@@ -1,6 +1,6 @@
-# Elm Prefabber
+# Elm Prefab
 
-A codegen library
+A codegen library that's *still under construction!*
 
 
 ## Goals 
