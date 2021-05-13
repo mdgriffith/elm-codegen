@@ -41,36 +41,31 @@ var a =
     Annotation.GenericType (Util.formatValue a)
 
 
-{-| A `Bool` type annotation.
--}
+{-| -}
 bool : Annotation
 bool =
     typed "Bool" []
 
 
-{-| An `Int` type annotation.
--}
+{-| -}
 int : Annotation
 int =
     typed "Int" []
 
 
-{-| A `Float` type annotation.
--}
+{-| -}
 float : Annotation
 float =
     typed "Float" []
 
 
-{-| A `String` type annotation.
--}
+{-| -}
 string : Annotation
 string =
     typed "String" []
 
 
-{-| A `Char` type annotation.
--}
+{-| -}
 char : Annotation
 char =
     typed "Char" []
@@ -112,8 +107,7 @@ dict keyArg valArg =
     typed "Dict" [ keyArg, valArg ]
 
 
-{-| Creates a `Maybe` type annotation.
--}
+{-| -}
 maybe : Annotation -> Annotation
 maybe maybeArg =
     typed "Maybe" [ maybeArg ]

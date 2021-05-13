@@ -65,7 +65,7 @@ unit =
 
 {-|
 
-    `'c'`
+    'c'
 
 -}
 char : Char -> Pattern
@@ -87,7 +87,7 @@ int intVal =
 
 {-|
 
-    `0x11`
+    0x11
 
 -}
 hex : Int -> Pattern
@@ -109,7 +109,7 @@ float floatVal =
 
 results in
 
-    `(one, two)`
+    ( one, two )
 
 -}
 tuple : Pattern -> Pattern -> Pattern
