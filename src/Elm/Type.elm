@@ -1,6 +1,15 @@
-module Elm.Type exposing (..)
+module Elm.Type exposing
+    ( Annotation, var, bool, int, float, string, char, unit
+    , list, tuple, triple, set, dict, maybe, record
+    )
 
-{-|-}
+{-|
+
+@docs Annotation, var, bool, int, float, string, char, unit
+
+@docs list, tuple, triple, set, dict, maybe, record
+
+-}
 
 import Elm.Syntax.Declaration exposing (Declaration(..))
 import Elm.Syntax.Exposing as Expose
@@ -19,11 +28,10 @@ import Elm.Syntax.TypeAlias as TypeAlias
 import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Util as Util
 
+
+{-| -}
 type alias Annotation =
     Annotation.TypeAnnotation
-
-
-
 
 
 {-| A type variable
@@ -31,7 +39,6 @@ type alias Annotation =
 var : String -> Annotation
 var a =
     Annotation.GenericType (Util.formatValue a)
-
 
 
 {-| A `Bool` type annotation.
@@ -69,45 +76,37 @@ char =
     typed "Char" []
 
 
-
-{-|-}
+{-| -}
 unit : Annotation
 unit =
     Annotation.Unit
 
 
-
-{-|-} 
+{-| -}
 list : Annotation -> Annotation
 list inner =
-     typed "List" [ inner ]
+    typed "List" [ inner ]
 
 
-
-{-| 
--}
+{-| -}
 tuple : Annotation -> Annotation -> Annotation
 tuple one two =
-    Annotation.Tupled (Util.nodifyAll [one, two ])
+    Annotation.Tupled (Util.nodifyAll [ one, two ])
 
 
-
-{-| 
--}
+{-| -}
 triple : Annotation -> Annotation -> Annotation -> Annotation
 triple one two three =
-    Annotation.Tupled (Util.nodifyAll [one, two, three ])
+    Annotation.Tupled (Util.nodifyAll [ one, two, three ])
 
 
-{-| 
--}
+{-| -}
 set : Annotation -> Annotation
 set setArg =
     typed "Set" [ setArg ]
 
 
-{-| 
--}
+{-| -}
 dict : Annotation -> Annotation -> Annotation
 dict keyArg valArg =
     typed "Dict" [ keyArg, valArg ]
@@ -120,10 +119,7 @@ maybe maybeArg =
     typed "Maybe" [ maybeArg ]
 
 
-
-
-{-| 
--}
+{-| -}
 record : List ( String, Annotation ) -> Annotation
 record fields =
     List.map (Tuple.mapBoth Util.nodify Util.nodify) fields
@@ -131,9 +127,7 @@ record fields =
         |> Annotation.Record
 
 
-
-{-| 
--}
+{-| -}
 typed : String -> List Annotation -> Annotation
 typed name args =
     Annotation.Typed (Util.nodify ( [], name )) (Util.nodifyAll args)
