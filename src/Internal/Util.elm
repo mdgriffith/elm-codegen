@@ -8,26 +8,46 @@ import Elm.Syntax.Declaration  as Declaration
 
 
 type Declaration
-    = Declaration Expose Declaration.Declaration
+    = Declaration Expose (List (Module)) Declaration.Declaration
 
 
 {-|-}
 expose : Declaration -> Declaration
-expose (Declaration _ body) =
-    Declaration Exposed body
+expose (Declaration _ imports body) =
+    Declaration Exposed imports body
 
 
 
 
 {-|-}
 exposeConstructor : Declaration -> Declaration
-exposeConstructor (Declaration metadata body) =
-    Declaration ExposedConstructor body
+exposeConstructor (Declaration metadata imports body) =
+    Declaration ExposedConstructor imports body
 
 
 
 type Module =
-    Module ModuleName.ModuleName
+    Module ModuleName.ModuleName (Maybe String)
+
+
+makeImport (Module name maybeAlias) =
+    nodify 
+         { moduleName = nodify name
+         , moduleAlias =
+            Maybe.map 
+                (\al ->
+                    nodify [al]
+                ) maybeAlias  
+        , exposingList = Nothing
+        }
+
+fullModName : Module -> String
+fullModName (Module name _) =
+    String.join "." name
+
+getModule : Module -> ModuleName.ModuleName
+getModule (Module name _) =
+    name
 
 type Expose
     = NotExposed
@@ -41,12 +61,22 @@ emptyModule =
 
 inModule : List String -> Module
 inModule mods =
-    Module (List.map formatType mods)
+    Module (List.map formatType mods) Nothing
+
+moduleAs : List String -> String -> Module
+moduleAs mods modAlias =
+    Module (List.map formatType mods) (Just modAlias)
+
+
 
 
 unpack : Module -> ModuleName.ModuleName
-unpack (Module name) =
-    name
+unpack (Module name maybeAlias) =
+    case maybeAlias of
+        Nothing ->
+            name
+        Just modAlias ->
+            [modAlias]
 
 
 denode : Node a -> a

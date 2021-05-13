@@ -2,6 +2,8 @@ module Elm exposing (..)
 
 {-|
 
+@docs file, toString
+
 
 # Primitives
 
@@ -10,7 +12,6 @@ module Elm exposing (..)
 
 @docs value, valueFrom
 
-@docs parens
 
 @docs list, tuple, triple
 
@@ -20,7 +21,7 @@ module Elm exposing (..)
 
 @docs apply, applyFrom
 
-@docs function functionWith
+@docs declaration, function functionWith
 
 
 @docs lambda
@@ -38,29 +39,58 @@ module Elm exposing (..)
 import Elm.Syntax.Declaration  as Declaration exposing (Declaration(..))
 import Elm.Syntax.Exposing as Expose
 import Elm.Syntax.Expression as Exp
-import Elm.Syntax.File as File
-import Elm.Syntax.Import as Import
 import Elm.Syntax.Infix as Infix
 import Elm.Syntax.Module as Module
-import Elm.Syntax.ModuleName as ModuleName
 import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
 import Elm.Syntax.Range as Range
-import Elm.Syntax.Signature as Signature
-import Elm.Syntax.Type as Type
-import Elm.Syntax.TypeAlias as TypeAlias
 import Internal.Util as Util
 import Elm.Type
-import Internal.Prepare as Prepare
+import Elm.Syntax.TypeAnnotation as Annotation
+import Set
+import Internal.Write
 
 {-|-}
-type alias Expression = 
-    -- TODO: match each expression with their type and bubble it up! 
-    -- { expression : Exp.Expression
-    -- , annotation : Elm.Type.Annotation
-    -- }
-    Exp.Expression
+type Expression = 
+    Expression ExpressionDetails
 
+type alias ExpressionDetails =
+    { expression : Exp.Expression
+    , annotation : Result (List InferenceError) Elm.Type.Annotation
+    , imports : List (Util.Module) 
+    }
+
+
+type InferenceError  
+     = MismatchedList Elm.Type.Annotation Elm.Type.Annotation 
+     | SomeOtherIssue
+     | ThisIsntARecord String
+     | DuplicateFieldInRecord String
+    
+{-|-}
+filename : File -> String
+filename (File fileDetails) =
+    ""
+
+{-|
+Turn the AST into a pretty printed file
+
+-}
+toString : File -> String
+toString (File fileDetails) =
+    Internal.Write.write
+        { moduleDefinition = 
+            Util.nodify 
+                (Module.NormalModule 
+                    { moduleName = Util.nodify (Util.getModule fileDetails.moduleDefinition)
+                    , exposingList = Util.nodify (Expose.All Range.emptyRange)
+                    }
+                )
+        , imports = 
+            List.map (Util.makeImport) fileDetails.imports --: List (Node Import)
+        , declarations = fileDetails.body
+        , comments = Nothing --: Maybe (Comments.Comment Comments.FileComment)
+        }
 
 
 {-|-}
@@ -68,24 +98,37 @@ file : Module -> List Declaration -> File
 file mod decs =
     File 
         { moduleDefinition = mod
-        , imports = []
+        , imports =
+            reduceDeclarationImports decs (Set.empty, [])
+                |> Tuple.second
         , body = decs
         }
 
 
-{-|
-A file with aliases for various libraries
-
--}
-fileWith : Module -> List (Module, String) -> List Declaration -> File
-fileWith mod aliases decs =
-    File 
-        { moduleDefinition = mod
-        , imports = []
-        , body = decs
-        }
+reduceDeclarationImports : List Declaration -> (Set.Set String, List Module) -> (Set.Set String, List Module)
+reduceDeclarationImports decs imports =
+    case decs of
+        [] ->
+            imports
+        (Util.Declaration _ newImports body :: remain) ->
+            reduceDeclarationImports remain 
+                (addImports newImports imports)
 
 
+addImports : List Module -> (Set.Set String, List Module) -> (Set.Set String, List Module)
+addImports newImports (set, deduped) =
+    case newImports of
+        [] ->
+            (set, deduped)
+        new :: remain ->
+            let
+                full = (Util.fullModName new)
+            in
+            if Set.member full set then
+                addImports remain (set, deduped)
+            else
+                addImports remain
+                    (Set.insert full set, new:: deduped)
 
 
 {-|-}
@@ -95,7 +138,7 @@ type File =
 
 type alias FileDetails =
     { moduleDefinition : Module
-    , imports : List (Node.Node Import.Import)
+    , imports : List Module
     , body : List Declaration
     -- , comments : Maybe (Comment FileComment)
     }
@@ -109,7 +152,7 @@ type alias Module =
 
 {-| A modules name
 
-        Elm.inModule 
+        Elm.moduleName
             [ "Html"
             , "Attributes"
             ]
@@ -121,10 +164,30 @@ type alias Module =
 Note also that this will force capitalization on each segment to prevent silly errors.
 
 -}
-inModule : List String -> Module
-inModule =
+moduleName : List String -> Module
+moduleName =
     Util.inModule 
 
+
+
+
+{-| A modules name
+
+        Elm.moduleAs
+            [ "Html"
+            , "Attributes"
+            ]
+            "Html"
+    
+    will refer to
+
+        Html.Attributes as Html
+
+
+-}
+moduleAs : List String -> String -> Module
+moduleAs =
+    Util.moduleAs
 
 
 {-|-}
@@ -137,7 +200,11 @@ value =
 -}
 valueFrom : Module -> String -> Expression
 valueFrom mod name =
-    Exp.FunctionOrValue (Util.unpack mod) name
+    Expression 
+        { expression =  Exp.FunctionOrValue (Util.unpack mod) name
+        , annotation = Ok Elm.Type.unit
+        , imports = [ mod ]
+        }
 
 
 
@@ -145,28 +212,45 @@ valueFrom mod name =
 -}
 unit : Expression
 unit =
-    Exp.UnitExpr
+    Expression 
+        { expression =  Exp.UnitExpr
+        , annotation = Ok Elm.Type.unit
+        , imports = []
+        }
+   
 
 
 {-| 
 -}
 int : Int -> Expression
 int intVal =
-    Exp.Integer intVal
+    Expression 
+        { expression =  Exp.Integer intVal
+        , annotation = Ok Elm.Type.int
+        , imports = []
+        }
 
 
 {-| 
 -}
 hex : Int -> Expression
 hex hexVal =
-    Exp.Hex hexVal
+    Expression 
+        { expression =  Exp.Hex hexVal
+        , annotation = Ok Elm.Type.int
+        , imports = []
+        }
 
 
 {-| 
 -}
 float : Float -> Expression
 float floatVal =
-    Exp.Floatable floatVal
+    Expression 
+        { expression =  Exp.Floatable floatVal
+        , annotation = Ok Elm.Type.float
+        , imports = []
+        }
 
 
 
@@ -174,55 +258,177 @@ float floatVal =
 -}
 string : String -> Expression
 string literal =
-    Exp.Literal literal
+    Expression 
+        { expression =  Exp.Literal literal
+        , annotation = Ok Elm.Type.string
+        , imports = []
+        }
 
 
 {-| 
 -}
 char : Char -> Expression
 char charVal =
-    Exp.CharLiteral charVal
+     Expression 
+        { expression =  Exp.CharLiteral charVal
+        , annotation = Ok Elm.Type.char
+        , imports = []
+        }
 
 
 
-{-| 
--}
-glsl : String -> Expression
-glsl expr =
-    Exp.GLSLExpression expr
+-- {-| 
+-- -}
+-- glsl : String -> Expression
+-- glsl expr =
+--     Exp.GLSLExpression expr
 
 
 {-| 
 -}
 tuple : Expression -> Expression -> Expression
-tuple one two =
-    Exp.TupledExpression (Util.nodifyAll [one, two])
+tuple (Expression one) (Expression two) =
+    Expression 
+        { expression =  Exp.TupledExpression (Util.nodifyAll [one.expression, two.expression])
+        , annotation = Result.map2 Elm.Type.tuple one.annotation two.annotation
+        , imports = one.imports ++ two.imports
+        }
 
 
 
 {-| 
 -}
 triple : Expression -> Expression -> Expression -> Expression
-triple one two three =
-    Exp.TupledExpression (Util.nodifyAll [one, two, three])
+triple (Expression one) (Expression two) (Expression three) =
+    Expression 
+        { expression =  Exp.TupledExpression (Util.nodifyAll [one.expression, two.expression, three.expression])
+        , annotation = 
+            Result.map3 Elm.Type.triple
+                one.annotation two.annotation three.annotation
+        , imports = one.imports ++ two.imports ++ three.imports
+        }
+
 
 {-|-}
 list : List Expression -> Expression
 list exprs =
-    Exp.ListExpr (Util.nodifyAll exprs)
+    Expression 
+        { expression = Exp.ListExpr  (List.map toList exprs)
+        , annotation = unify exprs
+        , imports = []
+        }
+
+toList : Expression -> Node.Node Exp.Expression
+toList (Expression exp) =
+    Util.nodify exp.expression
+
+
+unify : List Expression -> Result (List InferenceError) Elm.Type.Annotation
+unify exps =
+    case exps of
+        [] ->
+            Ok (Elm.Type.var "a")
+
+        Expression top :: remain ->
+            case top.annotation of
+                Ok ann ->
+                    unifyHelper remain ann
+                Err err ->
+                    Err err
+
+
+unifyHelper : List Expression -> Elm.Type.Annotation -> Result (List InferenceError) Elm.Type.Annotation
+unifyHelper exps existing =
+    case exps of
+        [] -> Ok existing
+
+        Expression top :: remain ->
+            case top.annotation of
+                Ok ann ->
+                    case unifiable ann existing of
+                        Err _ ->
+                            Err [ MismatchedList ann existing ]
+
+                        Ok new ->
+                            unifyHelper remain new
+                
+                Err err ->
+                    Err err
+{-|
+
+This is definitely not correct, but will do for now!
+
+-}
+unifiable : Annotation.TypeAnnotation -> Annotation.TypeAnnotation -> Result String Annotation.TypeAnnotation
+unifiable one two =
+    case one of
+        Annotation.GenericType a ->
+            Ok two
+        
+        otherwise ->
+            case two of
+                Annotation.GenericType b ->
+                    Ok one
+                _ ->
+                    if one == two then
+                        Ok one
+                    else
+                        Err "Unable to unify"
+
 
 
 {-| 
 -}
 record : List ( String, Expression ) -> Expression
-record setters =
-     setters
-        |> List.map 
-            (\( fieldName, expr ) -> 
-                ( Util.nodify fieldName, Util.nodify expr )
-            )
-        |> Util.nodifyAll
-        |> Exp.RecordExpr
+record fields =
+    let
+        unified =
+            fields
+                |> List.foldl
+                    (\(fieldName, Expression exp) found -> 
+                        { fields = 
+                            ( Util.nodify fieldName
+                            , Util.nodify exp.expression
+                            ) :: found.fields
+                        , errors = 
+                            if Set.member fieldName found.passed then
+                                DuplicateFieldInRecord fieldName :: found.errors
+                            else
+                                found.errors
+                        , fieldAnnotations =
+                            case exp.annotation of
+                                Err err ->
+                                    found.fieldAnnotations 
+                                Ok ann ->
+                                    (fieldName, ann) 
+                                        :: found.fieldAnnotations 
+                        , passed = Set.insert fieldName found.passed
+                        , imports = exp.imports ++ found.imports
+                        }
+                    )
+                    { fields = []
+                    , errors = []
+                    , fieldAnnotations = []
+                    , passed = Set.empty
+                    , imports = []
+                    }
+
+    in
+    Expression 
+        { expression =
+            unified.fields
+                |> List.reverse
+                |> Util.nodifyAll
+                |> Exp.RecordExpr
+        , annotation = 
+            case unified.errors of
+                [] ->
+                    Ok (Elm.Type.record unified.fieldAnnotations)
+                  
+                errs ->  
+                    Err errs
+        , imports = unified.imports
+        }
 
 
 
@@ -234,17 +440,26 @@ record setters =
 
     record.field
 
+
+
+*Note* - 
 -}
 get : String -> Expression ->  Expression
-get selector expr =
-    Exp.RecordAccess (Util.nodify expr) (Util.nodify selector)
+get selector (Expression expr) =
+    Expression 
+        { expression =
+            Exp.RecordAccess (Util.nodify expr.expression) (Util.nodify selector)
+        , annotation = 
+            Err [ SomeOtherIssue ]
+        , imports = expr.imports
+        }
 
 
 
-{-|-}
-parens : Expression -> Expression
-parens expr =
-    Exp.ParenthesizedExpression (Util.nodify expr)
+-- {-|-}
+-- parens : Expression -> Expression
+-- parens expr =
+--     Exp.ParenthesizedExpression (Util.nodify expr)
 
 
 
@@ -255,17 +470,35 @@ parens expr =
 -}
 apply : String -> List Expression -> Expression
 apply name args =
-    Exp.Application (Util.nodifyAll (value name :: args))
+    Expression 
+        { expression =
+            Exp.Application (Util.nodifyAll (getExpression (value name) :: List.map getExpression args))
+        , annotation = 
+            Err [ SomeOtherIssue ]
+        , imports = List.concatMap getImports args
+        }
 
 
+getExpression : Expression -> Exp.Expression
+getExpression (Expression exp) =
+    exp.expression
 
+getImports : Expression -> List Util.Module
+getImports (Expression exp) =
+    exp.imports
 
 
 {-| 
 -}
 applyFrom : Module -> String -> List Expression -> Expression
-applyFrom (modName) name args =
-    Exp.Application (Util.nodifyAll (valueFrom modName name :: args))
+applyFrom mod name args =
+    Expression 
+        { expression =
+            Exp.Application (Util.nodifyAll (getExpression (valueFrom mod name) :: List.map getExpression args))
+        , annotation = 
+            Err [ SomeOtherIssue ]
+        , imports = mod :: List.concatMap getImports args
+        }
 
 
 
@@ -280,10 +513,16 @@ type alias Pattern = Pattern.Pattern
 {-| LambdaExpression Lambda
 -}
 lambda : List Pattern -> Expression -> Expression
-lambda args expr =
-    Exp.LambdaExpression
-        { args = Util.nodifyAll args
-        , expression = Util.nodify expr
+lambda args (Expression expr) =
+    Expression 
+        { expression =   
+            Exp.LambdaExpression
+                { args = Util.nodifyAll args
+                , expression = Util.nodify expr.expression
+                }
+        , annotation = 
+            expr.annotation
+        , imports = expr.imports
         }
         
 
@@ -291,37 +530,44 @@ type alias Declaration = Util.Declaration
 
 
 
+
+
+{-|-}
+declaration : String ->  Expression -> Declaration
+declaration name body =
+    function name [] body
+
+
 {-|-}
 function : String ->  List Pattern -> Expression -> Declaration
-function name args body =
+function name args (Expression body) =
     { documentation = Util.nodifyMaybe Nothing
     , signature = Util.nodifyMaybe Nothing
     , declaration = 
         Util.nodify 
             { name = Util.nodify name
             , arguments = Util.nodifyAll args
-            , expression = Util.nodify body
+            , expression = Util.nodify body.expression
             }
     }
     |> Declaration.FunctionDeclaration
-    |> Util.Declaration Util.NotExposed
-
+    |> Util.Declaration Util.NotExposed body.imports
 
 
 {-|-}
 functionWith : String ->  List (Elm.Type.Annotation , Pattern) -> Expression -> Declaration
-functionWith  name args body =
+functionWith  name args (Expression body) =
     { documentation = Util.nodifyMaybe Nothing
     , signature = Util.nodifyMaybe Nothing
     , declaration = 
         Util.nodify 
             { name = Util.nodify name
             , arguments = Util.nodifyAll (List.map Tuple.second args)
-            , expression = Util.nodify body
+            , expression = Util.nodify body.expression
             }
     }
     |> Declaration.FunctionDeclaration
-    |> Util.Declaration Util.NotExposed
+    |> Util.Declaration Util.NotExposed body.imports
 
 
 
@@ -548,5 +794,12 @@ pipeLeft =
 
 
 applyBinOp :  BinOp -> Expression -> Expression -> Expression
-applyBinOp  (BinOp symbol dir _) exprl exprr =
-    Exp.OperatorApplication symbol dir (Util.nodify exprl) (Util.nodify exprr)
+applyBinOp  (BinOp symbol dir _) (Expression exprl) (Expression exprr) =
+    Expression 
+        { expression =
+            Exp.OperatorApplication symbol dir (Util.nodify exprl.expression) (Util.nodify exprr.expression)
+        , annotation = Err [SomeOtherIssue]
+        , imports = exprl.imports ++ exprr.imports
+
+        }
+    

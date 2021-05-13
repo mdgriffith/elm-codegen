@@ -26,6 +26,14 @@ type alias Annotation =
 
 
 
+{-| A type variable
+-}
+var : String -> Annotation
+var a =
+    Annotation.GenericType (Util.formatValue a)
+
+
+
 {-| A `Bool` type annotation.
 -}
 bool : Annotation
@@ -69,11 +77,26 @@ unit =
 
 
 
-{-|-}
+{-|-} 
 list : Annotation -> Annotation
 list inner =
      typed "List" [ inner ]
 
+
+
+{-| 
+-}
+tuple : Annotation -> Annotation -> Annotation
+tuple one two =
+    Annotation.Tupled (Util.nodifyAll [one, two ])
+
+
+
+{-| 
+-}
+triple : Annotation -> Annotation -> Annotation -> Annotation
+triple one two three =
+    Annotation.Tupled (Util.nodifyAll [one, two, three ])
 
 
 {-| 
@@ -98,6 +121,14 @@ maybe maybeArg =
 
 
 
+
+{-| 
+-}
+record : List ( String, Annotation ) -> Annotation
+record fields =
+    List.map (Tuple.mapBoth Util.nodify Util.nodify) fields
+        |> Util.nodifyAll
+        |> Annotation.Record
 
 
 
