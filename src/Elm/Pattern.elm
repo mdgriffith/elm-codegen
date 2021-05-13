@@ -1,13 +1,13 @@
 module Elm.Pattern exposing
-    ( Pattern, all, unit, char, string, int, hex, float
-    , tuple, triple, fields, cons, list, var, named, namedFrom, withAlias
+    ( Pattern, var, skip, unit, char, string, int, hex, float
+    , tuple, triple, fields, cons, list, named, namedFrom, withAlias
     )
 
 {-|
 
-@docs Pattern, all, unit, char, string, int, hex, float
+@docs Pattern, var, skip, unit, char, string, int, hex, float
 
-@docs tuple, triple, fields, cons, list, var, named, namedFrom, withAlias
+@docs tuple, triple, fields, cons, list, named, namedFrom, withAlias
 
 -}
 
@@ -46,19 +46,28 @@ type alias Pattern =
     Pattern.Pattern
 
 
-{-| -}
-all : Pattern
-all =
+{-| The catchall `_` pattern.
+-}
+skip : Pattern
+skip =
     Pattern.AllPattern
 
 
-{-| -}
+{-|
+
+    `()`
+
+-}
 unit : Pattern
 unit =
     Pattern.UnitPattern
 
 
-{-| -}
+{-|
+
+    `'c'`
+
+-}
 char : Char -> Pattern
 char charVal =
     Pattern.CharPattern charVal
@@ -76,7 +85,11 @@ int intVal =
     Pattern.IntPattern intVal
 
 
-{-| -}
+{-|
+
+    `0x11`
+
+-}
 hex : Int -> Pattern
 hex hexVal =
     Pattern.HexPattern hexVal
@@ -88,7 +101,17 @@ float floatVal =
     Pattern.FloatPattern floatVal
 
 
-{-| -}
+{-|
+
+    Elm.Pattern.tuple
+        (Elm.Pattern.var "one")
+        (Elm.Pattern.var "two")
+
+results in
+
+    `(one, two)`
+
+-}
 tuple : Pattern -> Pattern -> Pattern
 tuple one two =
     Pattern.TuplePattern (Util.nodifyAll [ one, two ])
@@ -100,7 +123,17 @@ triple one two =
     Pattern.TuplePattern (Util.nodifyAll [ one, two ])
 
 
-{-| RecordPattern (List (Node String))
+{-|
+
+    Elm.Pattern.fields
+        [ "field1"
+        , "field2"
+        ]
+
+results in
+
+    { field1, field2}
+
 -}
 fields : List String -> Pattern
 fields flds =
@@ -120,7 +153,10 @@ list seq =
     Pattern.ListPattern (Util.nodifyAll seq)
 
 
-{-| VarPattern String
+{-| A simple variable name!
+
+This is what you want 90% of the time.
+
 -}
 var : String -> Pattern
 var name =
@@ -129,11 +165,11 @@ var name =
 
 {-|
 
-        Elm.Pattern.named "Just" [ Elm.Pattern.var "value" ]
+    Elm.Pattern.named "Just" [ Elm.Pattern.var "value" ]
 
-    would result in the following unpacking
+would result in the following unpacking
 
-        (Just value)
+    Just value
 
 -}
 named : String -> List Pattern -> Pattern
@@ -142,23 +178,42 @@ named name patterns =
         |> parensIf (not (List.isEmpty patterns))
 
 
-{-| -}
+{-| Same as `named`, but from a specific module.
+
+    result = Elm.moduleName ["Result" ]
+
+    Elm.Pattern.namedFrom result "Ok" [ Elm.Pattern.var "value" ]
+
+would result in
+
+    Result.Ok value
+
+-}
 namedFrom : Elm.Module -> String -> List Pattern -> Pattern
 namedFrom moduleName name patterns =
     Pattern.NamedPattern { moduleName = Util.unpack moduleName, name = name } (Util.nodifyAll patterns)
         |> parensIf (not (List.isEmpty patterns))
 
 
-{-| -}
+{-| This is equivalent to `as` in Elm.
+
+Sometimes you want to unpack some stuff, but also keep a reference to the top level thing.
+
+    Pattern.withAlias "fullTuple"
+        (Pattern.tuple
+            (Pattern.var "one")
+            (Pattern.var "two")
+        )
+
+results in
+
+    ((one, two) as fullTuple)
+
+-}
 withAlias : String -> Pattern -> Pattern
 withAlias name pattern =
     Pattern.AsPattern (Util.nodify pattern) (Util.nodify name)
         |> parens
-
-
-
--- {-| ParenthesizedPattern (Node Pattern)
--- -}
 
 
 parensIf : Bool -> Pattern -> Pattern

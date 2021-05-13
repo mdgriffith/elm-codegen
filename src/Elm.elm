@@ -111,7 +111,16 @@ toString (File fileDetails) =
         }
 
 
-{-| -}
+{-| Build a file!
+
+    Elm.file (Elm.moduleName [ "My", "Module" ])
+        [ Elm.declaration "placeholder"
+            (Elm.string "a fancy string!")
+        ]
+
+Once you have a file, you can render it using `Elm.toString`.
+
+-}
 file : Module -> List Declaration -> File
 file mod decs =
     File
