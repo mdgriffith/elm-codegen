@@ -1,0 +1,28 @@
+{
+  "name": "elm-prefab",
+  "version": "1.0.0",
+  "description": "Codegen for Elm",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "watch": "tsc --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mdgriffith/elm-prefab.git"
+  },
+  "author": "Matthew Griffith",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/mdgriffith/elm-prefab/issues"
+  },
+  "homepage": "https://github.com/mdgriffith/elm-prefab#readme",
+  "devDependencies": {
+    "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "chalk": "^4.1.1",
+    "commander": "^7.2.0"
+  }
+}

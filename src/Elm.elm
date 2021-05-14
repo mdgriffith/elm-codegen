@@ -1,5 +1,5 @@
 module Elm exposing
-    ( file, toString
+    ( file, render
     , int, float, char, string, hex, unit
     , value, valueFrom
     , list, tuple, triple
@@ -14,7 +14,7 @@ module Elm exposing
 
 {-|
 
-@docs file, toString
+@docs file, render
 
 
 # Primitives
@@ -94,21 +94,31 @@ filename (File fileDetails) =
 
 {-| Turn the AST into a pretty printed file
 -}
-toString : File -> String
-toString (File fileDetails) =
-    Internal.Write.write
-        { moduleDefinition =
-            Util.nodify
-                (Elm.Syntax.Module.NormalModule
-                    { moduleName = Util.nodify (Util.getModule fileDetails.moduleDefinition)
-                    , exposingList = Util.nodify (Expose.All Range.emptyRange)
-                    }
-                )
-        , imports =
-            List.map Util.makeImport fileDetails.imports
-        , declarations = fileDetails.body
-        , comments = Nothing --: Maybe (Comments.Comment Comments.FileComment)
-        }
+render : File -> { path : String, contents : String }
+render (File fileDetails) =
+    let
+        mod =
+            Util.getModule fileDetails.moduleDefinition
+
+        body =
+            Internal.Write.write
+                { moduleDefinition =
+                    Util.nodify
+                        (Elm.Syntax.Module.NormalModule
+                            { moduleName = Util.nodify mod
+                            , exposingList = Util.nodify (Expose.All Range.emptyRange)
+                            }
+                        )
+                , imports =
+                    List.map Util.makeImport fileDetails.imports
+                , declarations = fileDetails.body
+                , comments = Nothing --: Maybe (Comments.Comment Comments.FileComment)
+                }
+    in
+    { path =
+        String.join "/" mod ++ ".elm"
+    , contents = body
+    }
 
 
 {-| Build a file!

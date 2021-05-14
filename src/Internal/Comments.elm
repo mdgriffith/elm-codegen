@@ -9,14 +9,27 @@ module Internal.Comments exposing
 It is useful to have this in a structured way, so that it can be re-flowed by
 the pretty printer, and so that an understanding of the layout of the doc tags
 can be extracted to order the exposing clause by.
+
+
 # Structured comments
+
 @docs Comment, CommentPart, DocComment, FileComment
+
+
 # Building comments
+
 @docs emptyComment, addPart
+
+
 # Pretty printing of comments
+
 @docs prettyDocComment, prettyFileComment
+
+
 # Parsing of comments into structured comments
+
 @docs docCommentParser, fileCommentParser
+
 -}
 
 import Parser exposing (Parser)
@@ -179,7 +192,7 @@ mergeDocTags innerParts =
             DocTags (List.sort tags) :: partsExceptMaybeFirst
 
 
-prettyCommentPart : CommentPart -> Doc
+prettyCommentPart : CommentPart -> Doc t
 prettyCommentPart part =
     case part of
         Markdown val ->
@@ -239,7 +252,7 @@ fileCommentParser =
         |> Parser.map (\val -> Comment [ Markdown val ])
 
 
-delimeters : Doc -> Doc
+delimeters : Doc t -> Doc t
 delimeters doc =
     Pretty.string "{-| "
         |> Pretty.a doc
