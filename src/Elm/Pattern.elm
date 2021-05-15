@@ -14,7 +14,6 @@ module Elm.Pattern exposing
 
 -}
 
-import Elm
 import Elm.Syntax.Pattern as Pattern
 import Internal.Util as Util
 
@@ -47,6 +46,11 @@ import Internal.Util as Util
 {-| -}
 type alias Pattern =
     Pattern.Pattern
+
+
+{-| -}
+type alias Module =
+    Util.Module
 
 
 {-| The catchall `_` pattern.
@@ -192,7 +196,7 @@ would result in
     Result.Ok value
 
 -}
-namedFrom : Elm.Module -> String -> List Pattern -> Pattern
+namedFrom : Module -> String -> List Pattern -> Pattern
 namedFrom moduleName name patterns =
     Pattern.NamedPattern { moduleName = Util.unpack moduleName, name = name } (Util.nodifyAll patterns)
         |> parensIf (not (List.isEmpty patterns))

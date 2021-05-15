@@ -1,9 +1,37 @@
 module Internal.Util exposing (..)
 
 import Elm.Syntax.Declaration as Declaration
+import Elm.Syntax.Expression as Exp
 import Elm.Syntax.ModuleName as ModuleName
 import Elm.Syntax.Node as Node exposing (Node(..))
-import Elm.Syntax.Range exposing (emptyRange)
+import Elm.Syntax.Range as Range
+import Elm.Syntax.TypeAnnotation as Annotation
+
+
+{-| -}
+type Expression
+    = Expression ExpressionDetails
+
+
+type alias ExpressionDetails =
+    { expression : Exp.Expression
+    , annotation : Result (List InferenceError) Annotation.TypeAnnotation
+    , imports : List Module
+    }
+
+
+type InferenceError
+    = MismatchedList Annotation.TypeAnnotation Annotation.TypeAnnotation
+    | SomeOtherIssue
+    | EmptyCaseStatement
+    | ThisIsntARecord String
+    | DuplicateFieldInRecord String
+    | CaseBranchesReturnDifferentTypes
+
+
+{-| -}
+type LetDeclaration
+    = LetDeclaration (List Module) Exp.LetDeclaration
 
 
 type Declaration
@@ -97,7 +125,7 @@ denodeMaybe =
 
 nodify : a -> Node a
 nodify exp =
-    Node emptyRange exp
+    Node Range.emptyRange exp
 
 
 nodifyAll : List a -> List (Node a)
@@ -123,3 +151,65 @@ formatValue str =
 formatType : String -> String
 formatType str =
     String.toUpper (String.left 1 str) ++ String.dropLeft 1 str
+
+
+unify : List Expression -> Result (List InferenceError) Annotation.TypeAnnotation
+unify exps =
+    case exps of
+        [] ->
+            Ok (Annotation.GenericType "a")
+
+        (Expression top) :: remain ->
+            case top.annotation of
+                Ok ann ->
+                    unifyHelper remain ann
+
+                Err err ->
+                    Err err
+
+
+unifyHelper :
+    List Expression
+    -> Annotation.TypeAnnotation
+    -> Result (List InferenceError) Annotation.TypeAnnotation
+unifyHelper exps existing =
+    case exps of
+        [] ->
+            Ok existing
+
+        (Expression top) :: remain ->
+            case top.annotation of
+                Ok ann ->
+                    case unifiable ann existing of
+                        Err _ ->
+                            Err [ MismatchedList ann existing ]
+
+                        Ok new ->
+                            unifyHelper remain new
+
+                Err err ->
+                    Err err
+
+
+{-| This is definitely not correct, but will do for now!
+-}
+unifiable :
+    Annotation.TypeAnnotation
+    -> Annotation.TypeAnnotation
+    -> Result String Annotation.TypeAnnotation
+unifiable one two =
+    case one of
+        Annotation.GenericType a ->
+            Ok two
+
+        otherwise ->
+            case two of
+                Annotation.GenericType b ->
+                    Ok one
+
+                _ ->
+                    if one == two then
+                        Ok one
+
+                    else
+                        Err "Unable to unify"
