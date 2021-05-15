@@ -11,6 +11,7 @@ module Elm exposing
     , Module, moduleName, moduleAs
     , expose, exposeConstructor
     , power, multiply, divide, intDivide, modulo, rem, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, pipe, pipeLeft, compose, composeLeft
+    , portIncoming, portOutgoing
     )
 
 {-|
@@ -48,6 +49,11 @@ module Elm exposing
 
 @docs power, multiply, divide, intDivide, modulo, rem, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, pipe, pipeLeft, compose, composeLeft
 
+
+# Ports
+
+@docs portIncoming, portOutgoing
+
 -}
 
 import Elm.Let as Let
@@ -76,12 +82,6 @@ type alias Expression =
     Util.Expression
 
 
-{-| -}
-filename : File -> String
-filename (File fileDetails) =
-    ""
-
-
 {-| Turn the AST into a pretty printed file
 -}
 render : File -> { path : String, contents : String }
@@ -90,13 +90,31 @@ render (File fileDetails) =
         mod =
             Util.getModule fileDetails.moduleDefinition
 
+        exposed =
+            Util.getExposed fileDetails.body
+
         body =
             Internal.Write.write
                 { moduleDefinition =
                     Util.nodify
-                        (Elm.Syntax.Module.NormalModule
+                        ((if Util.hasPorts fileDetails.body then
+                            Elm.Syntax.Module.PortModule
+
+                          else
+                            Elm.Syntax.Module.NormalModule
+                         )
                             { moduleName = Util.nodify mod
-                            , exposingList = Util.nodify (Expose.All Range.emptyRange)
+                            , exposingList =
+                                case exposed of
+                                    [] ->
+                                        Util.nodify
+                                            (Expose.All Range.emptyRange)
+
+                                    _ ->
+                                        Util.nodify
+                                            (Expose.Explicit
+                                                (Util.nodifyAll exposed)
+                                            )
                             }
                         )
                 , imports =
@@ -224,7 +242,7 @@ valueFrom : Module -> String -> Expression
 valueFrom mod name =
     Util.Expression
         { expression = Exp.FunctionOrValue (Util.unpack mod) name
-        , annotation = Ok Elm.Type.unit
+        , annotation = Err []
         , imports = [ mod ]
         }
 
@@ -664,6 +682,111 @@ expose =
 exposeConstructor : Declaration -> Declaration
 exposeConstructor =
     Util.exposeConstructor
+
+
+{-|
+
+    import Elm.Type as Type
+
+    Elm.portIncoming "receiveMessageFromTheWorld" [ Type.string, Type.int ]
+
+Results in
+
+    port receiveMessageFromTheWorld : (String -> Int -> msg) -> Sub msg
+
+**Note** You generally only need one incoming and one outgoing port!
+
+If you want to vary the messages going in and out of your app, don't use a huge number of ports, instead write Json encoders and decoders.
+
+This will give you more flexibility in the future and save you having to wire up a bunch of stuff.
+
+**Another note** -
+
+-}
+portIncoming : String -> List Elm.Type.Annotation -> Declaration
+portIncoming name args =
+    { name = Util.nodify name
+    , typeAnnotation =
+        Util.nodify
+            (case args of
+                [] ->
+                    Annotation.FunctionTypeAnnotation
+                        (Util.nodify (Annotation.GenericType "msg"))
+                        (Util.nodify sub)
+
+                start :: remain ->
+                    Annotation.FunctionTypeAnnotation
+                        (groupAnn (Util.nodify (functionAnnotation start (remain ++ [ Annotation.GenericType "msg" ]))))
+                        (Util.nodify sub)
+            )
+    }
+        |> Declaration.PortDeclaration
+        |> Util.Declaration Util.NotExposed []
+
+
+groupAnn ann =
+    Annotation.Tupled
+        [ ann ]
+        |> Util.nodify
+
+
+sub : Annotation.TypeAnnotation
+sub =
+    Annotation.Typed
+        (Util.nodify ( [], "Sub" ))
+        [ Util.nodify (Annotation.GenericType "msg") ]
+
+
+{-| Create a port that can send messages to the outside world!
+
+    import Elm.Type as Type
+
+    Elm.portOutgoing "tellTheWorld" [ Type.string, Type.int ]
+
+will generate
+
+    port tellTheWorld : String -> Int -> Cmd msg
+
+-}
+portOutgoing : String -> List Elm.Type.Annotation -> Declaration
+portOutgoing name args =
+    { name = Util.nodify name
+    , typeAnnotation =
+        Util.nodify
+            (case args of
+                [] ->
+                    cmd
+
+                start :: remain ->
+                    Annotation.FunctionTypeAnnotation
+                        (Util.nodify (functionAnnotation start remain))
+                        (Util.nodify cmd)
+            )
+    }
+        |> Declaration.PortDeclaration
+        |> Util.Declaration Util.NotExposed []
+
+
+cmd : Annotation.TypeAnnotation
+cmd =
+    Annotation.Typed
+        (Util.nodify ( [], "Cmd" ))
+        [ Util.nodify (Annotation.GenericType "msg") ]
+
+
+functionAnnotation : Elm.Type.Annotation -> List Elm.Type.Annotation -> Elm.Type.Annotation
+functionAnnotation start args =
+    case args of
+        [] ->
+            start
+
+        next :: remain ->
+            functionAnnotation
+                (Annotation.FunctionTypeAnnotation
+                    (Util.nodify start)
+                    (Util.nodify next)
+                )
+                remain
 
 
 

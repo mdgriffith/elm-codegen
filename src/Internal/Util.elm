@@ -1,6 +1,7 @@
 module Internal.Util exposing (..)
 
 import Elm.Syntax.Declaration as Declaration
+import Elm.Syntax.Exposing as Expose
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.ModuleName as ModuleName
 import Elm.Syntax.Node as Node exposing (Node(..))
@@ -70,6 +71,128 @@ makeImport (Module name maybeAlias) =
 fullModName : Module -> String
 fullModName (Module name _) =
     String.join "." name
+
+
+{-| -}
+hasPorts : List Declaration -> Bool
+hasPorts decls =
+    List.any
+        (\(Declaration exp _ decBody) ->
+            case exp of
+                NotExposed ->
+                    False
+
+                Exposed ->
+                    case decBody of
+                        Declaration.PortDeclaration myPort ->
+                            True
+
+                        _ ->
+                            False
+
+                ExposedConstructor ->
+                    case decBody of
+                        Declaration.PortDeclaration myPort ->
+                            True
+
+                        _ ->
+                            False
+        )
+        decls
+
+
+getExposed : List Declaration -> List Expose.TopLevelExpose
+getExposed decls =
+    List.filterMap
+        (\(Declaration exp _ decBody) ->
+            case exp of
+                NotExposed ->
+                    Nothing
+
+                Exposed ->
+                    case decBody of
+                        Declaration.FunctionDeclaration fn ->
+                            let
+                                fnName =
+                                    denode (.name (denode fn.declaration))
+                            in
+                            Expose.FunctionExpose fnName
+                                |> Just
+
+                        Declaration.AliasDeclaration synonym ->
+                            let
+                                aliasName =
+                                    denode synonym.name
+                            in
+                            Expose.TypeOrAliasExpose aliasName
+                                |> Just
+
+                        Declaration.CustomTypeDeclaration myType ->
+                            let
+                                typeName =
+                                    denode myType.name
+                            in
+                            Expose.TypeOrAliasExpose typeName
+                                |> Just
+
+                        Declaration.PortDeclaration myPort ->
+                            let
+                                typeName =
+                                    denode myPort.name
+                            in
+                            Expose.FunctionExpose typeName
+                                |> Just
+
+                        Declaration.InfixDeclaration infix ->
+                            Nothing
+
+                        Declaration.Destructuring _ _ ->
+                            Nothing
+
+                ExposedConstructor ->
+                    case decBody of
+                        Declaration.FunctionDeclaration fn ->
+                            let
+                                fnName =
+                                    denode (.name (denode fn.declaration))
+                            in
+                            Expose.FunctionExpose fnName
+                                |> Just
+
+                        Declaration.AliasDeclaration synonym ->
+                            let
+                                aliasName =
+                                    denode synonym.name
+                            in
+                            Expose.TypeOrAliasExpose aliasName
+                                |> Just
+
+                        Declaration.CustomTypeDeclaration myType ->
+                            let
+                                typeName =
+                                    denode myType.name
+                            in
+                            Expose.TypeExpose
+                                { name = typeName
+                                , open = Just Range.emptyRange
+                                }
+                                |> Just
+
+                        Declaration.PortDeclaration myPort ->
+                            let
+                                typeName =
+                                    denode myPort.name
+                            in
+                            Expose.FunctionExpose typeName
+                                |> Just
+
+                        Declaration.InfixDeclaration infix ->
+                            Nothing
+
+                        Declaration.Destructuring _ _ ->
+                            Nothing
+        )
+        decls
 
 
 getModule : Module -> ModuleName.ModuleName
