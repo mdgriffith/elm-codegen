@@ -401,7 +401,7 @@ record fields =
         , annotation =
             case unified.errors of
                 [] ->
-                    Ok (Elm.Type.record unified.fieldAnnotations)
+                    Ok (Elm.Type.record (List.reverse unified.fieldAnnotations))
 
                 errs ->
                     Err errs
