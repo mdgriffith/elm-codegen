@@ -4,9 +4,10 @@ module Elm exposing
     , int, float, char, string, hex, unit
     , list, tuple, triple
     , record, get
+    , caseOn
     , apply, applyFrom
     , lambda
-    , declaration, function, functionWith
+    , declaration, declarationWith, function, functionWith
     , Module, moduleName, moduleAs
     , expose, exposeConstructor
     , power, multiply, divide, intDivide, modulo, rem, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, pipe, pipeLeft, compose, composeLeft
@@ -27,6 +28,8 @@ module Elm exposing
 
 @docs record, get
 
+@docs caseOn
+
 @docs apply, applyFrom
 
 @docs lambda
@@ -34,7 +37,7 @@ module Elm exposing
 
 # Top level
 
-@docs declaration, function, functionWith
+@docs declaration, declarationWith, function, functionWith
 
 @docs Module, moduleName, moduleAs
 
@@ -84,6 +87,7 @@ type InferenceError
     | SomeOtherIssue
     | ThisIsntARecord String
     | DuplicateFieldInRecord String
+    | CaseBranchesReturnDifferentTypes
 
 
 {-| -}
@@ -457,6 +461,53 @@ record fields =
         }
 
 
+{-| -}
+caseOn : Expression -> List ( Pattern, Expression ) -> Expression
+caseOn (Expression expr) cases =
+    let
+        gathered =
+            List.foldl
+                (\( pattern, Expression exp ) accum ->
+                    { cases = ( Util.nodify pattern, Util.nodify exp.expression ) :: accum.cases
+                    , imports = accum.imports ++ exp.imports
+                    , annotation =
+                        case accum.annotation of
+                            Nothing ->
+                                Just exp.annotation
+
+                            Just exist ->
+                                if exist == exp.annotation then
+                                    accum.annotation
+
+                                else
+                                    Just (Err [ CaseBranchesReturnDifferentTypes ])
+                    }
+                )
+                { cases = []
+                , imports = []
+                , annotation = Nothing
+                }
+                cases
+
+        --
+    in
+    Expression
+        { expression =
+            Exp.CaseExpression
+                { expression = Util.nodify expr.expression
+                , cases = List.reverse gathered.cases
+                }
+        , annotation =
+            case gathered.annotation of
+                Nothing ->
+                    Err [ SomeOtherIssue ]
+
+                Just ann ->
+                    ann
+        , imports = expr.imports ++ gathered.imports
+        }
+
+
 {-|
 
     record
@@ -552,11 +603,35 @@ declaration name body =
     function name [] body
 
 
+{-| If you have a specific type signature you would like you can add it here.
+
+Note, this library will autocalculate many type signatures! Make sure `Elm.declaration` doesnt already do this automatically for you!
+
+-}
+declarationWith : String -> Elm.Type.Annotation -> Expression -> Declaration
+declarationWith name annotation (Expression body) =
+    function name
+        []
+        -- note, we could do some type checking here
+        (Expression { body | annotation = Ok annotation })
+
+
 {-| -}
 function : String -> List Pattern -> Expression -> Declaration
 function name args (Expression body) =
     { documentation = Util.nodifyMaybe Nothing
-    , signature = Util.nodifyMaybe Nothing
+    , signature =
+        case body.annotation of
+            Ok sig ->
+                Just
+                    (Util.nodify
+                        { name = Util.nodify name
+                        , typeAnnotation = Util.nodify sig
+                        }
+                    )
+
+            Err _ ->
+                Util.nodifyMaybe Nothing
     , declaration =
         Util.nodify
             { name = Util.nodify name

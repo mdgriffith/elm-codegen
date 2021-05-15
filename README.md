@@ -13,3 +13,8 @@ A codegen library that's *still under construction!*
 Separately, it would be realllly cool if this library could generate a helper library for generating code for any package in the elm ecosystem.
 
 
+- [x] Autoadd type signature if present
+- [x] A runner for generation programs
+- [x] A watch mode for the runner
+
+

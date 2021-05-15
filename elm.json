@@ -15,7 +15,7 @@
         "elm-community/maybe-extra": "5.0.0 <= v < 6.0.0",
         "rtfeldman/elm-hex": "1.0.0 <= v < 2.0.0",
         "stil4m/elm-syntax": "7.1.0 <= v < 8.0.0",
-        "the-sett/elm-pretty-printer": "2.2.3 <= v < 3.0.0"
+        "the-sett/elm-pretty-printer": "3.0.0 <= v < 4.0.0"
     },
     "test-dependencies": {}
 }
