@@ -22,7 +22,7 @@ import * as elm_compiler from 'node-elm-compiler'
 import * as path from 'path';
 import * as fs from 'fs';
 import {XMLHttpRequest}  from './run/vendor/XMLHttpRequest';
-
+import * as chokidar from 'chokidar';
 
 
 async function run_generator(base:string, moduleName:string, elm_source:string) {
@@ -30,7 +30,6 @@ async function run_generator(base:string, moduleName:string, elm_source:string) 
     // @ts-ignore
     this.XMLHttpRequest = XMLHttpRequest
     eval(elm_source);
-    console.log("EVALED")
 
     const promise = new Promise((resolve, reject) => {
         // @ts-ignore
@@ -55,8 +54,18 @@ async function run_generator(base:string, moduleName:string, elm_source:string) 
     return promise
 }
 
-
+const elm_process_opts = { stdio: [null, 'ignore', 'inherit'] }
 const program = new commander.Command();
+
+
+function generate(elm_file: string, moduleName:string, target_dir: string, base: string){
+    const data = elm_compiler.compileToStringSync([elm_file], {cwd: base, processOpts: elm_process_opts });
+    if (data === "") {
+        throw "Compiler error";
+    }
+    // @ts-ignore
+    new run_generator(target_dir, moduleName, data.toString());
+}
 
 program
   .version('0.1.0')
@@ -68,15 +77,25 @@ program
   .action((file, options, com) => {
     console.log("FILE:" , file)
     console.log(options)
+
     const cwd = options.cwd || "."
+    const output = options.output || "generated"
+
     if (file.endsWith(".elm")) {
         const moduleName = path.parse(file).name
-        const data = elm_compiler.compileToStringSync([file], {cwd: cwd});
-        if (data === "") {
-            throw "Compiler error";
+
+        if (options.watch) {
+
+            generate(file, moduleName, output, cwd)
+            chokidar.watch(path.join(cwd, "**", "*.elm"), {ignored: path.join(output, "**")} ).on('all', (event, path) => {
+                console.log("\nFile changed, regenerating")
+                generate(file, moduleName, output, cwd)
+            });
+        } else {
+           generate(file, moduleName, output, cwd)
         }
-        // @ts-ignore
-        new run_generator(cwd, moduleName, data.toString());
+
+
     } else if (file.endsWith(".json")) {
         console.log("JS")
     } else if (file.split("/").length == 2) {
