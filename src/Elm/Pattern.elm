@@ -1,13 +1,16 @@
 module Elm.Pattern exposing
-    ( Pattern, var, skip, unit, char, string, int, hex, float
+    ( Pattern, var, unit, char, string, int, hex, float
     , tuple, triple, fields, cons, list, named, namedFrom, withAlias
+    , skip
     )
 
 {-|
 
-@docs Pattern, var, skip, unit, char, string, int, hex, float
+@docs Pattern, var, unit, char, string, int, hex, float
 
 @docs tuple, triple, fields, cons, list, named, namedFrom, withAlias
+
+@docs skip
 
 -}
 

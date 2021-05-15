@@ -1,7 +1,7 @@
 module Elm exposing
     ( file, render
-    , int, float, char, string, hex, unit
     , value, valueFrom
+    , int, float, char, string, hex, unit
     , list, tuple, triple
     , record, get
     , apply, applyFrom
@@ -16,12 +16,12 @@ module Elm exposing
 
 @docs file, render
 
+@docs value, valueFrom
+
 
 # Primitives
 
 @docs int, float, char, string, hex, unit
-
-@docs value, valueFrom
 
 @docs list, tuple, triple
 
