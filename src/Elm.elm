@@ -741,26 +741,21 @@ sub =
 
     import Elm.Type as Type
 
-    Elm.portOutgoing "tellTheWorld" [ Type.string, Type.int ]
+    Elm.portOutgoing "tellTheWorld" Type.string
 
 will generate
 
-    port tellTheWorld : String -> Int -> Cmd msg
+    port tellTheWorld : String -> Cmd msg
 
 -}
-portOutgoing : String -> List Elm.Type.Annotation -> Declaration
-portOutgoing name args =
+portOutgoing : String -> Elm.Type.Annotation -> Declaration
+portOutgoing name arg =
     { name = Util.nodify name
     , typeAnnotation =
         Util.nodify
-            (case args of
-                [] ->
-                    cmd
-
-                start :: remain ->
-                    Annotation.FunctionTypeAnnotation
-                        (Util.nodify (functionAnnotation start remain))
-                        (Util.nodify cmd)
+            (Annotation.FunctionTypeAnnotation
+                (Util.nodify arg)
+                (Util.nodify cmd)
             )
     }
         |> Declaration.PortDeclaration
