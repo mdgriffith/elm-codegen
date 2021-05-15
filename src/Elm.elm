@@ -700,7 +700,7 @@ If you want to vary the messages going in and out of your app, don't use a huge 
 
 This will give you more flexibility in the future and save you having to wire up a bunch of stuff.
 
-**Another note** -
+**Another note** - You may need to expose your port explicityly using `Elm.expose`
 
 -}
 portIncoming : String -> List Elm.Type.Annotation -> Declaration
