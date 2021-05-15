@@ -587,7 +587,31 @@ declarationWith name annotation (Util.Expression body) =
         (Util.Expression { body | annotation = Ok annotation })
 
 
-{-| -}
+{-| Declare a function. Here's an example with a let:
+
+    import Elm.Pattern as Pattern
+
+    Elm.function "myFunc"
+        [ Pattern.var "one"
+        , Pattern.var "two"
+        ]
+        (Elm.letIn
+            [ Let.value "added"
+                (Elm.add (Elm.value "one") (Elm.value "two))
+            ]
+            (Elm.add (Elm.value "added") (Elm.int 5))
+        )
+
+will generate
+
+    myFunc one two =
+        let
+            added =
+                one + two
+        in
+        added + 5
+
+-}
 function : String -> List Pattern -> Expression -> Declaration
 function name args (Util.Expression body) =
     { documentation = Util.nodifyMaybe Nothing
