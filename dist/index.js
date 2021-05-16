@@ -125,13 +125,13 @@ program
     .arguments('<file>')
     .option('--watch', 'Watch the given file for changes and rerun the generator when a change is made.')
     .option('--cwd <dir>', 'Change the base directory for compiling your Elm generator')
-    .option('--output', 'The directory where your generated files should go.')
+    .option('--output <dir>', 'The directory where your generated files should go.')
     .option('--from-docs <docs>', 'The docs.json file to generate package bindings from.')
     .action(function (file, options, com) {
     console.log("FILE:", file);
     console.log(options);
     var cwd = options.cwd || ".";
-    var output = options.output || "generated";
+    var output = path.join(cwd, options.output || "generated");
     var flags = null;
     if (options.fromDocs) {
         flags = JSON.parse(fs.readFileSync(options.fromDocs).toString());
