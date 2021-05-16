@@ -76,7 +76,8 @@ var elm_compiler = __importStar(require("node-elm-compiler"));
 var path = __importStar(require("path"));
 var fs = __importStar(require("fs"));
 var XMLHttpRequest_1 = require("./run/vendor/XMLHttpRequest");
-function run_generator(base, moduleName, elm_source) {
+var chokidar = __importStar(require("chokidar"));
+function run_generator(base, moduleName, elm_source, flags) {
     return __awaiter(this, void 0, void 0, function () {
         var promise;
         var _this = this;
@@ -85,10 +86,9 @@ function run_generator(base, moduleName, elm_source) {
             // @ts-ignore
             this.XMLHttpRequest = XMLHttpRequest_1.XMLHttpRequest;
             eval(elm_source);
-            console.log("EVALED");
             promise = new Promise(function (resolve, reject) {
                 // @ts-ignore
-                var app = _this.Elm[moduleName].init();
+                var app = _this.Elm[moduleName].init({ flags: flags });
                 if (app.ports.onSuccessSend) {
                     app.ports.onSuccessSend.subscribe(resolve);
                 }
@@ -110,26 +110,44 @@ function run_generator(base, moduleName, elm_source) {
         });
     });
 }
+var elm_process_opts = { stdio: [null, 'ignore', 'inherit'] };
 var program = new commander.Command();
+function generate(elm_file, moduleName, target_dir, base, flags) {
+    var data = elm_compiler.compileToStringSync([elm_file], { cwd: base, processOpts: elm_process_opts });
+    if (data === "") {
+        throw "Compiler error";
+    }
+    // @ts-ignore
+    new run_generator(target_dir, moduleName, data.toString(), flags);
+}
 program
     .version('0.1.0')
     .arguments('<file>')
     .option('--watch', 'Watch the given file for changes and rerun the generator when a change is made.')
     .option('--cwd <dir>', 'Change the base directory for compiling your Elm generator')
     .option('--output', 'The directory where your generated files should go.')
-    .option('--from-docs', 'The docs.json file to generate package bindings from.')
+    .option('--from-docs <docs>', 'The docs.json file to generate package bindings from.')
     .action(function (file, options, com) {
     console.log("FILE:", file);
     console.log(options);
     var cwd = options.cwd || ".";
+    var output = options.output || "generated";
+    var flags = null;
+    if (options.fromDocs) {
+        flags = JSON.parse(fs.readFileSync(options.fromDocs).toString());
+    }
     if (file.endsWith(".elm")) {
-        var moduleName = path.parse(file).name;
-        var data = elm_compiler.compileToStringSync([file], { cwd: cwd });
-        if (data === "") {
-            throw "Compiler error";
+        var moduleName_1 = path.parse(file).name;
+        if (options.watch) {
+            generate(file, moduleName_1, output, cwd, flags);
+            chokidar.watch(path.join(cwd, "**", "*.elm"), { ignored: path.join(output, "**") }).on('all', function (event, path) {
+                console.log("\nFile changed, regenerating");
+                generate(file, moduleName_1, output, cwd, flags);
+            });
         }
-        // @ts-ignore
-        new run_generator(cwd, moduleName, data.toString());
+        else {
+            generate(file, moduleName_1, output, cwd, flags);
+        }
     }
     else if (file.endsWith(".json")) {
         console.log("JS");
