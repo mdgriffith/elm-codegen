@@ -24,11 +24,12 @@ import * as fs from 'fs';
 import {XMLHttpRequest}  from './run/vendor/XMLHttpRequest';
 import * as chokidar from 'chokidar';
 
+// We have to stub this in the allow Elm the ability to make http requests.
+// @ts-ignore
+globalThis["XMLHttpRequest"] = XMLHttpRequest
 
 async function run_generator(base:string, moduleName:string, elm_source:string, flags:any ) {
-    // We have to stub this in the allow Elm the ability to make http requests.
-    // @ts-ignore
-    this.XMLHttpRequest = XMLHttpRequest
+
     eval(elm_source);
 
     const promise = new Promise((resolve, reject) => {

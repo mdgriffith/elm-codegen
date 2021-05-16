@@ -77,14 +77,14 @@ var path = __importStar(require("path"));
 var fs = __importStar(require("fs"));
 var XMLHttpRequest_1 = require("./run/vendor/XMLHttpRequest");
 var chokidar = __importStar(require("chokidar"));
+// We have to stub this in the allow Elm the ability to make http requests.
+// @ts-ignore
+globalThis["XMLHttpRequest"] = XMLHttpRequest_1.XMLHttpRequest;
 function run_generator(base, moduleName, elm_source, flags) {
     return __awaiter(this, void 0, void 0, function () {
         var promise;
         var _this = this;
         return __generator(this, function (_a) {
-            // We have to stub this in the allow Elm the ability to make http requests.
-            // @ts-ignore
-            this.XMLHttpRequest = XMLHttpRequest_1.XMLHttpRequest;
             eval(elm_source);
             promise = new Promise(function (resolve, reject) {
                 // @ts-ignore
