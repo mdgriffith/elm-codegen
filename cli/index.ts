@@ -25,7 +25,7 @@ import {XMLHttpRequest}  from './run/vendor/XMLHttpRequest';
 import * as chokidar from 'chokidar';
 
 
-async function run_generator(base:string, moduleName:string, elm_source:string) {
+async function run_generator(base:string, moduleName:string, elm_source:string, flags:any ) {
     // We have to stub this in the allow Elm the ability to make http requests.
     // @ts-ignore
     this.XMLHttpRequest = XMLHttpRequest
@@ -33,7 +33,7 @@ async function run_generator(base:string, moduleName:string, elm_source:string) 
 
     const promise = new Promise((resolve, reject) => {
         // @ts-ignore
-        const app = this.Elm[moduleName].init();
+        const app = this.Elm[moduleName].init({flags: flags});
         if (app.ports.onSuccessSend) {
             app.ports.onSuccessSend.subscribe(resolve)
         }
@@ -58,13 +58,13 @@ const elm_process_opts = { stdio: [null, 'ignore', 'inherit'] }
 const program = new commander.Command();
 
 
-function generate(elm_file: string, moduleName:string, target_dir: string, base: string){
+function generate(elm_file: string, moduleName:string, target_dir: string, base: string, flags: any){
     const data = elm_compiler.compileToStringSync([elm_file], {cwd: base, processOpts: elm_process_opts });
     if (data === "") {
         throw "Compiler error";
     }
     // @ts-ignore
-    new run_generator(target_dir, moduleName, data.toString());
+    new run_generator(target_dir, moduleName, data.toString(), flags);
 }
 
 program
@@ -73,26 +73,31 @@ program
   .option('--watch', 'Watch the given file for changes and rerun the generator when a change is made.')
   .option('--cwd <dir>', 'Change the base directory for compiling your Elm generator')
   .option('--output', 'The directory where your generated files should go.')
-  .option('--from-docs', 'The docs.json file to generate package bindings from.')
+  .option('--from-docs <docs>', 'The docs.json file to generate package bindings from.')
   .action((file, options, com) => {
     console.log("FILE:" , file)
     console.log(options)
 
     const cwd = options.cwd || "."
     const output = options.output || "generated"
+    let flags:any | null = null
+    if (options.fromDocs) {
+        flags = JSON.parse(fs.readFileSync(options.fromDocs).toString());
+    }
+
 
     if (file.endsWith(".elm")) {
         const moduleName = path.parse(file).name
 
         if (options.watch) {
 
-            generate(file, moduleName, output, cwd)
+            generate(file, moduleName, output, cwd, flags)
             chokidar.watch(path.join(cwd, "**", "*.elm"), {ignored: path.join(output, "**")} ).on('all', (event, path) => {
                 console.log("\nFile changed, regenerating")
-                generate(file, moduleName, output, cwd)
+                generate(file, moduleName, output, cwd, flags)
             });
         } else {
-           generate(file, moduleName, output, cwd)
+           generate(file, moduleName, output, cwd, flags)
         }
 
 
