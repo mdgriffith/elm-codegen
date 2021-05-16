@@ -26,7 +26,7 @@ import * as chokidar from 'chokidar';
 
 // We have to stub this in the allow Elm the ability to make http requests.
 // @ts-ignore
-globalThis["XMLHttpRequest"] = XMLHttpRequest
+globalThis["XMLHttpRequest"] = XMLHttpRequest.XMLHttpRequest
 
 async function run_generator(base:string, moduleName:string, elm_source:string, flags:any ) {
 
