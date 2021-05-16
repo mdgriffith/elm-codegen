@@ -6,6 +6,7 @@ import Elm
 import Elm.Pattern as Pattern
 import Elm.Type as Type
 import Generate
+import Http
 
 
 main : Program {} () ()
@@ -14,8 +15,14 @@ main =
         { init =
             \json ->
                 ( ()
-                , Generate.files
-                    [ Elm.render file
+                , Cmd.batch
+                    [ Generate.files
+                        [ Elm.render file
+                        ]
+                    , Http.get
+                        { url = "http://google.com"
+                        , expect = Http.expectString (always ())
+                        }
                     ]
                 )
         , update =

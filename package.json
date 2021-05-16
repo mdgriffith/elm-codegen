@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "watch": "tsc --watch",
-    "gen-package": "(npm run build; node dist/index.js src/Generate.elm --cwd cli/gen-package --from-docs playground/docs/gql-docs.json)"
+    "gen-package": "(npm run build; node dist/index.js src/Generate.elm --cwd cli/gen-package --from-docs playground/docs/gql-docs.json)",
+    "playground": "(npm run build; node dist/index.js src/Gen.elm --cwd playground)"
   },
   "repository": {
     "type": "git",
