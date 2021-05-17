@@ -1,5 +1,6 @@
 module Elm exposing
     ( file, render
+    , Expression
     , value, valueFrom
     , int, float, char, string, hex, unit
     , list, tuple, triple
@@ -17,6 +18,8 @@ module Elm exposing
 {-|
 
 @docs file, render
+
+@docs Expression
 
 @docs value, valueFrom
 
