@@ -19,10 +19,6 @@ main =
                     [ Generate.files
                         [ Elm.render file
                         ]
-                    , Http.get
-                        { url = "http://google.com"
-                        , expect = Http.expectString (always ())
-                        }
                     ]
                 )
         , update =
