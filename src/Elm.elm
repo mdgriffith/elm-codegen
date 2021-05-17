@@ -13,6 +13,7 @@ module Elm exposing
     , expose, exposeConstructor
     , power, multiply, divide, intDivide, modulo, rem, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, pipe, pipeLeft, compose, composeLeft
     , portIncoming, portOutgoing
+    , File
     )
 
 {-|
@@ -56,6 +57,11 @@ module Elm exposing
 # Ports
 
 @docs portIncoming, portOutgoing
+
+
+# Util
+
+@docs File
 
 -}
 
