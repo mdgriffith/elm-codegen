@@ -126,15 +126,24 @@ program
     .option('--watch', 'Watch the given file for changes and rerun the generator when a change is made.')
     .option('--cwd <dir>', 'Change the base directory for compiling your Elm generator')
     .option('--output <dir>', 'The directory where your generated files should go.')
-    .option('--from-docs <docs>', 'The docs.json file to generate package bindings from.')
+    .option('--flags-from <file>', 'The file to feed to your elm app as flags.  If it has a json extension, it will be handed in as json.')
+    .option('--flags <json>', 'Json to pass to your elm app.  if --flags-from is given, that will take precedence.')
     .action(function (file, options, com) {
     console.log("FILE:", file);
     console.log(options);
     var cwd = options.cwd || ".";
     var output = path.join(cwd, options.output || "generated");
     var flags = null;
-    if (options.fromDocs) {
-        flags = JSON.parse(fs.readFileSync(options.fromDocs).toString());
+    if (options.flagsFrom) {
+        if (options.flagsFrom.endsWith(".json")) {
+            flags = JSON.parse(fs.readFileSync(options.flags).toString());
+        }
+        else {
+            flags = fs.readFileSync(options.flags).toString();
+        }
+    }
+    else if (options.flags) {
+        flags = options.flags;
     }
     if (file.endsWith(".elm")) {
         var moduleName_1 = path.parse(file).name;
