@@ -1,4 +1,4 @@
-port module Elm.Gen exposing (error, files)
+port module Elm.Gen exposing (File, error, files)
 
 import Json.Encode as Json
 
