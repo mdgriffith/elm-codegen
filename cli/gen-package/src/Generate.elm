@@ -18,16 +18,13 @@ main =
                 case Debug.log "Value decoding" (Json.decodeValue Docs.decoder json) of
                     Err err ->
                         ( ()
-                        , Elm.Gen.files
-                            [ Elm.render file
-                            ]
+                        , Elm.Gen.error "Issue decoding docs!"
                         )
 
                     Ok docs ->
                         ( ()
                         , Elm.Gen.files
-                            [ Elm.render file
-                            ]
+                            (List.map (Elm.render << moduleToFile) docs)
                         )
         , update =
             \msg model ->
@@ -59,3 +56,40 @@ file =
             )
             |> Elm.expose
         ]
+
+
+moduleToFile : Docs.Module -> Elm.File
+moduleToFile docs =
+    let
+        sourceModName =
+            String.split "." docs.name
+
+        modName =
+            "Elm" :: "Gen" :: sourceModName
+    in
+    Elm.file (Elm.moduleName modName)
+        (List.concat
+            [ List.map (generateValues sourceModName) docs.values
+            ]
+        )
+
+
+elm =
+    Elm.moduleName [ "Elm" ]
+
+
+generateValues : List String -> Docs.Value -> Elm.Declaration
+generateValues mod value =
+    Elm.declaration value.name
+        (Elm.apply
+            (Elm.valueFrom elm "valueFrom")
+            [ Elm.apply (Elm.valueFrom elm "moduleName")
+                [ Elm.list (List.map Elm.string mod)
+                ]
+            , Elm.string value.name
+            ]
+        )
+
+
+
+--value.name)
