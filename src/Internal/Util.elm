@@ -39,6 +39,41 @@ type Declaration
     = Declaration Expose (List Module) Declaration.Declaration
 
 
+documentation : String -> Declaration -> Declaration
+documentation str ((Declaration exp imports body) as decl) =
+    --Declaration exp imports body
+    case body of
+        Declaration.FunctionDeclaration func ->
+            Declaration exp
+                imports
+                (Declaration.FunctionDeclaration
+                    { func | documentation = Just (nodify str) }
+                )
+
+        Declaration.AliasDeclaration typealias ->
+            Declaration exp
+                imports
+                (Declaration.AliasDeclaration
+                    { typealias | documentation = Just (nodify str) }
+                )
+
+        Declaration.CustomTypeDeclaration typeDecl ->
+            Declaration exp
+                imports
+                (Declaration.CustomTypeDeclaration
+                    { typeDecl | documentation = Just (nodify str) }
+                )
+
+        Declaration.PortDeclaration sig ->
+            decl
+
+        Declaration.InfixDeclaration _ ->
+            decl
+
+        Declaration.Destructuring _ _ ->
+            decl
+
+
 {-| -}
 expose : Declaration -> Declaration
 expose (Declaration _ imports body) =

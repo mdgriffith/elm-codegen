@@ -8,9 +8,9 @@ module Elm exposing
     , caseOn
     , apply
     , lambda
-    , declaration, declarationWith, function, functionWith
+    , Declaration, declaration, declarationWith, function, functionWith
     , Module, moduleName, moduleAs
-    , expose, exposeConstructor
+    , documentation, expose, exposeConstructor
     , power, multiply, divide, intDivide, modulo, rem, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, pipe, pipeLeft, compose, composeLeft
     , portIncoming, portOutgoing
     , File
@@ -42,11 +42,11 @@ module Elm exposing
 
 # Top level
 
-@docs declaration, declarationWith, function, functionWith
+@docs Declaration, declaration, declarationWith, function, functionWith
 
 @docs Module, moduleName, moduleAs
 
-@docs expose, exposeConstructor
+@docs documentation, expose, exposeConstructor
 
 
 # Operators
@@ -511,11 +511,9 @@ caseOn (Util.Expression expr) cases =
     record
         |> Elm.get "field"
 
-    ->
+results in
 
     record.field
-
-_Note_ -
 
 -}
 get : String -> Expression -> Expression
@@ -563,8 +561,7 @@ type alias Pattern =
     Pattern.Pattern
 
 
-{-| LambdaExpression Lambda
--}
+{-| -}
 lambda : List Pattern -> Expression -> Expression
 lambda args (Util.Expression expr) =
     Util.Expression
@@ -667,6 +664,12 @@ functionWith name args (Util.Expression body) =
     }
         |> Declaration.FunctionDeclaration
         |> Util.Declaration Util.NotExposed body.imports
+
+
+{-| -}
+documentation : String -> Declaration -> Declaration
+documentation =
+    Util.documentation
 
 
 {-| -}
