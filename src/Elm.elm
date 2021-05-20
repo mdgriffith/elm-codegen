@@ -6,7 +6,7 @@ module Elm exposing
     , list, tuple, triple
     , record, get
     , caseOn
-    , apply, applyFrom
+    , apply
     , lambda
     , declaration, declarationWith, function, functionWith
     , Module, moduleName, moduleAs
@@ -35,7 +35,7 @@ module Elm exposing
 
 @docs caseOn
 
-@docs apply, applyFrom
+@docs apply
 
 @docs lambda
 
@@ -536,18 +536,6 @@ parens expr =
     Exp.ParenthesizedExpression (Util.nodify expr)
 
 
-{-| -}
-apply : String -> List Expression -> Expression
-apply name args =
-    Util.Expression
-        { expression =
-            Exp.Application (Util.nodifyAll (getExpression (value name) :: List.map (parens << getExpression) args))
-        , annotation =
-            Err [ Util.SomeOtherIssue ]
-        , imports = List.concatMap getImports args
-        }
-
-
 getExpression : Expression -> Exp.Expression
 getExpression (Util.Expression exp) =
     exp.expression
@@ -559,14 +547,14 @@ getImports (Util.Expression exp) =
 
 
 {-| -}
-applyFrom : Module -> String -> List Expression -> Expression
-applyFrom mod name args =
+apply : Expression -> List Expression -> Expression
+apply (Util.Expression exp) args =
     Util.Expression
         { expression =
-            Exp.Application (Util.nodifyAll (getExpression (valueFrom mod name) :: List.map (parens << getExpression) args))
+            Exp.Application (Util.nodifyAll (exp.expression :: List.map (parens << getExpression) args))
         , annotation =
             Err [ Util.SomeOtherIssue ]
-        , imports = mod :: List.concatMap getImports args
+        , imports = exp.imports ++ List.concatMap getImports args
         }
 
 
