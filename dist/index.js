@@ -136,14 +136,14 @@ program
     var flags = null;
     if (options.flagsFrom) {
         if (options.flagsFrom.endsWith(".json")) {
-            flags = JSON.parse(fs.readFileSync(options.flags).toString());
+            flags = JSON.parse(fs.readFileSync(options.flagsFrom).toString());
         }
         else {
-            flags = fs.readFileSync(options.flags).toString();
+            flags = fs.readFileSync(options.flagsFrom).toString();
         }
     }
     else if (options.flags) {
-        flags = options.flags;
+        flags = JSON.parse(options.flags);
     }
     if (file.endsWith(".elm")) {
         var moduleName_1 = path.parse(file).name;
