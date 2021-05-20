@@ -80,7 +80,8 @@ elm =
 
 generateValues : List String -> Docs.Value -> Elm.Declaration
 generateValues mod value =
-    Elm.declaration value.name
+    Elm.declarationWith value.name
+        (Type.named elm "Expression")
         (Elm.apply
             (Elm.valueFrom elm "valueFrom")
             [ Elm.apply (Elm.valueFrom elm "moduleName")
@@ -89,7 +90,4 @@ generateValues mod value =
             , Elm.string value.name
             ]
         )
-
-
-
---value.name)
+        |> Elm.documentation (value.comment ++ "\n\n" ++ value.type_ ++ "\n")

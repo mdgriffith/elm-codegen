@@ -40,8 +40,11 @@ type Declaration
 
 
 documentation : String -> Declaration -> Declaration
-documentation str ((Declaration exp imports body) as decl) =
-    --Declaration exp imports body
+documentation doc ((Declaration exp imports body) as decl) =
+    let
+        str =
+            "{-|" ++ doc ++ "-}"
+    in
     case body of
         Declaration.FunctionDeclaration func ->
             Declaration exp
