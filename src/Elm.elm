@@ -5,7 +5,7 @@ module Elm exposing
     , int, float, char, string, hex, unit
     , list, tuple, triple
     , record, get
-    , caseOn
+    , caseOf
     , apply
     , lambda
     , Declaration, declaration, declarationWith, function, functionWith
@@ -33,7 +33,7 @@ module Elm exposing
 
 @docs record, get
 
-@docs caseOn
+@docs caseOf
 
 @docs apply
 
@@ -256,6 +256,29 @@ valueFrom mod name =
         }
 
 
+{-| Add an annotation to a value.
+
+**Note** this may not _literally_ add an annotation to the code, but will inform `elm-prefab`s type inference so that top level values can be auto-annotated.
+
+So, for example, if we have.
+
+    Elm.list
+        [ Elm.valueWith myModule "myString" Elm.Type.string
+        , Elm.valueWith myModule "myOtherString" Elm.Type.string
+        ]
+
+Then, when that list is generated, it will automatically have the type signature `List String`
+
+-}
+valueWith : Module -> String -> Elm.Type.Annotation -> Expression
+valueWith mod name ann =
+    Util.Expression
+        { expression = Exp.FunctionOrValue (Util.unpack mod) name
+        , annotation = Ok ann
+        , imports = [ mod ]
+        }
+
+
 {-| -}
 unit : Expression
 unit =
@@ -354,7 +377,7 @@ list exprs =
     Util.Expression
         { expression = Exp.ListExpr (List.map toList exprs)
         , annotation = Util.unify exprs
-        , imports = []
+        , imports = List.concatMap getImports exprs
         }
 
 
@@ -460,8 +483,8 @@ letIn decls (Util.Expression within) =
 
 
 {-| -}
-caseOn : Expression -> List ( Pattern, Expression ) -> Expression
-caseOn (Util.Expression expr) cases =
+caseOf : Expression -> List ( Pattern, Expression ) -> Expression
+caseOf (Util.Expression expr) cases =
     let
         gathered =
             List.foldl
