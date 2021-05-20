@@ -1,6 +1,7 @@
 module Elm.Type exposing
     ( custom, alias
     , Annotation, var, bool, int, float, string, char, unit
+    , named, namedWith
     , list, tuple, triple, set, dict, maybe, record
     )
 
@@ -9,6 +10,8 @@ module Elm.Type exposing
 @docs custom, alias
 
 @docs Annotation, var, bool, int, float, string, char, unit
+
+@docs named, namedWith
 
 @docs list, tuple, triple, set, dict, maybe, record
 
@@ -28,6 +31,11 @@ type alias Annotation =
 
 type alias Declaration =
     Util.Declaration
+
+
+{-| -}
+type alias Module =
+    Util.Module
 
 
 {-| A type variable
@@ -115,6 +123,29 @@ record fields =
     List.map (Tuple.mapBoth Util.nodify Util.nodify) fields
         |> Util.nodifyAll
         |> Annotation.Record
+
+
+{-| -}
+named : Module -> String -> Annotation
+named (Util.Module mod maybeAlias) name =
+    case maybeAlias of
+        Nothing ->
+            Annotation.Typed (Util.nodify ( mod, name )) []
+
+        Just aliasStr ->
+            Annotation.Typed (Util.nodify ( [ aliasStr ], name )) []
+
+
+{-| -}
+namedWith : Module -> String -> List Annotation -> Annotation
+namedWith (Util.Module mod maybeAlias) name args =
+    case maybeAlias of
+        Nothing ->
+            Annotation.Typed (Util.nodify ( mod, name ))
+                (Util.nodifyAll args)
+
+        Just aliasStr ->
+            Annotation.Typed (Util.nodify ( [ aliasStr ], name )) (Util.nodifyAll args)
 
 
 {-| -}
