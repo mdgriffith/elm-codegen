@@ -599,6 +599,7 @@ lambda args (Util.Expression expr) =
         }
 
 
+{-| -}
 type alias Declaration =
     Util.Declaration
 
@@ -689,7 +690,8 @@ functionWith name args (Util.Expression body) =
         |> Util.Declaration Util.NotExposed body.imports
 
 
-{-| -}
+{-| Add documentation to a declaration!
+-}
 documentation : String -> Declaration -> Declaration
 documentation =
     Util.documentation
