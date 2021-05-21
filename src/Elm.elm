@@ -263,14 +263,14 @@ valueFrom mod name =
 So, for example, if we have.
 
     Elm.list
-        [ Elm.valueWith myModule "myString" Elm.Type.string
-        , Elm.valueWith myModule "myOtherString" Elm.Type.string
+        [ Elm.valueWith myModule "myString" Elm.Annotation.string
+        , Elm.valueWith myModule "myOtherString" Elm.Annotation.string
         ]
 
 Then, when that list is generated, it will automatically have the type signature `List String`
 
 -}
-valueWith : Module -> String -> Elm.Type.Annotation -> Expression
+valueWith : Module -> String -> Elm.Annotation.Annotation -> Expression
 valueWith mod name ann =
     Util.Expression
         { expression = Exp.FunctionOrValue (Util.unpack mod) name
@@ -284,7 +284,7 @@ unit : Expression
 unit =
     Util.Expression
         { expression = Exp.UnitExpr
-        , annotation = Ok Elm.Type.unit
+        , annotation = Ok Elm.Annotation.unit
         , imports = []
         }
 
@@ -294,7 +294,7 @@ int : Int -> Expression
 int intVal =
     Util.Expression
         { expression = Exp.Integer intVal
-        , annotation = Ok Elm.Type.int
+        , annotation = Ok Elm.Annotation.int
         , imports = []
         }
 
@@ -304,7 +304,7 @@ hex : Int -> Expression
 hex hexVal =
     Util.Expression
         { expression = Exp.Hex hexVal
-        , annotation = Ok Elm.Type.int
+        , annotation = Ok Elm.Annotation.int
         , imports = []
         }
 
@@ -314,7 +314,7 @@ float : Float -> Expression
 float floatVal =
     Util.Expression
         { expression = Exp.Floatable floatVal
-        , annotation = Ok Elm.Type.float
+        , annotation = Ok Elm.Annotation.float
         , imports = []
         }
 
@@ -324,7 +324,7 @@ string : String -> Expression
 string literal =
     Util.Expression
         { expression = Exp.Literal literal
-        , annotation = Ok Elm.Type.string
+        , annotation = Ok Elm.Annotation.string
         , imports = []
         }
 
@@ -334,7 +334,7 @@ char : Char -> Expression
 char charVal =
     Util.Expression
         { expression = Exp.CharLiteral charVal
-        , annotation = Ok Elm.Type.char
+        , annotation = Ok Elm.Annotation.char
         , imports = []
         }
 
@@ -352,7 +352,7 @@ tuple : Expression -> Expression -> Expression
 tuple (Util.Expression one) (Util.Expression two) =
     Util.Expression
         { expression = Exp.TupledExpression (Util.nodifyAll [ one.expression, two.expression ])
-        , annotation = Result.map2 Elm.Type.tuple one.annotation two.annotation
+        , annotation = Result.map2 Elm.Annotation.tuple one.annotation two.annotation
         , imports = one.imports ++ two.imports
         }
 
@@ -363,7 +363,7 @@ triple (Util.Expression one) (Util.Expression two) (Util.Expression three) =
     Util.Expression
         { expression = Exp.TupledExpression (Util.nodifyAll [ one.expression, two.expression, three.expression ])
         , annotation =
-            Result.map3 Elm.Type.triple
+            Result.map3 Elm.Annotation.triple
                 one.annotation
                 two.annotation
                 three.annotation
@@ -433,7 +433,7 @@ record fields =
         , annotation =
             case unified.errors of
                 [] ->
-                    Ok (Elm.Type.record (List.reverse unified.fieldAnnotations))
+                    Ok (Elm.Annotation.record (List.reverse unified.fieldAnnotations))
 
                 errs ->
                     Err errs
@@ -589,8 +589,8 @@ customType name variants =
 
     Elm.alias "MyAlias"
         (Elm.Annotation.record
-            [ ( "one", Elm.Type.string )
-            , ( "two", Elm.Type.int )
+            [ ( "one", Elm.Annotation.string )
+            , ( "two", Elm.Annotation.int )
             ]
         )
 
@@ -680,7 +680,7 @@ declaration name body =
 Note, this library will autocalculate many type signatures! Make sure `Elm.declaration` doesnt already do this automatically for you!
 
 -}
-declarationWith : String -> Elm.Type.Annotation -> Expression -> Declaration
+declarationWith : String -> Elm.Annotation.Annotation -> Expression -> Declaration
 declarationWith name annotation (Util.Expression body) =
     function name
         []
@@ -740,7 +740,7 @@ function name args (Util.Expression body) =
 
 
 {-| -}
-functionWith : String -> List ( Elm.Type.Annotation, Pattern ) -> Expression -> Declaration
+functionWith : String -> List ( Elm.Annotation.Annotation, Pattern ) -> Expression -> Declaration
 functionWith name args (Util.Expression body) =
     { documentation = Util.nodifyMaybe Nothing
     , signature = Util.nodifyMaybe Nothing
@@ -776,7 +776,7 @@ exposeConstructor =
 
 {-|
 
-    import Elm.Type as Type
+    import Elm.Annotation as Type
 
     Elm.portIncoming "receiveMessageFromTheWorld" [ Type.string, Type.int ]
 
@@ -793,7 +793,7 @@ This will give you more flexibility in the future and save you having to wire up
 **Another note** - You may need to expose your port explicityly using `Elm.expose`
 
 -}
-portIncoming : String -> List Elm.Type.Annotation -> Declaration
+portIncoming : String -> List Elm.Annotation.Annotation -> Declaration
 portIncoming name args =
     { name = Util.nodify name
     , typeAnnotation =
@@ -829,7 +829,7 @@ sub =
 
 {-| Create a port that can send messages to the outside world!
 
-    import Elm.Type as Type
+    import Elm.Annotation as Type
 
     Elm.portOutgoing "tellTheWorld" Type.string
 
@@ -838,7 +838,7 @@ will generate
     port tellTheWorld : String -> Cmd msg
 
 -}
-portOutgoing : String -> Elm.Type.Annotation -> Declaration
+portOutgoing : String -> Elm.Annotation.Annotation -> Declaration
 portOutgoing name arg =
     { name = Util.nodify name
     , typeAnnotation =
@@ -859,7 +859,7 @@ cmd =
         [ Util.nodify (Annotation.GenericType "msg") ]
 
 
-functionAnnotation : Elm.Type.Annotation -> List Elm.Type.Annotation -> Elm.Type.Annotation
+functionAnnotation : Elm.Annotation.Annotation -> List Elm.Annotation.Annotation -> Elm.Annotation.Annotation
 functionAnnotation start args =
     case args of
         [] ->
