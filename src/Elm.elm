@@ -10,7 +10,7 @@ module Elm exposing
     , lambda
     , Declaration, declaration, declarationWith, function, functionWith
     , Module, moduleName, moduleAs
-    , documentation, expose, exposeConstructor
+    , withDocumentation, expose, exposeConstructor
     , power, multiply, divide, intDivide, modulo, rem, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, pipe, pipeLeft, compose, composeLeft
     , portIncoming, portOutgoing
     , File
@@ -46,7 +46,7 @@ module Elm exposing
 
 @docs Module, moduleName, moduleAs
 
-@docs documentation, expose, exposeConstructor
+@docs withDocumentation, expose, exposeConstructor
 
 
 # Operators
@@ -692,8 +692,8 @@ functionWith name args (Util.Expression body) =
 
 {-| Add documentation to a declaration!
 -}
-documentation : String -> Declaration -> Declaration
-documentation =
+withDocumentation : String -> Declaration -> Declaration
+withDocumentation =
     Util.documentation
 
 

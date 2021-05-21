@@ -1,7 +1,7 @@
 module Elm.Pattern exposing
     ( Pattern, var, unit, char, string, int, hex, float
     , tuple, triple, fields, cons, list, named, namedFrom, withAlias
-    , skip
+    , wildcard
     )
 
 {-|
@@ -10,7 +10,7 @@ module Elm.Pattern exposing
 
 @docs tuple, triple, fields, cons, list, named, namedFrom, withAlias
 
-@docs skip
+@docs wildcard
 
 -}
 
@@ -55,8 +55,8 @@ type alias Module =
 
 {-| The catchall `_` pattern.
 -}
-skip : Pattern
-skip =
+wildcard : Pattern
+wildcard =
     Pattern.AllPattern
 
 
@@ -125,9 +125,9 @@ tuple one two =
 
 
 {-| -}
-triple : Pattern -> Pattern -> Pattern
-triple one two =
-    Pattern.TuplePattern (Util.nodifyAll [ one, two ])
+triple : Pattern -> Pattern -> Pattern -> Pattern
+triple one two three =
+    Pattern.TuplePattern (Util.nodifyAll [ one, two, three ])
 
 
 {-|
