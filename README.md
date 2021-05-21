@@ -5,7 +5,7 @@ Code generation for Elm.
 *Under Construction!*
 
 With the file `Generator.elm`
-```
+```elm
 import Elm
 
 main =
@@ -21,7 +21,7 @@ main =
 You can run `elm-prefab Generator.elm` and it will generate
 
 
-```
+```elm
 module My.Module exposing (..)
 
 placeholder : String
@@ -33,7 +33,7 @@ placeholder =
 ## Running an Elm Generator program
 
 
-```
+```bash
 elm-prefab src/MyGenerator.elm
 ```
 
@@ -47,7 +47,7 @@ Let's say you want to generate code that uses a specific library like `mdgriffit
 Elm prefab can help you out!
 
 Running
-```
+```bash
 elm-prefab install mdgriffith/elm-ui
 ```
 
