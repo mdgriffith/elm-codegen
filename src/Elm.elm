@@ -65,6 +65,7 @@ module Elm exposing
 
 -}
 
+import Elm.Annotation
 import Elm.Let as Let
 import Elm.Syntax.Declaration as Declaration exposing (Declaration(..))
 import Elm.Syntax.Exposing as Expose
@@ -75,7 +76,6 @@ import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
 import Elm.Syntax.Range as Range
 import Elm.Syntax.TypeAnnotation as Annotation
-import Elm.Type
 import Internal.Util as Util
 import Internal.Write
 import Set
@@ -548,6 +548,71 @@ get selector (Util.Expression expr) =
             Err [ Util.SomeOtherIssue ]
         , imports = expr.imports
         }
+
+
+{-| A custom type declaration.
+
+    Elm.customType "MyType"
+        [ ( "One", [] )
+        , ( "Two", [ Elm.Annotation.list Elm.Annotation.string ] )
+        ]
+
+Should result in
+
+    type MyType
+        = One
+        | Two (List String)
+
+-}
+customType : String -> List ( String, List Elm.Annotation.Annotation ) -> Declaration
+customType name variants =
+    Util.Declaration Util.NotExposed
+        []
+        (Declaration.CustomTypeDeclaration
+            { documentation = Nothing
+            , name = Util.nodify name
+            , generics = []
+            , constructors =
+                List.map
+                    (\( varName, vars ) ->
+                        Util.nodify
+                            { name = Util.nodify varName
+                            , arguments = Util.nodifyAll vars
+                            }
+                    )
+                    variants
+            }
+        )
+
+
+{-| A custom type declaration.
+
+    Elm.alias "MyAlias"
+        (Elm.Annotation.record
+            [ ( "one", Elm.Type.string )
+            , ( "two", Elm.Type.int )
+            ]
+        )
+
+Should result in
+
+    type alias MyAlias =
+        { one : String
+        , two : int
+        }
+
+-}
+alias : String -> Elm.Annotation.Annotation -> Declaration
+alias name innerAnnotation =
+    Util.Declaration Util.NotExposed
+        []
+        (Declaration.AliasDeclaration
+            { documentation = Nothing
+            , name = Util.nodify name
+            , generics = []
+            , typeAnnotation = Util.nodify innerAnnotation
+            }
+        )
 
 
 {-| Not exposed, this should be done automatically!

@@ -1,19 +1,16 @@
-module Elm.Type exposing
-    ( custom, alias
-    , Annotation, var, bool, int, float, string, char, unit
+module Elm.Annotation exposing
+    ( Annotation, var, bool, int, float, string, char, unit
     , named, namedWith
-    , list, tuple, triple, set, dict, maybe, record
+    , list, tuple, triple, set, dict, maybe, record, extensible
     )
 
 {-|
-
-@docs custom, alias
 
 @docs Annotation, var, bool, int, float, string, char, unit
 
 @docs named, namedWith
 
-@docs list, tuple, triple, set, dict, maybe, record
+@docs list, tuple, triple, set, dict, maybe, record, extensible
 
 -}
 
@@ -126,6 +123,14 @@ record fields =
 
 
 {-| -}
+extensible : String -> List ( String, Annotation ) -> Annotation
+extensible base fields =
+    List.map (Tuple.mapBoth Util.nodify Util.nodify) fields
+        |> Util.nodifyAll
+        |> Annotation.Record
+
+
+{-| -}
 named : Module -> String -> Annotation
 named (Util.Module mod maybeAlias) name =
     case maybeAlias of
@@ -152,68 +157,3 @@ namedWith (Util.Module mod maybeAlias) name args =
 typed : String -> List Annotation -> Annotation
 typed name args =
     Annotation.Typed (Util.nodify ( [], name )) (Util.nodifyAll args)
-
-
-{-| A custom type declaration.
-
-    Elm.Type.custom "MyType"
-        [ ( "One", [] )
-        , ( "Two", [ Elm.Type.list Elm.Type.string ] )
-        ]
-
-Should result in
-
-    type MyType
-        = One
-        | Two (List String)
-
--}
-custom : String -> List ( String, List Annotation ) -> Declaration
-custom name variants =
-    Util.Declaration Util.NotExposed
-        []
-        (Declaration.CustomTypeDeclaration
-            { documentation = Nothing
-            , name = Util.nodify name
-            , generics = []
-            , constructors =
-                List.map
-                    (\( varName, vars ) ->
-                        Util.nodify
-                            { name = Util.nodify varName
-                            , arguments = Util.nodifyAll vars
-                            }
-                    )
-                    variants
-            }
-        )
-
-
-{-| A custom type declaration.
-
-    Elm.Type.alias "MyAlias"
-        (Elm.Type.record
-            [ ( "one", Elm.Type.string )
-            , ( "two", Elm.Type.int )
-            ]
-        )
-
-Should result in
-
-    type alias MyAlias =
-        { one : String
-        , two : int
-        }
-
--}
-alias : String -> Annotation -> Declaration
-alias name innerAnnotation =
-    Util.Declaration Util.NotExposed
-        []
-        (Declaration.AliasDeclaration
-            { documentation = Nothing
-            , name = Util.nodify name
-            , generics = []
-            , typeAnnotation = Util.nodify innerAnnotation
-            }
-        )

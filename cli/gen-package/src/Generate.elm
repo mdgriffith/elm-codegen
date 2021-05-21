@@ -2,11 +2,12 @@ module Generate exposing (main)
 
 {-| -}
 
-import Docs
 import Elm
+import Elm.Annotation as Annotation
+import Elm.Docs
 import Elm.Gen
 import Elm.Pattern as Pattern
-import Elm.Type as Type
+import Elm.Type
 import Json.Decode as Json
 
 
@@ -15,7 +16,7 @@ main =
     Platform.worker
         { init =
             \json ->
-                case Debug.log "Value decoding" (Json.decodeValue Docs.decoder json) of
+                case Debug.log "Value decoding" (Json.decodeValue (Json.list Elm.Docs.decoder) json) of
                     Err err ->
                         ( ()
                         , Elm.Gen.error "Issue decoding docs!"
@@ -58,9 +59,12 @@ file =
         ]
 
 
-moduleToFile : Docs.Module -> Elm.File
+moduleToFile : Elm.Docs.Module -> Elm.File
 moduleToFile docs =
     let
+        blocks =
+            Elm.Docs.toBlocks docs
+
         sourceModName =
             String.split "." docs.name
 
@@ -68,26 +72,97 @@ moduleToFile docs =
             "Elm" :: "Gen" :: sourceModName
     in
     Elm.file (Elm.moduleName modName)
-        (List.concat
-            [ List.map (generateValues sourceModName) docs.values
-            ]
-        )
+        (List.concatMap (generateBlocks modName) blocks)
 
 
 elm =
     Elm.moduleName [ "Elm" ]
 
 
-generateValues : List String -> Docs.Value -> Elm.Declaration
-generateValues mod value =
-    Elm.declarationWith value.name
-        (Type.named elm "Expression")
-        (Elm.apply
-            (Elm.valueFrom elm "valueFrom")
-            [ Elm.apply (Elm.valueFrom elm "moduleName")
-                [ Elm.list (List.map Elm.string mod)
-                ]
-            , Elm.string value.name
+generateBlocks : List String -> Elm.Docs.Block -> List Elm.Declaration
+generateBlocks mod block =
+    case block of
+        Elm.Docs.MarkdownBlock str ->
+            []
+
+        Elm.Docs.UnionBlock union ->
+            []
+
+        Elm.Docs.AliasBlock alias ->
+            [--Elm.declarationWith value.name
+             --    (Annotation.named elm "Expression")
+             --    (Elm.apply
+             --        (Elm.valueFrom elm "valueFrom")
+             --        [ Elm.apply (Elm.valueFrom elm "moduleName")
+             --            [ Elm.list (List.map Elm.string mod)
+             --            ]
+             --        , Elm.string value.name
+             --        ]
+             --    )
+             --    |> Elm.withDocumentation (value.comment ++ "\n\n")
             ]
-        )
-        |> Elm.documentation (value.comment ++ "\n\n" ++ value.type_ ++ "\n")
+
+        Elm.Docs.ValueBlock value ->
+            [ Elm.declarationWith value.name
+                (Annotation.named elm "Expression")
+                (Elm.apply
+                    (Elm.valueFrom elm "valueFrom")
+                    [ Elm.apply (Elm.valueFrom elm "moduleName")
+                        [ Elm.list (List.map Elm.string mod)
+                        ]
+                    , Elm.string value.name
+                    ]
+                )
+                |> Elm.withDocumentation (value.comment ++ "\n\n")
+            ]
+
+        Elm.Docs.BinopBlock binop ->
+            []
+
+        Elm.Docs.UnknownBlock str ->
+            []
+
+
+{-|
+
+    type Type
+        = Var String
+        | Lambda Type Type
+        | Tuple (List Type)
+        | Type String (List Type)
+        | Record (List ( String, Type )) (Maybe String)
+
+-}
+convertType : Elm.Type.Type -> Annotation.Annotation
+convertType elmType =
+    case elmType of
+        Elm.Type.Var string ->
+            Annotation.var string
+
+        Elm.Type.Lambda one two ->
+            Debug.todo ""
+
+        Elm.Type.Tuple types ->
+            case types of
+                [] ->
+                    Annotation.unit
+
+                [ one, two ] ->
+                    Annotation.tuple (convertType one) (convertType two)
+
+                [ one, two, three ] ->
+                    Annotation.triple (convertType one) (convertType two) (convertType three)
+
+                _ ->
+                    Debug.todo "what to do??"
+
+        Elm.Type.Type name types ->
+            Annotation.namedWith (Elm.moduleName []) name (List.map convertType types)
+
+        Elm.Type.Record fields maybeExtensible ->
+            case maybeExtensible of
+                Nothing ->
+                    Annotation.record (List.map (Tuple.mapSecond convertType) fields)
+
+                Just base ->
+                    Annotation.extensible base (List.map (Tuple.mapSecond convertType) fields)

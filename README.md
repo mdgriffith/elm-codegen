@@ -1,20 +1,62 @@
 # Elm Prefab
 
-A codegen library that's *still under construction!*
+Code generation for Elm.
+
+*Under Construction!*
+
+With the file `Generator.elm`
+```
+import Elm
+
+main =
+    Elm.Gen.files
+        [ Elm.file (Elm.moduleName [ "My", "Module" ])
+            [ Elm.declaration "placeholder"
+                (Elm.string "a fancy string!")
+            ]
+        ]
+
+```
+
+You can run `elm-prefab Generator.elm` and it will generate
 
 
-## Goals 
-- [x] Auto-generate import statements by hoisting used values.
-- [x] Auto-hoist exposing declarations for top level decls
-- [x] Auto format names so they're syntactically valid elm.
-- [x] Parenthize function calls when necessary
+```
+module My.Module exposing (..)
+
+placeholder : String
+placeholder =
+    "a fancy string!"
+
+```
+
+## Running an Elm Generator program
 
 
-Separately, it would be realllly cool if this library could generate a helper library for generating code for any package in the elm ecosystem.
+```
+elm-prefab src/MyGenerator.elm
+```
 
 
-- [x] Autoadd type signature if present
-- [x] A runner for generation programs
-- [x] A watch mode for the runner
+
+
+## Generating Code for a Package
+
+Let's say you want to generate code that uses a specific library like `mdgriffith/elm-ui`.
+
+Elm prefab can help you out!
+
+Running
+```
+elm-prefab install mdgriffith/elm-ui
+```
+
+Will generate a module `Elm.Gen.Element` which contains a bunch of helpers for you to generate code from the `Element` module in `elm-ui`!
+
+So, if you wanted to generate a call to `Element.el`, you could use `Element.Gen.Element.el`.
+
+Confused?  Yeah, it's a bit confusing!  Let's check out an example.  Later, when I have time to write an example.
+
+
 
 
