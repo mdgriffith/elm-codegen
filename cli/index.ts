@@ -23,7 +23,8 @@ import * as path from 'path';
 import * as fs from 'fs';
 import {XMLHttpRequest}  from './run/vendor/XMLHttpRequest';
 import * as chokidar from 'chokidar';
-
+import * as https from 'https'
+import fetch from 'node-fetch'
 // We have to stub this in the allow Elm the ability to make http requests.
 // @ts-ignore
 globalThis["XMLHttpRequest"] = XMLHttpRequest.XMLHttpRequest
@@ -68,51 +69,92 @@ function generate(elm_file: string, moduleName:string, target_dir: string, base:
     new run_generator(target_dir, moduleName, data.toString(), flags);
 }
 
+
+type Options = {
+    cwd: string | null
+    output: string | null
+    flagsFrom: string | null
+    flags: string | null
+    watch: boolean
+}
+
+const docs_generator =
+    { cwd: "cli/gen-package"
+    , file: "src/Generate.elm"
+    , moduleName: "Generate"
+    }
+
+async function action(file: string, pkg: string | null, options: Options, com:any) {
+    console.log("FILE:" , file)
+    console.log("PACKAGE:", pkg)
+    console.log(options)
+    const cwd = options.cwd || "."
+    const output = path.join(cwd, options.output || "generated")
+
+    if (file == "install" && !!pkg) {
+
+        let version = ''
+        const searchResp = await fetch('https://elm-package-cache-psi.vercel.app/search.json')
+        const search = await searchResp.json()
+        for (let found of search) {
+            if (found.name == pkg){
+                version = found.version
+                break
+            }
+        }
+        const docsResp = await fetch(`https://elm-package-cache-psi.vercel.app/packages/${pkg}/${version}/docs.json`)
+        const docs = await docsResp.json()
+
+        generate(docs_generator.file, docs_generator.moduleName, output, docs_generator.cwd, docs)
+
+    } else {
+
+        let flags:any | null = null
+        if (options.flagsFrom) {
+            if (options.flagsFrom.endsWith(".json")) {
+                flags = JSON.parse(fs.readFileSync(options.flagsFrom).toString());
+            } else {
+                flags = fs.readFileSync(options.flagsFrom).toString();
+            }
+        } else if (options.flags) {
+            flags = JSON.parse(options.flags)
+        }
+
+        if (file.endsWith(".elm")) {
+            const moduleName = path.parse(file).name
+
+            if (options.watch) {
+                generate(file, moduleName, output, cwd, flags)
+                chokidar.watch(path.join(cwd, "**", "*.elm"), {ignored: path.join(output, "**")} ).on('all', (event, path) => {
+                    console.log("\nFile changed, regenerating")
+                    generate(file, moduleName, output, cwd, flags)
+                });
+            } else {
+               generate(file, moduleName, output, cwd, flags)
+            }
+        } else if (file.endsWith(".json")) {
+            console.log("JS")
+        } else if (file.split("/").length == 2) {
+            console.log("Elm package!")
+        }
+    }
+
+}
+
+
+
+
+
 program
   .version('0.1.0')
-  .arguments('<file>')
+  .arguments('<file> [package]')
   .option('--watch', 'Watch the given file for changes and rerun the generator when a change is made.')
   .option('--cwd <dir>', 'Change the base directory for compiling your Elm generator')
   .option('--output <dir>', 'The directory where your generated files should go.')
   .option('--flags-from <file>', 'The file to feed to your elm app as flags.  If it has a json extension, it will be handed in as json.')
   .option('--flags <json>', 'Json to pass to your elm app.  if --flags-from is given, that will take precedence.')
-  .action((file, options, com) => {
-    console.log("FILE:" , file)
-    console.log(options)
-
-    const cwd = options.cwd || "."
-    const output = path.join(cwd, options.output || "generated")
-    let flags:any | null = null
-    if (options.flagsFrom) {
-        if (options.flagsFrom.endsWith(".json")) {
-            flags = JSON.parse(fs.readFileSync(options.flagsFrom).toString());
-        } else {
-            flags = fs.readFileSync(options.flagsFrom).toString();
-        }
-    } else if (options.flags) {
-        flags = JSON.parse(options.flags)
-    }
-
-    if (file.endsWith(".elm")) {
-        const moduleName = path.parse(file).name
-
-        if (options.watch) {
-
-            generate(file, moduleName, output, cwd, flags)
-            chokidar.watch(path.join(cwd, "**", "*.elm"), {ignored: path.join(output, "**")} ).on('all', (event, path) => {
-                console.log("\nFile changed, regenerating")
-                generate(file, moduleName, output, cwd, flags)
-            });
-        } else {
-           generate(file, moduleName, output, cwd, flags)
-        }
+  .action(action);
 
 
-    } else if (file.endsWith(".json")) {
-        console.log("JS")
-    } else if (file.split("/").length == 2) {
-        console.log("Elm package!")
-    }
-  });
 
-program.parse();
+program.parseAsync();

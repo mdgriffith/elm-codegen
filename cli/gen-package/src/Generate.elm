@@ -8,6 +8,7 @@ import Elm.Docs
 import Elm.Gen
 import Elm.Pattern as Pattern
 import Elm.Type
+import Internal.Util as Util
 import Json.Decode as Json
 
 
@@ -16,7 +17,7 @@ main =
     Platform.worker
         { init =
             \json ->
-                case Debug.log "Value decoding" (Json.decodeValue (Json.list Elm.Docs.decoder) json) of
+                case Json.decodeValue (Json.list Elm.Docs.decoder) json of
                     Err err ->
                         ( ()
                         , Elm.Gen.error "Issue decoding docs!"
@@ -72,55 +73,264 @@ moduleToFile docs =
             "Elm" :: "Gen" :: sourceModName
     in
     Elm.file (Elm.moduleName modName)
-        (List.concatMap (generateBlocks modName) blocks)
+        ((Elm.declarationWith "thisModule"
+            (Annotation.named elm "Module")
+            (Elm.apply
+                (Elm.valueWith elm "moduleName" (Annotation.named elm "Module"))
+                [ Elm.list (List.map Elm.string sourceModName)
+                ]
+            )
+            |> Elm.withDocumentation " The name of this module. "
+         )
+            :: List.concatMap generateBlocks blocks
+        )
 
 
+elmAnnotation : Elm.Module
+elmAnnotation =
+    Elm.moduleName [ "Elm", "Annotation" ]
+
+
+elm : Elm.Module
 elm =
     Elm.moduleName [ "Elm" ]
 
 
-generateBlocks : List String -> Elm.Docs.Block -> List Elm.Declaration
-generateBlocks mod block =
+local : Elm.Module
+local =
+    Elm.moduleName []
+
+
+thisModuleName : Elm.Expression
+thisModuleName =
+    Elm.valueWith local "thisModule" (Annotation.named elm "Module")
+
+
+generateBlocks : Elm.Docs.Block -> List Elm.Declaration
+generateBlocks block =
     case block of
         Elm.Docs.MarkdownBlock str ->
             []
 
         Elm.Docs.UnionBlock union ->
-            []
+            -- we need a way to expose both the constructors and
+            -- the annotation
+            -- It's also possible no contructors are exposed.
+            [--Elm.customTypeWith union.name
+             --   union.args
+             --   (List.map
+             --       (\( name, types ) ->
+             --           ( name, List.map convertType types )
+             --       )
+             --       union.tags
+             --   )
+             --   |> Elm.withDocumentation union.comment
+            ]
 
         Elm.Docs.AliasBlock alias ->
-            [--Elm.declarationWith value.name
-             --    (Annotation.named elm "Expression")
-             --    (Elm.apply
-             --        (Elm.valueFrom elm "valueFrom")
-             --        [ Elm.apply (Elm.valueFrom elm "moduleName")
-             --            [ Elm.list (List.map Elm.string mod)
-             --            ]
-             --        , Elm.string value.name
-             --        ]
-             --    )
-             --    |> Elm.withDocumentation (value.comment ++ "\n\n")
+            [ Elm.aliasWith alias.name
+                alias.args
+                (convertType alias.tipe)
+                |> Elm.withDocumentation alias.comment
+                |> Elm.expose
             ]
 
         Elm.Docs.ValueBlock value ->
-            [ Elm.declarationWith value.name
-                (Annotation.named elm "Expression")
-                (Elm.apply
-                    (Elm.valueFrom elm "valueFrom")
-                    [ Elm.apply (Elm.valueFrom elm "moduleName")
-                        [ Elm.list (List.map Elm.string mod)
-                        ]
-                    , Elm.string value.name
+            --if value.name /= "int" then
+            --    []
+            --
+            --else
+            case value.tipe of
+                Elm.Type.Lambda one two ->
+                    let
+                        captured =
+                            captureFunction two
+                                { index = 2
+                                , arguments =
+                                    [ asArgument 1 one
+                                    ]
+                                , values =
+                                    [ asValue 1 one
+                                    ]
+                                }
+                    in
+                    [ Elm.functionWith value.name
+                        (List.reverse (List.drop 1 captured.arguments))
+                        (apply
+                            (valueFrom
+                                thisModuleName
+                                (Elm.string value.name)
+                            )
+                            (List.reverse (List.drop 1 captured.values))
+                        )
+                        |> Elm.withDocumentation value.comment
+                        |> Elm.expose
                     ]
-                )
-                |> Elm.withDocumentation (value.comment ++ "\n\n")
-            ]
+
+                _ ->
+                    [ Elm.declarationWith value.name
+                        expressionType
+                        (valueFrom
+                            thisModuleName
+                            (Elm.string value.name)
+                        )
+                        |> Elm.withDocumentation value.comment
+                        |> Elm.expose
+                    ]
 
         Elm.Docs.BinopBlock binop ->
+            --All binops are defined in the top level `Elm` library
             []
 
         Elm.Docs.UnknownBlock str ->
             []
+
+
+logAnnotation str ((Util.Expression exp) as val) =
+    let
+        _ =
+            Debug.log str exp.annotation
+    in
+    val
+
+
+expressionType : Annotation.Annotation
+expressionType =
+    Annotation.named elm "Expression"
+
+
+valueFrom : Elm.Expression -> Elm.Expression -> Elm.Expression
+valueFrom mod name =
+    Elm.apply
+        (Elm.valueWith elm
+            "valueFrom"
+            (Annotation.function
+                [ Annotation.named elm "Module"
+                , Annotation.string
+
+                --, Annotation.named elmAnnotation "Annotation"
+                ]
+                (Annotation.named elm "Expression")
+            )
+            --|> Debug.log "   VALUE FROM "
+            |> logAnnotation "   VALUE FROM "
+        )
+        [ mod
+        , name
+        ]
+        |> logAnnotation "   VF APPLIED -> "
+
+
+apply : Elm.Expression -> List Elm.Expression -> Elm.Expression
+apply fn args =
+    Elm.apply
+        (Elm.valueWith elm
+            "apply"
+            (Annotation.function
+                [ expressionType
+
+                -- NOTE, this is wrong :/  should be `Annotation.list expressionType`, but taht doesnt quite work
+                , expressionType
+                ]
+                expressionType
+            )
+        )
+        [ fn
+        , Elm.list args
+        ]
+
+
+{-| Ultimately we want to capture
+
+    { arguments =
+        [ ( expressionType, Elm.Pattern.var "one" )
+        , ( expressionType, Elm.Pattern.var "two" )
+        , ( expressionType, Elm.Pattern.car "three" )
+        ]
+    , body =
+        Elm.apply
+            (valueFrom
+                (Elm.apply (Elm.valueFrom elm "moduleName")
+                    [ Elm.list (List.map Elm.string mod)
+                    ]
+                )
+                (Elm.string value.name)
+            )
+            [ Elm.value "one"
+            , Elm.value "two"
+            , Elm.value "three"
+            ]
+    }
+
+-}
+captureFunction :
+    Elm.Type.Type
+    ->
+        { index : Int
+        , arguments : List ( Annotation.Annotation, Pattern.Pattern )
+        , values : List Elm.Expression
+        }
+    ->
+        { index : Int
+        , arguments : List ( Annotation.Annotation, Pattern.Pattern )
+        , values : List Elm.Expression
+        }
+captureFunction tipe captured =
+    case tipe of
+        Elm.Type.Lambda one two ->
+            captureFunction two
+                { index = captured.index + 1
+                , arguments = asArgument captured.index one :: captured.arguments
+                , values = asValue captured.index one :: captured.values
+                }
+
+        _ ->
+            { index = captured.index + 1
+            , arguments = asArgument captured.index tipe :: captured.arguments
+            , values = asValue captured.index tipe :: captured.values
+            }
+
+
+argName : Int -> String
+argName index =
+    "arg" ++ String.fromInt index
+
+
+asArgument : Int -> Elm.Type.Type -> ( Annotation.Annotation, Pattern.Pattern )
+asArgument index tipe =
+    case tipe of
+        Elm.Type.Lambda one two ->
+            ( asArgumentTypeHelper tipe
+            , Pattern.var (argName index)
+            )
+
+        _ ->
+            ( expressionType
+            , Pattern.var (argName index)
+            )
+
+
+asArgumentTypeHelper : Elm.Type.Type -> Annotation.Annotation
+asArgumentTypeHelper tipe =
+    case tipe of
+        Elm.Type.Lambda one two ->
+            Annotation.function
+                [ asArgumentTypeHelper one ]
+                (asArgumentTypeHelper two)
+
+        _ ->
+            expressionType
+
+
+{-|
+
+        TODO: convert tipe to proper Expression type
+
+-}
+asValue index tipe =
+    Elm.valueWith local
+        (argName index)
+        expressionType
 
 
 {-|
@@ -140,7 +350,9 @@ convertType elmType =
             Annotation.var string
 
         Elm.Type.Lambda one two ->
-            Debug.todo ""
+            Annotation.function
+                [ convertType one ]
+                (convertType two)
 
         Elm.Type.Tuple types ->
             case types of
@@ -154,7 +366,8 @@ convertType elmType =
                     Annotation.triple (convertType one) (convertType two) (convertType three)
 
                 _ ->
-                    Debug.todo "what to do??"
+                    -- this should never happen :/
+                    Annotation.unit
 
         Elm.Type.Type name types ->
             Annotation.namedWith (Elm.moduleName []) name (List.map convertType types)

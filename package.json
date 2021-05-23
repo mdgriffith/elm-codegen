@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "watch": "tsc --watch",
-    "gen-package": "(npm run build; node dist/index.js src/Generate.elm --cwd cli/gen-package --flags-from playground/docs/gql-docs.json)",
+    "gen-package-local": "(npm run build; node dist/index.js src/Generate.elm --cwd cli/gen-package --flags-from playground/docs/gql-docs.json)",
+    "gen-package": "(npm run build; node dist/index.js install elm/json)",
     "playground": "(npm run build; node dist/index.js src/Gen.elm --cwd playground)"
   },
   "repository": {
@@ -21,6 +22,7 @@
   },
   "homepage": "https://github.com/mdgriffith/elm-prefab#readme",
   "devDependencies": {
+    "@types/node-fetch": "^2.5.10",
     "typescript": "^4.2.4"
   },
   "dependencies": {
@@ -28,6 +30,7 @@
     "chalk": "^4.1.1",
     "chokidar": "^3.5.1",
     "commander": "^7.2.0",
-    "node-elm-compiler": "^5.0.6"
+    "node-elm-compiler": "^5.0.6",
+    "node-fetch": "^2.6.1"
   }
 }
