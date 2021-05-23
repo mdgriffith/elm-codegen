@@ -1,17 +1,21 @@
 module Elm exposing
     ( file, render
     , Expression
-    , value, valueFrom
+    , value, valueFrom, valueWith
     , int, float, char, string, hex, unit
     , list, tuple, triple
     , record, get
     , caseOf
     , apply
     , lambda
-    , Declaration, declaration, declarationWith, function, functionWith
+    , Declaration, declaration, declarationWith
+    , function, functionWith
+    , alias, aliasWith
+    , customType, customTypeWith
     , Module, moduleName, moduleAs
     , withDocumentation, expose, exposeConstructor
     , power, multiply, divide, intDivide, modulo, rem, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, pipe, pipeLeft, compose, composeLeft
+    , keep, skip, slash, questionMark
     , portIncoming, portOutgoing
     , File
     )
@@ -22,7 +26,7 @@ module Elm exposing
 
 @docs Expression
 
-@docs value, valueFrom
+@docs value, valueFrom, valueWith
 
 
 # Primitives
@@ -42,7 +46,13 @@ module Elm exposing
 
 # Top level
 
-@docs Declaration, declaration, declarationWith, function, functionWith
+@docs Declaration, declaration, declarationWith
+
+@docs function, functionWith
+
+@docs alias, aliasWith
+
+@docs customType, customTypeWith
 
 @docs Module, moduleName, moduleAs
 
@@ -52,6 +62,11 @@ module Elm exposing
 # Operators
 
 @docs power, multiply, divide, intDivide, modulo, rem, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, pipe, pipeLeft, compose, composeLeft
+
+
+# Package specific operators
+
+@docs keep, skip, slash, questionMark
 
 
 # Ports
@@ -127,7 +142,7 @@ render (File fileDetails) =
                             }
                         )
                 , imports =
-                    List.map Util.makeImport fileDetails.imports
+                    List.filterMap Util.makeImport fileDetails.imports
                 , declarations = fileDetails.body
                 , comments = Nothing --: Maybe (Comments.Comment Comments.FileComment)
                 }
@@ -585,6 +600,29 @@ customType name variants =
         )
 
 
+{-| If you want type variables in your custom type!
+-}
+customTypeWith : String -> List String -> List ( String, List Elm.Annotation.Annotation ) -> Declaration
+customTypeWith name args variants =
+    Util.Declaration Util.NotExposed
+        []
+        (Declaration.CustomTypeDeclaration
+            { documentation = Nothing
+            , name = Util.nodify name
+            , generics = Util.nodifyAll args
+            , constructors =
+                List.map
+                    (\( varName, vars ) ->
+                        Util.nodify
+                            { name = Util.nodify varName
+                            , arguments = Util.nodifyAll vars
+                            }
+                    )
+                    variants
+            }
+        )
+
+
 {-| A custom type declaration.
 
     Elm.alias "MyAlias"
@@ -615,6 +653,25 @@ alias name innerAnnotation =
         )
 
 
+{-| You may need type variables.
+
+Elm.aliasWith "MyMaybe" ["a"]
+(Elm.Annotation.maybe (Elm.Annotation.var "a"))
+
+-}
+aliasWith : String -> List String -> Elm.Annotation.Annotation -> Declaration
+aliasWith name args innerAnnotation =
+    Util.Declaration Util.NotExposed
+        []
+        (Declaration.AliasDeclaration
+            { documentation = Nothing
+            , name = Util.nodify name
+            , generics = Util.nodifyAll args
+            , typeAnnotation = Util.nodify innerAnnotation
+            }
+        )
+
+
 {-| Not exposed, this should be done automatically!
 -}
 parens : Exp.Expression -> Exp.Expression
@@ -634,12 +691,12 @@ getImports (Util.Expression exp) =
 
 {-| -}
 apply : Expression -> List Expression -> Expression
-apply (Util.Expression exp) args =
+apply ((Util.Expression exp) as top) args =
     Util.Expression
         { expression =
             Exp.Application (Util.nodifyAll (exp.expression :: List.map (parens << getExpression) args))
         , annotation =
-            Err [ Util.SomeOtherIssue ]
+            Util.applyType top args
         , imports = exp.imports ++ List.concatMap getImports args
         }
 
@@ -719,15 +776,23 @@ function name args (Util.Expression body) =
     , signature =
         case body.annotation of
             Ok sig ->
-                Just
-                    (Util.nodify
-                        { name = Util.nodify name
-                        , typeAnnotation = Util.nodify sig
-                        }
-                    )
+                case args of
+                    [] ->
+                        Just
+                            (Util.nodify
+                                { name = Util.nodify name
+                                , typeAnnotation =
+                                    Util.nodify sig
+                                }
+                            )
+
+                    _ ->
+                        -- we dont know the types of the arguments
+                        -- maybe we only allow the `functionWith` version?
+                        Nothing
 
             Err _ ->
-                Util.nodifyMaybe Nothing
+                Nothing
     , declaration =
         Util.nodify
             { name = Util.nodify name
@@ -743,7 +808,22 @@ function name args (Util.Expression body) =
 functionWith : String -> List ( Elm.Annotation.Annotation, Pattern ) -> Expression -> Declaration
 functionWith name args (Util.Expression body) =
     { documentation = Util.nodifyMaybe Nothing
-    , signature = Util.nodifyMaybe Nothing
+    , signature =
+        case body.annotation of
+            Ok return ->
+                Just
+                    (Util.nodify
+                        { name = Util.nodify name
+                        , typeAnnotation =
+                            Util.nodify <|
+                                Elm.Annotation.function
+                                    (List.map Tuple.first args)
+                                    return
+                        }
+                    )
+
+            Err _ ->
+                Util.nodifyMaybe Nothing
     , declaration =
         Util.nodify
             { name = Util.nodify name
@@ -1051,6 +1131,37 @@ and =
 or : Expression -> Expression -> Expression
 or =
     applyBinOp (BinOp "||" Infix.Right 2)
+
+
+{-| used in the `elm/parser` library
+
+`|=`
+
+-}
+keep : Expression -> Expression -> Expression
+keep =
+    applyBinOp (BinOp "|=" Infix.Left 5)
+
+
+{-| `|.`
+-}
+skip : Expression -> Expression -> Expression
+skip =
+    applyBinOp (BinOp "|." Infix.Left 6)
+
+
+{-| `</>` used in url parsing
+-}
+slash : Expression -> Expression -> Expression
+slash =
+    applyBinOp (BinOp "</>" Infix.Right 7)
+
+
+{-| `<?>` used in url parsing
+-}
+questionMark : Expression -> Expression -> Expression
+questionMark =
+    applyBinOp (BinOp "<?>" Infix.Left 8)
 
 
 {-| `|>`
