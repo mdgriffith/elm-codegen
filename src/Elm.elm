@@ -54,6 +54,8 @@ module Elm exposing
 
 @docs customType, customTypeWith
 
+@docs customType
+
 @docs Module, moduleName, moduleAs
 
 @docs withDocumentation, expose, exposeConstructor
