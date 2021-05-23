@@ -9,6 +9,7 @@ module Elm exposing
     , apply
     , lambda
     , Declaration, declaration, declarationWith, function, functionWith
+    , customType
     , Module, moduleName, moduleAs
     , withDocumentation, expose, exposeConstructor
     , power, multiply, divide, intDivide, modulo, rem, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, pipe, pipeLeft, compose, composeLeft
@@ -43,6 +44,8 @@ module Elm exposing
 # Top level
 
 @docs Declaration, declaration, declarationWith, function, functionWith
+
+@docs customType
 
 @docs Module, moduleName, moduleAs
 
