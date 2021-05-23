@@ -8,7 +8,7 @@ import Elm.Docs
 import Elm.Gen
 import Elm.Pattern as Pattern
 import Elm.Type
-import Internal.Util as Util
+import Internal.Compiler as Util
 import Json.Decode as Json
 
 
@@ -228,8 +228,6 @@ apply fn args =
             "apply"
             (Annotation.function
                 [ expressionType
-
-                -- NOTE, this is wrong :/  should be `Annotation.list expressionType`, but taht doesnt quite work
                 , expressionType
                 ]
                 expressionType

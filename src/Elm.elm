@@ -91,7 +91,7 @@ import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
 import Elm.Syntax.Range as Range
 import Elm.Syntax.TypeAnnotation as Annotation
-import Internal.Util as Util
+import Internal.Compiler as Util
 import Internal.Write
 import Set
 
@@ -268,6 +268,7 @@ valueFrom mod name =
         { expression = Exp.FunctionOrValue (Util.unpack mod) name
         , annotation = Err []
         , imports = [ mod ]
+        , skip = False
         }
 
 
@@ -291,6 +292,7 @@ valueWith mod name ann =
         { expression = Exp.FunctionOrValue (Util.unpack mod) name
         , annotation = Ok ann
         , imports = [ mod ]
+        , skip = False
         }
 
 
@@ -301,6 +303,7 @@ unit =
         { expression = Exp.UnitExpr
         , annotation = Ok Elm.Annotation.unit
         , imports = []
+        , skip = False
         }
 
 
@@ -311,6 +314,7 @@ int intVal =
         { expression = Exp.Integer intVal
         , annotation = Ok Elm.Annotation.int
         , imports = []
+        , skip = False
         }
 
 
@@ -321,6 +325,7 @@ hex hexVal =
         { expression = Exp.Hex hexVal
         , annotation = Ok Elm.Annotation.int
         , imports = []
+        , skip = False
         }
 
 
@@ -331,6 +336,7 @@ float floatVal =
         { expression = Exp.Floatable floatVal
         , annotation = Ok Elm.Annotation.float
         , imports = []
+        , skip = False
         }
 
 
@@ -341,6 +347,7 @@ string literal =
         { expression = Exp.Literal literal
         , annotation = Ok Elm.Annotation.string
         , imports = []
+        , skip = False
         }
 
 
@@ -351,6 +358,7 @@ char charVal =
         { expression = Exp.CharLiteral charVal
         , annotation = Ok Elm.Annotation.char
         , imports = []
+        , skip = False
         }
 
 
@@ -369,6 +377,7 @@ tuple (Util.Expression one) (Util.Expression two) =
         { expression = Exp.TupledExpression (Util.nodifyAll [ one.expression, two.expression ])
         , annotation = Result.map2 Elm.Annotation.tuple one.annotation two.annotation
         , imports = one.imports ++ two.imports
+        , skip = False
         }
 
 
@@ -383,6 +392,7 @@ triple (Util.Expression one) (Util.Expression two) (Util.Expression three) =
                 two.annotation
                 three.annotation
         , imports = one.imports ++ two.imports ++ three.imports
+        , skip = False
         }
 
 
@@ -393,6 +403,7 @@ list exprs =
         { expression = Exp.ListExpr (List.map toList exprs)
         , annotation = Util.unify exprs
         , imports = List.concatMap getImports exprs
+        , skip = False
         }
 
 
@@ -453,6 +464,7 @@ record fields =
                 errs ->
                     Err errs
         , imports = unified.imports
+        , skip = False
         }
 
 
@@ -494,6 +506,7 @@ letIn decls (Util.Expression within) =
         , imports = gathered.imports
         , annotation =
             within.annotation
+        , skip = False
         }
 
 
@@ -541,6 +554,7 @@ caseOf (Util.Expression expr) cases =
                 Just ann ->
                     ann
         , imports = expr.imports ++ gathered.imports
+        , skip = False
         }
 
 
@@ -562,6 +576,7 @@ get selector (Util.Expression expr) =
         , annotation =
             Err [ Util.SomeOtherIssue ]
         , imports = expr.imports
+        , skip = False
         }
 
 
@@ -698,6 +713,7 @@ apply ((Util.Expression exp) as top) args =
         , annotation =
             Util.applyType top args
         , imports = exp.imports ++ List.concatMap getImports args
+        , skip = False
         }
 
 
@@ -718,6 +734,7 @@ lambda args (Util.Expression expr) =
         , annotation =
             expr.annotation
         , imports = expr.imports
+        , skip = False
         }
 
 
@@ -1196,4 +1213,5 @@ applyBinOp (BinOp symbol dir _) (Util.Expression exprl) (Util.Expression exprr) 
             Exp.OperatorApplication symbol dir (Util.nodify exprl.expression) (Util.nodify exprr.expression)
         , annotation = Err [ Util.SomeOtherIssue ]
         , imports = exprl.imports ++ exprr.imports
+        , skip = False
         }

@@ -15,7 +15,7 @@ module Elm.Pattern exposing
 -}
 
 import Elm.Syntax.Pattern as Pattern
-import Internal.Util as Util
+import Internal.Compiler as Util
 
 
 

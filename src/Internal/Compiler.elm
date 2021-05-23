@@ -1,4 +1,4 @@
-module Internal.Util exposing (..)
+module Internal.Compiler exposing (..)
 
 import Elm.Syntax.Declaration as Declaration
 import Elm.Syntax.Exposing as Expose
@@ -15,7 +15,8 @@ type Expression
 
 
 type alias ExpressionDetails =
-    { expression : Exp.Expression
+    { skip : Bool
+    , expression : Exp.Expression
     , annotation : Result (List InferenceError) Annotation.TypeAnnotation
     , imports : List Module
     }

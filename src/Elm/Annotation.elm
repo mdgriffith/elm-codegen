@@ -21,7 +21,7 @@ import Elm.Syntax.Declaration as Declaration
 import Elm.Syntax.Type as Type
 import Elm.Syntax.TypeAlias as TypeAlias
 import Elm.Syntax.TypeAnnotation as Annotation
-import Internal.Util as Util
+import Internal.Compiler as Util
 
 
 {-| -}

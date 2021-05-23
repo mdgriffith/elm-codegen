@@ -13,7 +13,7 @@ module Elm.Let exposing
 
 import Elm.Pattern as Pattern exposing (Pattern)
 import Elm.Syntax.Expression as Exp
-import Internal.Util as Util
+import Internal.Compiler as Util
 
 
 type alias Expression =

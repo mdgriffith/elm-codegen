@@ -1,9 +1,8 @@
 module Internal.Prepare exposing (..)
 
-{-|-}
+{-| -}
 
-
-import Elm.Syntax.Declaration as Declaration 
+import Elm.Syntax.Declaration as Declaration
 import Elm.Syntax.Exposing as Expose
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.File as File
@@ -17,23 +16,23 @@ import Elm.Syntax.Range as Range
 import Elm.Syntax.Signature as Signature
 import Elm.Syntax.Type as Type
 import Elm.Syntax.TypeAlias as TypeAlias
-import Internal.Util as Util
-
-{-|
-Note, when gathering information, we also rewrite the existing declarations to use the aliases the have if necessary.
+import Internal.Compiler as Util
 
 
+{-| Note, when gathering information, we also rewrite the existing declarations to use the aliases the have if necessary.
 -}
 type alias Prepared =
     { aliased : List Declaration.Declaration
-    , imports : List (Util.Module, String) 
-    , exposed : List (Util.Expose, String)
+    , imports : List ( Util.Module, String )
+    , exposed : List ( Util.Expose, String )
     }
 
+
+
 -- {-|-}
--- prepare : 
---     List (Util.Module, String) 
---         ->  List Util.Declaration 
+-- prepare :
+--     List (Util.Module, String)
+--         ->  List Util.Declaration
 --         -> Prepared
 -- prepare aliases declarations =
 --     prepareHelper declarations
@@ -41,63 +40,48 @@ type alias Prepared =
 --         , imports = aliases
 --         , exposed = []
 --         }
-
-
-
 -- prepareHelper : List Util.Declaration -> Prepared -> Prepared
 -- prepareHelper declarations prepared =
 --     case declarations of
 --         [] ->
 --             prepared
-
 --         dec :: remaining ->
---             prepareHelper remaining 
+--             prepareHelper remaining
 --                 (prepareDeclaration prepared dec)
-
-
-
-
 -- prepareDeclaration : Prepared -> Util.Declaration -> Prepared
 -- prepareDeclaration prepared (Util.Declaration exposed body) =
 --     -- let
-
 --     -- in
 --     -- { aliased = prepared.aliased
 --     -- , imports = prepared.imports
---     -- , exposed = 
+--     -- , exposed =
 --     --     case exposed of
 --     --         Util.NotExposed ->
 --     --             prepared.exposed
-
 --     --         Util.Exposed ->
 --     --             prepared.exposed
-                
 --     --         Util.ExposedConstructor ->
 --     --             prepared.exposed
---     -- } 
+--     -- }
 --     case body of
 --         Declaration.FunctionDeclaration fn ->
-            
 --             -- type alias Function =
 --             --     { documentation : Maybe (Node Documentation)
 --             --     , signature : Maybe (Node Signature)
 --             --     , declaration : Node FunctionImplementation
 --             --     }
-           
 --             { aliased = body :: prepared.aliased
 --             , imports = prepared.imports
---             , exposed = 
+--             , exposed =
 --                 case exposed of
 --                     Util.NotExposed ->
 --                         prepared.exposed
-
 --                     _ ->
 --                         let
 --                             functionName = getFunctionName fn
 --                         in
 --                         (exposed, functionName) :: prepared.exposed
-                        
---             } 
+--             }
 --         Declaration.AliasDeclaration typeAlias ->
 --             prepared
 --         Declaration.CustomTypeDeclaration type_ ->
@@ -108,21 +92,15 @@ type alias Prepared =
 --             prepared
 --         Declaration.Destructuring nodePattern nodeExpression ->
 --             prepared
-
-
-
 -- getFunctionName : Exp.Function -> String
 -- getFunctionName fn =
 --     case fn.declaration of
---         Node.Node _ dec -> 
+--         Node.Node _ dec ->
 --             case dec.name of
 --                 Node.Node _ name ->
 --                     name
-
-
-
 -- prepareFunction : Prepared -> Exp.Function -> { prepared : Exp.Function, imports : List (Util.Module, String)  }
--- prepareFunction prepared fn = 
+-- prepareFunction prepared fn =
 --     let
 --         prepped =
 --             case fn.declaration of
@@ -141,16 +119,11 @@ type alias Prepared =
 --                     { prepped = Node.Node range { impl | expression = (prepImpl.prepped) }
 --                     , imports = prepImpl.imports
 --                     }
-
-
 --     in
 --     { prepared = { fn | declaration = prepped.prepped  }
 --     , imports = prepped.imports
 --     }
-
 -- {-|
-
-
 --     type Expression
 --         = UnitExpr
 --         | Application (List (Node Expression))
@@ -180,13 +153,9 @@ type alias Prepared =
 --         | RecordAccessFunction String
 --         | RecordUpdateExpression (Node String) (List (Node RecordSetter))
 --         | GLSLExpression String
-
-
-
 -- -}
 -- prepareExpression : Prepared -> b -> { prepped : b, imports : List c }
 -- prepareExpression prepared exp =
 --     { prepped = exp
 --     , imports = []
 --     }
-    
