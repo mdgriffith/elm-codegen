@@ -2,6 +2,7 @@ module Elm.Annotation exposing
     ( Annotation, var, bool, int, float, string, char, unit
     , named, namedWith
     , list, tuple, triple, set, dict, maybe, record, extensible
+    , function
     )
 
 {-|
@@ -11,6 +12,8 @@ module Elm.Annotation exposing
 @docs named, namedWith
 
 @docs list, tuple, triple, set, dict, maybe, record, extensible
+
+@docs function
 
 -}
 
@@ -157,3 +160,16 @@ namedWith (Util.Module mod maybeAlias) name args =
 typed : String -> List Annotation -> Annotation
 typed name args =
     Annotation.Typed (Util.nodify ( [], name )) (Util.nodifyAll args)
+
+
+{-| -}
+function : List Annotation -> Annotation -> Annotation
+function anns return =
+    List.foldr
+        (\ann fn ->
+            Annotation.FunctionTypeAnnotation
+                (Util.nodify ann)
+                (Util.nodify fn)
+        )
+        return
+        anns
