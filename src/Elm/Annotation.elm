@@ -17,32 +17,32 @@ module Elm.Annotation exposing
 
 -}
 
-import Elm.Syntax.Declaration as Declaration
-import Elm.Syntax.Type as Type
-import Elm.Syntax.TypeAlias as TypeAlias
 import Elm.Syntax.TypeAnnotation as Annotation
-import Internal.Compiler as Util
+import Internal.Compiler as Compiler
 
 
 {-| -}
 type alias Annotation =
-    Annotation.TypeAnnotation
+    Compiler.Annotation
 
 
 type alias Declaration =
-    Util.Declaration
+    Compiler.Declaration
 
 
 {-| -}
 type alias Module =
-    Util.Module
+    Compiler.Module
 
 
 {-| A type variable
 -}
 var : String -> Annotation
 var a =
-    Annotation.GenericType (Util.formatValue a)
+    Compiler.Annotation
+        { annotation = Annotation.GenericType (Compiler.formatValue a)
+        , imports = []
+        }
 
 
 {-| -}
@@ -78,7 +78,10 @@ char =
 {-| -}
 unit : Annotation
 unit =
-    Annotation.Unit
+    Compiler.Annotation
+        { annotation = Annotation.Unit
+        , imports = []
+        }
 
 
 {-| -}
@@ -90,13 +93,37 @@ list inner =
 {-| -}
 tuple : Annotation -> Annotation -> Annotation
 tuple one two =
-    Annotation.Tupled (Util.nodifyAll [ one, two ])
+    Compiler.Annotation
+        { annotation =
+            Annotation.Tupled
+                (Compiler.nodifyAll
+                    [ Compiler.getInnerAnnotation one
+                    , Compiler.getInnerAnnotation two
+                    ]
+                )
+        , imports =
+            Compiler.getAnnotationImports one
+                ++ Compiler.getAnnotationImports two
+        }
 
 
 {-| -}
 triple : Annotation -> Annotation -> Annotation -> Annotation
 triple one two three =
-    Annotation.Tupled (Util.nodifyAll [ one, two, three ])
+    Compiler.Annotation
+        { annotation =
+            Annotation.Tupled
+                (Compiler.nodifyAll
+                    [ Compiler.getInnerAnnotation one
+                    , Compiler.getInnerAnnotation two
+                    , Compiler.getInnerAnnotation three
+                    ]
+                )
+        , imports =
+            Compiler.getAnnotationImports one
+                ++ Compiler.getAnnotationImports two
+                ++ Compiler.getAnnotationImports three
+        }
 
 
 {-| -}
@@ -120,56 +147,122 @@ maybe maybeArg =
 {-| -}
 record : List ( String, Annotation ) -> Annotation
 record fields =
-    List.map (Tuple.mapBoth Util.nodify Util.nodify) fields
-        |> Util.nodifyAll
-        |> Annotation.Record
+    Compiler.Annotation
+        { annotation =
+            fields
+                |> List.map
+                    (\( name, ann ) ->
+                        ( Compiler.nodify name
+                        , Compiler.nodify (Compiler.getInnerAnnotation ann)
+                        )
+                    )
+                |> Compiler.nodifyAll
+                |> Annotation.Record
+        , imports =
+            fields
+                |> List.concatMap (Tuple.second >> Compiler.getAnnotationImports)
+        }
 
 
 {-| -}
 extensible : String -> List ( String, Annotation ) -> Annotation
 extensible base fields =
-    List.map (Tuple.mapBoth Util.nodify Util.nodify) fields
-        |> Util.nodifyAll
-        |> Annotation.Record
+    Compiler.Annotation
+        { annotation =
+            fields
+                |> List.map
+                    (\( name, ann ) ->
+                        ( Compiler.nodify name
+                        , Compiler.nodify (Compiler.getInnerAnnotation ann)
+                        )
+                    )
+                |> Compiler.nodifyAll
+                |> Compiler.nodify
+                |> Annotation.GenericRecord (Compiler.nodify base)
+        , imports =
+            fields
+                |> List.concatMap (Tuple.second >> Compiler.getAnnotationImports)
+        }
 
 
 {-| -}
 named : Module -> String -> Annotation
-named (Util.Module mod maybeAlias) name =
-    case maybeAlias of
-        Nothing ->
-            Annotation.Typed (Util.nodify ( mod, name )) []
+named (Compiler.Module mod maybeAlias) name =
+    Compiler.Annotation
+        { annotation =
+            case maybeAlias of
+                Nothing ->
+                    Annotation.Typed (Compiler.nodify ( mod, name )) []
 
-        Just aliasStr ->
-            Annotation.Typed (Util.nodify ( [ aliasStr ], name )) []
+                Just aliasStr ->
+                    Annotation.Typed (Compiler.nodify ( [ aliasStr ], name )) []
+        , imports = []
+        }
 
 
 {-| -}
 namedWith : Module -> String -> List Annotation -> Annotation
-namedWith (Util.Module mod maybeAlias) name args =
+namedWith ((Compiler.Module mod maybeAlias) as fullMod) name args =
     case maybeAlias of
         Nothing ->
-            Annotation.Typed (Util.nodify ( mod, name ))
-                (Util.nodifyAll args)
+            Compiler.Annotation
+                { annotation =
+                    Annotation.Typed (Compiler.nodify ( mod, name ))
+                        (Compiler.nodifyAll
+                            (List.map Compiler.getInnerAnnotation
+                                args
+                            )
+                        )
+                , imports =
+                    fullMod
+                        :: List.concatMap Compiler.getAnnotationImports
+                            args
+                }
 
         Just aliasStr ->
-            Annotation.Typed (Util.nodify ( [ aliasStr ], name )) (Util.nodifyAll args)
+            Compiler.Annotation
+                { annotation =
+                    Annotation.Typed (Compiler.nodify ( [ aliasStr ], name ))
+                        (Compiler.nodifyAll
+                            (List.map Compiler.getInnerAnnotation
+                                args
+                            )
+                        )
+                , imports =
+                    fullMod
+                        :: List.concatMap Compiler.getAnnotationImports
+                            args
+                }
 
 
 {-| -}
 typed : String -> List Annotation -> Annotation
 typed name args =
-    Annotation.Typed (Util.nodify ( [], name )) (Util.nodifyAll args)
+    Compiler.Annotation
+        { annotation =
+            Annotation.Typed
+                (Compiler.nodify ( [], name ))
+                (Compiler.nodifyAll
+                    (List.map Compiler.getInnerAnnotation args)
+                )
+        , imports = List.concatMap Compiler.getAnnotationImports args
+        }
 
 
 {-| -}
 function : List Annotation -> Annotation -> Annotation
 function anns return =
-    List.foldr
-        (\ann fn ->
-            Annotation.FunctionTypeAnnotation
-                (Util.nodify ann)
-                (Util.nodify fn)
-        )
-        return
-        anns
+    Compiler.Annotation
+        { annotation =
+            List.foldr
+                (\ann fn ->
+                    Annotation.FunctionTypeAnnotation
+                        (Compiler.nodify ann)
+                        (Compiler.nodify fn)
+                )
+                (Compiler.getInnerAnnotation return)
+                (List.map Compiler.getInnerAnnotation anns)
+        , imports =
+            Compiler.getAnnotationImports return
+                ++ List.concatMap Compiler.getAnnotationImports anns
+        }

@@ -94,19 +94,19 @@ import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
 import Elm.Syntax.Range as Range
 import Elm.Syntax.TypeAnnotation as Annotation
-import Internal.Compiler as Util
+import Internal.Compiler as Compiler
 import Internal.Write
 import Set
 
 
 {-| -}
 type alias Module =
-    Util.Module
+    Compiler.Module
 
 
 {-| -}
 type alias Expression =
-    Util.Expression
+    Compiler.Expression
 
 
 {-| Turn the AST into a pretty printed file
@@ -115,37 +115,37 @@ render : File -> { path : String, contents : String }
 render (File fileDetails) =
     let
         mod =
-            Util.getModule fileDetails.moduleDefinition
+            Compiler.getModule fileDetails.moduleDefinition
 
         exposed =
-            Util.getExposed fileDetails.body
+            Compiler.getExposed fileDetails.body
 
         body =
             Internal.Write.write
                 { moduleDefinition =
-                    Util.nodify
-                        ((if Util.hasPorts fileDetails.body then
+                    Compiler.nodify
+                        ((if Compiler.hasPorts fileDetails.body then
                             Elm.Syntax.Module.PortModule
 
                           else
                             Elm.Syntax.Module.NormalModule
                          )
-                            { moduleName = Util.nodify mod
+                            { moduleName = Compiler.nodify mod
                             , exposingList =
                                 case exposed of
                                     [] ->
-                                        Util.nodify
+                                        Compiler.nodify
                                             (Expose.All Range.emptyRange)
 
                                     _ ->
-                                        Util.nodify
+                                        Compiler.nodify
                                             (Expose.Explicit
-                                                (Util.nodifyAll exposed)
+                                                (Compiler.nodifyAll exposed)
                                             )
                             }
                         )
                 , imports =
-                    List.filterMap Util.makeImport fileDetails.imports
+                    List.filterMap Compiler.makeImport fileDetails.imports
                 , declarations = fileDetails.body
                 , comments = Nothing --: Maybe (Comments.Comment Comments.FileComment)
                 }
@@ -183,7 +183,7 @@ reduceDeclarationImports decs imports =
         [] ->
             imports
 
-        (Util.Declaration _ newImports body) :: remain ->
+        (Compiler.Declaration _ newImports body) :: remain ->
             reduceDeclarationImports remain
                 (addImports newImports imports)
 
@@ -197,7 +197,7 @@ addImports newImports ( set, deduped ) =
         new :: remain ->
             let
                 full =
-                    Util.fullModName new
+                    Compiler.fullModName new
             in
             if Set.member full set then
                 addImports remain ( set, deduped )
@@ -237,7 +237,7 @@ Note also that this will force capitalization on each segment to prevent silly e
 -}
 moduleName : List String -> Module
 moduleName =
-    Util.inModule
+    Compiler.inModule
 
 
 {-| A modules name
@@ -255,20 +255,20 @@ moduleName =
 -}
 moduleAs : List String -> String -> Module
 moduleAs =
-    Util.moduleAs
+    Compiler.moduleAs
 
 
 {-| -}
 value : String -> Expression
 value =
-    valueFrom Util.emptyModule
+    valueFrom Compiler.emptyModule
 
 
 {-| -}
 valueFrom : Module -> String -> Expression
 valueFrom mod name =
-    Util.Expression
-        { expression = Exp.FunctionOrValue (Util.unpack mod) name
+    Compiler.Expression
+        { expression = Exp.FunctionOrValue (Compiler.unpack mod) name
         , annotation = Err []
         , imports = [ mod ]
         , skip = False
@@ -291,10 +291,10 @@ Then, when that list is generated, it will automatically have the type signature
 -}
 valueWith : Module -> String -> Elm.Annotation.Annotation -> Expression
 valueWith mod name ann =
-    Util.Expression
-        { expression = Exp.FunctionOrValue (Util.unpack mod) name
-        , annotation = Ok ann
-        , imports = [ mod ]
+    Compiler.Expression
+        { expression = Exp.FunctionOrValue (Compiler.unpack mod) name
+        , annotation = Ok (Compiler.getInnerAnnotation ann)
+        , imports = mod :: Compiler.getAnnotationImports ann
         , skip = False
         }
 
@@ -302,9 +302,9 @@ valueWith mod name ann =
 {-| -}
 unit : Expression
 unit =
-    Util.Expression
+    Compiler.Expression
         { expression = Exp.UnitExpr
-        , annotation = Ok Elm.Annotation.unit
+        , annotation = Ok Annotation.Unit
         , imports = []
         , skip = False
         }
@@ -313,9 +313,9 @@ unit =
 {-| -}
 int : Int -> Expression
 int intVal =
-    Util.Expression
+    Compiler.Expression
         { expression = Exp.Integer intVal
-        , annotation = Ok Elm.Annotation.int
+        , annotation = Ok (Compiler.getInnerAnnotation Elm.Annotation.int)
         , imports = []
         , skip = False
         }
@@ -324,9 +324,9 @@ int intVal =
 {-| -}
 hex : Int -> Expression
 hex hexVal =
-    Util.Expression
+    Compiler.Expression
         { expression = Exp.Hex hexVal
-        , annotation = Ok Elm.Annotation.int
+        , annotation = Ok (Compiler.getInnerAnnotation Elm.Annotation.int)
         , imports = []
         , skip = False
         }
@@ -335,9 +335,9 @@ hex hexVal =
 {-| -}
 float : Float -> Expression
 float floatVal =
-    Util.Expression
+    Compiler.Expression
         { expression = Exp.Floatable floatVal
-        , annotation = Ok Elm.Annotation.float
+        , annotation = Ok (Compiler.getInnerAnnotation Elm.Annotation.float)
         , imports = []
         , skip = False
         }
@@ -346,9 +346,9 @@ float floatVal =
 {-| -}
 string : String -> Expression
 string literal =
-    Util.Expression
+    Compiler.Expression
         { expression = Exp.Literal literal
-        , annotation = Ok Elm.Annotation.string
+        , annotation = Ok (Compiler.getInnerAnnotation Elm.Annotation.string)
         , imports = []
         , skip = False
         }
@@ -357,9 +357,9 @@ string literal =
 {-| -}
 char : Char -> Expression
 char charVal =
-    Util.Expression
+    Compiler.Expression
         { expression = Exp.CharLiteral charVal
-        , annotation = Ok Elm.Annotation.char
+        , annotation = Ok (Compiler.getInnerAnnotation Elm.Annotation.char)
         , imports = []
         , skip = False
         }
@@ -375,10 +375,19 @@ char charVal =
 
 {-| -}
 tuple : Expression -> Expression -> Expression
-tuple (Util.Expression one) (Util.Expression two) =
-    Util.Expression
-        { expression = Exp.TupledExpression (Util.nodifyAll [ one.expression, two.expression ])
-        , annotation = Result.map2 Elm.Annotation.tuple one.annotation two.annotation
+tuple (Compiler.Expression one) (Compiler.Expression two) =
+    Compiler.Expression
+        { expression = Exp.TupledExpression (Compiler.nodifyAll [ one.expression, two.expression ])
+        , annotation =
+            Result.map2
+                (\oneA twoA ->
+                    Elm.Annotation.tuple
+                        (Compiler.noImports oneA)
+                        (Compiler.noImports twoA)
+                        |> Compiler.getInnerAnnotation
+                )
+                one.annotation
+                two.annotation
         , imports = one.imports ++ two.imports
         , skip = False
         }
@@ -386,11 +395,22 @@ tuple (Util.Expression one) (Util.Expression two) =
 
 {-| -}
 triple : Expression -> Expression -> Expression -> Expression
-triple (Util.Expression one) (Util.Expression two) (Util.Expression three) =
-    Util.Expression
-        { expression = Exp.TupledExpression (Util.nodifyAll [ one.expression, two.expression, three.expression ])
+triple (Compiler.Expression one) (Compiler.Expression two) (Compiler.Expression three) =
+    Compiler.Expression
+        { expression =
+            Exp.TupledExpression
+                (Compiler.nodifyAll
+                    [ one.expression, two.expression, three.expression ]
+                )
         , annotation =
-            Result.map3 Elm.Annotation.triple
+            Result.map3
+                (\oneA twoA threeA ->
+                    Elm.Annotation.triple
+                        (Compiler.noImports oneA)
+                        (Compiler.noImports twoA)
+                        (Compiler.noImports threeA)
+                        |> Compiler.getInnerAnnotation
+                )
                 one.annotation
                 two.annotation
                 three.annotation
@@ -402,17 +422,17 @@ triple (Util.Expression one) (Util.Expression two) (Util.Expression three) =
 {-| -}
 list : List Expression -> Expression
 list exprs =
-    Util.Expression
+    Compiler.Expression
         { expression = Exp.ListExpr (List.map toList exprs)
-        , annotation = Util.unify exprs
+        , annotation = Compiler.unify exprs
         , imports = List.concatMap getImports exprs
         , skip = False
         }
 
 
 toList : Expression -> Node.Node Exp.Expression
-toList (Util.Expression exp) =
-    Util.nodify exp.expression
+toList (Compiler.Expression exp) =
+    Compiler.nodify exp.expression
 
 
 {-| -}
@@ -422,15 +442,15 @@ record fields =
         unified =
             fields
                 |> List.foldl
-                    (\( fieldName, Util.Expression exp ) found ->
+                    (\( fieldName, Compiler.Expression exp ) found ->
                         { fields =
-                            ( Util.nodify fieldName
-                            , Util.nodify exp.expression
+                            ( Compiler.nodify fieldName
+                            , Compiler.nodify exp.expression
                             )
                                 :: found.fields
                         , errors =
                             if Set.member fieldName found.passed then
-                                Util.DuplicateFieldInRecord fieldName :: found.errors
+                                Compiler.DuplicateFieldInRecord fieldName :: found.errors
 
                             else
                                 found.errors
@@ -453,20 +473,30 @@ record fields =
                     , imports = []
                     }
     in
-    Util.Expression
+    Compiler.Expression
         { expression =
             unified.fields
                 |> List.reverse
-                |> Util.nodifyAll
+                |> Compiler.nodifyAll
                 |> Exp.RecordExpr
         , annotation =
             case unified.errors of
                 [] ->
-                    Ok (Elm.Annotation.record (List.reverse unified.fieldAnnotations))
+                    List.reverse unified.fieldAnnotations
+                        |> List.map
+                            (\( name, ann ) ->
+                                ( Compiler.nodify name
+                                , Compiler.nodify ann
+                                )
+                            )
+                        |> Compiler.nodifyAll
+                        |> Annotation.Record
+                        |> Ok
 
                 errs ->
                     Err errs
-        , imports = unified.imports
+        , imports =
+            unified.imports
         , skip = False
         }
 
@@ -485,11 +515,11 @@ Check out `Elm.Let` to add things to it.
 
 -}
 letIn : List Let.Declaration -> Expression -> Expression
-letIn decls (Util.Expression within) =
+letIn decls (Compiler.Expression within) =
     let
         gathered =
             List.foldl
-                (\(Util.LetDeclaration mods dec) accum ->
+                (\(Compiler.LetDeclaration mods dec) accum ->
                     { declarations =
                         dec :: accum.declarations
                     , imports = accum.imports ++ mods
@@ -500,11 +530,11 @@ letIn decls (Util.Expression within) =
                 }
                 decls
     in
-    Util.Expression
+    Compiler.Expression
         { expression =
             Exp.LetExpression
-                { declarations = Util.nodifyAll gathered.declarations
-                , expression = Util.nodify within.expression
+                { declarations = Compiler.nodifyAll gathered.declarations
+                , expression = Compiler.nodify within.expression
                 }
         , imports = gathered.imports
         , annotation =
@@ -515,12 +545,12 @@ letIn decls (Util.Expression within) =
 
 {-| -}
 caseOf : Expression -> List ( Pattern, Expression ) -> Expression
-caseOf (Util.Expression expr) cases =
+caseOf (Compiler.Expression expr) cases =
     let
         gathered =
             List.foldl
-                (\( pattern, Util.Expression exp ) accum ->
-                    { cases = ( Util.nodify pattern, Util.nodify exp.expression ) :: accum.cases
+                (\( pattern, Compiler.Expression exp ) accum ->
+                    { cases = ( Compiler.nodify pattern, Compiler.nodify exp.expression ) :: accum.cases
                     , imports = accum.imports ++ exp.imports
                     , annotation =
                         case accum.annotation of
@@ -532,7 +562,7 @@ caseOf (Util.Expression expr) cases =
                                     accum.annotation
 
                                 else
-                                    Just (Err [ Util.CaseBranchesReturnDifferentTypes ])
+                                    Just (Err [ Compiler.CaseBranchesReturnDifferentTypes ])
                     }
                 )
                 { cases = []
@@ -543,16 +573,16 @@ caseOf (Util.Expression expr) cases =
 
         --
     in
-    Util.Expression
+    Compiler.Expression
         { expression =
             Exp.CaseExpression
-                { expression = Util.nodify expr.expression
+                { expression = Compiler.nodify expr.expression
                 , cases = List.reverse gathered.cases
                 }
         , annotation =
             case gathered.annotation of
                 Nothing ->
-                    Err [ Util.EmptyCaseStatement ]
+                    Err [ Compiler.EmptyCaseStatement ]
 
                 Just ann ->
                     ann
@@ -572,12 +602,12 @@ results in
 
 -}
 get : String -> Expression -> Expression
-get selector (Util.Expression expr) =
-    Util.Expression
+get selector (Compiler.Expression expr) =
+    Compiler.Expression
         { expression =
-            Exp.RecordAccess (Util.nodify expr.expression) (Util.nodify selector)
+            Exp.RecordAccess (Compiler.nodify expr.expression) (Compiler.nodify selector)
         , annotation =
-            Err [ Util.SomeOtherIssue ]
+            Err [ Compiler.SomeOtherIssue ]
         , imports = expr.imports
         , skip = False
         }
@@ -599,18 +629,26 @@ Should result in
 -}
 customType : String -> List ( String, List Elm.Annotation.Annotation ) -> Declaration
 customType name variants =
-    Util.Declaration Util.NotExposed
-        []
+    Compiler.Declaration Compiler.NotExposed
+        (List.concatMap
+            (Tuple.second >> List.concatMap Compiler.getAnnotationImports)
+            variants
+        )
         (Declaration.CustomTypeDeclaration
             { documentation = Nothing
-            , name = Util.nodify name
+            , name = Compiler.nodify name
             , generics = []
             , constructors =
                 List.map
                     (\( varName, vars ) ->
-                        Util.nodify
-                            { name = Util.nodify varName
-                            , arguments = Util.nodifyAll vars
+                        Compiler.nodify
+                            { name = Compiler.nodify varName
+                            , arguments =
+                                List.map
+                                    (Compiler.getInnerAnnotation
+                                        >> Compiler.nodify
+                                    )
+                                    vars
                             }
                     )
                     variants
@@ -622,18 +660,26 @@ customType name variants =
 -}
 customTypeWith : String -> List String -> List ( String, List Elm.Annotation.Annotation ) -> Declaration
 customTypeWith name args variants =
-    Util.Declaration Util.NotExposed
-        []
+    Compiler.Declaration Compiler.NotExposed
+        (List.concatMap
+            (Tuple.second >> List.concatMap Compiler.getAnnotationImports)
+            variants
+        )
         (Declaration.CustomTypeDeclaration
             { documentation = Nothing
-            , name = Util.nodify name
-            , generics = Util.nodifyAll args
+            , name = Compiler.nodify name
+            , generics = Compiler.nodifyAll args
             , constructors =
                 List.map
                     (\( varName, vars ) ->
-                        Util.nodify
-                            { name = Util.nodify varName
-                            , arguments = Util.nodifyAll vars
+                        Compiler.nodify
+                            { name = Compiler.nodify varName
+                            , arguments =
+                                List.map
+                                    (Compiler.getInnerAnnotation
+                                        >> Compiler.nodify
+                                    )
+                                    vars
                             }
                     )
                     variants
@@ -660,13 +706,13 @@ Should result in
 -}
 alias : String -> Elm.Annotation.Annotation -> Declaration
 alias name innerAnnotation =
-    Util.Declaration Util.NotExposed
-        []
+    Compiler.Declaration Compiler.NotExposed
+        (Compiler.getAnnotationImports innerAnnotation)
         (Declaration.AliasDeclaration
             { documentation = Nothing
-            , name = Util.nodify name
+            , name = Compiler.nodify name
             , generics = []
-            , typeAnnotation = Util.nodify innerAnnotation
+            , typeAnnotation = Compiler.nodify (Compiler.getInnerAnnotation innerAnnotation)
             }
         )
 
@@ -679,13 +725,13 @@ Elm.aliasWith "MyMaybe" ["a"]
 -}
 aliasWith : String -> List String -> Elm.Annotation.Annotation -> Declaration
 aliasWith name args innerAnnotation =
-    Util.Declaration Util.NotExposed
-        []
+    Compiler.Declaration Compiler.NotExposed
+        (Compiler.getAnnotationImports innerAnnotation)
         (Declaration.AliasDeclaration
             { documentation = Nothing
-            , name = Util.nodify name
-            , generics = Util.nodifyAll args
-            , typeAnnotation = Util.nodify innerAnnotation
+            , name = Compiler.nodify name
+            , generics = Compiler.nodifyAll args
+            , typeAnnotation = Compiler.nodify (Compiler.getInnerAnnotation innerAnnotation)
             }
         )
 
@@ -694,31 +740,31 @@ aliasWith name args innerAnnotation =
 -}
 parens : Exp.Expression -> Exp.Expression
 parens expr =
-    Exp.ParenthesizedExpression (Util.nodify expr)
+    Exp.ParenthesizedExpression (Compiler.nodify expr)
 
 
 getExpression : Expression -> Exp.Expression
-getExpression (Util.Expression exp) =
+getExpression (Compiler.Expression exp) =
     exp.expression
 
 
-getImports : Expression -> List Util.Module
-getImports (Util.Expression exp) =
+getImports : Expression -> List Compiler.Module
+getImports (Compiler.Expression exp) =
     exp.imports
 
 
 {-| -}
 apply : Expression -> List Expression -> Expression
-apply ((Util.Expression exp) as top) allArgs =
+apply ((Compiler.Expression exp) as top) allArgs =
     let
         args =
-            List.filter (\(Util.Expression arg) -> not arg.skip) allArgs
+            List.filter (\(Compiler.Expression arg) -> not arg.skip) allArgs
     in
-    Util.Expression
+    Compiler.Expression
         { expression =
-            Exp.Application (Util.nodifyAll (exp.expression :: List.map (parens << getExpression) args))
+            Exp.Application (Compiler.nodifyAll (exp.expression :: List.map (parens << getExpression) args))
         , annotation =
-            Util.applyType top args
+            Compiler.applyType top args
         , imports = exp.imports ++ List.concatMap getImports args
         , skip = False
         }
@@ -731,12 +777,12 @@ type alias Pattern =
 
 {-| -}
 lambda : List Pattern -> Expression -> Expression
-lambda args (Util.Expression expr) =
-    Util.Expression
+lambda args (Compiler.Expression expr) =
+    Compiler.Expression
         { expression =
             Exp.LambdaExpression
-                { args = Util.nodifyAll args
-                , expression = Util.nodify expr.expression
+                { args = Compiler.nodifyAll args
+                , expression = Compiler.nodify expr.expression
                 }
         , annotation =
             expr.annotation
@@ -747,7 +793,7 @@ lambda args (Util.Expression expr) =
 
 {-| -}
 type alias Declaration =
-    Util.Declaration
+    Compiler.Declaration
 
 
 {-| -}
@@ -762,11 +808,16 @@ Note, this library will autocalculate many type signatures! Make sure `Elm.decla
 
 -}
 declarationWith : String -> Elm.Annotation.Annotation -> Expression -> Declaration
-declarationWith name annotation (Util.Expression body) =
+declarationWith name annotation (Compiler.Expression body) =
     function name
         []
         -- note, we could do some type checking here
-        (Util.Expression { body | annotation = Ok annotation })
+        (Compiler.Expression
+            { body
+                | annotation = Ok (Compiler.getInnerAnnotation annotation)
+                , imports = body.imports ++ Compiler.getAnnotationImports annotation
+            }
+        )
 
 
 {-| Declare a function. Here's an example with a let:
@@ -795,18 +846,18 @@ will generate
 
 -}
 function : String -> List Pattern -> Expression -> Declaration
-function name args (Util.Expression body) =
-    { documentation = Util.nodifyMaybe Nothing
+function name args (Compiler.Expression body) =
+    { documentation = Compiler.nodifyMaybe Nothing
     , signature =
         case body.annotation of
             Ok sig ->
                 case args of
                     [] ->
                         Just
-                            (Util.nodify
-                                { name = Util.nodify name
+                            (Compiler.nodify
+                                { name = Compiler.nodify name
                                 , typeAnnotation =
-                                    Util.nodify sig
+                                    Compiler.nodify sig
                                 }
                             )
 
@@ -818,64 +869,72 @@ function name args (Util.Expression body) =
             Err _ ->
                 Nothing
     , declaration =
-        Util.nodify
-            { name = Util.nodify name
-            , arguments = Util.nodifyAll args
-            , expression = Util.nodify body.expression
+        Compiler.nodify
+            { name = Compiler.nodify name
+            , arguments = Compiler.nodifyAll args
+            , expression = Compiler.nodify body.expression
             }
     }
         |> Declaration.FunctionDeclaration
-        |> Util.Declaration Util.NotExposed body.imports
+        |> Compiler.Declaration Compiler.NotExposed body.imports
 
 
 {-| -}
 functionWith : String -> List ( Elm.Annotation.Annotation, Pattern ) -> Expression -> Declaration
-functionWith name args (Util.Expression body) =
-    { documentation = Util.nodifyMaybe Nothing
+functionWith name args (Compiler.Expression body) =
+    { documentation = Compiler.nodifyMaybe Nothing
     , signature =
         case body.annotation of
             Ok return ->
                 Just
-                    (Util.nodify
-                        { name = Util.nodify name
+                    (Compiler.nodify
+                        { name = Compiler.nodify name
                         , typeAnnotation =
-                            Util.nodify <|
-                                Elm.Annotation.function
-                                    (List.map Tuple.first args)
-                                    return
+                            Compiler.nodify <|
+                                Compiler.getInnerAnnotation <|
+                                    Elm.Annotation.function
+                                        (List.map Tuple.first args)
+                                        (Compiler.noImports return)
                         }
                     )
 
             Err _ ->
-                Util.nodifyMaybe Nothing
+                Compiler.nodifyMaybe Nothing
     , declaration =
-        Util.nodify
-            { name = Util.nodify name
-            , arguments = Util.nodifyAll (List.map Tuple.second args)
-            , expression = Util.nodify body.expression
+        Compiler.nodify
+            { name = Compiler.nodify name
+            , arguments = Compiler.nodifyAll (List.map Tuple.second args)
+            , expression = Compiler.nodify body.expression
             }
     }
         |> Declaration.FunctionDeclaration
-        |> Util.Declaration Util.NotExposed body.imports
+        |> Compiler.Declaration Compiler.NotExposed
+            (List.concatMap
+                (Tuple.first
+                    >> Compiler.getAnnotationImports
+                )
+                args
+                ++ body.imports
+            )
 
 
 {-| Add documentation to a declaration!
 -}
 withDocumentation : String -> Declaration -> Declaration
 withDocumentation =
-    Util.documentation
+    Compiler.documentation
 
 
 {-| -}
 expose : Declaration -> Declaration
 expose =
-    Util.expose
+    Compiler.expose
 
 
 {-| -}
 exposeConstructor : Declaration -> Declaration
 exposeConstructor =
-    Util.exposeConstructor
+    Compiler.exposeConstructor
 
 
 {-|
@@ -894,41 +953,51 @@ If you want to vary the messages going in and out of your app, don't use a huge 
 
 This will give you more flexibility in the future and save you having to wire up a bunch of stuff.
 
-**Another note** - You may need to expose your port explicityly using `Elm.expose`
+**Another note** - You may need to expose your port explicitly using `Elm.expose`
 
 -}
 portIncoming : String -> List Elm.Annotation.Annotation -> Declaration
 portIncoming name args =
-    { name = Util.nodify name
+    { name = Compiler.nodify name
     , typeAnnotation =
-        Util.nodify
+        Compiler.nodify
             (case args of
                 [] ->
                     Annotation.FunctionTypeAnnotation
-                        (Util.nodify (Annotation.GenericType "msg"))
-                        (Util.nodify sub)
+                        (Compiler.nodify (Annotation.GenericType "msg"))
+                        (Compiler.nodify sub)
 
                 start :: remain ->
                     Annotation.FunctionTypeAnnotation
-                        (groupAnn (Util.nodify (functionAnnotation start (remain ++ [ Annotation.GenericType "msg" ]))))
-                        (Util.nodify sub)
+                        (groupAnn
+                            (Compiler.nodify
+                                (Compiler.getInnerAnnotation
+                                    (Elm.Annotation.function
+                                        args
+                                        (Elm.Annotation.var "msg")
+                                    )
+                                )
+                            )
+                        )
+                        (Compiler.nodify sub)
             )
     }
         |> Declaration.PortDeclaration
-        |> Util.Declaration Util.NotExposed []
+        |> Compiler.Declaration Compiler.NotExposed
+            (List.concatMap Compiler.getAnnotationImports args)
 
 
 groupAnn ann =
     Annotation.Tupled
         [ ann ]
-        |> Util.nodify
+        |> Compiler.nodify
 
 
 sub : Annotation.TypeAnnotation
 sub =
     Annotation.Typed
-        (Util.nodify ( [], "Sub" ))
-        [ Util.nodify (Annotation.GenericType "msg") ]
+        (Compiler.nodify ( [], "Sub" ))
+        [ Compiler.nodify (Annotation.GenericType "msg") ]
 
 
 {-| Create a port that can send messages to the outside world!
@@ -944,41 +1013,40 @@ will generate
 -}
 portOutgoing : String -> Elm.Annotation.Annotation -> Declaration
 portOutgoing name arg =
-    { name = Util.nodify name
+    { name = Compiler.nodify name
     , typeAnnotation =
-        Util.nodify
+        Compiler.nodify
             (Annotation.FunctionTypeAnnotation
-                (Util.nodify arg)
-                (Util.nodify cmd)
+                (Compiler.nodify (Compiler.getInnerAnnotation arg))
+                (Compiler.nodify cmd)
             )
     }
         |> Declaration.PortDeclaration
-        |> Util.Declaration Util.NotExposed []
+        |> Compiler.Declaration Compiler.NotExposed (Compiler.getAnnotationImports arg)
 
 
 cmd : Annotation.TypeAnnotation
 cmd =
     Annotation.Typed
-        (Util.nodify ( [], "Cmd" ))
-        [ Util.nodify (Annotation.GenericType "msg") ]
-
-
-functionAnnotation : Elm.Annotation.Annotation -> List Elm.Annotation.Annotation -> Elm.Annotation.Annotation
-functionAnnotation start args =
-    case args of
-        [] ->
-            start
-
-        next :: remain ->
-            functionAnnotation
-                (Annotation.FunctionTypeAnnotation
-                    (Util.nodify start)
-                    (Util.nodify next)
-                )
-                remain
+        (Compiler.nodify ( [], "Cmd" ))
+        [ Compiler.nodify (Annotation.GenericType "msg") ]
 
 
 
+--
+--functionAnnotation : Elm.Annotation.Annotation -> List Elm.Annotation.Annotation -> Elm.Annotation.Annotation
+--functionAnnotation start args =
+--    case args of
+--        [] ->
+--            start
+--
+--        next :: remain ->
+--            functionAnnotation
+--                (Annotation.FunctionTypeAnnotation
+--                    (Compiler.nodify start)
+--                    (Compiler.nodify next)
+--                )
+--                remain
 {- Infix operators!
 
    The goal is to make the following work
@@ -1214,17 +1282,17 @@ pipeLeft =
 
 
 applyBinOp : BinOp -> Expression -> Expression -> Expression
-applyBinOp (BinOp symbol dir _) (Util.Expression exprl) (Util.Expression exprr) =
-    Util.Expression
+applyBinOp (BinOp symbol dir _) (Compiler.Expression exprl) (Compiler.Expression exprr) =
+    Compiler.Expression
         { expression =
-            Exp.OperatorApplication symbol dir (Util.nodify exprl.expression) (Util.nodify exprr.expression)
-        , annotation = Err [ Util.SomeOtherIssue ]
+            Exp.OperatorApplication symbol dir (Compiler.nodify exprl.expression) (Compiler.nodify exprr.expression)
+        , annotation = Err [ Compiler.SomeOtherIssue ]
         , imports = exprl.imports ++ exprr.imports
         , skip = False
         }
 
 
 {-| -}
-pass : Util.Expression
+pass : Compiler.Expression
 pass =
-    Util.skip
+    Compiler.skip

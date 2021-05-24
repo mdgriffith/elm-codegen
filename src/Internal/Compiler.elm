@@ -9,6 +9,31 @@ import Elm.Syntax.Range as Range
 import Elm.Syntax.TypeAnnotation as Annotation
 
 
+type Annotation
+    = Annotation AnnotationDetails
+
+
+noImports tipe =
+    Annotation
+        { annotation = tipe
+        , imports = []
+        }
+
+
+getInnerAnnotation (Annotation details) =
+    details.annotation
+
+
+getAnnotationImports (Annotation details) =
+    details.imports
+
+
+type alias AnnotationDetails =
+    { imports : List Module
+    , annotation : Annotation.TypeAnnotation
+    }
+
+
 {-| -}
 type Expression
     = Expression ExpressionDetails
