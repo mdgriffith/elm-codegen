@@ -442,7 +442,11 @@ record fields =
         unified =
             fields
                 |> List.foldl
-                    (\( fieldName, Compiler.Expression exp ) found ->
+                    (\( unformattedFieldName, Compiler.Expression exp ) found ->
+                        let
+                            fieldName =
+                                Compiler.formatValue unformattedFieldName
+                        in
                         { fields =
                             ( Compiler.nodify fieldName
                             , Compiler.nodify exp.expression
@@ -453,14 +457,21 @@ record fields =
                                 Compiler.DuplicateFieldInRecord fieldName :: found.errors
 
                             else
-                                found.errors
+                                case exp.annotation of
+                                    Err err ->
+                                        err ++ found.errors
+
+                                    Ok ann ->
+                                        found.errors
                         , fieldAnnotations =
                             case exp.annotation of
                                 Err err ->
                                     found.fieldAnnotations
 
                                 Ok ann ->
-                                    ( fieldName, ann )
+                                    ( Compiler.formatValue fieldName
+                                    , ann
+                                    )
                                         :: found.fieldAnnotations
                         , passed = Set.insert fieldName found.passed
                         , imports = exp.imports ++ found.imports

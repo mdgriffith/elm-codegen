@@ -463,48 +463,33 @@ applyType (Expression exp) args =
 {-| -}
 applyTypeHelper : Annotation.TypeAnnotation -> List Annotation.TypeAnnotation -> Result (List InferenceError) Annotation.TypeAnnotation
 applyTypeHelper fn args =
-    let
-        _ =
-            Debug.log "    ---> fn"
-                { fn = fn
-                , argCount = List.length args
-                }
-    in
-    Debug.log "<-- RETURN" <|
-        case fn of
-            Annotation.FunctionTypeAnnotation one two ->
-                case args of
-                    [] ->
-                        Ok fn
+    case fn of
+        Annotation.FunctionTypeAnnotation one two ->
+            case args of
+                [] ->
+                    Ok fn
 
-                    top :: rest ->
-                        -- if one and top match ->
-                        case unifiable (denode one) top of
-                            Ok _ ->
-                                case rest of
-                                    [] ->
-                                        Ok (denode two)
+                top :: rest ->
+                    -- if one and top match ->
+                    case unifiable (denode one) top of
+                        Ok _ ->
+                            case rest of
+                                [] ->
+                                    Ok (denode two)
 
-                                    _ ->
-                                        applyTypeHelper (denode two) rest
+                                _ ->
+                                    applyTypeHelper (denode two) rest
 
-                            Err err ->
-                                Err []
+                        Err err ->
+                            Err []
 
-            final ->
-                case args of
-                    [] ->
-                        Ok fn
+        final ->
+            case args of
+                [] ->
+                    Ok fn
 
-                    _ ->
-                        let
-                            _ =
-                                Debug.log "WHY TOO MANY -----> "
-                                    { fn = fn
-                                    , args = args
-                                    }
-                        in
-                        Err [ FunctionAppliedToTooManyArgs ]
+                _ ->
+                    Err [ FunctionAppliedToTooManyArgs ]
 
 
 unify : List Expression -> Result (List InferenceError) Annotation.TypeAnnotation

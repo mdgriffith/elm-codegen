@@ -35,31 +35,6 @@ main =
         }
 
 
-file =
-    Elm.file (Elm.moduleName [ "My", "Module" ])
-        [ Elm.declaration "placeholder"
-            (Elm.valueFrom (Elm.moduleAs [ "Json", "Decode" ] "Json")
-                "map2"
-            )
-        , Elm.declaration "myRecord"
-            (Elm.record
-                [ ( "field1", Elm.string "My cool string" )
-                , ( "field2", Elm.int 5 )
-                , ( "field4", Elm.string "My cool string" )
-                , ( "field5", Elm.int 5 )
-                , ( "field6", Elm.string "My cool string" )
-                , ( "field7"
-                  , Elm.record
-                        [ ( "field1", Elm.string "My cool string" )
-                        , ( "field2", Elm.int 5 )
-                        ]
-                  )
-                ]
-            )
-            |> Elm.expose
-        ]
-
-
 moduleToFile : Elm.Docs.Module -> Elm.File
 moduleToFile docs =
     let
@@ -81,6 +56,7 @@ moduleToFile docs =
                 ]
             )
             |> Elm.withDocumentation " The name of this module. "
+            |> Elm.expose
          )
             :: List.concatMap generateBlocks blocks
         )
@@ -106,6 +82,90 @@ thisModuleName =
     Elm.valueWith local "thisModule" (Annotation.named elm "Module")
 
 
+expressionType : Annotation.Annotation
+expressionType =
+    Annotation.named elm "Expression"
+
+
+annotationNamed : String -> Elm.Expression
+annotationNamed name =
+    Elm.apply
+        (Elm.valueWith elmAnnotation
+            "named"
+            (Annotation.function
+                [ Annotation.named elm "Module"
+                , Annotation.string
+                ]
+                (Annotation.named elmAnnotation "Annotation")
+            )
+        )
+        [ thisModuleName
+        , Elm.string name
+        ]
+
+
+skip : Elm.Expression
+skip =
+    Elm.valueWith elm
+        "pass"
+        expressionType
+
+
+valueFrom : Elm.Expression -> Elm.Expression -> Elm.Expression
+valueFrom mod name =
+    Elm.apply
+        (Elm.valueWith elm
+            "valueFrom"
+            (Annotation.function
+                [ Annotation.named elm "Module"
+                , Annotation.string
+
+                --, Annotation.named elmAnnotation "Annotation"
+                ]
+                (Annotation.named elm "Expression")
+            )
+         --|> Debug.log "   VALUE FROM "
+         --|> logAnnotation "   VALUE FROM "
+        )
+        [ mod
+        , name
+        ]
+
+
+
+--|> logAnnotation "   VF APPLIED -> "
+
+
+apply : Elm.Expression -> List Elm.Expression -> Elm.Expression
+apply fn args =
+    Elm.apply
+        (Elm.valueWith elm
+            "apply"
+            (Annotation.function
+                [ expressionType
+                , expressionType
+                ]
+                expressionType
+            )
+        )
+        [ fn
+        , Elm.list args
+        ]
+
+
+chooseName base tags =
+    case tags of
+        [] ->
+            base
+
+        ( name, _ ) :: rest ->
+            if name == base then
+                chooseName (base ++ "_") rest
+
+            else
+                chooseName base rest
+
+
 generateBlocks : Elm.Docs.Block -> List Elm.Declaration
 generateBlocks block =
     case block of
@@ -116,30 +176,35 @@ generateBlocks block =
             -- we need a way to expose both the constructors and
             -- the annotation
             -- It's also possible no contructors are exposed.
-            [--Elm.customTypeWith union.name
-             --   union.args
-             --   (List.map
-             --       (\( name, types ) ->
-             --           ( name, List.map convertType types )
-             --       )
-             --       union.tags
-             --   )
-             --   |> Elm.withDocumentation union.comment
+            [ Elm.declaration ("type" ++ union.name)
+                (Elm.record
+                    (( chooseName "annotation" union.tags
+                     , annotationNamed union.name
+                     )
+                        :: List.map
+                            (\( name, tag ) ->
+                                ( name
+                                , valueFrom thisModuleName (Elm.string name)
+                                )
+                            )
+                            union.tags
+                    )
+                )
+                |> Elm.withDocumentation union.comment
             ]
 
         Elm.Docs.AliasBlock alias ->
-            [ Elm.aliasWith alias.name
-                alias.args
-                (convertType alias.tipe)
+            [ Elm.declaration ("alias" ++ alias.name)
+                (Elm.record
+                    [ ( "annotation"
+                      , annotationNamed alias.name
+                      )
+                    ]
+                )
                 |> Elm.withDocumentation alias.comment
-                |> Elm.expose
             ]
 
         Elm.Docs.ValueBlock value ->
-            --if value.name /= "int" then
-            --    []
-            --
-            --else
             case value.tipe of
                 Elm.Type.Lambda one two ->
                     let
@@ -192,57 +257,6 @@ logAnnotation str ((Util.Expression exp) as val) =
             Debug.log str exp.annotation
     in
     val
-
-
-expressionType : Annotation.Annotation
-expressionType =
-    Annotation.named elm "Expression"
-
-
-skip : Elm.Expression
-skip =
-    Elm.valueWith elm
-        "pass"
-        expressionType
-
-
-valueFrom : Elm.Expression -> Elm.Expression -> Elm.Expression
-valueFrom mod name =
-    Elm.apply
-        (Elm.valueWith elm
-            "valueFrom"
-            (Annotation.function
-                [ Annotation.named elm "Module"
-                , Annotation.string
-
-                --, Annotation.named elmAnnotation "Annotation"
-                ]
-                (Annotation.named elm "Expression")
-            )
-            --|> Debug.log "   VALUE FROM "
-            |> logAnnotation "   VALUE FROM "
-        )
-        [ mod
-        , name
-        ]
-        |> logAnnotation "   VF APPLIED -> "
-
-
-apply : Elm.Expression -> List Elm.Expression -> Elm.Expression
-apply fn args =
-    Elm.apply
-        (Elm.valueWith elm
-            "apply"
-            (Annotation.function
-                [ expressionType
-                , expressionType
-                ]
-                expressionType
-            )
-        )
-        [ fn
-        , Elm.list args
-        ]
 
 
 {-| Ultimately we want to capture
