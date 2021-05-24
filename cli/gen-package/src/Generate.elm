@@ -199,6 +199,13 @@ expressionType =
     Annotation.named elm "Expression"
 
 
+skip : Elm.Expression
+skip =
+    Elm.valueWith elm
+        "pass"
+        expressionType
+
+
 valueFrom : Elm.Expression -> Elm.Expression -> Elm.Expression
 valueFrom mod name =
     Elm.apply
@@ -320,15 +327,35 @@ asArgumentTypeHelper tipe =
             expressionType
 
 
-{-|
-
-        TODO: convert tipe to proper Expression type
-
--}
+{-| -}
+asValue : Int -> Elm.Type.Type -> Elm.Expression
 asValue index tipe =
-    Elm.valueWith local
-        (argName index)
-        expressionType
+    asValueHelper index tipe []
+
+
+asValueHelper : Int -> Elm.Type.Type -> List Elm.Expression -> Elm.Expression
+asValueHelper index tipe args =
+    case tipe of
+        Elm.Type.Lambda one two ->
+            asValueHelper index two (skip :: args)
+
+        _ ->
+            case args of
+                [] ->
+                    Elm.valueWith local
+                        (argName index)
+                        expressionType
+
+                _ ->
+                    Elm.apply
+                        (Elm.valueWith local
+                            (argName index)
+                            (Annotation.function
+                                (List.repeat (List.length args) expressionType)
+                                expressionType
+                            )
+                        )
+                        (List.reverse args)
 
 
 {-|

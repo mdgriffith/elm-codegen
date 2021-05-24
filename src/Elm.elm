@@ -18,6 +18,7 @@ module Elm exposing
     , keep, skip, slash, questionMark
     , portIncoming, portOutgoing
     , File
+    , pass
     )
 
 {-|
@@ -77,6 +78,8 @@ module Elm exposing
 # Util
 
 @docs File
+
+@docs pass
 
 -}
 
@@ -706,7 +709,11 @@ getImports (Util.Expression exp) =
 
 {-| -}
 apply : Expression -> List Expression -> Expression
-apply ((Util.Expression exp) as top) args =
+apply ((Util.Expression exp) as top) allArgs =
+    let
+        args =
+            List.filter (\(Util.Expression arg) -> not arg.skip) allArgs
+    in
     Util.Expression
         { expression =
             Exp.Application (Util.nodifyAll (exp.expression :: List.map (parens << getExpression) args))
@@ -1215,3 +1222,9 @@ applyBinOp (BinOp symbol dir _) (Util.Expression exprl) (Util.Expression exprr) 
         , imports = exprl.imports ++ exprr.imports
         , skip = False
         }
+
+
+{-| -}
+pass : Util.Expression
+pass =
+    Util.skip

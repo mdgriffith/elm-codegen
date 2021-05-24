@@ -22,6 +22,17 @@ type alias ExpressionDetails =
     }
 
 
+{-| -}
+skip : Expression
+skip =
+    Expression
+        { skip = True
+        , expression = Exp.UnitExpr
+        , annotation = Err []
+        , imports = []
+        }
+
+
 type InferenceError
     = MismatchedList Annotation.TypeAnnotation Annotation.TypeAnnotation
     | SomeOtherIssue
