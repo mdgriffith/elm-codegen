@@ -23,8 +23,10 @@ import * as path from 'path';
 import * as fs from 'fs';
 import {XMLHttpRequest}  from './run/vendor/XMLHttpRequest';
 import * as chokidar from 'chokidar';
-import * as https from 'https'
-import fetch from 'node-fetch'
+import * as https from 'https';
+import fetch from 'node-fetch';
+import chalk from 'chalk';
+
 // We have to stub this in the allow Elm the ability to make http requests.
 // @ts-ignore
 globalThis["XMLHttpRequest"] = XMLHttpRequest.XMLHttpRequest
@@ -78,21 +80,160 @@ type Options = {
     watch: boolean
 }
 
+const elm_gen_file = `
+port module Elm.Gen exposing (File, error, files)
+
+import Json.Encode as Json
+
+
+type alias File =
+    { path : String
+    , contents : String
+    }
+
+
+encodeFile : File -> Json.Value
+encodeFile file =
+    Json.object
+        [ ( "path", Json.string file.path )
+        , ( "contents", Json.string file.contents )
+        ]
+
+
+files : List File -> Cmd msg
+files list =
+    onSuccessSend (List.map encodeFile list)
+
+
+error : String -> Cmd msg
+error err =
+    onFailureSend err
+
+
+port onSuccessSend : List Json.Value -> Cmd msg
+
+
+port onFailureSend : String -> Cmd msg
+`
+
+const elm_json_file = `
+{
+    "type": "application",
+    "source-directories": [
+        ".", "../src"
+    ],
+    "elm-version": "0.19.1",
+    "dependencies": {
+        "direct": {
+            "elm/browser": "1.0.2",
+            "elm/core": "1.0.5",
+            "elm/html": "1.0.0"
+        },
+        "indirect": {
+            "elm/json": "1.1.3",
+            "elm/time": "1.0.0",
+            "elm/url": "1.0.0",
+            "elm/virtual-dom": "1.0.2"
+        }
+    },
+    "test-dependencies": {
+        "direct": {},
+        "indirect": {}
+    }
+}
+`
+
+
+const elm_starter_file = `module Generator exposing (main)
+
+{-| -}
+
+import Elm
+import Elm.Pattern as Pattern
+import Elm.Type as Type
+import Elm.Gen
+
+
+main : Program {} () ()
+main =
+    Platform.worker
+        { init =
+            \json ->
+                ( ()
+                , Elm.Gen.files
+                    [ Elm.render file
+                    ]
+                )
+        , update =
+            \msg model ->
+                ( model, Cmd.none )
+        , subscriptions = \_ -> Sub.none
+        }
+
+
+file =
+    Elm.file (Elm.moduleName [ "My", "Module" ])
+        [ Elm.declaration "placeholder"
+            (Elm.valueFrom (Elm.moduleAs [ "Json", "Decode" ] "Json")
+                "map2"
+            )
+        , Elm.declaration "myRecord"
+            (Elm.record
+                [ ( "one", Elm.string "My cool string" )
+                , ( "two", Elm.int 5 )
+                , ( "three"
+                  , Elm.record
+                        [ ( "four", Elm.string "My cool string" )
+                        , ( "five", Elm.int 5 )
+                        ]
+                  )
+                ]
+            )
+            |> Elm.expose
+        ]
+`
+
+
 const docs_generator =
     { cwd: "cli/gen-package"
     , file: "src/Generate.elm"
     , moduleName: "Generate"
     }
 
-async function action(file: string, pkg: string | null, options: Options, com:any) {
-    console.log("FILE:" , file)
+function format_block(content: string[]) {
+    return "\n    " + content.join("\n    ") + "\n"
+}
+
+
+async function action(cmd: string, pkg: string | null, options: Options, com:any) {
+    console.log("FILE:" , cmd)
     console.log("PACKAGE:", pkg)
     console.log(options)
     const cwd = options.cwd || "."
     const output = path.join(cwd, options.output || "generated")
 
-    if (file == "install" && !!pkg) {
+    if (cmd == "init") {
+        // create folder
+        const base = "generators"
+        if (fs.existsSync("./" + base)){
+            console.log(format_block(["Looks like there's already a "+ chalk.cyan(base) + " folder."]))
 
+            process.exit(1);
+        }
+
+        fs.mkdirSync(`./${base}`)
+        fs.mkdirSync(`./${base}/Elm`)
+        fs.writeFileSync(`./${base}/elm.json`, elm_json_file)
+        fs.writeFileSync(`./${base}/Generate.elm`, elm_starter_file)
+        fs.writeFileSync(`./${base}/Elm/Gen.elm`, elm_gen_file)
+        console.log(format_block(
+            [ "I've created the " + chalk.cyan(base) +  " folder and added some files.",
+             chalk.cyan(`${base}/Generate.elm`) + " is a good place to get start to see how everything works!"
+            , ""
+            , "Run your generator by running " + chalk.yellow("elm-prefab")
+            ]))
+
+    } else if (cmd == "install" && !!pkg) {
         let version = ''
         const searchResp = await fetch('https://elm-package-cache-psi.vercel.app/search.json')
         const search = await searchResp.json()
@@ -120,34 +261,26 @@ async function action(file: string, pkg: string | null, options: Options, com:an
             flags = JSON.parse(options.flags)
         }
 
-        if (file.endsWith(".elm")) {
-            const moduleName = path.parse(file).name
+        if (cmd.endsWith(".elm")) {
+            const moduleName = path.parse(cmd).name
 
             if (options.watch) {
-                generate(file, moduleName, output, cwd, flags)
+                generate(cmd, moduleName, output, cwd, flags)
                 chokidar.watch(path.join(cwd, "**", "*.elm"), {ignored: path.join(output, "**")} ).on('all', (event, path) => {
                     console.log("\nFile changed, regenerating")
-                    generate(file, moduleName, output, cwd, flags)
+                    generate(cmd, moduleName, output, cwd, flags)
                 });
             } else {
-               generate(file, moduleName, output, cwd, flags)
+               generate(cmd, moduleName, output, cwd, flags)
             }
-        } else if (file.endsWith(".json")) {
-            console.log("JS")
-        } else if (file.split("/").length == 2) {
-            console.log("Elm package!")
         }
     }
-
 }
-
-
-
 
 
 program
   .version('0.1.0')
-  .arguments('<file> [package]')
+  .arguments('[cmd] [package]')
   .option('--watch', 'Watch the given file for changes and rerun the generator when a change is made.')
   .option('--cwd <dir>', 'Change the base directory for compiling your Elm generator')
   .option('--output <dir>', 'The directory where your generated files should go.')

@@ -81,6 +81,7 @@ var fs = __importStar(require("fs"));
 var XMLHttpRequest_1 = require("./run/vendor/XMLHttpRequest");
 var chokidar = __importStar(require("chokidar"));
 var node_fetch_1 = __importDefault(require("node-fetch"));
+var chalk_1 = __importDefault(require("chalk"));
 // We have to stub this in the allow Elm the ability to make http requests.
 // @ts-ignore
 globalThis["XMLHttpRequest"] = XMLHttpRequest_1.XMLHttpRequest.XMLHttpRequest;
@@ -124,13 +125,19 @@ function generate(elm_file, moduleName, target_dir, base, flags) {
     // @ts-ignore
     new run_generator(target_dir, moduleName, data.toString(), flags);
 }
+var elm_gen_file = "\nport module Elm.Gen exposing (File, error, files)\n\nimport Json.Encode as Json\n\n\ntype alias File =\n    { path : String\n    , contents : String\n    }\n\n\nencodeFile : File -> Json.Value\nencodeFile file =\n    Json.object\n        [ ( \"path\", Json.string file.path )\n        , ( \"contents\", Json.string file.contents )\n        ]\n\n\nfiles : List File -> Cmd msg\nfiles list =\n    onSuccessSend (List.map encodeFile list)\n\n\nerror : String -> Cmd msg\nerror err =\n    onFailureSend err\n\n\nport onSuccessSend : List Json.Value -> Cmd msg\n\n\nport onFailureSend : String -> Cmd msg\n";
+var elm_json_file = "\n{\n    \"type\": \"application\",\n    \"source-directories\": [\n        \".\", \"../src\"\n    ],\n    \"elm-version\": \"0.19.1\",\n    \"dependencies\": {\n        \"direct\": {\n            \"elm/browser\": \"1.0.2\",\n            \"elm/core\": \"1.0.5\",\n            \"elm/html\": \"1.0.0\"\n        },\n        \"indirect\": {\n            \"elm/json\": \"1.1.3\",\n            \"elm/time\": \"1.0.0\",\n            \"elm/url\": \"1.0.0\",\n            \"elm/virtual-dom\": \"1.0.2\"\n        }\n    },\n    \"test-dependencies\": {\n        \"direct\": {},\n        \"indirect\": {}\n    }\n}\n";
+var elm_starter_file = "module Generator exposing (main)\n\n{-| -}\n\nimport Elm\nimport Elm.Pattern as Pattern\nimport Elm.Type as Type\nimport Elm.Gen\n\n\nmain : Program {} () ()\nmain =\n    Platform.worker\n        { init =\n            json ->\n                ( ()\n                , Elm.Gen.files\n                    [ Elm.render file\n                    ]\n                )\n        , update =\n            msg model ->\n                ( model, Cmd.none )\n        , subscriptions = _ -> Sub.none\n        }\n\n\nfile =\n    Elm.file (Elm.moduleName [ \"My\", \"Module\" ])\n        [ Elm.declaration \"placeholder\"\n            (Elm.valueFrom (Elm.moduleAs [ \"Json\", \"Decode\" ] \"Json\")\n                \"map2\"\n            )\n        , Elm.declaration \"myRecord\"\n            (Elm.record\n                [ ( \"one\", Elm.string \"My cool string\" )\n                , ( \"two\", Elm.int 5 )\n                , ( \"three\"\n                  , Elm.record\n                        [ ( \"four\", Elm.string \"My cool string\" )\n                        , ( \"five\", Elm.int 5 )\n                        ]\n                  )\n                ]\n            )\n            |> Elm.expose\n        ]\n";
 var docs_generator = { cwd: "cli/gen-package",
     file: "src/Generate.elm",
     moduleName: "Generate"
 };
+function format_block(content) {
+    return "\n    " + content.join("\n    ") + "\n";
+}
 function action(file, pkg, options, com) {
     return __awaiter(this, void 0, void 0, function () {
-        var cwd, output, version, searchResp, search, _i, search_1, found, docsResp, docs, flags_1, moduleName_1;
+        var cwd, output, base, version, searchResp, search, _i, search_1, found, docsResp, docs, flags_1, moduleName_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -139,13 +146,28 @@ function action(file, pkg, options, com) {
                     console.log(options);
                     cwd = options.cwd || ".";
                     output = path.join(cwd, options.output || "generated");
-                    if (!(file == "install" && !!pkg)) return [3 /*break*/, 5];
+                    if (!(file == "init")) return [3 /*break*/, 1];
+                    base = "generators";
+                    if (fs.existsSync("./" + base)) {
+                        console.log(format_block(["Looks like there's already a " + chalk_1.default.cyan(base) + " folder."]));
+                        process.exit(1);
+                    }
+                    fs.mkdirSync("./" + base);
+                    fs.mkdirSync("./" + base + "/Elm");
+                    fs.writeFileSync("./" + base + "/elm.json", elm_json_file);
+                    fs.writeFileSync("./" + base + "/Generate.elm", elm_starter_file);
+                    fs.writeFileSync("./" + base + "/Elm/Gen.elm", elm_gen_file);
+                    console.log(format_block(["I've created the " + chalk_1.default.cyan(base) + " folder and added some files.", chalk_1.default.cyan(base + "/Generate.elm") + " is a good place to get start to see how everything works!", "",
+                        "Run your generator by running " + chalk_1.default.yellow("elm-prefab")]));
+                    return [3 /*break*/, 7];
+                case 1:
+                    if (!(file == "install" && !!pkg)) return [3 /*break*/, 6];
                     version = '';
                     return [4 /*yield*/, node_fetch_1.default('https://elm-package-cache-psi.vercel.app/search.json')];
-                case 1:
+                case 2:
                     searchResp = _a.sent();
                     return [4 /*yield*/, searchResp.json()];
-                case 2:
+                case 3:
                     search = _a.sent();
                     for (_i = 0, search_1 = search; _i < search_1.length; _i++) {
                         found = search_1[_i];
@@ -155,14 +177,14 @@ function action(file, pkg, options, com) {
                         }
                     }
                     return [4 /*yield*/, node_fetch_1.default("https://elm-package-cache-psi.vercel.app/packages/" + pkg + "/" + version + "/docs.json")];
-                case 3:
+                case 4:
                     docsResp = _a.sent();
                     return [4 /*yield*/, docsResp.json()];
-                case 4:
+                case 5:
                     docs = _a.sent();
                     generate(docs_generator.file, docs_generator.moduleName, output, docs_generator.cwd, docs);
-                    return [3 /*break*/, 6];
-                case 5:
+                    return [3 /*break*/, 7];
+                case 6:
                     flags_1 = null;
                     if (options.flagsFrom) {
                         if (options.flagsFrom.endsWith(".json")) {
@@ -194,8 +216,8 @@ function action(file, pkg, options, com) {
                     else if (file.split("/").length == 2) {
                         console.log("Elm package!");
                     }
-                    _a.label = 6;
-                case 6: return [2 /*return*/];
+                    _a.label = 7;
+                case 7: return [2 /*return*/];
             }
         });
     });
