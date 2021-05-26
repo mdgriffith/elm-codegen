@@ -166,7 +166,13 @@ function install(pkg, output, version) {
                     return [4 /*yield*/, docsResp.json()];
                 case 5:
                     docs = _a.sent();
-                    generate(docs_generator.file, docs_generator.moduleName, output, docs_generator.cwd, docs);
+                    try {
+                        generate(docs_generator.file, docs_generator.moduleName, output, docs_generator.cwd, docs);
+                    }
+                    catch (error) {
+                        console.log("There was an issue generating docs for " + pkg);
+                        console.log(format_block([error]));
+                    }
                     return [2 /*return*/];
             }
         });

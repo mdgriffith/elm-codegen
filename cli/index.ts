@@ -223,7 +223,12 @@ async function install(pkg:string, output: string, version: string|null){
     const docsResp = await fetch(`https://elm-package-cache-psi.vercel.app/packages/${pkg}/${version}/docs.json`)
     const docs = await docsResp.json()
 
-    generate(docs_generator.file, docs_generator.moduleName, output, docs_generator.cwd, docs)
+    try {
+        generate(docs_generator.file, docs_generator.moduleName, output, docs_generator.cwd, docs)
+    } catch (error) {
+        console.log(`There was an issue generating docs for ${pkg}`)
+        console.log(format_block([error]))
+    }
 }
 
 async function action(cmd: string, pkg: string | null, options: Options, com:any) {
