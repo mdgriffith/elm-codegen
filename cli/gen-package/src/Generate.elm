@@ -48,7 +48,7 @@ moduleToFile docs =
             "Elm" :: "Gen" :: sourceModName
     in
     Elm.file (Elm.moduleName modName)
-        ((Elm.declarationWith "thisModule"
+        ((Elm.declarationWith "moduleName_"
             (Annotation.named elm "Module")
             (Elm.apply
                 (Elm.valueWith elm "moduleName" (Annotation.named elm "Module"))
@@ -58,6 +58,13 @@ moduleToFile docs =
             |> Elm.withDocumentation " The name of this module. "
             |> Elm.expose
          )
+            :: (Elm.declaration "id_"
+                    (Elm.record
+                        (List.filterMap blockToIdField blocks)
+                    )
+                    |> Elm.withDocumentation " Every value/function in this module in case you need to refer to it directly. "
+                    |> Elm.expose
+               )
             :: List.concatMap generateBlocks blocks
         )
 
@@ -79,7 +86,7 @@ local =
 
 thisModuleName : Elm.Expression
 thisModuleName =
-    Elm.valueWith local "thisModule" (Annotation.named elm "Module")
+    Elm.valueWith local "moduleName_" (Annotation.named elm "Module")
 
 
 expressionType : Annotation.Annotation
@@ -164,6 +171,33 @@ chooseName base tags =
 
             else
                 chooseName base rest
+
+
+blockToIdField : Elm.Docs.Block -> Maybe ( String, Elm.Expression )
+blockToIdField block =
+    case block of
+        Elm.Docs.MarkdownBlock str ->
+            Nothing
+
+        Elm.Docs.UnionBlock union ->
+            Nothing
+
+        Elm.Docs.AliasBlock alias ->
+            Nothing
+
+        Elm.Docs.ValueBlock value ->
+            Just
+                ( value.name
+                , valueFrom
+                    thisModuleName
+                    (Elm.string value.name)
+                )
+
+        Elm.Docs.BinopBlock binop ->
+            Nothing
+
+        Elm.Docs.UnknownBlock str ->
+            Nothing
 
 
 generateBlocks : Elm.Docs.Block -> List Elm.Declaration
