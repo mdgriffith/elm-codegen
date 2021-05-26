@@ -135,39 +135,18 @@ var docs_generator = { cwd: "cli/gen-package",
 function format_block(content) {
     return "\n    " + content.join("\n    ") + "\n";
 }
-function action(file, pkg, options, com) {
+function install(pkg, output, version) {
     return __awaiter(this, void 0, void 0, function () {
-        var cwd, output, base, version, searchResp, search, _i, search_1, found, docsResp, docs, flags_1, moduleName_1;
+        var searchResp, search, _i, search_1, found, docsResp, docs;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    console.log("FILE:", file);
-                    console.log("PACKAGE:", pkg);
-                    console.log(options);
-                    cwd = options.cwd || ".";
-                    output = path.join(cwd, options.output || "generated");
-                    if (!(file == "init")) return [3 /*break*/, 1];
-                    base = "generators";
-                    if (fs.existsSync("./" + base)) {
-                        console.log(format_block(["Looks like there's already a " + chalk_1.default.cyan(base) + " folder."]));
-                        process.exit(1);
-                    }
-                    fs.mkdirSync("./" + base);
-                    fs.mkdirSync("./" + base + "/Elm");
-                    fs.writeFileSync("./" + base + "/elm.json", elm_json_file);
-                    fs.writeFileSync("./" + base + "/Generate.elm", elm_starter_file);
-                    fs.writeFileSync("./" + base + "/Elm/Gen.elm", elm_gen_file);
-                    console.log(format_block(["I've created the " + chalk_1.default.cyan(base) + " folder and added some files.", chalk_1.default.cyan(base + "/Generate.elm") + " is a good place to get start to see how everything works!", "",
-                        "Run your generator by running " + chalk_1.default.yellow("elm-prefab")]));
-                    return [3 /*break*/, 7];
-                case 1:
-                    if (!(file == "install" && !!pkg)) return [3 /*break*/, 6];
-                    version = '';
+                    if (!(version == null)) return [3 /*break*/, 3];
                     return [4 /*yield*/, node_fetch_1.default('https://elm-package-cache-psi.vercel.app/search.json')];
-                case 2:
+                case 1:
                     searchResp = _a.sent();
                     return [4 /*yield*/, searchResp.json()];
-                case 3:
+                case 2:
                     search = _a.sent();
                     for (_i = 0, search_1 = search; _i < search_1.length; _i++) {
                         found = search_1[_i];
@@ -176,55 +155,81 @@ function action(file, pkg, options, com) {
                             break;
                         }
                     }
-                    return [4 /*yield*/, node_fetch_1.default("https://elm-package-cache-psi.vercel.app/packages/" + pkg + "/" + version + "/docs.json")];
+                    if (version == null) {
+                        console.log(format_block(["No package found for " + pkg]));
+                        process.exit();
+                    }
+                    _a.label = 3;
+                case 3: return [4 /*yield*/, node_fetch_1.default("https://elm-package-cache-psi.vercel.app/packages/" + pkg + "/" + version + "/docs.json")];
                 case 4:
                     docsResp = _a.sent();
                     return [4 /*yield*/, docsResp.json()];
                 case 5:
                     docs = _a.sent();
                     generate(docs_generator.file, docs_generator.moduleName, output, docs_generator.cwd, docs);
-                    return [3 /*break*/, 7];
-                case 6:
-                    flags_1 = null;
-                    if (options.flagsFrom) {
-                        if (options.flagsFrom.endsWith(".json")) {
-                            flags_1 = JSON.parse(fs.readFileSync(options.flagsFrom).toString());
-                        }
-                        else {
-                            flags_1 = fs.readFileSync(options.flagsFrom).toString();
-                        }
-                    }
-                    else if (options.flags) {
-                        flags_1 = JSON.parse(options.flags);
-                    }
-                    if (file.endsWith(".elm")) {
-                        moduleName_1 = path.parse(file).name;
-                        if (options.watch) {
-                            generate(file, moduleName_1, output, cwd, flags_1);
-                            chokidar.watch(path.join(cwd, "**", "*.elm"), { ignored: path.join(output, "**") }).on('all', function (event, path) {
-                                console.log("\nFile changed, regenerating");
-                                generate(file, moduleName_1, output, cwd, flags_1);
-                            });
-                        }
-                        else {
-                            generate(file, moduleName_1, output, cwd, flags_1);
-                        }
-                    }
-                    else if (file.endsWith(".json")) {
-                        console.log("JS");
-                    }
-                    else if (file.split("/").length == 2) {
-                        console.log("Elm package!");
-                    }
-                    _a.label = 7;
-                case 7: return [2 /*return*/];
+                    return [2 /*return*/];
             }
+        });
+    });
+}
+function action(cmd, pkg, options, com) {
+    return __awaiter(this, void 0, void 0, function () {
+        var cwd, output, base, flags_1, moduleName_1;
+        return __generator(this, function (_a) {
+            cwd = options.cwd || ".";
+            output = path.join(cwd, options.output || "generated");
+            if (cmd == "init") {
+                base = "generators";
+                if (fs.existsSync("./" + base)) {
+                    console.log(format_block(["Looks like there's already a " + chalk_1.default.cyan(base) + " folder."]));
+                    process.exit(1);
+                }
+                fs.mkdirSync("./" + base);
+                fs.mkdirSync("./" + base + "/Elm");
+                fs.writeFileSync("./" + base + "/elm.json", elm_json_file);
+                fs.writeFileSync("./" + base + "/Generate.elm", elm_starter_file);
+                fs.writeFileSync("./" + base + "/Elm/Gen.elm", elm_gen_file);
+                install("elm/core", base, null);
+                console.log(format_block(["I've created the " + chalk_1.default.cyan(base) + " folder and added some files.", chalk_1.default.cyan(base + "/Generate.elm") + " is a good place to get start to see how everything works!", "",
+                    "Run your generator by running " + chalk_1.default.yellow("elm-prefab")]));
+            }
+            else if (cmd == "install" && !!pkg) {
+                install(pkg, output, null);
+            }
+            else {
+                flags_1 = null;
+                if (options.flagsFrom) {
+                    if (options.flagsFrom.endsWith(".json")) {
+                        flags_1 = JSON.parse(fs.readFileSync(options.flagsFrom).toString());
+                    }
+                    else {
+                        flags_1 = fs.readFileSync(options.flagsFrom).toString();
+                    }
+                }
+                else if (options.flags) {
+                    flags_1 = JSON.parse(options.flags);
+                }
+                if (cmd.endsWith(".elm")) {
+                    moduleName_1 = path.parse(cmd).name;
+                    if (options.watch) {
+                        generate(cmd, moduleName_1, output, cwd, flags_1);
+                        chokidar.watch(path.join(cwd, "**", "*.elm"), { ignored: path.join(output, "**") }).on('all', function (event, path) {
+                            console.log("\nFile changed, regenerating");
+                            generate(cmd, moduleName_1, output, cwd, flags_1);
+                        });
+                    }
+                    else {
+                        generate(cmd, moduleName_1, output, cwd, flags_1);
+                    }
+                }
+            }
+            return [2 /*return*/];
         });
     });
 }
 program
     .version('0.1.0')
-    .arguments('<file> [package]')
+    .arguments('[cmd] [package]')
     .option('--watch', 'Watch the given file for changes and rerun the generator when a change is made.')
     .option('--cwd <dir>', 'Change the base directory for compiling your Elm generator')
     .option('--output <dir>', 'The directory where your generated files should go.')

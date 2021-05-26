@@ -205,10 +205,31 @@ function format_block(content: string[]) {
 }
 
 
+async function install(pkg:string, output: string, version: string|null){
+    if (version == null) {
+        const searchResp = await fetch('https://elm-package-cache-psi.vercel.app/search.json')
+        const search = await searchResp.json()
+        for (let found of search) {
+            if (found.name == pkg){
+                version = found.version
+                break
+            }
+        }
+        if (version == null) {
+            console.log(format_block([ `No package found for ${pkg}` ]))
+            process.exit()
+        }
+    }
+    const docsResp = await fetch(`https://elm-package-cache-psi.vercel.app/packages/${pkg}/${version}/docs.json`)
+    const docs = await docsResp.json()
+
+    generate(docs_generator.file, docs_generator.moduleName, output, docs_generator.cwd, docs)
+}
+
 async function action(cmd: string, pkg: string | null, options: Options, com:any) {
-    console.log("FILE:" , cmd)
-    console.log("PACKAGE:", pkg)
-    console.log(options)
+//     console.log("FILE:" , cmd)
+//     console.log("PACKAGE:", pkg)
+//     console.log(options)
     const cwd = options.cwd || "."
     const output = path.join(cwd, options.output || "generated")
 
@@ -226,6 +247,7 @@ async function action(cmd: string, pkg: string | null, options: Options, com:any
         fs.writeFileSync(`./${base}/elm.json`, elm_json_file)
         fs.writeFileSync(`./${base}/Generate.elm`, elm_starter_file)
         fs.writeFileSync(`./${base}/Elm/Gen.elm`, elm_gen_file)
+        install("elm/core", base, null)
         console.log(format_block(
             [ "I've created the " + chalk.cyan(base) +  " folder and added some files.",
              chalk.cyan(`${base}/Generate.elm`) + " is a good place to get start to see how everything works!"
@@ -234,20 +256,7 @@ async function action(cmd: string, pkg: string | null, options: Options, com:any
             ]))
 
     } else if (cmd == "install" && !!pkg) {
-        let version = ''
-        const searchResp = await fetch('https://elm-package-cache-psi.vercel.app/search.json')
-        const search = await searchResp.json()
-        for (let found of search) {
-            if (found.name == pkg){
-                version = found.version
-                break
-            }
-        }
-        const docsResp = await fetch(`https://elm-package-cache-psi.vercel.app/packages/${pkg}/${version}/docs.json`)
-        const docs = await docsResp.json()
-
-        generate(docs_generator.file, docs_generator.moduleName, output, docs_generator.cwd, docs)
-
+        install(pkg, output, null)
     } else {
 
         let flags:any | null = null
