@@ -211,9 +211,10 @@ function action(cmd, pkg, options, com) {
         var cwd, output, base, flags_1, moduleName_1;
         return __generator(this, function (_a) {
             cwd = options.cwd || ".";
-            output = path.join(cwd, options.output || "generated");
+            output = path.join(cwd, options.output || "output");
+            base = "generators";
             if (cmd == "init") {
-                base = "generators";
+                // create folder
                 if (fs.existsSync("./" + base)) {
                     console.log(format_block(["Looks like there's already a " + chalk_1.default.cyan(base) + " folder."]));
                     process.exit(1);
@@ -228,7 +229,7 @@ function action(cmd, pkg, options, com) {
                     "Run your generator by running " + chalk_1.default.yellow("elm-prefab")]));
             }
             else if (cmd == "install" && !!pkg) {
-                install(pkg, output, null);
+                install(pkg, base, null);
             }
             else {
                 flags_1 = null;

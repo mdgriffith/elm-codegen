@@ -262,14 +262,12 @@ async function action(cmd: string, pkg: string | null, options: Options, com:any
 //     console.log("PACKAGE:", pkg)
 //     console.log(options)
     const cwd = options.cwd || "."
-    const output = path.join(cwd, options.output || "generated")
-
+    const output = path.join(cwd, options.output || "output")
+    const base = "generators"
     if (cmd == "init") {
         // create folder
-        const base = "generators"
         if (fs.existsSync("./" + base)){
             console.log(format_block(["Looks like there's already a "+ chalk.cyan(base) + " folder."]))
-
             process.exit(1);
         }
 
@@ -287,7 +285,7 @@ async function action(cmd: string, pkg: string | null, options: Options, com:any
             ]))
 
     } else if (cmd == "install" && !!pkg) {
-        install(pkg, output, null)
+        install(pkg, base, null)
     } else {
 
         let flags:any | null = null
