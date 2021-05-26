@@ -82,6 +82,7 @@ var XMLHttpRequest_1 = require("./run/vendor/XMLHttpRequest");
 var chokidar = __importStar(require("chokidar"));
 var node_fetch_1 = __importDefault(require("node-fetch"));
 var chalk_1 = __importDefault(require("chalk"));
+var gen_package = require('./gen-package');
 // We have to stub this in the allow Elm the ability to make http requests.
 // @ts-ignore
 globalThis["XMLHttpRequest"] = XMLHttpRequest_1.XMLHttpRequest.XMLHttpRequest;
@@ -115,10 +116,9 @@ function run_generator(base, moduleName, elm_source, flags) {
         });
     });
 }
-var elm_process_opts = { stdio: [null, 'ignore', 'inherit'] };
 var program = new commander.Command();
 function generate(elm_file, moduleName, target_dir, base, flags) {
-    var data = elm_compiler.compileToStringSync([elm_file], { cwd: base, processOpts: elm_process_opts });
+    var data = elm_compiler.compileToStringSync([elm_file], { cwd: base });
     if (data === "") {
         throw "Compiler error";
     }
@@ -134,6 +134,34 @@ var docs_generator = { cwd: "cli/gen-package",
 };
 function format_block(content) {
     return "\n    " + content.join("\n    ") + "\n";
+}
+function run_package_generator(output, flags) {
+    return __awaiter(this, void 0, void 0, function () {
+        var promise;
+        return __generator(this, function (_a) {
+            promise = new Promise(function (resolve, reject) {
+                // @ts-ignore
+                var app = gen_package.Elm.Generate.init({ flags: flags });
+                if (app.ports.onSuccessSend) {
+                    app.ports.onSuccessSend.subscribe(resolve);
+                }
+                if (app.ports.onFailureSend) {
+                    app.ports.onFailureSend.subscribe(reject);
+                }
+            })
+                .then(function (files) {
+                for (var _i = 0, files_2 = files; _i < files_2.length; _i++) {
+                    var file = files_2[_i];
+                    var fullpath = path.join(output, file.path);
+                    fs.mkdirSync(path.dirname(fullpath), { recursive: true });
+                    fs.writeFileSync(fullpath, file.contents);
+                }
+            })
+                .then(function (_) { return console.info("Success!"); })
+                .catch(function (reason) { return console.error("Failure", reason); });
+            return [2 /*return*/, promise];
+        });
+    });
 }
 function install(pkg, output, version) {
     return __awaiter(this, void 0, void 0, function () {
@@ -167,7 +195,7 @@ function install(pkg, output, version) {
                 case 5:
                     docs = _a.sent();
                     try {
-                        generate(docs_generator.file, docs_generator.moduleName, output, docs_generator.cwd, docs);
+                        run_package_generator(output, docs);
                     }
                     catch (error) {
                         console.log("There was an issue generating docs for " + pkg);

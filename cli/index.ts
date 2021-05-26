@@ -26,6 +26,7 @@ import * as chokidar from 'chokidar';
 import * as https from 'https';
 import fetch from 'node-fetch';
 import chalk from 'chalk';
+const gen_package = require('./gen-package')
 
 // We have to stub this in the allow Elm the ability to make http requests.
 // @ts-ignore
@@ -58,12 +59,12 @@ async function run_generator(base:string, moduleName:string, elm_source:string, 
     return promise
 }
 
-const elm_process_opts = { stdio: [null, 'ignore', 'inherit'] }
+
 const program = new commander.Command();
 
 
 function generate(elm_file: string, moduleName:string, target_dir: string, base: string, flags: any){
-    const data = elm_compiler.compileToStringSync([elm_file], {cwd: base, processOpts: elm_process_opts });
+    const data = elm_compiler.compileToStringSync([elm_file], {cwd: base });
     if (data === "") {
         throw "Compiler error";
     }
@@ -204,6 +205,31 @@ function format_block(content: string[]) {
     return "\n    " + content.join("\n    ") + "\n"
 }
 
+async function run_package_generator(output: string, flags:any) {
+
+    const promise = new Promise((resolve, reject) => {
+        // @ts-ignore
+        const app = gen_package.Elm.Generate.init({flags: flags});
+        if (app.ports.onSuccessSend) {
+            app.ports.onSuccessSend.subscribe(resolve)
+        }
+        if (app.ports.onFailureSend) {
+            app.ports.onFailureSend.subscribe(reject)
+        }
+
+    })
+        .then((files:any) => {
+            for (const file of files) {
+                const fullpath = path.join(output, file.path)
+                fs.mkdirSync(path.dirname(fullpath), { recursive: true })
+                fs.writeFileSync(fullpath, file.contents)
+            }
+        })
+        .then((_) => console.info("Success!"))
+        .catch((reason) => console.error("Failure", reason))
+    return promise
+}
+
 
 async function install(pkg:string, output: string, version: string|null){
     if (version == null) {
@@ -224,7 +250,7 @@ async function install(pkg:string, output: string, version: string|null){
     const docs = await docsResp.json()
 
     try {
-        generate(docs_generator.file, docs_generator.moduleName, output, docs_generator.cwd, docs)
+        run_package_generator(output, docs)
     } catch (error) {
         console.log(`There was an issue generating docs for ${pkg}`)
         console.log(format_block([error]))
