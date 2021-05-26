@@ -458,8 +458,11 @@ record fields =
 
                             else
                                 case exp.annotation of
-                                    Err err ->
-                                        err ++ found.errors
+                                    Err [] ->
+                                        Compiler.SomeOtherIssue :: found.errors
+
+                                    Err errs ->
+                                        errs ++ found.errors
 
                                     Ok ann ->
                                         found.errors
@@ -493,20 +496,16 @@ record fields =
         , annotation =
             case unified.errors of
                 [] ->
-                    if List.length fields /= List.length unified.fieldAnnotations then
-                        Err [ Compiler.SomeOtherIssue ]
-
-                    else
-                        List.reverse unified.fieldAnnotations
-                            |> List.map
-                                (\( name, ann ) ->
-                                    ( Compiler.nodify name
-                                    , Compiler.nodify ann
-                                    )
+                    List.reverse unified.fieldAnnotations
+                        |> List.map
+                            (\( name, ann ) ->
+                                ( Compiler.nodify name
+                                , Compiler.nodify ann
                                 )
-                            |> Compiler.nodifyAll
-                            |> Annotation.Record
-                            |> Ok
+                            )
+                        |> Compiler.nodifyAll
+                        |> Annotation.Record
+                        |> Ok
 
                 errs ->
                     Err errs
