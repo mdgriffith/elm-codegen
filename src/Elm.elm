@@ -493,16 +493,20 @@ record fields =
         , annotation =
             case unified.errors of
                 [] ->
-                    List.reverse unified.fieldAnnotations
-                        |> List.map
-                            (\( name, ann ) ->
-                                ( Compiler.nodify name
-                                , Compiler.nodify ann
+                    if List.length fields /= List.length unified.fieldAnnotations then
+                        Err [ Compiler.SomeOtherIssue ]
+
+                    else
+                        List.reverse unified.fieldAnnotations
+                            |> List.map
+                                (\( name, ann ) ->
+                                    ( Compiler.nodify name
+                                    , Compiler.nodify ann
+                                    )
                                 )
-                            )
-                        |> Compiler.nodifyAll
-                        |> Annotation.Record
-                        |> Ok
+                            |> Compiler.nodifyAll
+                            |> Annotation.Record
+                            |> Ok
 
                 errs ->
                     Err errs
@@ -910,7 +914,7 @@ functionWith name args (Compiler.Expression body) =
                     )
 
             Err _ ->
-                Compiler.nodifyMaybe Nothing
+                Nothing
     , declaration =
         Compiler.nodify
             { name = Compiler.nodify name

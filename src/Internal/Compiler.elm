@@ -402,11 +402,6 @@ applyType : Expression -> List Expression -> Result (List InferenceError) Annota
 applyType (Expression exp) args =
     case exp.annotation of
         Err err ->
-            let
-                _ =
-                    Debug.log "NO TOP"
-                        args
-            in
             Err err
 
         Ok topAnnotation ->
@@ -420,44 +415,6 @@ applyType (Expression exp) args =
                             Debug.log "LIST FAILED TO EXTRACT" "pleasse"
                     in
                     Err err
-
-
-
---Debug.log "result" <|
---    case args of
---        [] ->
---            exp.annotation
---
---        (Expression top) :: rest ->
---            case top.annotation of
---                Err err ->
---                    Err err
---
---                Ok topAnnotation ->
---                    let
---                        _ =
---                            Debug.log "arg" topAnnotation
---                    in
---                    case exp.annotation of
---                        Ok (Annotation.FunctionTypeAnnotation one two) ->
---                            -- if one and top match ->
---                            case unifiable topAnnotation (denode one) of
---                                Ok _ ->
---                                    case rest of
---                                        [] ->
---                                            Ok (denode two)
---
---                                        _ ->
---                                            applyType two rest
---
---                                Err err ->
---                                    Err []
---
---                        Ok final ->
---                            Err [ FunctionAppliedToTooManyArgs ]
---
---                        Err err ->
---                            Err err
 
 
 {-| -}
