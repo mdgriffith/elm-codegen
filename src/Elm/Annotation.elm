@@ -187,7 +187,7 @@ extensible base fields =
 
 {-| -}
 named : Module -> String -> Annotation
-named (Compiler.Module mod maybeAlias) name =
+named ((Compiler.Module mod maybeAlias) as fullMod) name =
     Compiler.Annotation
         { annotation =
             case maybeAlias of
@@ -196,7 +196,7 @@ named (Compiler.Module mod maybeAlias) name =
 
                 Just aliasStr ->
                     Annotation.Typed (Compiler.nodify ( [ aliasStr ], name )) []
-        , imports = []
+        , imports = [ fullMod ]
         }
 
 
