@@ -1,6 +1,10 @@
 module Elm.Debug exposing (annotation)
 
-{-| -}
+{-|
+
+@docs annotation
+
+-}
 
 import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Compiler as Compiler

@@ -650,7 +650,7 @@ customType name variants =
         )
         (Declaration.CustomTypeDeclaration
             { documentation = Nothing
-            , name = Compiler.nodify name
+            , name = Compiler.nodify (Compiler.formatType name)
             , generics = []
             , constructors =
                 List.map
@@ -681,7 +681,7 @@ customTypeWith name args variants =
         )
         (Declaration.CustomTypeDeclaration
             { documentation = Nothing
-            , name = Compiler.nodify name
+            , name = Compiler.nodify (Compiler.formatType name)
             , generics = Compiler.nodifyAll args
             , constructors =
                 List.map
@@ -777,7 +777,6 @@ apply ((Compiler.Expression exp) as top) allArgs =
     Compiler.Expression
         { expression =
             Exp.Application (Compiler.nodifyAll (exp.expression :: List.map (parens << getExpression) args))
-                |> parens
         , annotation =
             Compiler.applyType top args
         , imports = exp.imports ++ List.concatMap getImports args
@@ -885,7 +884,7 @@ function name args (Compiler.Expression body) =
                 Nothing
     , declaration =
         Compiler.nodify
-            { name = Compiler.nodify name
+            { name = Compiler.nodify (Compiler.formatValue name)
             , arguments = Compiler.nodifyAll args
             , expression = Compiler.nodify body.expression
             }
@@ -903,7 +902,7 @@ functionWith name args (Compiler.Expression body) =
             Ok return ->
                 Just
                     (Compiler.nodify
-                        { name = Compiler.nodify name
+                        { name = Compiler.nodify (Compiler.formatValue name)
                         , typeAnnotation =
                             Compiler.nodify <|
                                 Compiler.getInnerAnnotation <|
@@ -917,7 +916,7 @@ functionWith name args (Compiler.Expression body) =
                 Nothing
     , declaration =
         Compiler.nodify
-            { name = Compiler.nodify name
+            { name = Compiler.nodify (Compiler.formatValue name)
             , arguments = Compiler.nodifyAll (List.map Tuple.second args)
             , expression = Compiler.nodify body.expression
             }
@@ -1048,20 +1047,6 @@ cmd =
 
 
 
---
---functionAnnotation : Elm.Annotation.Annotation -> List Elm.Annotation.Annotation -> Elm.Annotation.Annotation
---functionAnnotation start args =
---    case args of
---        [] ->
---            start
---
---        next :: remain ->
---            functionAnnotation
---                (Annotation.FunctionTypeAnnotation
---                    (Compiler.nodify start)
---                    (Compiler.nodify next)
---                )
---                remain
 {- Infix operators!
 
    The goal is to make the following work
