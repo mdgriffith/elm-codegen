@@ -777,6 +777,7 @@ apply ((Compiler.Expression exp) as top) allArgs =
     Compiler.Expression
         { expression =
             Exp.Application (Compiler.nodifyAll (exp.expression :: List.map (parens << getExpression) args))
+                |> parens
         , annotation =
             Compiler.applyType top args
         , imports = exp.imports ++ List.concatMap getImports args
