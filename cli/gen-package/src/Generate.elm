@@ -51,7 +51,14 @@ moduleToFile docs =
         ((Elm.declarationWith "moduleName_"
             (Annotation.named elm "Module")
             (Elm.apply
-                (Elm.valueWith elm "moduleName" (Annotation.named elm "Module"))
+                (Elm.valueWith elm
+                    "moduleName"
+                    (Annotation.function
+                        [ Annotation.list Annotation.string
+                        ]
+                        (Annotation.named elm "Module")
+                    )
+                )
                 [ Elm.list (List.map Elm.string sourceModName)
                 ]
             )
@@ -71,7 +78,12 @@ moduleToFile docs =
 
 elmAnnotation : Elm.Module
 elmAnnotation =
-    Elm.moduleName [ "Elm", "Annotation" ]
+    Elm.moduleAs [ "Elm", "Annotation" ] "Type"
+
+
+annotationType : Annotation.Annotation
+annotationType =
+    Annotation.named elmAnnotation "Annotation"
 
 
 elm : Elm.Module
@@ -118,16 +130,15 @@ skip =
         expressionType
 
 
-valueFrom : Elm.Expression -> Elm.Expression -> Elm.Expression
-valueFrom mod name =
+valueFrom : Elm.Expression -> Elm.Expression -> Elm.Type.Type -> Elm.Expression
+valueFrom mod name annotation =
     Elm.apply
         (Elm.valueWith elm
-            "valueFrom"
+            "valueWith"
             (Annotation.function
                 [ Annotation.named elm "Module"
                 , Annotation.string
-
-                --, Annotation.named elmAnnotation "Annotation"
+                , Annotation.named elmAnnotation "Annotation"
                 ]
                 (Annotation.named elm "Expression")
             )
@@ -136,6 +147,7 @@ valueFrom mod name =
         )
         [ mod
         , name
+        , typeToExpression annotation
         ]
 
 
@@ -150,7 +162,7 @@ apply fn args =
             "apply"
             (Annotation.function
                 [ expressionType
-                , expressionType
+                , Annotation.list expressionType
                 ]
                 expressionType
             )
@@ -191,6 +203,7 @@ blockToIdField block =
                 , valueFrom
                     thisModuleName
                     (Elm.string value.name)
+                    value.tipe
                 )
 
         Elm.Docs.BinopBlock binop ->
@@ -218,7 +231,11 @@ generateBlocks block =
                         :: List.map
                             (\( name, tag ) ->
                                 ( name
-                                , valueFrom thisModuleName (Elm.string name)
+                                , valueFrom thisModuleName
+                                    (Elm.string name)
+                                    (Elm.Type.Type union.name
+                                        (List.map Elm.Type.Var union.args)
+                                    )
                                 )
                             )
                             union.tags
@@ -259,6 +276,7 @@ generateBlocks block =
                             (valueFrom
                                 thisModuleName
                                 (Elm.string value.name)
+                                value.tipe
                             )
                             (List.reverse (List.drop 1 captured.values))
                         )
@@ -272,6 +290,7 @@ generateBlocks block =
                         (valueFrom
                             thisModuleName
                             (Elm.string value.name)
+                            value.tipe
                         )
                         |> Elm.withDocumentation value.comment
                         |> Elm.expose
@@ -416,16 +435,16 @@ asValueHelper index tipe args =
         | Record (List ( String, Type )) (Maybe String)
 
 -}
-convertType : Elm.Type.Type -> Annotation.Annotation
-convertType elmType =
+typeToAnnotation : Elm.Type.Type -> Annotation.Annotation
+typeToAnnotation elmType =
     case elmType of
         Elm.Type.Var string ->
             Annotation.var string
 
         Elm.Type.Lambda one two ->
             Annotation.function
-                [ convertType one ]
-                (convertType two)
+                [ typeToAnnotation one ]
+                (typeToAnnotation two)
 
         Elm.Type.Tuple types ->
             case types of
@@ -433,22 +452,205 @@ convertType elmType =
                     Annotation.unit
 
                 [ one, two ] ->
-                    Annotation.tuple (convertType one) (convertType two)
+                    Annotation.tuple (typeToAnnotation one) (typeToAnnotation two)
 
                 [ one, two, three ] ->
-                    Annotation.triple (convertType one) (convertType two) (convertType three)
+                    Annotation.triple (typeToAnnotation one) (typeToAnnotation two) (typeToAnnotation three)
 
                 _ ->
                     -- this should never happen :/
                     Annotation.unit
 
         Elm.Type.Type name types ->
-            Annotation.namedWith (Elm.moduleName []) name (List.map convertType types)
+            Annotation.namedWith (Elm.moduleName []) name (List.map typeToAnnotation types)
 
         Elm.Type.Record fields maybeExtensible ->
             case maybeExtensible of
                 Nothing ->
-                    Annotation.record (List.map (Tuple.mapSecond convertType) fields)
+                    Annotation.record (List.map (Tuple.mapSecond typeToAnnotation) fields)
 
                 Just base ->
-                    Annotation.extensible base (List.map (Tuple.mapSecond convertType) fields)
+                    Annotation.extensible base (List.map (Tuple.mapSecond typeToAnnotation) fields)
+
+
+chompLambdas : List Elm.Expression -> Elm.Type.Type -> Elm.Expression
+chompLambdas exps tipe =
+    case tipe of
+        Elm.Type.Lambda one two ->
+            chompLambdas
+                (typeToExpression one :: exps)
+                two
+
+        _ ->
+            Elm.apply
+                (Elm.valueWith elmAnnotation
+                    "function"
+                    (Annotation.function
+                        [ Annotation.list annotationType
+                        , annotationType
+                        ]
+                        annotationType
+                    )
+                )
+                [ Elm.list (List.reverse exps)
+                , typeToExpression tipe
+                ]
+
+
+typeToExpression : Elm.Type.Type -> Elm.Expression
+typeToExpression elmType =
+    case elmType of
+        Elm.Type.Var string ->
+            Elm.apply
+                (Elm.valueWith elmAnnotation
+                    "var"
+                    (Annotation.function
+                        [ Annotation.string ]
+                        annotationType
+                    )
+                )
+                [ Elm.string string
+                ]
+
+        Elm.Type.Lambda one two ->
+            chompLambdas
+                [ typeToExpression one
+                ]
+                two
+
+        Elm.Type.Tuple types ->
+            case types of
+                [] ->
+                    Elm.valueWith elmAnnotation "unit" annotationType
+
+                [ one, two ] ->
+                    Elm.apply
+                        (Elm.valueWith elmAnnotation
+                            "tuple"
+                            (Annotation.function
+                                [ annotationType
+                                , annotationType
+                                ]
+                                annotationType
+                            )
+                        )
+                        [ typeToExpression one
+                        , typeToExpression two
+                        ]
+
+                [ one, two, three ] ->
+                    Elm.apply
+                        (Elm.valueWith elmAnnotation
+                            "triple"
+                            (Annotation.function
+                                [ annotationType
+                                , annotationType
+                                , annotationType
+                                ]
+                                annotationType
+                            )
+                        )
+                        [ typeToExpression one
+                        , typeToExpression two
+                        , typeToExpression three
+                        ]
+
+                _ ->
+                    -- this should never happen :/
+                    Elm.valueWith elmAnnotation "unit" annotationType
+
+        Elm.Type.Type name types ->
+            let
+                frags =
+                    String.split "." name
+
+                fragsLength =
+                    List.length frags
+
+                typeName =
+                    List.drop (fragsLength - 1) frags
+                        |> List.head
+                        |> Maybe.withDefault name
+
+                mod =
+                    List.take (fragsLength - 1) frags
+                        |> List.map Elm.string
+            in
+            Elm.apply
+                (Elm.valueWith elmAnnotation
+                    "namedWith"
+                    (Annotation.function
+                        [ Annotation.named elm "Module"
+                        , Annotation.string
+                        , Annotation.list annotationType
+                        ]
+                        annotationType
+                    )
+                )
+                [ Elm.apply
+                    (Elm.valueWith elm
+                        "moduleName"
+                        (Annotation.function
+                            [ Annotation.list Annotation.string
+                            ]
+                            (Annotation.named elm "Module")
+                        )
+                    )
+                    [ Elm.list mod ]
+                , Elm.string typeName
+                , Elm.list (List.map typeToExpression types)
+                ]
+
+        Elm.Type.Record fields maybeExtensible ->
+            case maybeExtensible of
+                Nothing ->
+                    Elm.apply
+                        (Elm.valueWith elmAnnotation
+                            "record"
+                            (Annotation.function
+                                [ Annotation.list
+                                    (Annotation.tuple
+                                        Annotation.string
+                                        annotationType
+                                    )
+                                ]
+                                annotationType
+                            )
+                        )
+                        [ Elm.list
+                            (List.map
+                                (\( fieldName, fieldType ) ->
+                                    Elm.tuple
+                                        (Elm.string fieldName)
+                                        (typeToExpression fieldType)
+                                )
+                                fields
+                            )
+                        ]
+
+                Just base ->
+                    Elm.apply
+                        (Elm.valueWith elmAnnotation
+                            "extensible"
+                            (Annotation.function
+                                [ Annotation.string
+                                , Annotation.list
+                                    (Annotation.tuple
+                                        Annotation.string
+                                        annotationType
+                                    )
+                                ]
+                                annotationType
+                            )
+                        )
+                        [ Elm.string base
+                        , Elm.list
+                            (List.map
+                                (\( fieldName, fieldType ) ->
+                                    Elm.tuple
+                                        (Elm.string fieldName)
+                                        (typeToExpression fieldType)
+                                )
+                                fields
+                            )
+                        ]

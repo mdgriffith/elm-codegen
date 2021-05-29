@@ -394,6 +394,10 @@ extractListAnnotation expressions annotations =
                     extractListAnnotation remain (ann :: annotations)
 
                 Err err ->
+                    --let
+                    --    _ =
+                    --        Debug.log "LIST FAILED TO EXTRACT" { passed = annotations, top = top }
+                    --in
                     Err err
 
 
@@ -410,11 +414,26 @@ applyType (Expression exp) args =
                     applyTypeHelper topAnnotation types
 
                 Err err ->
-                    let
-                        _ =
-                            Debug.log "LIST FAILED TO EXTRACT" "pleasse"
-                    in
+                    --let
+                    --    _ =
+                    --        Debug.log "LIST FAILED TO EXTRACT" err
+                    --in
                     Err err
+
+
+autoReduce : Int -> Expression -> Expression
+autoReduce count ((Expression fn) as unchanged) =
+    if count <= 0 then
+        unchanged
+
+    else
+        case fn.annotation of
+            Ok (Annotation.FunctionTypeAnnotation one two) ->
+                autoReduce (count - 1)
+                    (Expression { fn | annotation = Ok (denode two) })
+
+            final ->
+                unchanged
 
 
 {-| -}
@@ -438,6 +457,13 @@ applyTypeHelper fn args =
                                     applyTypeHelper (denode two) rest
 
                         Err err ->
+                            let
+                                _ =
+                                    Debug.log "APPLAIL"
+                                        { fn = fn
+                                        , top = top
+                                        }
+                            in
                             Err []
 
         final ->
@@ -476,13 +502,12 @@ unifyHelper exps existing =
         (Expression top) :: remain ->
             case top.annotation of
                 Ok ann ->
-                    case unifiable ann existing of
-                        Err _ ->
-                            Err [ MismatchedList ann existing ]
+                    --case unifiable ann existing of
+                    --    Err _ ->
+                    Err [ MismatchedList ann existing ]
 
-                        Ok new ->
-                            unifyHelper remain new
-
+                --Ok new ->
+                --    unifyHelper remain new
                 Err err ->
                     Err err
 
@@ -510,6 +535,26 @@ unifiable one two =
                 Annotation.GenericType a ->
                     Ok two
 
+                Annotation.Typed oneName oneContents ->
+                    case two of
+                        Annotation.Typed twoName twoContents ->
+                            if denode oneName == denode twoName then
+                                case unifiableLists oneContents twoContents [] of
+                                    Ok unifiedContent ->
+                                        Ok (Annotation.Typed twoName unifiedContent)
+
+                                    Err err ->
+                                        Err err
+
+                            else
+                                Err "Unable to unify container!"
+
+                        Annotation.GenericType b ->
+                            Ok one
+
+                        _ ->
+                            Err "Unable to unify container!"
+
                 otherwise ->
                     case two of
                         Annotation.GenericType b ->
@@ -532,3 +577,28 @@ unifiable one two =
                         ( one, two )
     in
     result
+
+
+unifiableLists one two unified =
+    case ( one, two ) of
+        ( [], [] ) ->
+            Ok (nodifyAll (List.reverse unified))
+
+        ( [ oneX ], [ twoX ] ) ->
+            case unifiable (denode oneX) (denode twoX) of
+                Ok un ->
+                    Ok (nodifyAll (List.reverse (un :: unified)))
+
+                Err err ->
+                    Err err
+
+        ( oneX :: oneRemain, twoX :: twoRemain ) ->
+            case unifiable (denode oneX) (denode twoX) of
+                Ok un ->
+                    unifiableLists oneRemain twoRemain (un :: unified)
+
+                Err err ->
+                    Err err
+
+        _ ->
+            Err "Mismatched numbers of type variables"

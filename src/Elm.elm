@@ -424,7 +424,14 @@ list : List Expression -> Expression
 list exprs =
     Compiler.Expression
         { expression = Exp.ListExpr (List.map toList exprs)
-        , annotation = Compiler.unify exprs
+        , annotation =
+            Compiler.unify exprs
+                |> Result.map
+                    (\inner ->
+                        Annotation.Typed
+                            (Compiler.nodify ( [], "List" ))
+                            [ Compiler.nodify inner ]
+                    )
         , imports = List.concatMap getImports exprs
         , skip = False
         }
@@ -771,6 +778,18 @@ getImports (Compiler.Expression exp) =
 apply : Expression -> List Expression -> Expression
 apply ((Compiler.Expression exp) as top) allArgs =
     let
+        reduceCount =
+            List.foldl
+                (\(Compiler.Expression arg) count ->
+                    if arg.skip then
+                        count + 1
+
+                    else
+                        count
+                )
+                0
+                allArgs
+
         args =
             List.filter (\(Compiler.Expression arg) -> not arg.skip) allArgs
     in
@@ -778,7 +797,7 @@ apply ((Compiler.Expression exp) as top) allArgs =
         { expression =
             Exp.Application (Compiler.nodifyAll (exp.expression :: List.map (parens << getExpression) args))
         , annotation =
-            Compiler.applyType top args
+            Compiler.applyType (Compiler.autoReduce reduceCount top) args
         , imports = exp.imports ++ List.concatMap getImports args
         , skip = False
         }
