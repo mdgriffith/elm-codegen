@@ -130,8 +130,8 @@ skip =
         expressionType
 
 
-valueFrom : Elm.Expression -> Elm.Expression -> Elm.Type.Type -> Elm.Expression
-valueFrom mod name annotation =
+valueWith : Elm.Expression -> Elm.Expression -> Elm.Type.Type -> Elm.Expression
+valueWith mod name annotation =
     Elm.apply
         (Elm.valueWith elm
             "valueWith"
@@ -200,7 +200,7 @@ blockToIdField block =
         Elm.Docs.ValueBlock value ->
             Just
                 ( value.name
-                , valueFrom
+                , valueWith
                     thisModuleName
                     (Elm.string value.name)
                     value.tipe
@@ -231,7 +231,7 @@ generateBlocks block =
                         :: List.map
                             (\( name, tag ) ->
                                 ( name
-                                , valueFrom thisModuleName
+                                , valueWith thisModuleName
                                     (Elm.string name)
                                     (Elm.Type.Type union.name
                                         (List.map Elm.Type.Var union.args)
@@ -273,7 +273,7 @@ generateBlocks block =
                     [ Elm.functionWith value.name
                         (List.reverse (List.drop 1 captured.arguments))
                         (apply
-                            (valueFrom
+                            (valueWith
                                 thisModuleName
                                 (Elm.string value.name)
                                 value.tipe
@@ -287,7 +287,7 @@ generateBlocks block =
                 _ ->
                     [ Elm.declarationWith value.name
                         expressionType
-                        (valueFrom
+                        (valueWith
                             thisModuleName
                             (Elm.string value.name)
                             value.tipe
@@ -321,8 +321,8 @@ logAnnotation str ((Util.Expression exp) as val) =
         ]
     , body =
         Elm.apply
-            (valueFrom
-                (Elm.apply (Elm.valueFrom elm "moduleName")
+            (valueWith
+                (Elm.apply (Elm.valueWith elm "moduleName")
                     [ Elm.list (List.map Elm.string mod)
                     ]
                 )

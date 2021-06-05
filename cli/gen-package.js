@@ -4948,22 +4948,35 @@ var $author$project$Internal$Compiler$MismatchedList = F2(
 	});
 var $author$project$Internal$Compiler$unifyHelper = F2(
 	function (exps, existing) {
-		if (!exps.b) {
-			return $elm$core$Result$Ok(existing);
-		} else {
-			var top = exps.a.a;
-			var remain = exps.b;
-			var _v1 = top.annotation;
-			if (_v1.$ === 'Ok') {
-				var ann = _v1.a;
-				return $elm$core$Result$Err(
-					_List_fromArray(
-						[
-							A2($author$project$Internal$Compiler$MismatchedList, ann, existing)
-						]));
+		unifyHelper:
+		while (true) {
+			if (!exps.b) {
+				return $elm$core$Result$Ok(existing);
 			} else {
-				var err = _v1.a;
-				return $elm$core$Result$Err(err);
+				var top = exps.a.a;
+				var remain = exps.b;
+				var _v1 = top.annotation;
+				if (_v1.$ === 'Ok') {
+					var ann = _v1.a;
+					var _v2 = A2($author$project$Internal$Compiler$unifiable, ann, existing);
+					if (_v2.$ === 'Err') {
+						return $elm$core$Result$Err(
+							_List_fromArray(
+								[
+									A2($author$project$Internal$Compiler$MismatchedList, ann, existing)
+								]));
+					} else {
+						var _new = _v2.a;
+						var $temp$exps = remain,
+							$temp$existing = _new;
+						exps = $temp$exps;
+						existing = $temp$existing;
+						continue unifyHelper;
+					}
+				} else {
+					var err = _v1.a;
+					return $elm$core$Result$Err(err);
+				}
 			}
 		}
 	});
@@ -5468,7 +5481,7 @@ var $author$project$Generate$typeToExpression = function (elmType) {
 			}
 	}
 };
-var $author$project$Generate$valueFrom = F3(
+var $author$project$Generate$valueWith = F3(
 	function (mod, name, annotation) {
 		return A2(
 			$author$project$Elm$apply,
@@ -5509,7 +5522,7 @@ var $author$project$Generate$blockToIdField = function (block) {
 				_Utils_Tuple2(
 					value.name,
 					A3(
-						$author$project$Generate$valueFrom,
+						$author$project$Generate$valueWith,
 						$author$project$Generate$thisModuleName,
 						$author$project$Elm$string(value.name),
 						value.tipe)));
@@ -6268,7 +6281,7 @@ var $author$project$Generate$generateBlocks = function (block) {
 										return _Utils_Tuple2(
 											name,
 											A3(
-												$author$project$Generate$valueFrom,
+												$author$project$Generate$valueWith,
 												$author$project$Generate$thisModuleName,
 												$author$project$Elm$string(name),
 												A2(
@@ -6330,7 +6343,7 @@ var $author$project$Generate$generateBlocks = function (block) {
 								A2(
 									$author$project$Generate$apply,
 									A3(
-										$author$project$Generate$valueFrom,
+										$author$project$Generate$valueWith,
 										$author$project$Generate$thisModuleName,
 										$author$project$Elm$string(value.name),
 										value.tipe),
@@ -6349,7 +6362,7 @@ var $author$project$Generate$generateBlocks = function (block) {
 								value.name,
 								$author$project$Generate$expressionType,
 								A3(
-									$author$project$Generate$valueFrom,
+									$author$project$Generate$valueWith,
 									$author$project$Generate$thisModuleName,
 									$author$project$Elm$string(value.name),
 									value.tipe))))

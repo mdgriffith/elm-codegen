@@ -502,12 +502,13 @@ unifyHelper exps existing =
         (Expression top) :: remain ->
             case top.annotation of
                 Ok ann ->
-                    --case unifiable ann existing of
-                    --    Err _ ->
-                    Err [ MismatchedList ann existing ]
+                    case unifiable ann existing of
+                        Err _ ->
+                            Err [ MismatchedList ann existing ]
 
-                --Ok new ->
-                --    unifyHelper remain new
+                        Ok new ->
+                            unifyHelper remain new
+
                 Err err ->
                     Err err
 
