@@ -312,7 +312,7 @@ inModule mods =
 
 moduleAs : List String -> String -> Module
 moduleAs mods modAlias =
-    Module (List.map formatType mods) (Just modAlias)
+    Module (List.map formatType mods) (Just (formatType modAlias))
 
 
 unpack : Module -> ModuleName.ModuleName

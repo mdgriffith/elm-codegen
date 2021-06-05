@@ -8,6 +8,7 @@ module Elm exposing
     , caseOf
     , apply
     , lambda, lambdaWith
+    , withAnnotation
     , Declaration, declaration, declarationWith
     , function, functionWith
     , alias, aliasWith
@@ -43,6 +44,8 @@ module Elm exposing
 @docs apply
 
 @docs lambda, lambdaWith
+
+@docs withAnnotation
 
 
 # Top level
@@ -268,10 +271,24 @@ value =
 valueFrom : Module -> String -> Expression
 valueFrom mod name =
     Compiler.Expression
-        { expression = Exp.FunctionOrValue (Compiler.unpack mod) name
+        { expression = Exp.FunctionOrValue (Compiler.unpack mod) (Compiler.formatValue name)
         , annotation = Err []
         , imports = [ mod ]
         , skip = False
+        }
+
+
+{-| Sometimes you may need to add a manual annotation.
+
+Though be sure elm-prefab isn't already doing this automatically for you!
+
+-}
+withAnnotation : Elm.Annotation.Annotation -> Expression -> Expression
+withAnnotation ann (Compiler.Expression exp) =
+    Compiler.Expression
+        { exp
+            | annotation = Ok (Compiler.getInnerAnnotation ann)
+            , imports = exp.imports ++ Compiler.getAnnotationImports ann
         }
 
 
@@ -292,7 +309,7 @@ Then, when that list is generated, it will automatically have the type signature
 valueWith : Module -> String -> Elm.Annotation.Annotation -> Expression
 valueWith mod name ann =
     Compiler.Expression
-        { expression = Exp.FunctionOrValue (Compiler.unpack mod) name
+        { expression = Exp.FunctionOrValue (Compiler.unpack mod) (Compiler.formatValue name)
         , annotation = Ok (Compiler.getInnerAnnotation ann)
         , imports = mod :: Compiler.getAnnotationImports ann
         , skip = False
@@ -626,7 +643,7 @@ get : String -> Expression -> Expression
 get selector (Compiler.Expression expr) =
     Compiler.Expression
         { expression =
-            Exp.RecordAccess (Compiler.nodify expr.expression) (Compiler.nodify selector)
+            Exp.RecordAccess (Compiler.nodify expr.expression) (Compiler.nodify (Compiler.formatValue selector))
         , annotation =
             Err [ Compiler.SomeOtherIssue ]
         , imports = expr.imports
@@ -731,7 +748,7 @@ alias name innerAnnotation =
         (Compiler.getAnnotationImports innerAnnotation)
         (Declaration.AliasDeclaration
             { documentation = Nothing
-            , name = Compiler.nodify name
+            , name = Compiler.nodify (Compiler.formatType name)
             , generics = []
             , typeAnnotation = Compiler.nodify (Compiler.getInnerAnnotation innerAnnotation)
             }
@@ -750,7 +767,7 @@ aliasWith name args innerAnnotation =
         (Compiler.getAnnotationImports innerAnnotation)
         (Declaration.AliasDeclaration
             { documentation = Nothing
-            , name = Compiler.nodify name
+            , name = Compiler.nodify (Compiler.formatType name)
             , generics = Compiler.nodifyAll args
             , typeAnnotation = Compiler.nodify (Compiler.getInnerAnnotation innerAnnotation)
             }
@@ -778,18 +795,6 @@ getImports (Compiler.Expression exp) =
 apply : Expression -> List Expression -> Expression
 apply ((Compiler.Expression exp) as top) allArgs =
     let
-        reduceCount =
-            List.foldl
-                (\(Compiler.Expression arg) count ->
-                    if arg.skip then
-                        count + 1
-
-                    else
-                        count
-                )
-                0
-                allArgs
-
         args =
             List.filter (\(Compiler.Expression arg) -> not arg.skip) allArgs
     in
@@ -797,7 +802,6 @@ apply ((Compiler.Expression exp) as top) allArgs =
         { expression =
             Exp.Application (Compiler.nodifyAll (exp.expression :: List.map (parens << getExpression) args))
         , annotation =
-            --Compiler.applyType (Compiler.autoReduce reduceCount top) args
             Compiler.applyType top args
         , imports = exp.imports ++ List.concatMap getImports args
         , skip = False
@@ -918,7 +922,7 @@ function name args (Compiler.Expression body) =
                     [] ->
                         Just
                             (Compiler.nodify
-                                { name = Compiler.nodify name
+                                { name = Compiler.nodify (Compiler.formatValue name)
                                 , typeAnnotation =
                                     Compiler.nodify sig
                                 }

@@ -5119,15 +5119,6 @@ var $author$project$Elm$parens = function (expr) {
 var $author$project$Elm$apply = F2(
 	function (top, allArgs) {
 		var exp = top.a;
-		var reduceCount = A3(
-			$elm$core$List$foldl,
-			F2(
-				function (_v1, count) {
-					var arg = _v1.a;
-					return arg.skip ? (count + 1) : count;
-				}),
-			0,
-			allArgs);
 		var args = A2(
 			$elm$core$List$filter,
 			function (_v0) {
@@ -5242,7 +5233,9 @@ var $author$project$Elm$Annotation$named = F2(
 						return A2(
 							$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Typed,
 							$author$project$Internal$Compiler$nodify(
-								_Utils_Tuple2(mod, name)),
+								_Utils_Tuple2(
+									mod,
+									$author$project$Internal$Compiler$formatType(name))),
 							_List_Nil);
 					} else {
 						var aliasStr = maybeAlias.a;
@@ -5252,7 +5245,7 @@ var $author$project$Elm$Annotation$named = F2(
 								_Utils_Tuple2(
 									_List_fromArray(
 										[aliasStr]),
-									name)),
+									$author$project$Internal$Compiler$formatType(name))),
 							_List_Nil);
 					}
 				}(),
@@ -5264,6 +5257,13 @@ var $stil4m$elm_syntax$Elm$Syntax$Expression$FunctionOrValue = F2(
 	function (a, b) {
 		return {$: 'FunctionOrValue', a: a, b: b};
 	});
+var $elm$core$String$toLower = _String_toLower;
+var $author$project$Internal$Compiler$formatValue = function (str) {
+	return _Utils_ap(
+		$elm$core$String$toLower(
+			A2($elm$core$String$left, 1, str)),
+		A2($elm$core$String$dropLeft, 1, str));
+};
 var $author$project$Internal$Compiler$unpack = function (_v0) {
 	var name = _v0.a;
 	var maybeAlias = _v0.b;
@@ -5284,7 +5284,7 @@ var $author$project$Elm$valueWith = F3(
 				expression: A2(
 					$stil4m$elm_syntax$Elm$Syntax$Expression$FunctionOrValue,
 					$author$project$Internal$Compiler$unpack(mod),
-					name),
+					$author$project$Internal$Compiler$formatValue(name)),
 				imports: A2(
 					$elm$core$List$cons,
 					mod,
@@ -5302,7 +5302,8 @@ var $author$project$Internal$Compiler$moduleAs = F2(
 		return A2(
 			$author$project$Internal$Compiler$Module,
 			A2($elm$core$List$map, $author$project$Internal$Compiler$formatType, mods),
-			$elm$core$Maybe$Just(modAlias));
+			$elm$core$Maybe$Just(
+				$author$project$Internal$Compiler$formatType(modAlias)));
 	});
 var $author$project$Elm$moduleAs = $author$project$Internal$Compiler$moduleAs;
 var $author$project$Generate$elmAnnotation = A2(
@@ -5984,13 +5985,6 @@ var $stil4m$elm_syntax$Elm$Syntax$Declaration$FunctionDeclaration = function (a)
 	return {$: 'FunctionDeclaration', a: a};
 };
 var $author$project$Internal$Compiler$NotExposed = {$: 'NotExposed'};
-var $elm$core$String$toLower = _String_toLower;
-var $author$project$Internal$Compiler$formatValue = function (str) {
-	return _Utils_ap(
-		$elm$core$String$toLower(
-			A2($elm$core$String$left, 1, str)),
-		A2($elm$core$String$dropLeft, 1, str));
-};
 var $elm$core$Maybe$map = F2(
 	function (f, maybe) {
 		if (maybe.$ === 'Just') {
@@ -6027,7 +6021,8 @@ var $author$project$Elm$function = F3(
 								return $elm$core$Maybe$Just(
 									$author$project$Internal$Compiler$nodify(
 										{
-											name: $author$project$Internal$Compiler$nodify(name),
+											name: $author$project$Internal$Compiler$nodify(
+												$author$project$Internal$Compiler$formatValue(name)),
 											typeAnnotation: $author$project$Internal$Compiler$nodify(sig)
 										}));
 							} else {

@@ -178,7 +178,7 @@ extensible base fields =
                     )
                 |> Compiler.nodifyAll
                 |> Compiler.nodify
-                |> Annotation.GenericRecord (Compiler.nodify base)
+                |> Annotation.GenericRecord (Compiler.nodify (Compiler.formatValue base))
         , imports =
             fields
                 |> List.concatMap (Tuple.second >> Compiler.getAnnotationImports)
@@ -192,10 +192,10 @@ named ((Compiler.Module mod maybeAlias) as fullMod) name =
         { annotation =
             case maybeAlias of
                 Nothing ->
-                    Annotation.Typed (Compiler.nodify ( mod, name )) []
+                    Annotation.Typed (Compiler.nodify ( mod, Compiler.formatType name )) []
 
                 Just aliasStr ->
-                    Annotation.Typed (Compiler.nodify ( [ aliasStr ], name )) []
+                    Annotation.Typed (Compiler.nodify ( [ aliasStr ], Compiler.formatType name )) []
         , imports = [ fullMod ]
         }
 
@@ -207,7 +207,7 @@ namedWith ((Compiler.Module mod maybeAlias) as fullMod) name args =
         Nothing ->
             Compiler.Annotation
                 { annotation =
-                    Annotation.Typed (Compiler.nodify ( mod, name ))
+                    Annotation.Typed (Compiler.nodify ( mod, Compiler.formatType name ))
                         (Compiler.nodifyAll
                             (List.map Compiler.getInnerAnnotation
                                 args
