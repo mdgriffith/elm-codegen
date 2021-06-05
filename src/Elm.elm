@@ -7,7 +7,7 @@ module Elm exposing
     , record, get
     , caseOf
     , apply
-    , lambda
+    , lambda, lambdaWith
     , Declaration, declaration, declarationWith
     , function, functionWith
     , alias, aliasWith
@@ -42,7 +42,7 @@ module Elm exposing
 
 @docs apply
 
-@docs lambda
+@docs lambda, lambdaWith
 
 
 # Top level
@@ -819,7 +819,36 @@ lambda args (Compiler.Expression expr) =
                 , expression = Compiler.nodify expr.expression
                 }
         , annotation =
-            expr.annotation
+            Err []
+        , imports = expr.imports
+        , skip = False
+        }
+
+
+{-| -}
+lambdaWith : List ( Pattern, Elm.Annotation.Annotation ) -> Expression -> Expression
+lambdaWith args (Compiler.Expression expr) =
+    Compiler.Expression
+        { expression =
+            Exp.LambdaExpression
+                { args = Compiler.nodifyAll (List.map Tuple.first args)
+                , expression = Compiler.nodify expr.expression
+                }
+        , annotation =
+            case expr.annotation of
+                Err err ->
+                    Err err
+
+                Ok return ->
+                    List.foldr
+                        (\ann fn ->
+                            Annotation.FunctionTypeAnnotation
+                                (Compiler.nodify ann)
+                                (Compiler.nodify fn)
+                        )
+                        return
+                        (List.map (Compiler.getInnerAnnotation << Tuple.second) args)
+                        |> Ok
         , imports = expr.imports
         , skip = False
         }
