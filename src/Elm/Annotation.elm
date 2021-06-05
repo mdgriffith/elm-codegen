@@ -48,31 +48,31 @@ var a =
 {-| -}
 bool : Annotation
 bool =
-    typed "Bool" []
+    typed [ "Basics" ] "Bool" []
 
 
 {-| -}
 int : Annotation
 int =
-    typed "Int" []
+    typed [ "Basics" ] "Int" []
 
 
 {-| -}
 float : Annotation
 float =
-    typed "Float" []
+    typed [ "Basics" ] "Float" []
 
 
 {-| -}
 string : Annotation
 string =
-    typed "String" []
+    typed [ "String" ] "String" []
 
 
 {-| -}
 char : Annotation
 char =
-    typed "Char" []
+    typed [ "Char" ] "Char" []
 
 
 {-| -}
@@ -87,7 +87,7 @@ unit =
 {-| -}
 list : Annotation -> Annotation
 list inner =
-    typed "List" [ inner ]
+    typed [ "List" ] "List" [ inner ]
 
 
 {-| -}
@@ -129,19 +129,19 @@ triple one two three =
 {-| -}
 set : Annotation -> Annotation
 set setArg =
-    typed "Set" [ setArg ]
+    typed [ "Set" ] "Set" [ setArg ]
 
 
 {-| -}
 dict : Annotation -> Annotation -> Annotation
 dict keyArg valArg =
-    typed "Dict" [ keyArg, valArg ]
+    typed [ "Dict" ] "Dict" [ keyArg, valArg ]
 
 
 {-| -}
 maybe : Annotation -> Annotation
 maybe maybeArg =
-    typed "Maybe" [ maybeArg ]
+    typed [ "Maybe" ] "Maybe" [ maybeArg ]
 
 
 {-| -}
@@ -236,12 +236,12 @@ namedWith ((Compiler.Module mod maybeAlias) as fullMod) name args =
 
 
 {-| -}
-typed : String -> List Annotation -> Annotation
-typed name args =
+typed : List String -> String -> List Annotation -> Annotation
+typed mod name args =
     Compiler.Annotation
         { annotation =
             Annotation.Typed
-                (Compiler.nodify ( [], name ))
+                (Compiler.nodify ( mod, name ))
                 (Compiler.nodifyAll
                     (List.map Compiler.getInnerAnnotation args)
                 )

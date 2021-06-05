@@ -5167,20 +5167,25 @@ var $author$project$Internal$Compiler$getAnnotationImports = function (_v0) {
 	var details = _v0.a;
 	return details.imports;
 };
-var $author$project$Elm$Annotation$typed = F2(
-	function (name, args) {
+var $author$project$Elm$Annotation$typed = F3(
+	function (mod, name, args) {
 		return $author$project$Internal$Compiler$Annotation(
 			{
 				annotation: A2(
 					$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Typed,
 					$author$project$Internal$Compiler$nodify(
-						_Utils_Tuple2(_List_Nil, name)),
+						_Utils_Tuple2(mod, name)),
 					$author$project$Internal$Compiler$nodifyAll(
 						A2($elm$core$List$map, $author$project$Internal$Compiler$getInnerAnnotation, args))),
 				imports: A2($elm$core$List$concatMap, $author$project$Internal$Compiler$getAnnotationImports, args)
 			});
 	});
-var $author$project$Elm$Annotation$string = A2($author$project$Elm$Annotation$typed, 'String', _List_Nil);
+var $author$project$Elm$Annotation$string = A3(
+	$author$project$Elm$Annotation$typed,
+	_List_fromArray(
+		['String']),
+	'String',
+	_List_Nil);
 var $author$project$Elm$string = function (literal) {
 	return $author$project$Internal$Compiler$Expression(
 		{
@@ -5441,7 +5446,10 @@ var $author$project$Elm$list = function (exprs) {
 					return A2(
 						$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Typed,
 						$author$project$Internal$Compiler$nodify(
-							_Utils_Tuple2(_List_Nil, 'List')),
+							_Utils_Tuple2(
+								_List_fromArray(
+									['List']),
+								'List')),
 						_List_fromArray(
 							[
 								$author$project$Internal$Compiler$nodify(inner)
@@ -5455,8 +5463,10 @@ var $author$project$Elm$list = function (exprs) {
 		});
 };
 var $author$project$Elm$Annotation$list = function (inner) {
-	return A2(
+	return A3(
 		$author$project$Elm$Annotation$typed,
+		_List_fromArray(
+			['List']),
 		'List',
 		_List_fromArray(
 			[inner]));

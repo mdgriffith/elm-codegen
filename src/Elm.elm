@@ -429,7 +429,7 @@ list exprs =
                 |> Result.map
                     (\inner ->
                         Annotation.Typed
-                            (Compiler.nodify ( [], "List" ))
+                            (Compiler.nodify ( [ "List" ], "List" ))
                             [ Compiler.nodify inner ]
                     )
         , imports = List.concatMap getImports exprs
@@ -1030,7 +1030,7 @@ groupAnn ann =
 sub : Annotation.TypeAnnotation
 sub =
     Annotation.Typed
-        (Compiler.nodify ( [], "Sub" ))
+        (Compiler.nodify ( [ "Platform", "Sub" ], "Sub" ))
         [ Compiler.nodify (Annotation.GenericType "msg") ]
 
 
@@ -1062,7 +1062,7 @@ portOutgoing name arg =
 cmd : Annotation.TypeAnnotation
 cmd =
     Annotation.Typed
-        (Compiler.nodify ( [], "Cmd" ))
+        (Compiler.nodify ( [ "Platform", "Cmd" ], "Cmd" ))
         [ Compiler.nodify (Annotation.GenericType "msg") ]
 
 
