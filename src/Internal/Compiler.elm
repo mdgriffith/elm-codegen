@@ -1,5 +1,6 @@
 module Internal.Compiler exposing (..)
 
+import Dict
 import Elm.Syntax.Declaration as Declaration
 import Elm.Syntax.Exposing as Expose
 import Elm.Syntax.Expression as Exp
@@ -531,42 +532,8 @@ unifiable :
     -> Result String Annotation.TypeAnnotation
 unifiable one two =
     let
-        result =
-            case one of
-                Annotation.GenericType a ->
-                    Ok two
-
-                Annotation.Typed oneName oneContents ->
-                    case two of
-                        Annotation.Typed twoName twoContents ->
-                            if denode oneName == denode twoName then
-                                case unifiableLists oneContents twoContents [] of
-                                    Ok unifiedContent ->
-                                        Ok (Annotation.Typed twoName unifiedContent)
-
-                                    Err err ->
-                                        Err err
-
-                            else
-                                Err "Unable to unify container!"
-
-                        Annotation.GenericType b ->
-                            Ok one
-
-                        _ ->
-                            Err "Unable to unify container!"
-
-                otherwise ->
-                    case two of
-                        Annotation.GenericType b ->
-                            Ok one
-
-                        _ ->
-                            if one == two then
-                                Ok one
-
-                            else
-                                Err "Unable to unify"
+        ( _, result ) =
+            unifiableHelper Dict.empty one two
 
         _ =
             case result of
@@ -580,26 +547,247 @@ unifiable one two =
     result
 
 
-unifiableLists one two unified =
+unifiableHelper vars one two =
+    case one of
+        Annotation.GenericType varName ->
+            case Dict.get varName vars of
+                Nothing ->
+                    ( Dict.insert varName two vars
+                    , Ok two
+                    )
+
+                Just found ->
+                    case two of
+                        Annotation.GenericType varNameB ->
+                            case Dict.get varNameB vars of
+                                Nothing ->
+                                    ( Dict.insert varNameB found vars
+                                    , Ok two
+                                    )
+
+                                Just foundTwo ->
+                                    unifiableHelper vars found foundTwo
+
+                        _ ->
+                            unifiableHelper vars found two
+
+        Annotation.Typed oneName oneContents ->
+            case two of
+                Annotation.Typed twoName twoContents ->
+                    if denode oneName == denode twoName then
+                        case unifiableLists vars oneContents twoContents [] of
+                            ( newVars, Ok unifiedContent ) ->
+                                ( newVars, Ok (Annotation.Typed twoName unifiedContent) )
+
+                            ( newVars, Err err ) ->
+                                ( newVars, Err err )
+
+                    else
+                        ( vars, Err "Unable to unify container!" )
+
+                Annotation.GenericType b ->
+                    ( vars, Ok one )
+
+                _ ->
+                    ( vars, Err "Unable to unify container!" )
+
+        Annotation.Unit ->
+            case two of
+                Annotation.GenericType b ->
+                    case Dict.get b vars of
+                        Nothing ->
+                            ( Dict.insert b one vars
+                            , Ok one
+                            )
+
+                        Just foundTwo ->
+                            unifiableHelper vars one foundTwo
+
+                Annotation.Unit ->
+                    ( vars, Ok Annotation.Unit )
+
+                _ ->
+                    ( vars, Err "Unable to unify units!" )
+
+        Annotation.Tupled valsA ->
+            case two of
+                Annotation.GenericType b ->
+                    case Dict.get b vars of
+                        Nothing ->
+                            ( Dict.insert b one vars
+                            , Ok one
+                            )
+
+                        Just foundTwo ->
+                            unifiableHelper vars one foundTwo
+
+                Annotation.Tupled valsB ->
+                    case unifiableLists vars valsA valsB [] of
+                        ( newVars, Ok unified ) ->
+                            ( newVars
+                            , Ok
+                                (Annotation.Tupled unified)
+                            )
+
+                        ( newVars, Err err ) ->
+                            ( newVars, Err err )
+
+                _ ->
+                    ( vars, Err "Unable to unify tuples!" )
+
+        Annotation.Record fieldsA ->
+            case two of
+                Annotation.GenericType b ->
+                    case Dict.get b vars of
+                        Nothing ->
+                            ( Dict.insert b one vars
+                            , Ok one
+                            )
+
+                        Just foundTwo ->
+                            unifiableHelper vars one foundTwo
+
+                Annotation.Record fieldsB ->
+                    case unifiableFields vars fieldsA fieldsB [] of
+                        ( newVars, Ok unifiedFields ) ->
+                            ( newVars, Ok (Annotation.Record unifiedFields) )
+
+                        ( newVars, Err err ) ->
+                            ( newVars, Err err )
+
+                _ ->
+                    ( vars, Err "Unable to unify function with non function type!" )
+
+        Annotation.GenericRecord reVarName fieldsA ->
+            case two of
+                Annotation.GenericType b ->
+                    case Dict.get b vars of
+                        Nothing ->
+                            ( Dict.insert b one vars
+                            , Ok one
+                            )
+
+                        Just foundTwo ->
+                            unifiableHelper vars one foundTwo
+
+                Annotation.Record fieldsB ->
+                    Debug.todo ""
+
+                _ ->
+                    ( vars, Err "Unable to unify function with non function type!" )
+
+        Annotation.FunctionTypeAnnotation oneA oneB ->
+            case two of
+                Annotation.GenericType b ->
+                    case Dict.get b vars of
+                        Nothing ->
+                            ( Dict.insert b one vars
+                            , Ok one
+                            )
+
+                        Just foundTwo ->
+                            unifiableHelper vars one foundTwo
+
+                Annotation.FunctionTypeAnnotation twoA twoB ->
+                    case unifiableHelper vars (denode oneA) (denode twoA) of
+                        ( aVars, Ok unifiedA ) ->
+                            case unifiableHelper aVars (denode oneB) (denode twoB) of
+                                ( bVars, Ok unifiedB ) ->
+                                    ( bVars
+                                    , Ok
+                                        (Annotation.FunctionTypeAnnotation
+                                            (nodify unifiedA)
+                                            (nodify unifiedB)
+                                        )
+                                    )
+
+                                otherwise ->
+                                    otherwise
+
+                        otherwise ->
+                            otherwise
+
+                _ ->
+                    ( vars, Err "Unable to unify function with non function type!" )
+
+
+unifiableFields vars one two unified =
     case ( one, two ) of
         ( [], [] ) ->
-            Ok (nodifyAll (List.reverse unified))
+            ( vars, Ok (nodifyAll (List.reverse unified)) )
 
-        ( [ oneX ], [ twoX ] ) ->
-            case unifiable (denode oneX) (denode twoX) of
-                Ok un ->
-                    Ok (nodifyAll (List.reverse (un :: unified)))
+        ( oneX :: oneRemain, twoFields ) ->
+            let
+                ( oneFieldName, oneFieldVal ) =
+                    denode oneX
 
-                Err err ->
-                    Err err
+                oneName =
+                    denode oneFieldName
 
-        ( oneX :: oneRemain, twoX :: twoRemain ) ->
-            case unifiable (denode oneX) (denode twoX) of
-                Ok un ->
-                    unifiableLists oneRemain twoRemain (un :: unified)
+                oneVal =
+                    denode oneFieldVal
+            in
+            case getField oneName oneVal twoFields [] of
+                Ok ( matchingFieldVal, remainingTwo ) ->
+                    let
+                        ( newVars, unifiedField ) =
+                            unifiableHelper vars oneVal matchingFieldVal
+                    in
+                    unifiableFields newVars oneRemain remainingTwo (unifiedField :: unified)
 
-                Err err ->
-                    Err err
+                Err notFound ->
+                    ( vars, Err ("Could not find " ++ oneName) )
 
         _ ->
-            Err "Mismatched numbers of type variables"
+            ( vars, Err "Mismatched numbers of type variables" )
+
+
+getField name val fields captured =
+    case fields of
+        [] ->
+            Err ("Could not find " ++ name)
+
+        top :: remain ->
+            let
+                ( topFieldName, topFieldVal ) =
+                    denode top
+
+                topName =
+                    denode topFieldName
+
+                topVal =
+                    denode topFieldVal
+            in
+            if topName == name then
+                Ok
+                    ( topVal
+                    , captured ++ remain
+                    )
+
+            else
+                getField name val remain (top :: captured)
+
+
+unifiableLists vars one two unified =
+    case ( one, two ) of
+        ( [], [] ) ->
+            ( vars, Ok (nodifyAll (List.reverse unified)) )
+
+        ( [ oneX ], [ twoX ] ) ->
+            case unifiableHelper vars (denode oneX) (denode twoX) of
+                ( newVars, Ok un ) ->
+                    ( newVars, Ok (nodifyAll (List.reverse (un :: unified))) )
+
+                ( newVars, Err err ) ->
+                    ( newVars, Err err )
+
+        ( oneX :: oneRemain, twoX :: twoRemain ) ->
+            case unifiableHelper vars (denode oneX) (denode twoX) of
+                ( newVars, Ok un ) ->
+                    unifiableLists newVars oneRemain twoRemain (un :: unified)
+
+                ( newVars, Err err ) ->
+                    ( vars, Err err )
+
+        _ ->
+            ( vars, Err "Mismatched numbers of type variables" )

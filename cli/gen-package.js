@@ -4367,9 +4367,161 @@ var $stil4m$elm_syntax$Elm$Syntax$Node$value = function (_v0) {
 };
 var $author$project$Internal$Compiler$denode = $stil4m$elm_syntax$Elm$Syntax$Node$value;
 var $elm$core$Debug$log = _Debug_log;
+var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$FunctionTypeAnnotation = F2(
+	function (a, b) {
+		return {$: 'FunctionTypeAnnotation', a: a, b: b};
+	});
+var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Record = function (a) {
+	return {$: 'Record', a: a};
+};
+var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Tupled = function (a) {
+	return {$: 'Tupled', a: a};
+};
 var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Typed = F2(
 	function (a, b) {
 		return {$: 'Typed', a: a, b: b};
+	});
+var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Unit = {$: 'Unit'};
+var $author$project$Internal$Compiler$getField = F4(
+	function (name, val, fields, captured) {
+		getField:
+		while (true) {
+			if (!fields.b) {
+				return $elm$core$Result$Err('Could not find ' + name);
+			} else {
+				var top = fields.a;
+				var remain = fields.b;
+				var _v1 = $author$project$Internal$Compiler$denode(top);
+				var topFieldName = _v1.a;
+				var topFieldVal = _v1.b;
+				var topName = $author$project$Internal$Compiler$denode(topFieldName);
+				var topVal = $author$project$Internal$Compiler$denode(topFieldVal);
+				if (_Utils_eq(topName, name)) {
+					return $elm$core$Result$Ok(
+						_Utils_Tuple2(
+							topVal,
+							_Utils_ap(captured, remain)));
+				} else {
+					var $temp$name = name,
+						$temp$val = val,
+						$temp$fields = remain,
+						$temp$captured = A2($elm$core$List$cons, top, captured);
+					name = $temp$name;
+					val = $temp$val;
+					fields = $temp$fields;
+					captured = $temp$captured;
+					continue getField;
+				}
+			}
+		}
+	});
+var $elm$core$Dict$Black = {$: 'Black'};
+var $elm$core$Dict$RBNode_elm_builtin = F5(
+	function (a, b, c, d, e) {
+		return {$: 'RBNode_elm_builtin', a: a, b: b, c: c, d: d, e: e};
+	});
+var $elm$core$Dict$Red = {$: 'Red'};
+var $elm$core$Dict$balance = F5(
+	function (color, key, value, left, right) {
+		if ((right.$ === 'RBNode_elm_builtin') && (right.a.$ === 'Red')) {
+			var _v1 = right.a;
+			var rK = right.b;
+			var rV = right.c;
+			var rLeft = right.d;
+			var rRight = right.e;
+			if ((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) {
+				var _v3 = left.a;
+				var lK = left.b;
+				var lV = left.c;
+				var lLeft = left.d;
+				var lRight = left.e;
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					$elm$core$Dict$Red,
+					key,
+					value,
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, lK, lV, lLeft, lRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, rK, rV, rLeft, rRight));
+			} else {
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					color,
+					rK,
+					rV,
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, key, value, left, rLeft),
+					rRight);
+			}
+		} else {
+			if ((((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) && (left.d.$ === 'RBNode_elm_builtin')) && (left.d.a.$ === 'Red')) {
+				var _v5 = left.a;
+				var lK = left.b;
+				var lV = left.c;
+				var _v6 = left.d;
+				var _v7 = _v6.a;
+				var llK = _v6.b;
+				var llV = _v6.c;
+				var llLeft = _v6.d;
+				var llRight = _v6.e;
+				var lRight = left.e;
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					$elm$core$Dict$Red,
+					lK,
+					lV,
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, llK, llV, llLeft, llRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, key, value, lRight, right));
+			} else {
+				return A5($elm$core$Dict$RBNode_elm_builtin, color, key, value, left, right);
+			}
+		}
+	});
+var $elm$core$Dict$insertHelp = F3(
+	function (key, value, dict) {
+		if (dict.$ === 'RBEmpty_elm_builtin') {
+			return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, key, value, $elm$core$Dict$RBEmpty_elm_builtin, $elm$core$Dict$RBEmpty_elm_builtin);
+		} else {
+			var nColor = dict.a;
+			var nKey = dict.b;
+			var nValue = dict.c;
+			var nLeft = dict.d;
+			var nRight = dict.e;
+			var _v1 = A2($elm$core$Basics$compare, key, nKey);
+			switch (_v1.$) {
+				case 'LT':
+					return A5(
+						$elm$core$Dict$balance,
+						nColor,
+						nKey,
+						nValue,
+						A3($elm$core$Dict$insertHelp, key, value, nLeft),
+						nRight);
+				case 'EQ':
+					return A5($elm$core$Dict$RBNode_elm_builtin, nColor, nKey, value, nLeft, nRight);
+				default:
+					return A5(
+						$elm$core$Dict$balance,
+						nColor,
+						nKey,
+						nValue,
+						nLeft,
+						A3($elm$core$Dict$insertHelp, key, value, nRight));
+			}
+		}
+	});
+var $elm$core$Dict$insert = F3(
+	function (key, value, dict) {
+		var _v0 = A3($elm$core$Dict$insertHelp, key, value, dict);
+		if ((_v0.$ === 'RBNode_elm_builtin') && (_v0.a.$ === 'Red')) {
+			var _v1 = _v0.a;
+			var k = _v0.b;
+			var v = _v0.c;
+			var l = _v0.d;
+			var r = _v0.e;
+			return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, k, v, l, r);
+		} else {
+			var x = _v0;
+			return x;
+		}
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Node$Node = F2(
 	function (a, b) {
@@ -4383,13 +4535,101 @@ var $author$project$Internal$Compiler$nodify = function (exp) {
 	return A2($stil4m$elm_syntax$Elm$Syntax$Node$Node, $stil4m$elm_syntax$Elm$Syntax$Range$emptyRange, exp);
 };
 var $author$project$Internal$Compiler$nodifyAll = $elm$core$List$map($author$project$Internal$Compiler$nodify);
-var $author$project$Internal$Compiler$unifiable = F2(
-	function (one, two) {
-		var result = function () {
+var $elm$core$Debug$todo = _Debug_todo;
+var $author$project$Internal$Compiler$unifiableFields = F4(
+	function (vars, one, two, unified) {
+		unifiableFields:
+		while (true) {
+			var _v27 = _Utils_Tuple2(one, two);
+			if (!_v27.a.b) {
+				if (!_v27.b.b) {
+					return _Utils_Tuple2(
+						vars,
+						$elm$core$Result$Ok(
+							$author$project$Internal$Compiler$nodifyAll(
+								$elm$core$List$reverse(unified))));
+				} else {
+					return _Utils_Tuple2(
+						vars,
+						$elm$core$Result$Err('Mismatched numbers of type variables'));
+				}
+			} else {
+				var _v28 = _v27.a;
+				var oneX = _v28.a;
+				var oneRemain = _v28.b;
+				var twoFields = _v27.b;
+				var _v29 = $author$project$Internal$Compiler$denode(oneX);
+				var oneFieldName = _v29.a;
+				var oneFieldVal = _v29.b;
+				var oneName = $author$project$Internal$Compiler$denode(oneFieldName);
+				var oneVal = $author$project$Internal$Compiler$denode(oneFieldVal);
+				var _v30 = A4($author$project$Internal$Compiler$getField, oneName, oneVal, twoFields, _List_Nil);
+				if (_v30.$ === 'Ok') {
+					var _v31 = _v30.a;
+					var matchingFieldVal = _v31.a;
+					var remainingTwo = _v31.b;
+					var _v32 = A3($author$project$Internal$Compiler$unifiableHelper, vars, oneVal, matchingFieldVal);
+					var newVars = _v32.a;
+					var unifiedField = _v32.b;
+					var $temp$vars = newVars,
+						$temp$one = oneRemain,
+						$temp$two = remainingTwo,
+						$temp$unified = A2($elm$core$List$cons, unifiedField, unified);
+					vars = $temp$vars;
+					one = $temp$one;
+					two = $temp$two;
+					unified = $temp$unified;
+					continue unifiableFields;
+				} else {
+					var notFound = _v30.a;
+					return _Utils_Tuple2(
+						vars,
+						$elm$core$Result$Err('Could not find ' + oneName));
+				}
+			}
+		}
+	});
+var $author$project$Internal$Compiler$unifiableHelper = F3(
+	function (vars, one, two) {
+		unifiableHelper:
+		while (true) {
 			switch (one.$) {
 				case 'GenericType':
-					var a = one.a;
-					return $elm$core$Result$Ok(two);
+					var varName = one.a;
+					var _v8 = A2($elm$core$Dict$get, varName, vars);
+					if (_v8.$ === 'Nothing') {
+						return _Utils_Tuple2(
+							A3($elm$core$Dict$insert, varName, two, vars),
+							$elm$core$Result$Ok(two));
+					} else {
+						var found = _v8.a;
+						if (two.$ === 'GenericType') {
+							var varNameB = two.a;
+							var _v10 = A2($elm$core$Dict$get, varNameB, vars);
+							if (_v10.$ === 'Nothing') {
+								return _Utils_Tuple2(
+									A3($elm$core$Dict$insert, varNameB, found, vars),
+									$elm$core$Result$Ok(two));
+							} else {
+								var foundTwo = _v10.a;
+								var $temp$vars = vars,
+									$temp$one = found,
+									$temp$two = foundTwo;
+								vars = $temp$vars;
+								one = $temp$one;
+								two = $temp$two;
+								continue unifiableHelper;
+							}
+						} else {
+							var $temp$vars = vars,
+								$temp$one = found,
+								$temp$two = two;
+							vars = $temp$vars;
+							one = $temp$one;
+							two = $temp$two;
+							continue unifiableHelper;
+						}
+					}
 				case 'Typed':
 					var oneName = one.a;
 					var oneContents = one.b;
@@ -4400,48 +4640,247 @@ var $author$project$Internal$Compiler$unifiable = F2(
 							if (_Utils_eq(
 								$author$project$Internal$Compiler$denode(oneName),
 								$author$project$Internal$Compiler$denode(twoName))) {
-								var _v11 = A3($author$project$Internal$Compiler$unifiableLists, oneContents, twoContents, _List_Nil);
-								if (_v11.$ === 'Ok') {
-									var unifiedContent = _v11.a;
-									return $elm$core$Result$Ok(
-										A2($stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Typed, twoName, unifiedContent));
+								var _v12 = A4($author$project$Internal$Compiler$unifiableLists, vars, oneContents, twoContents, _List_Nil);
+								if (_v12.b.$ === 'Ok') {
+									var newVars = _v12.a;
+									var unifiedContent = _v12.b.a;
+									return _Utils_Tuple2(
+										newVars,
+										$elm$core$Result$Ok(
+											A2($stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Typed, twoName, unifiedContent)));
 								} else {
-									var err = _v11.a;
-									return $elm$core$Result$Err(err);
+									var newVars = _v12.a;
+									var err = _v12.b.a;
+									return _Utils_Tuple2(
+										newVars,
+										$elm$core$Result$Err(err));
 								}
 							} else {
-								return $elm$core$Result$Err('Unable to unify container!');
+								return _Utils_Tuple2(
+									vars,
+									$elm$core$Result$Err('Unable to unify container!'));
 							}
 						case 'GenericType':
 							var b = two.a;
-							return $elm$core$Result$Ok(one);
+							return _Utils_Tuple2(
+								vars,
+								$elm$core$Result$Ok(one));
 						default:
-							return $elm$core$Result$Err('Unable to unify container!');
+							return _Utils_Tuple2(
+								vars,
+								$elm$core$Result$Err('Unable to unify container!'));
+					}
+				case 'Unit':
+					switch (two.$) {
+						case 'GenericType':
+							var b = two.a;
+							var _v14 = A2($elm$core$Dict$get, b, vars);
+							if (_v14.$ === 'Nothing') {
+								return _Utils_Tuple2(
+									A3($elm$core$Dict$insert, b, one, vars),
+									$elm$core$Result$Ok(one));
+							} else {
+								var foundTwo = _v14.a;
+								var $temp$vars = vars,
+									$temp$one = one,
+									$temp$two = foundTwo;
+								vars = $temp$vars;
+								one = $temp$one;
+								two = $temp$two;
+								continue unifiableHelper;
+							}
+						case 'Unit':
+							return _Utils_Tuple2(
+								vars,
+								$elm$core$Result$Ok($stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Unit));
+						default:
+							return _Utils_Tuple2(
+								vars,
+								$elm$core$Result$Err('Unable to unify units!'));
+					}
+				case 'Tupled':
+					var valsA = one.a;
+					switch (two.$) {
+						case 'GenericType':
+							var b = two.a;
+							var _v16 = A2($elm$core$Dict$get, b, vars);
+							if (_v16.$ === 'Nothing') {
+								return _Utils_Tuple2(
+									A3($elm$core$Dict$insert, b, one, vars),
+									$elm$core$Result$Ok(one));
+							} else {
+								var foundTwo = _v16.a;
+								var $temp$vars = vars,
+									$temp$one = one,
+									$temp$two = foundTwo;
+								vars = $temp$vars;
+								one = $temp$one;
+								two = $temp$two;
+								continue unifiableHelper;
+							}
+						case 'Tupled':
+							var valsB = two.a;
+							var _v17 = A4($author$project$Internal$Compiler$unifiableLists, vars, valsA, valsB, _List_Nil);
+							if (_v17.b.$ === 'Ok') {
+								var newVars = _v17.a;
+								var unified = _v17.b.a;
+								return _Utils_Tuple2(
+									newVars,
+									$elm$core$Result$Ok(
+										$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Tupled(unified)));
+							} else {
+								var newVars = _v17.a;
+								var err = _v17.b.a;
+								return _Utils_Tuple2(
+									newVars,
+									$elm$core$Result$Err(err));
+							}
+						default:
+							return _Utils_Tuple2(
+								vars,
+								$elm$core$Result$Err('Unable to unify tuples!'));
+					}
+				case 'Record':
+					var fieldsA = one.a;
+					switch (two.$) {
+						case 'GenericType':
+							var b = two.a;
+							var _v19 = A2($elm$core$Dict$get, b, vars);
+							if (_v19.$ === 'Nothing') {
+								return _Utils_Tuple2(
+									A3($elm$core$Dict$insert, b, one, vars),
+									$elm$core$Result$Ok(one));
+							} else {
+								var foundTwo = _v19.a;
+								var $temp$vars = vars,
+									$temp$one = one,
+									$temp$two = foundTwo;
+								vars = $temp$vars;
+								one = $temp$one;
+								two = $temp$two;
+								continue unifiableHelper;
+							}
+						case 'Record':
+							var fieldsB = two.a;
+							var _v20 = A4($author$project$Internal$Compiler$unifiableFields, vars, fieldsA, fieldsB, _List_Nil);
+							if (_v20.b.$ === 'Ok') {
+								var newVars = _v20.a;
+								var unifiedFields = _v20.b.a;
+								return _Utils_Tuple2(
+									newVars,
+									$elm$core$Result$Ok(
+										$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Record(unifiedFields)));
+							} else {
+								var newVars = _v20.a;
+								var err = _v20.b.a;
+								return _Utils_Tuple2(
+									newVars,
+									$elm$core$Result$Err(err));
+							}
+						default:
+							return _Utils_Tuple2(
+								vars,
+								$elm$core$Result$Err('Unable to unify function with non function type!'));
+					}
+				case 'GenericRecord':
+					var reVarName = one.a;
+					var fieldsA = one.b;
+					switch (two.$) {
+						case 'GenericType':
+							var b = two.a;
+							var _v22 = A2($elm$core$Dict$get, b, vars);
+							if (_v22.$ === 'Nothing') {
+								return _Utils_Tuple2(
+									A3($elm$core$Dict$insert, b, one, vars),
+									$elm$core$Result$Ok(one));
+							} else {
+								var foundTwo = _v22.a;
+								var $temp$vars = vars,
+									$temp$one = one,
+									$temp$two = foundTwo;
+								vars = $temp$vars;
+								one = $temp$one;
+								two = $temp$two;
+								continue unifiableHelper;
+							}
+						case 'Record':
+							var fieldsB = two.a;
+							return _Debug_todo(
+								'Internal.Compiler',
+								{
+									start: {line: 674, column: 21},
+									end: {line: 674, column: 31}
+								})('');
+						default:
+							return _Utils_Tuple2(
+								vars,
+								$elm$core$Result$Err('Unable to unify function with non function type!'));
 					}
 				default:
-					var otherwise = one;
-					if (two.$ === 'GenericType') {
-						var b = two.a;
-						return $elm$core$Result$Ok(one);
-					} else {
-						return _Utils_eq(one, two) ? $elm$core$Result$Ok(one) : $elm$core$Result$Err('Unable to unify');
+					var oneA = one.a;
+					var oneB = one.b;
+					switch (two.$) {
+						case 'GenericType':
+							var b = two.a;
+							var _v24 = A2($elm$core$Dict$get, b, vars);
+							if (_v24.$ === 'Nothing') {
+								return _Utils_Tuple2(
+									A3($elm$core$Dict$insert, b, one, vars),
+									$elm$core$Result$Ok(one));
+							} else {
+								var foundTwo = _v24.a;
+								var $temp$vars = vars,
+									$temp$one = one,
+									$temp$two = foundTwo;
+								vars = $temp$vars;
+								one = $temp$one;
+								two = $temp$two;
+								continue unifiableHelper;
+							}
+						case 'FunctionTypeAnnotation':
+							var twoA = two.a;
+							var twoB = two.b;
+							var _v25 = A3(
+								$author$project$Internal$Compiler$unifiableHelper,
+								vars,
+								$author$project$Internal$Compiler$denode(oneA),
+								$author$project$Internal$Compiler$denode(twoA));
+							if (_v25.b.$ === 'Ok') {
+								var aVars = _v25.a;
+								var unifiedA = _v25.b.a;
+								var _v26 = A3(
+									$author$project$Internal$Compiler$unifiableHelper,
+									aVars,
+									$author$project$Internal$Compiler$denode(oneB),
+									$author$project$Internal$Compiler$denode(twoB));
+								if (_v26.b.$ === 'Ok') {
+									var bVars = _v26.a;
+									var unifiedB = _v26.b.a;
+									return _Utils_Tuple2(
+										bVars,
+										$elm$core$Result$Ok(
+											A2(
+												$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$FunctionTypeAnnotation,
+												$author$project$Internal$Compiler$nodify(unifiedA),
+												$author$project$Internal$Compiler$nodify(unifiedB))));
+								} else {
+									var otherwise = _v26;
+									return otherwise;
+								}
+							} else {
+								var otherwise = _v25;
+								return otherwise;
+							}
+						default:
+							return _Utils_Tuple2(
+								vars,
+								$elm$core$Result$Err('Unable to unify function with non function type!'));
 					}
 			}
-		}();
-		var _v7 = function () {
-			if (result.$ === 'Ok') {
-				return _Utils_Tuple2(one, two);
-			} else {
-				return A2(
-					$elm$core$Debug$log,
-					'       Failed to unify',
-					_Utils_Tuple2(one, two));
-			}
-		}();
-		return result;
+		}
 	});
-var $author$project$Internal$Compiler$unifiableLists = F3(
-	function (one, two, unified) {
+var $author$project$Internal$Compiler$unifiableLists = F4(
+	function (vars, one, two, unified) {
 		unifiableLists:
 		while (true) {
 			var _v0 = _Utils_Tuple2(one, two);
@@ -4449,9 +4888,11 @@ var $author$project$Internal$Compiler$unifiableLists = F3(
 			while (true) {
 				if (!_v0.a.b) {
 					if (!_v0.b.b) {
-						return $elm$core$Result$Ok(
-							$author$project$Internal$Compiler$nodifyAll(
-								$elm$core$List$reverse(unified)));
+						return _Utils_Tuple2(
+							vars,
+							$elm$core$Result$Ok(
+								$author$project$Internal$Compiler$nodifyAll(
+									$elm$core$List$reverse(unified))));
 					} else {
 						break _v0$3;
 					}
@@ -4462,19 +4903,26 @@ var $author$project$Internal$Compiler$unifiableLists = F3(
 							var oneX = _v1.a;
 							var _v2 = _v0.b;
 							var twoX = _v2.a;
-							var _v3 = A2(
-								$author$project$Internal$Compiler$unifiable,
+							var _v3 = A3(
+								$author$project$Internal$Compiler$unifiableHelper,
+								vars,
 								$author$project$Internal$Compiler$denode(oneX),
 								$author$project$Internal$Compiler$denode(twoX));
-							if (_v3.$ === 'Ok') {
-								var un = _v3.a;
-								return $elm$core$Result$Ok(
-									$author$project$Internal$Compiler$nodifyAll(
-										$elm$core$List$reverse(
-											A2($elm$core$List$cons, un, unified))));
+							if (_v3.b.$ === 'Ok') {
+								var newVars = _v3.a;
+								var un = _v3.b.a;
+								return _Utils_Tuple2(
+									newVars,
+									$elm$core$Result$Ok(
+										$author$project$Internal$Compiler$nodifyAll(
+											$elm$core$List$reverse(
+												A2($elm$core$List$cons, un, unified)))));
 							} else {
-								var err = _v3.a;
-								return $elm$core$Result$Err(err);
+								var newVars = _v3.a;
+								var err = _v3.b.a;
+								return _Utils_Tuple2(
+									newVars,
+									$elm$core$Result$Err(err));
 							}
 						} else {
 							var _v4 = _v0.a;
@@ -4483,22 +4931,29 @@ var $author$project$Internal$Compiler$unifiableLists = F3(
 							var _v5 = _v0.b;
 							var twoX = _v5.a;
 							var twoRemain = _v5.b;
-							var _v6 = A2(
-								$author$project$Internal$Compiler$unifiable,
+							var _v6 = A3(
+								$author$project$Internal$Compiler$unifiableHelper,
+								vars,
 								$author$project$Internal$Compiler$denode(oneX),
 								$author$project$Internal$Compiler$denode(twoX));
-							if (_v6.$ === 'Ok') {
-								var un = _v6.a;
-								var $temp$one = oneRemain,
+							if (_v6.b.$ === 'Ok') {
+								var newVars = _v6.a;
+								var un = _v6.b.a;
+								var $temp$vars = newVars,
+									$temp$one = oneRemain,
 									$temp$two = twoRemain,
 									$temp$unified = A2($elm$core$List$cons, un, unified);
+								vars = $temp$vars;
 								one = $temp$one;
 								two = $temp$two;
 								unified = $temp$unified;
 								continue unifiableLists;
 							} else {
-								var err = _v6.a;
-								return $elm$core$Result$Err(err);
+								var newVars = _v6.a;
+								var err = _v6.b.a;
+								return _Utils_Tuple2(
+									vars,
+									$elm$core$Result$Err(err));
 							}
 						}
 					} else {
@@ -4506,8 +4961,26 @@ var $author$project$Internal$Compiler$unifiableLists = F3(
 					}
 				}
 			}
-			return $elm$core$Result$Err('Mismatched numbers of type variables');
+			return _Utils_Tuple2(
+				vars,
+				$elm$core$Result$Err('Mismatched numbers of type variables'));
 		}
+	});
+var $author$project$Internal$Compiler$unifiable = F2(
+	function (one, two) {
+		var _v0 = A3($author$project$Internal$Compiler$unifiableHelper, $elm$core$Dict$empty, one, two);
+		var result = _v0.b;
+		var _v1 = function () {
+			if (result.$ === 'Ok') {
+				return _Utils_Tuple2(one, two);
+			} else {
+				return A2(
+					$elm$core$Debug$log,
+					'       Failed to unify',
+					_Utils_Tuple2(one, two));
+			}
+		}();
+		return result;
 	});
 var $author$project$Internal$Compiler$applyTypeHelper = F2(
 	function (fn, args) {
@@ -4601,37 +5074,6 @@ var $author$project$Internal$Compiler$applyType = F2(
 			}
 		}
 	});
-var $author$project$Internal$Compiler$autoReduce = F2(
-	function (count, unchanged) {
-		autoReduce:
-		while (true) {
-			var fn = unchanged.a;
-			if (count <= 0) {
-				return unchanged;
-			} else {
-				var _v0 = fn.annotation;
-				if ((_v0.$ === 'Ok') && (_v0.a.$ === 'FunctionTypeAnnotation')) {
-					var _v1 = _v0.a;
-					var one = _v1.a;
-					var two = _v1.b;
-					var $temp$count = count - 1,
-						$temp$unchanged = $author$project$Internal$Compiler$Expression(
-						_Utils_update(
-							fn,
-							{
-								annotation: $elm$core$Result$Ok(
-									$author$project$Internal$Compiler$denode(two))
-							}));
-					count = $temp$count;
-					unchanged = $temp$unchanged;
-					continue autoReduce;
-				} else {
-					var _final = _v0;
-					return unchanged;
-				}
-			}
-		}
-	});
 var $elm$core$List$append = F2(
 	function (xs, ys) {
 		if (!ys.b) {
@@ -4695,10 +5137,7 @@ var $author$project$Elm$apply = F2(
 			allArgs);
 		return $author$project$Internal$Compiler$Expression(
 			{
-				annotation: A2(
-					$author$project$Internal$Compiler$applyType,
-					A2($author$project$Internal$Compiler$autoReduce, reduceCount, top),
-					args),
+				annotation: A2($author$project$Internal$Compiler$applyType, top, args),
 				expression: $stil4m$elm_syntax$Elm$Syntax$Expression$Application(
 					$author$project$Internal$Compiler$nodifyAll(
 						A2(
@@ -4866,10 +5305,6 @@ var $author$project$Generate$elmAnnotation = A2(
 	_List_fromArray(
 		['Elm', 'Annotation']),
 	'Type');
-var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$FunctionTypeAnnotation = F2(
-	function (a, b) {
-		return {$: 'FunctionTypeAnnotation', a: a, b: b};
-	});
 var $author$project$Elm$Annotation$function = F2(
 	function (anns, _return) {
 		return $author$project$Internal$Compiler$Annotation(
@@ -5175,9 +5610,6 @@ var $elm$core$Result$map2 = F3(
 var $author$project$Internal$Compiler$noImports = function (tipe) {
 	return $author$project$Internal$Compiler$Annotation(
 		{annotation: tipe, imports: _List_Nil});
-};
-var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Tupled = function (a) {
-	return {$: 'Tupled', a: a};
 };
 var $author$project$Elm$Annotation$tuple = F2(
 	function (one, two) {
@@ -5633,114 +6065,6 @@ var $author$project$Internal$Compiler$fullModName = function (_v0) {
 	var name = _v0.a;
 	return A2($elm$core$String$join, '.', name);
 };
-var $elm$core$Dict$Black = {$: 'Black'};
-var $elm$core$Dict$RBNode_elm_builtin = F5(
-	function (a, b, c, d, e) {
-		return {$: 'RBNode_elm_builtin', a: a, b: b, c: c, d: d, e: e};
-	});
-var $elm$core$Dict$Red = {$: 'Red'};
-var $elm$core$Dict$balance = F5(
-	function (color, key, value, left, right) {
-		if ((right.$ === 'RBNode_elm_builtin') && (right.a.$ === 'Red')) {
-			var _v1 = right.a;
-			var rK = right.b;
-			var rV = right.c;
-			var rLeft = right.d;
-			var rRight = right.e;
-			if ((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) {
-				var _v3 = left.a;
-				var lK = left.b;
-				var lV = left.c;
-				var lLeft = left.d;
-				var lRight = left.e;
-				return A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					$elm$core$Dict$Red,
-					key,
-					value,
-					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, lK, lV, lLeft, lRight),
-					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, rK, rV, rLeft, rRight));
-			} else {
-				return A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					color,
-					rK,
-					rV,
-					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, key, value, left, rLeft),
-					rRight);
-			}
-		} else {
-			if ((((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) && (left.d.$ === 'RBNode_elm_builtin')) && (left.d.a.$ === 'Red')) {
-				var _v5 = left.a;
-				var lK = left.b;
-				var lV = left.c;
-				var _v6 = left.d;
-				var _v7 = _v6.a;
-				var llK = _v6.b;
-				var llV = _v6.c;
-				var llLeft = _v6.d;
-				var llRight = _v6.e;
-				var lRight = left.e;
-				return A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					$elm$core$Dict$Red,
-					lK,
-					lV,
-					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, llK, llV, llLeft, llRight),
-					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, key, value, lRight, right));
-			} else {
-				return A5($elm$core$Dict$RBNode_elm_builtin, color, key, value, left, right);
-			}
-		}
-	});
-var $elm$core$Dict$insertHelp = F3(
-	function (key, value, dict) {
-		if (dict.$ === 'RBEmpty_elm_builtin') {
-			return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, key, value, $elm$core$Dict$RBEmpty_elm_builtin, $elm$core$Dict$RBEmpty_elm_builtin);
-		} else {
-			var nColor = dict.a;
-			var nKey = dict.b;
-			var nValue = dict.c;
-			var nLeft = dict.d;
-			var nRight = dict.e;
-			var _v1 = A2($elm$core$Basics$compare, key, nKey);
-			switch (_v1.$) {
-				case 'LT':
-					return A5(
-						$elm$core$Dict$balance,
-						nColor,
-						nKey,
-						nValue,
-						A3($elm$core$Dict$insertHelp, key, value, nLeft),
-						nRight);
-				case 'EQ':
-					return A5($elm$core$Dict$RBNode_elm_builtin, nColor, nKey, value, nLeft, nRight);
-				default:
-					return A5(
-						$elm$core$Dict$balance,
-						nColor,
-						nKey,
-						nValue,
-						nLeft,
-						A3($elm$core$Dict$insertHelp, key, value, nRight));
-			}
-		}
-	});
-var $elm$core$Dict$insert = F3(
-	function (key, value, dict) {
-		var _v0 = A3($elm$core$Dict$insertHelp, key, value, dict);
-		if ((_v0.$ === 'RBNode_elm_builtin') && (_v0.a.$ === 'Red')) {
-			var _v1 = _v0.a;
-			var k = _v0.b;
-			var v = _v0.c;
-			var l = _v0.d;
-			var r = _v0.e;
-			return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, k, v, l, r);
-		} else {
-			var x = _v0;
-			return x;
-		}
-	});
 var $elm$core$Set$insert = F2(
 	function (key, _v0) {
 		var dict = _v0.a;
@@ -6095,9 +6419,6 @@ var $author$project$Elm$functionWith = F3(
 	});
 var $author$project$Internal$Compiler$DuplicateFieldInRecord = function (a) {
 	return {$: 'DuplicateFieldInRecord', a: a};
-};
-var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Record = function (a) {
-	return {$: 'Record', a: a};
 };
 var $stil4m$elm_syntax$Elm$Syntax$Expression$RecordExpr = function (a) {
 	return {$: 'RecordExpr', a: a};

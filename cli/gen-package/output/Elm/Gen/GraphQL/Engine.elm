@@ -1,7 +1,7 @@
-module Elm.Gen.GraphQL.Engine exposing (arg, decodeId, encodeId, enum, field, fieldWith, id_, map, map2, maybeEnum, maybeScalarEncode, moduleName_, mutation, nullable, object, objectWith, query, queryString, recover, select, union, with)
+module Elm.Gen.GraphQL.Engine exposing (arg, decodeId, encodeId, encodeOptionals, enum, field, fieldWith, id_, map, map2, maybeEnum, maybeScalarEncode, moduleName_, mutation, nullable, object, objectWith, optional, query, queryString, recover, select, union, with)
 
 import Elm
-import Elm.Annotation
+import Elm.Annotation as Type
 
 
 {-| The name of this module. -}
@@ -26,110 +26,882 @@ id_ :
     , map2 : Elm.Expression
     , recover : Elm.Expression
     , arg : Elm.Expression
+    , optional : Elm.Expression
     , query : Elm.Expression
     , mutation : Elm.Expression
     , queryString : Elm.Expression
     , maybeScalarEncode : Elm.Expression
     , encodeId : Elm.Expression
     , decodeId : Elm.Expression
+    , encodeOptionals : Elm.Expression
     }
 id_ =
-    { nullable = Elm.valueFrom moduleName_ "nullable"
-    , field = Elm.valueFrom moduleName_ "field"
-    , fieldWith = Elm.valueFrom moduleName_ "fieldWith"
-    , object = Elm.valueFrom moduleName_ "object"
-    , objectWith = Elm.valueFrom moduleName_ "objectWith"
-    , enum = Elm.valueFrom moduleName_ "enum"
-    , maybeEnum = Elm.valueFrom moduleName_ "maybeEnum"
-    , union = Elm.valueFrom moduleName_ "union"
-    , select = Elm.valueFrom moduleName_ "select"
-    , with = Elm.valueFrom moduleName_ "with"
-    , map = Elm.valueFrom moduleName_ "map"
-    , map2 = Elm.valueFrom moduleName_ "map2"
-    , recover = Elm.valueFrom moduleName_ "recover"
-    , arg = Elm.valueFrom moduleName_ "arg"
-    , query = Elm.valueFrom moduleName_ "query"
-    , mutation = Elm.valueFrom moduleName_ "mutation"
-    , queryString = Elm.valueFrom moduleName_ "queryString"
-    , maybeScalarEncode = Elm.valueFrom moduleName_ "maybeScalarEncode"
-    , encodeId = Elm.valueFrom moduleName_ "encodeId"
-    , decodeId = Elm.valueFrom moduleName_ "decodeId"
+    { nullable =
+        Elm.valueWith
+            moduleName_
+            "nullable"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "data" ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source"
+                    , Type.namedWith
+                        (Elm.moduleName [ "Maybe" ])
+                        "Maybe"
+                        [ Type.var "data" ]
+                    ]
+                )
+            )
+    , field =
+        Elm.valueWith
+            moduleName_
+            "field"
+            (Type.function
+                [ Type.namedWith (Elm.moduleName [ "String" ]) "String" []
+                , Type.namedWith
+                    (Elm.moduleName [ "Json", "Decode" ])
+                    "Decoder"
+                    [ Type.var "data" ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "data" ]
+                )
+            )
+    , fieldWith =
+        Elm.valueWith
+            moduleName_
+            "fieldWith"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "List" ])
+                    "List"
+                    [ Type.tuple
+                        (Type.namedWith
+                            (Elm.moduleName [ "String" ])
+                            "String"
+                            []
+                        )
+                        (Type.namedWith
+                            (Elm.moduleName [ "GraphQL", "Engine" ])
+                            "Argument"
+                            []
+                        )
+                    ]
+                , Type.namedWith (Elm.moduleName [ "String" ]) "String" []
+                , Type.namedWith
+                    (Elm.moduleName [ "Json", "Decode" ])
+                    "Decoder"
+                    [ Type.var "data" ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "data" ]
+                )
+            )
+    , object =
+        Elm.valueWith
+            moduleName_
+            "object"
+            (Type.function
+                [ Type.namedWith (Elm.moduleName [ "String" ]) "String" []
+                , Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "data" ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "otherSource", Type.var "data" ]
+                )
+            )
+    , objectWith =
+        Elm.valueWith
+            moduleName_
+            "objectWith"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "List" ])
+                    "List"
+                    [ Type.tuple
+                        (Type.namedWith
+                            (Elm.moduleName [ "String" ])
+                            "String"
+                            []
+                        )
+                        (Type.namedWith
+                            (Elm.moduleName [ "GraphQL", "Engine" ])
+                            "Argument"
+                            []
+                        )
+                    ]
+                , Type.namedWith (Elm.moduleName [ "String" ]) "String" []
+                , Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "data" ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "otherSource", Type.var "data" ]
+                )
+            )
+    , enum =
+        Elm.valueWith
+            moduleName_
+            "enum"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "List" ])
+                    "List"
+                    [ Type.tuple
+                        (Type.namedWith
+                            (Elm.moduleName [ "String" ])
+                            "String"
+                            []
+                        )
+                        (Type.var "item")
+                    ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "Json", "Decode" ])
+                    "Decoder"
+                    [ Type.var "item" ]
+                )
+            )
+    , maybeEnum =
+        Elm.valueWith
+            moduleName_
+            "maybeEnum"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "List" ])
+                    "List"
+                    [ Type.tuple
+                        (Type.namedWith
+                            (Elm.moduleName [ "String" ])
+                            "String"
+                            []
+                        )
+                        (Type.var "item")
+                    ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "Json", "Decode" ])
+                    "Decoder"
+                    [ Type.namedWith
+                        (Elm.moduleName [ "Maybe" ])
+                        "Maybe"
+                        [ Type.var "item" ]
+                    ]
+                )
+            )
+    , union =
+        Elm.valueWith
+            moduleName_
+            "union"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "List" ])
+                    "List"
+                    [ Type.tuple
+                        (Type.namedWith
+                            (Elm.moduleName [ "String" ])
+                            "String"
+                            []
+                        )
+                        (Type.namedWith
+                            (Elm.moduleName [ "GraphQL", "Engine" ])
+                            "Selection"
+                            [ Type.var "source", Type.var "data" ]
+                        )
+                    ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "data" ]
+                )
+            )
+    , select =
+        Elm.valueWith
+            moduleName_
+            "select"
+            (Type.function
+                [ Type.var "data" ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "data" ]
+                )
+            )
+    , with =
+        Elm.valueWith
+            moduleName_
+            "with"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "a" ]
+                , Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source"
+                    , Type.function [ Type.var "a" ] (Type.var "b")
+                    ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "b" ]
+                )
+            )
+    , map =
+        Elm.valueWith
+            moduleName_
+            "map"
+            (Type.function
+                [ Type.function [ Type.var "a" ] (Type.var "b")
+                , Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "a" ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "b" ]
+                )
+            )
+    , map2 =
+        Elm.valueWith
+            moduleName_
+            "map2"
+            (Type.function
+                [ Type.function [ Type.var "a", Type.var "b" ] (Type.var "c")
+                , Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "a" ]
+                , Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "b" ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "c" ]
+                )
+            )
+    , recover =
+        Elm.valueWith
+            moduleName_
+            "recover"
+            (Type.function
+                [ Type.var "recovered"
+                , Type.function [ Type.var "data" ] (Type.var "recovered")
+                , Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "data" ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "recovered" ]
+                )
+            )
+    , arg =
+        Elm.valueWith
+            moduleName_
+            "arg"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "Json", "Encode" ])
+                    "Value"
+                    []
+                , Type.namedWith (Elm.moduleName [ "String" ]) "String" []
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Argument"
+                    []
+                )
+            )
+    , optional =
+        Elm.valueWith
+            moduleName_
+            "optional"
+            (Type.function
+                [ Type.namedWith (Elm.moduleName [ "String" ]) "String" []
+                , Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Argument"
+                    []
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Optional"
+                    [ Type.var "arg" ]
+                )
+            )
+    , query =
+        Elm.valueWith
+            moduleName_
+            "query"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.namedWith
+                        (Elm.moduleName [ "GraphQL", "Engine" ])
+                        "Query"
+                        []
+                    , Type.var "value"
+                    ]
+                , Type.record
+                    [ ( "headers"
+                      , Type.namedWith
+                            (Elm.moduleName [ "List" ])
+                            "List"
+                            [ Type.namedWith
+                                (Elm.moduleName [ "Http" ])
+                                "Header"
+                                []
+                            ]
+                      )
+                    , ( "url"
+                      , Type.namedWith (Elm.moduleName [ "String" ]) "String" []
+                      )
+                    , ( "timeout"
+                      , Type.namedWith
+                            (Elm.moduleName [ "Maybe" ])
+                            "Maybe"
+                            [ Type.namedWith
+                                (Elm.moduleName [ "Basics" ])
+                                "Float"
+                                []
+                            ]
+                      )
+                    , ( "tracker"
+                      , Type.namedWith
+                            (Elm.moduleName [ "Maybe" ])
+                            "Maybe"
+                            [ Type.namedWith
+                                (Elm.moduleName [ "String" ])
+                                "String"
+                                []
+                            ]
+                      )
+                    ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "Platform", "Cmd" ])
+                    "Cmd"
+                    [ Type.namedWith
+                        (Elm.moduleName [ "Result" ])
+                        "Result"
+                        [ Type.namedWith (Elm.moduleName [ "Http" ]) "Error" []
+                        , Type.var "value"
+                        ]
+                    ]
+                )
+            )
+    , mutation =
+        Elm.valueWith
+            moduleName_
+            "mutation"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.namedWith
+                        (Elm.moduleName [ "GraphQL", "Engine" ])
+                        "Mutation"
+                        []
+                    , Type.var "msg"
+                    ]
+                , Type.record
+                    [ ( "headers"
+                      , Type.namedWith
+                            (Elm.moduleName [ "List" ])
+                            "List"
+                            [ Type.namedWith
+                                (Elm.moduleName [ "Http" ])
+                                "Header"
+                                []
+                            ]
+                      )
+                    , ( "url"
+                      , Type.namedWith (Elm.moduleName [ "String" ]) "String" []
+                      )
+                    , ( "timeout"
+                      , Type.namedWith
+                            (Elm.moduleName [ "Maybe" ])
+                            "Maybe"
+                            [ Type.namedWith
+                                (Elm.moduleName [ "Basics" ])
+                                "Float"
+                                []
+                            ]
+                      )
+                    , ( "tracker"
+                      , Type.namedWith
+                            (Elm.moduleName [ "Maybe" ])
+                            "Maybe"
+                            [ Type.namedWith
+                                (Elm.moduleName [ "String" ])
+                                "String"
+                                []
+                            ]
+                      )
+                    ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "Platform", "Cmd" ])
+                    "Cmd"
+                    [ Type.namedWith
+                        (Elm.moduleName [ "Result" ])
+                        "Result"
+                        [ Type.namedWith (Elm.moduleName [ "Http" ]) "Error" []
+                        , Type.var "msg"
+                        ]
+                    ]
+                )
+            )
+    , queryString =
+        Elm.valueWith
+            moduleName_
+            "queryString"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "data" ]
+                ]
+                (Type.namedWith (Elm.moduleName [ "String" ]) "String" [])
+            )
+    , maybeScalarEncode =
+        Elm.valueWith
+            moduleName_
+            "maybeScalarEncode"
+            (Type.function
+                [ Type.function
+                    [ Type.var "a" ]
+                    (Type.namedWith
+                        (Elm.moduleName [ "Json", "Encode" ])
+                        "Value"
+                        []
+                    )
+                , Type.namedWith
+                    (Elm.moduleName [ "Maybe" ])
+                    "Maybe"
+                    [ Type.var "a" ]
+                ]
+                (Type.namedWith (Elm.moduleName [ "Json", "Encode" ]) "Value" []
+                )
+            )
+    , encodeId =
+        Elm.valueWith
+            moduleName_
+            "encodeId"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Id"
+                    []
+                ]
+                (Type.namedWith (Elm.moduleName [ "Json", "Decode" ]) "Value" []
+                )
+            )
+    , decodeId =
+        Elm.valueWith
+            moduleName_
+            "decodeId"
+            (Type.namedWith
+                (Elm.moduleName [ "Json", "Decode" ])
+                "Decoder"
+                [ Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Id"
+                    []
+                ]
+            )
+    , encodeOptionals =
+        Elm.valueWith
+            moduleName_
+            "encodeOptionals"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "List" ])
+                    "List"
+                    [ Type.namedWith
+                        (Elm.moduleName [ "GraphQL", "Engine" ])
+                        "Optional"
+                        [ Type.var "arg" ]
+                    ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "List" ])
+                    "List"
+                    [ Type.tuple
+                        (Type.namedWith
+                            (Elm.moduleName [ "String" ])
+                            "String"
+                            []
+                        )
+                        (Type.namedWith
+                            (Elm.moduleName [ "GraphQL", "Engine" ])
+                            "Argument"
+                            []
+                        )
+                    ]
+                )
+            )
     }
 
 
-{-|
-Used in generated code to handle maybes
+{-| Used in generated code to handle maybes
 -}
 nullable : Elm.Expression -> Elm.Expression
 nullable arg1 =
-    Elm.apply (Elm.valueFrom moduleName_ "nullable") [ arg1 ]
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "nullable"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "data" ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source"
+                    , Type.namedWith
+                        (Elm.moduleName [ "Maybe" ])
+                        "Maybe"
+                        [ Type.var "data" ]
+                    ]
+                )
+            )
+        )
+        [ arg1 ]
 
 
 {-| -}
 field : Elm.Expression -> Elm.Expression -> Elm.Expression
 field arg1 arg2 =
-    Elm.apply (Elm.valueFrom moduleName_ "field") [ arg1, arg2 ]
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "field"
+            (Type.function
+                [ Type.namedWith (Elm.moduleName [ "String" ]) "String" []
+                , Type.namedWith
+                    (Elm.moduleName [ "Json", "Decode" ])
+                    "Decoder"
+                    [ Type.var "data" ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "data" ]
+                )
+            )
+        )
+        [ arg1, arg2 ]
 
 
 {-| -}
 fieldWith : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 fieldWith arg1 arg2 arg3 =
-    Elm.apply (Elm.valueFrom moduleName_ "fieldWith") [ arg1, arg2, arg3 ]
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "fieldWith"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "List" ])
+                    "List"
+                    [ Type.tuple
+                        (Type.namedWith
+                            (Elm.moduleName [ "String" ])
+                            "String"
+                            []
+                        )
+                        (Type.namedWith
+                            (Elm.moduleName [ "GraphQL", "Engine" ])
+                            "Argument"
+                            []
+                        )
+                    ]
+                , Type.namedWith (Elm.moduleName [ "String" ]) "String" []
+                , Type.namedWith
+                    (Elm.moduleName [ "Json", "Decode" ])
+                    "Decoder"
+                    [ Type.var "data" ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "data" ]
+                )
+            )
+        )
+        [ arg1, arg2, arg3 ]
 
 
 {-| -}
 object : Elm.Expression -> Elm.Expression -> Elm.Expression
 object arg1 arg2 =
-    Elm.apply (Elm.valueFrom moduleName_ "object") [ arg1, arg2 ]
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "object"
+            (Type.function
+                [ Type.namedWith (Elm.moduleName [ "String" ]) "String" []
+                , Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "data" ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "otherSource", Type.var "data" ]
+                )
+            )
+        )
+        [ arg1, arg2 ]
 
 
 {-| -}
 objectWith :
     Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 objectWith arg1 arg2 arg3 =
-    Elm.apply (Elm.valueFrom moduleName_ "objectWith") [ arg1, arg2, arg3 ]
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "objectWith"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "List" ])
+                    "List"
+                    [ Type.tuple
+                        (Type.namedWith
+                            (Elm.moduleName [ "String" ])
+                            "String"
+                            []
+                        )
+                        (Type.namedWith
+                            (Elm.moduleName [ "GraphQL", "Engine" ])
+                            "Argument"
+                            []
+                        )
+                    ]
+                , Type.namedWith (Elm.moduleName [ "String" ]) "String" []
+                , Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "data" ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "otherSource", Type.var "data" ]
+                )
+            )
+        )
+        [ arg1, arg2, arg3 ]
 
 
 {-| -}
 enum : Elm.Expression -> Elm.Expression
 enum arg1 =
-    Elm.apply (Elm.valueFrom moduleName_ "enum") [ arg1 ]
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "enum"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "List" ])
+                    "List"
+                    [ Type.tuple
+                        (Type.namedWith
+                            (Elm.moduleName [ "String" ])
+                            "String"
+                            []
+                        )
+                        (Type.var "item")
+                    ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "Json", "Decode" ])
+                    "Decoder"
+                    [ Type.var "item" ]
+                )
+            )
+        )
+        [ arg1 ]
 
 
 {-| -}
 maybeEnum : Elm.Expression -> Elm.Expression
 maybeEnum arg1 =
-    Elm.apply (Elm.valueFrom moduleName_ "maybeEnum") [ arg1 ]
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "maybeEnum"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "List" ])
+                    "List"
+                    [ Type.tuple
+                        (Type.namedWith
+                            (Elm.moduleName [ "String" ])
+                            "String"
+                            []
+                        )
+                        (Type.var "item")
+                    ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "Json", "Decode" ])
+                    "Decoder"
+                    [ Type.namedWith
+                        (Elm.moduleName [ "Maybe" ])
+                        "Maybe"
+                        [ Type.var "item" ]
+                    ]
+                )
+            )
+        )
+        [ arg1 ]
 
 
 {-| -}
 union : Elm.Expression -> Elm.Expression
 union arg1 =
-    Elm.apply (Elm.valueFrom moduleName_ "union") [ arg1 ]
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "union"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "List" ])
+                    "List"
+                    [ Type.tuple
+                        (Type.namedWith
+                            (Elm.moduleName [ "String" ])
+                            "String"
+                            []
+                        )
+                        (Type.namedWith
+                            (Elm.moduleName [ "GraphQL", "Engine" ])
+                            "Selection"
+                            [ Type.var "source", Type.var "data" ]
+                        )
+                    ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "data" ]
+                )
+            )
+        )
+        [ arg1 ]
 
 
 {-| -}
-typeSelection : { annotation : Elm.Annotation.Annotation }
+typeSelection : { annotation : Type.Annotation }
 typeSelection =
-    { annotation = Elm.Annotation.named moduleName_ "Selection" }
+    { annotation = Type.named moduleName_ "Selection" }
 
 
 {-| -}
 select : Elm.Expression -> Elm.Expression
 select arg1 =
-    Elm.apply (Elm.valueFrom moduleName_ "select") [ arg1 ]
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "select"
+            (Type.function
+                [ Type.var "data" ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "data" ]
+                )
+            )
+        )
+        [ arg1 ]
 
 
 {-| -}
 with : Elm.Expression -> Elm.Expression -> Elm.Expression
 with arg1 arg2 =
-    Elm.apply (Elm.valueFrom moduleName_ "with") [ arg1, arg2 ]
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "with"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "a" ]
+                , Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source"
+                    , Type.function [ Type.var "a" ] (Type.var "b")
+                    ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "b" ]
+                )
+            )
+        )
+        [ arg1, arg2 ]
 
 
 {-| -}
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 map arg1 arg2 =
-    Elm.apply (Elm.valueFrom moduleName_ "map") [ arg1 Elm.pass, arg2 ]
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "map"
+            (Type.function
+                [ Type.function [ Type.var "a" ] (Type.var "b")
+                , Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "a" ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "b" ]
+                )
+            )
+        )
+        [ arg1 Elm.pass, arg2 ]
 
 
 {-| -}
@@ -140,7 +912,27 @@ map2 :
     -> Elm.Expression
 map2 arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueFrom moduleName_ "map2")
+        (Elm.valueWith
+            moduleName_
+            "map2"
+            (Type.function
+                [ Type.function [ Type.var "a", Type.var "b" ] (Type.var "c")
+                , Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "a" ]
+                , Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "b" ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "c" ]
+                )
+            )
+        )
         [ arg1 Elm.pass Elm.pass, arg2, arg3 ]
 
 
@@ -152,7 +944,24 @@ recover :
     -> Elm.Expression
 recover arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueFrom moduleName_ "recover")
+        (Elm.valueWith
+            moduleName_
+            "recover"
+            (Type.function
+                [ Type.var "recovered"
+                , Type.function [ Type.var "data" ] (Type.var "recovered")
+                , Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "data" ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "recovered" ]
+                )
+            )
+        )
         [ arg1, arg2 Elm.pass, arg3 ]
 
 
@@ -160,39 +969,228 @@ recover arg1 arg2 arg3 =
 -}
 arg : Elm.Expression -> Elm.Expression -> Elm.Expression
 arg arg1 arg2 =
-    Elm.apply (Elm.valueFrom moduleName_ "arg") [ arg1, arg2 ]
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "arg"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "Json", "Encode" ])
+                    "Value"
+                    []
+                , Type.namedWith (Elm.moduleName [ "String" ]) "String" []
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Argument"
+                    []
+                )
+            )
+        )
+        [ arg1, arg2 ]
 
 
-{-|-}
-typeQuery : { annotation : Elm.Annotation.Annotation }
-typeQuery =
-    { annotation = Elm.Annotation.named moduleName_ "Query" }
-
-
-{-|-}
-query : Elm.Expression -> Elm.Expression -> Elm.Expression
-query arg1 arg2 =
-    Elm.apply (Elm.valueFrom moduleName_ "query") [ arg1, arg2 ]
-
-
-{-|-}
-typeMutation : { annotation : Elm.Annotation.Annotation }
-typeMutation =
-    { annotation = Elm.Annotation.named moduleName_ "Mutation" }
-
-
-{-|-}
-mutation : Elm.Expression -> Elm.Expression -> Elm.Expression
-mutation arg1 arg2 =
-    Elm.apply (Elm.valueFrom moduleName_ "mutation") [ arg1, arg2 ]
+{-| -}
+typeOptional : { annotation : Type.Annotation }
+typeOptional =
+    { annotation = Type.named moduleName_ "Optional" }
 
 
 {-|
 
+    Encode the nullability in the argument itself.
+
 -}
+optional : Elm.Expression -> Elm.Expression -> Elm.Expression
+optional arg1 arg2 =
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "optional"
+            (Type.function
+                [ Type.namedWith (Elm.moduleName [ "String" ]) "String" []
+                , Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Argument"
+                    []
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Optional"
+                    [ Type.var "arg" ]
+                )
+            )
+        )
+        [ arg1, arg2 ]
+
+
+{-| -}
+typeQuery : { annotation : Type.Annotation }
+typeQuery =
+    { annotation = Type.named moduleName_ "Query" }
+
+
+{-| -}
+query : Elm.Expression -> Elm.Expression -> Elm.Expression
+query arg1 arg2 =
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "query"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.namedWith
+                        (Elm.moduleName [ "GraphQL", "Engine" ])
+                        "Query"
+                        []
+                    , Type.var "value"
+                    ]
+                , Type.record
+                    [ ( "headers"
+                      , Type.namedWith
+                            (Elm.moduleName [ "List" ])
+                            "List"
+                            [ Type.namedWith
+                                (Elm.moduleName [ "Http" ])
+                                "Header"
+                                []
+                            ]
+                      )
+                    , ( "url"
+                      , Type.namedWith (Elm.moduleName [ "String" ]) "String" []
+                      )
+                    , ( "timeout"
+                      , Type.namedWith
+                            (Elm.moduleName [ "Maybe" ])
+                            "Maybe"
+                            [ Type.namedWith
+                                (Elm.moduleName [ "Basics" ])
+                                "Float"
+                                []
+                            ]
+                      )
+                    , ( "tracker"
+                      , Type.namedWith
+                            (Elm.moduleName [ "Maybe" ])
+                            "Maybe"
+                            [ Type.namedWith
+                                (Elm.moduleName [ "String" ])
+                                "String"
+                                []
+                            ]
+                      )
+                    ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "Platform", "Cmd" ])
+                    "Cmd"
+                    [ Type.namedWith
+                        (Elm.moduleName [ "Result" ])
+                        "Result"
+                        [ Type.namedWith (Elm.moduleName [ "Http" ]) "Error" []
+                        , Type.var "value"
+                        ]
+                    ]
+                )
+            )
+        )
+        [ arg1, arg2 ]
+
+
+{-| -}
+typeMutation : { annotation : Type.Annotation }
+typeMutation =
+    { annotation = Type.named moduleName_ "Mutation" }
+
+
+{-| -}
+mutation : Elm.Expression -> Elm.Expression -> Elm.Expression
+mutation arg1 arg2 =
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "mutation"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.namedWith
+                        (Elm.moduleName [ "GraphQL", "Engine" ])
+                        "Mutation"
+                        []
+                    , Type.var "msg"
+                    ]
+                , Type.record
+                    [ ( "headers"
+                      , Type.namedWith
+                            (Elm.moduleName [ "List" ])
+                            "List"
+                            [ Type.namedWith
+                                (Elm.moduleName [ "Http" ])
+                                "Header"
+                                []
+                            ]
+                      )
+                    , ( "url"
+                      , Type.namedWith (Elm.moduleName [ "String" ]) "String" []
+                      )
+                    , ( "timeout"
+                      , Type.namedWith
+                            (Elm.moduleName [ "Maybe" ])
+                            "Maybe"
+                            [ Type.namedWith
+                                (Elm.moduleName [ "Basics" ])
+                                "Float"
+                                []
+                            ]
+                      )
+                    , ( "tracker"
+                      , Type.namedWith
+                            (Elm.moduleName [ "Maybe" ])
+                            "Maybe"
+                            [ Type.namedWith
+                                (Elm.moduleName [ "String" ])
+                                "String"
+                                []
+                            ]
+                      )
+                    ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "Platform", "Cmd" ])
+                    "Cmd"
+                    [ Type.namedWith
+                        (Elm.moduleName [ "Result" ])
+                        "Result"
+                        [ Type.namedWith (Elm.moduleName [ "Http" ]) "Error" []
+                        , Type.var "msg"
+                        ]
+                    ]
+                )
+            )
+        )
+        [ arg1, arg2 ]
+
+
+{-| -}
 queryString : Elm.Expression -> Elm.Expression
 queryString arg1 =
-    Elm.apply (Elm.valueFrom moduleName_ "queryString") [ arg1 ]
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "queryString"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Selection"
+                    [ Type.var "source", Type.var "data" ]
+                ]
+                (Type.namedWith (Elm.moduleName [ "String" ]) "String" [])
+            )
+        )
+        [ arg1 ]
 
 
 {-| We can also accept:
@@ -204,48 +1202,125 @@ But we can define anything else in terms of these:
 
 -}
 typeArgument :
-    { annotation : Elm.Annotation.Annotation
+    { annotation : Type.Annotation
     , argValue : Elm.Expression
     , var : Elm.Expression
     }
 typeArgument =
-    { annotation = Elm.Annotation.named moduleName_ "Argument"
-    , argValue = Elm.valueFrom moduleName_ "ArgValue"
-    , var = Elm.valueFrom moduleName_ "Var"
+    { annotation = Type.named moduleName_ "Argument"
+    , argValue =
+        Elm.valueWith
+            moduleName_
+            "ArgValue"
+            (Type.namedWith (Elm.moduleName []) "Argument" [])
+    , var =
+        Elm.valueWith
+            moduleName_
+            "Var"
+            (Type.namedWith (Elm.moduleName []) "Argument" [])
     }
 
 
-{-|-}
+{-| -}
 maybeScalarEncode :
     (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 maybeScalarEncode arg1 arg2 =
     Elm.apply
-        (Elm.valueFrom moduleName_ "maybeScalarEncode")
+        (Elm.valueWith
+            moduleName_
+            "maybeScalarEncode"
+            (Type.function
+                [ Type.function
+                    [ Type.var "a" ]
+                    (Type.namedWith
+                        (Elm.moduleName [ "Json", "Encode" ])
+                        "Value"
+                        []
+                    )
+                , Type.namedWith
+                    (Elm.moduleName [ "Maybe" ])
+                    "Maybe"
+                    [ Type.var "a" ]
+                ]
+                (Type.namedWith (Elm.moduleName [ "Json", "Encode" ]) "Value" []
+                )
+            )
+        )
         [ arg1 Elm.pass, arg2 ]
 
 
-{-|-}
-typeId : { annotation : Elm.Annotation.Annotation }
+{-| -}
+typeId : { annotation : Type.Annotation }
 typeId =
-    { annotation = Elm.Annotation.named moduleName_ "Id" }
+    { annotation = Type.named moduleName_ "Id" }
 
 
-{-|-}
+{-| -}
 encodeId : Elm.Expression -> Elm.Expression
 encodeId arg1 =
-    Elm.apply (Elm.valueFrom moduleName_ "encodeId") [ arg1 ]
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "encodeId"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "GraphQL", "Engine" ])
+                    "Id"
+                    []
+                ]
+                (Type.namedWith (Elm.moduleName [ "Json", "Decode" ]) "Value" []
+                )
+            )
+        )
+        [ arg1 ]
 
 
-{-|-}
+{-| -}
 decodeId : Elm.Expression
 decodeId =
-    Elm.valueFrom moduleName_ "decodeId"
+    Elm.valueWith
+        moduleName_
+        "decodeId"
+        (Type.namedWith
+            (Elm.moduleName [ "Json", "Decode" ])
+            "Decoder"
+            [ Type.namedWith (Elm.moduleName [ "GraphQL", "Engine" ]) "Id" [] ]
+        )
 
 
-{-|-}
-typeOptional :
-    { annotation : Elm.Annotation.Annotation, optional : Elm.Expression }
-typeOptional =
-    { annotation = Elm.Annotation.named moduleName_ "Optional"
-    , optional = Elm.valueFrom moduleName_ "Optional"
-    }
+{-| -}
+encodeOptionals : Elm.Expression -> Elm.Expression
+encodeOptionals arg1 =
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "encodeOptionals"
+            (Type.function
+                [ Type.namedWith
+                    (Elm.moduleName [ "List" ])
+                    "List"
+                    [ Type.namedWith
+                        (Elm.moduleName [ "GraphQL", "Engine" ])
+                        "Optional"
+                        [ Type.var "arg" ]
+                    ]
+                ]
+                (Type.namedWith
+                    (Elm.moduleName [ "List" ])
+                    "List"
+                    [ Type.tuple
+                        (Type.namedWith
+                            (Elm.moduleName [ "String" ])
+                            "String"
+                            []
+                        )
+                        (Type.namedWith
+                            (Elm.moduleName [ "GraphQL", "Engine" ])
+                            "Argument"
+                            []
+                        )
+                    ]
+                )
+            )
+        )
+        [ arg1 ]
