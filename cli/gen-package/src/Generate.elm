@@ -106,21 +106,56 @@ expressionType =
     Annotation.named elm "Expression"
 
 
-annotationNamed : String -> Elm.Expression
-annotationNamed name =
-    Elm.apply
-        (Elm.valueWith elmAnnotation
-            "named"
-            (Annotation.function
-                [ Annotation.named elm "Module"
-                , Annotation.string
+annotationNamed : String -> List String -> Elm.Expression
+annotationNamed name tags =
+    case tags of
+        [] ->
+            Elm.apply
+                (Elm.valueWith elmAnnotation
+                    "named"
+                    (Annotation.function
+                        [ Annotation.named elm "Module"
+                        , Annotation.string
+                        ]
+                        (Annotation.named elmAnnotation "Annotation")
+                    )
+                )
+                [ thisModuleName
+                , Elm.string name
                 ]
-                (Annotation.named elmAnnotation "Annotation")
-            )
-        )
-        [ thisModuleName
-        , Elm.string name
-        ]
+
+        nonEmpty ->
+            Elm.lambdaWith
+                (List.indexedMap
+                    (\i arg ->
+                        ( Pattern.var ("arg" ++ String.fromInt i)
+                        , Annotation.named elmAnnotation "Annotation"
+                        )
+                    )
+                    nonEmpty
+                )
+                (Elm.apply
+                    (Elm.valueWith elmAnnotation
+                        "namedWith"
+                        (Annotation.function
+                            [ Annotation.named elm "Module"
+                            , Annotation.string
+                            , Annotation.list (Annotation.named elmAnnotation "Annotation")
+                            ]
+                            (Annotation.named elmAnnotation "Annotation")
+                        )
+                    )
+                    [ thisModuleName
+                    , Elm.string name
+                    , Elm.list
+                        (List.indexedMap
+                            (\i arg ->
+                                Elm.value ("arg" ++ String.fromInt i)
+                            )
+                            nonEmpty
+                        )
+                    ]
+                )
 
 
 skip : Elm.Expression
@@ -226,17 +261,46 @@ generateBlocks block =
             [ Elm.declaration ("type" ++ union.name)
                 (Elm.record
                     (( chooseName "annotation" union.tags
-                     , annotationNamed union.name
+                     , annotationNamed union.name union.args
                      )
                         :: List.map
-                            (\( name, tag ) ->
-                                ( name
-                                , valueWith thisModuleName
-                                    (Elm.string name)
-                                    (Elm.Type.Type union.name
-                                        (List.map Elm.Type.Var union.args)
-                                    )
-                                )
+                            (\( name, tags ) ->
+                                case tags of
+                                    [] ->
+                                        ( name
+                                        , valueWith thisModuleName
+                                            (Elm.string name)
+                                            (Elm.Type.Type union.name
+                                                (List.map Elm.Type.Var union.args)
+                                            )
+                                        )
+
+                                    _ ->
+                                        ( name
+                                        , Elm.lambdaWith
+                                            (List.indexedMap
+                                                (\i tag ->
+                                                    ( Pattern.var ("arg" ++ String.fromInt i)
+                                                    , Annotation.named elmAnnotation "Annotation"
+                                                    )
+                                                )
+                                                tags
+                                            )
+                                            (Elm.apply
+                                                (valueWith thisModuleName
+                                                    (Elm.string name)
+                                                    (Elm.Type.Type union.name
+                                                        (List.map Elm.Type.Var union.args)
+                                                    )
+                                                )
+                                                (List.indexedMap
+                                                    (\i tag ->
+                                                        Elm.value ("arg" ++ String.fromInt i)
+                                                    )
+                                                    tags
+                                                )
+                                            )
+                                        )
                             )
                             union.tags
                     )
@@ -248,7 +312,7 @@ generateBlocks block =
             [ Elm.declaration ("alias" ++ alias.name)
                 (Elm.record
                     [ ( "annotation"
-                      , annotationNamed alias.name
+                      , annotationNamed alias.name alias.args
                       )
                     ]
                 )

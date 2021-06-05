@@ -6159,27 +6159,138 @@ var $elm$core$List$filterMap = F2(
 			_List_Nil,
 			xs);
 	});
-var $author$project$Generate$annotationNamed = function (name) {
-	return A2(
-		$author$project$Elm$apply,
-		A3(
-			$author$project$Elm$valueWith,
-			$author$project$Generate$elmAnnotation,
-			'named',
-			A2(
-				$author$project$Elm$Annotation$function,
+var $stil4m$elm_syntax$Elm$Syntax$Expression$LambdaExpression = function (a) {
+	return {$: 'LambdaExpression', a: a};
+};
+var $author$project$Elm$lambdaWith = F2(
+	function (args, _v0) {
+		var expr = _v0.a;
+		return $author$project$Internal$Compiler$Expression(
+			{
+				annotation: function () {
+					var _v1 = expr.annotation;
+					if (_v1.$ === 'Err') {
+						var err = _v1.a;
+						return $elm$core$Result$Err(err);
+					} else {
+						var _return = _v1.a;
+						return $elm$core$Result$Ok(
+							A3(
+								$elm$core$List$foldr,
+								F2(
+									function (ann, fn) {
+										return A2(
+											$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$FunctionTypeAnnotation,
+											$author$project$Internal$Compiler$nodify(ann),
+											$author$project$Internal$Compiler$nodify(fn));
+									}),
+								_return,
+								A2(
+									$elm$core$List$map,
+									A2($elm$core$Basics$composeL, $author$project$Internal$Compiler$getInnerAnnotation, $elm$core$Tuple$second),
+									args)));
+					}
+				}(),
+				expression: $stil4m$elm_syntax$Elm$Syntax$Expression$LambdaExpression(
+					{
+						args: $author$project$Internal$Compiler$nodifyAll(
+							A2($elm$core$List$map, $elm$core$Tuple$first, args)),
+						expression: $author$project$Internal$Compiler$nodify(expr.expression)
+					}),
+				imports: expr.imports,
+				skip: false
+			});
+	});
+var $author$project$Internal$Compiler$emptyModule = $author$project$Internal$Compiler$inModule(_List_Nil);
+var $author$project$Elm$valueFrom = F2(
+	function (mod, name) {
+		return $author$project$Internal$Compiler$Expression(
+			{
+				annotation: $elm$core$Result$Err(_List_Nil),
+				expression: A2(
+					$stil4m$elm_syntax$Elm$Syntax$Expression$FunctionOrValue,
+					$author$project$Internal$Compiler$unpack(mod),
+					$author$project$Internal$Compiler$formatValue(name)),
+				imports: _List_fromArray(
+					[mod]),
+				skip: false
+			});
+	});
+var $author$project$Elm$value = $author$project$Elm$valueFrom($author$project$Internal$Compiler$emptyModule);
+var $stil4m$elm_syntax$Elm$Syntax$Pattern$VarPattern = function (a) {
+	return {$: 'VarPattern', a: a};
+};
+var $author$project$Elm$Pattern$var = function (name) {
+	return $stil4m$elm_syntax$Elm$Syntax$Pattern$VarPattern(name);
+};
+var $author$project$Generate$annotationNamed = F2(
+	function (name, tags) {
+		if (!tags.b) {
+			return A2(
+				$author$project$Elm$apply,
+				A3(
+					$author$project$Elm$valueWith,
+					$author$project$Generate$elmAnnotation,
+					'named',
+					A2(
+						$author$project$Elm$Annotation$function,
+						_List_fromArray(
+							[
+								A2($author$project$Elm$Annotation$named, $author$project$Generate$elm, 'Module'),
+								$author$project$Elm$Annotation$string
+							]),
+						A2($author$project$Elm$Annotation$named, $author$project$Generate$elmAnnotation, 'Annotation'))),
 				_List_fromArray(
 					[
-						A2($author$project$Elm$Annotation$named, $author$project$Generate$elm, 'Module'),
-						$author$project$Elm$Annotation$string
-					]),
-				A2($author$project$Elm$Annotation$named, $author$project$Generate$elmAnnotation, 'Annotation'))),
-		_List_fromArray(
-			[
-				$author$project$Generate$thisModuleName,
-				$author$project$Elm$string(name)
-			]));
-};
+						$author$project$Generate$thisModuleName,
+						$author$project$Elm$string(name)
+					]));
+		} else {
+			var nonEmpty = tags;
+			return A2(
+				$author$project$Elm$lambdaWith,
+				A2(
+					$elm$core$List$indexedMap,
+					F2(
+						function (i, arg) {
+							return _Utils_Tuple2(
+								$author$project$Elm$Pattern$var(
+									'arg' + $elm$core$String$fromInt(i)),
+								A2($author$project$Elm$Annotation$named, $author$project$Generate$elmAnnotation, 'Annotation'));
+						}),
+					nonEmpty),
+				A2(
+					$author$project$Elm$apply,
+					A3(
+						$author$project$Elm$valueWith,
+						$author$project$Generate$elmAnnotation,
+						'namedWith',
+						A2(
+							$author$project$Elm$Annotation$function,
+							_List_fromArray(
+								[
+									A2($author$project$Elm$Annotation$named, $author$project$Generate$elm, 'Module'),
+									$author$project$Elm$Annotation$string,
+									$author$project$Elm$Annotation$list(
+									A2($author$project$Elm$Annotation$named, $author$project$Generate$elmAnnotation, 'Annotation'))
+								]),
+							A2($author$project$Elm$Annotation$named, $author$project$Generate$elmAnnotation, 'Annotation'))),
+					_List_fromArray(
+						[
+							$author$project$Generate$thisModuleName,
+							$author$project$Elm$string(name),
+							$author$project$Elm$list(
+							A2(
+								$elm$core$List$indexedMap,
+								F2(
+									function (i, arg) {
+										return $author$project$Elm$value(
+											'arg' + $elm$core$String$fromInt(i));
+									}),
+								nonEmpty))
+						])));
+		}
+	});
 var $author$project$Generate$expressionType = A2($author$project$Elm$Annotation$named, $author$project$Generate$elm, 'Expression');
 var $author$project$Generate$apply = F2(
 	function (fn, args) {
@@ -6220,12 +6331,6 @@ var $author$project$Generate$asArgumentTypeHelper = function (tipe) {
 	} else {
 		return $author$project$Generate$expressionType;
 	}
-};
-var $stil4m$elm_syntax$Elm$Syntax$Pattern$VarPattern = function (a) {
-	return {$: 'VarPattern', a: a};
-};
-var $author$project$Elm$Pattern$var = function (name) {
-	return $stil4m$elm_syntax$Elm$Syntax$Pattern$VarPattern(name);
 };
 var $author$project$Generate$asArgument = F2(
 	function (index, tipe) {
@@ -6598,22 +6703,57 @@ var $author$project$Generate$generateBlocks = function (block) {
 								$elm$core$List$cons,
 								_Utils_Tuple2(
 									A2($author$project$Generate$chooseName, 'annotation', union.tags),
-									$author$project$Generate$annotationNamed(union.name)),
+									A2($author$project$Generate$annotationNamed, union.name, union.args)),
 								A2(
 									$elm$core$List$map,
 									function (_v1) {
 										var name = _v1.a;
-										var tag = _v1.b;
-										return _Utils_Tuple2(
-											name,
-											A3(
-												$author$project$Generate$valueWith,
-												$author$project$Generate$thisModuleName,
-												$author$project$Elm$string(name),
+										var tags = _v1.b;
+										if (!tags.b) {
+											return _Utils_Tuple2(
+												name,
+												A3(
+													$author$project$Generate$valueWith,
+													$author$project$Generate$thisModuleName,
+													$author$project$Elm$string(name),
+													A2(
+														$elm$project_metadata_utils$Elm$Type$Type,
+														union.name,
+														A2($elm$core$List$map, $elm$project_metadata_utils$Elm$Type$Var, union.args))));
+										} else {
+											return _Utils_Tuple2(
+												name,
 												A2(
-													$elm$project_metadata_utils$Elm$Type$Type,
-													union.name,
-													A2($elm$core$List$map, $elm$project_metadata_utils$Elm$Type$Var, union.args))));
+													$author$project$Elm$lambdaWith,
+													A2(
+														$elm$core$List$indexedMap,
+														F2(
+															function (i, tag) {
+																return _Utils_Tuple2(
+																	$author$project$Elm$Pattern$var(
+																		'arg' + $elm$core$String$fromInt(i)),
+																	A2($author$project$Elm$Annotation$named, $author$project$Generate$elmAnnotation, 'Annotation'));
+															}),
+														tags),
+													A2(
+														$author$project$Elm$apply,
+														A3(
+															$author$project$Generate$valueWith,
+															$author$project$Generate$thisModuleName,
+															$author$project$Elm$string(name),
+															A2(
+																$elm$project_metadata_utils$Elm$Type$Type,
+																union.name,
+																A2($elm$core$List$map, $elm$project_metadata_utils$Elm$Type$Var, union.args))),
+														A2(
+															$elm$core$List$indexedMap,
+															F2(
+																function (i, tag) {
+																	return $author$project$Elm$value(
+																		'arg' + $elm$core$String$fromInt(i));
+																}),
+															tags))));
+										}
 									},
 									union.tags)))))
 				]);
@@ -6632,15 +6772,15 @@ var $author$project$Generate$generateBlocks = function (block) {
 								[
 									_Utils_Tuple2(
 									'annotation',
-									$author$project$Generate$annotationNamed(alias.name))
+									A2($author$project$Generate$annotationNamed, alias.name, alias.args))
 								]))))
 				]);
 		case 'ValueBlock':
 			var value = block.a;
-			var _v2 = value.tipe;
-			if (_v2.$ === 'Lambda') {
-				var one = _v2.a;
-				var two = _v2.b;
+			var _v3 = value.tipe;
+			if (_v3.$ === 'Lambda') {
+				var one = _v3.a;
+				var two = _v3.b;
 				var captured = A2(
 					$author$project$Generate$captureFunction,
 					two,
