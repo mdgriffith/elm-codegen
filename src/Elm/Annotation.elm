@@ -198,52 +198,34 @@ extensible base fields =
 
 {-| -}
 named : Module -> String -> Annotation
-named ((Compiler.Module mod maybeAlias) as fullMod) name =
+named mod name =
     Compiler.Annotation
         { annotation =
-            case maybeAlias of
-                Nothing ->
-                    Annotation.Typed (Compiler.nodify ( mod, Compiler.formatType name )) []
-
-                Just aliasStr ->
-                    Annotation.Typed (Compiler.nodify ( [ aliasStr ], Compiler.formatType name )) []
-        , imports = [ fullMod ]
+            Annotation.Typed
+                (Compiler.nodify
+                    ( Compiler.resolveModuleName mod, Compiler.formatType name )
+                )
+                []
+        , imports = [ mod ]
         }
 
 
 {-| -}
 namedWith : Module -> String -> List Annotation -> Annotation
-namedWith ((Compiler.Module mod maybeAlias) as fullMod) name args =
-    case maybeAlias of
-        Nothing ->
-            Compiler.Annotation
-                { annotation =
-                    Annotation.Typed (Compiler.nodify ( mod, Compiler.formatType name ))
-                        (Compiler.nodifyAll
-                            (List.map Compiler.getInnerAnnotation
-                                args
-                            )
-                        )
-                , imports =
-                    fullMod
-                        :: List.concatMap Compiler.getAnnotationImports
-                            args
-                }
-
-        Just aliasStr ->
-            Compiler.Annotation
-                { annotation =
-                    Annotation.Typed (Compiler.nodify ( [ aliasStr ], name ))
-                        (Compiler.nodifyAll
-                            (List.map Compiler.getInnerAnnotation
-                                args
-                            )
-                        )
-                , imports =
-                    fullMod
-                        :: List.concatMap Compiler.getAnnotationImports
-                            args
-                }
+namedWith mod name args =
+    Compiler.Annotation
+        { annotation =
+            Annotation.Typed (Compiler.nodify ( Compiler.resolveModuleName mod, Compiler.formatType name ))
+                (Compiler.nodifyAll
+                    (List.map Compiler.getInnerAnnotation
+                        args
+                    )
+                )
+        , imports =
+            mod
+                :: List.concatMap Compiler.getAnnotationImports
+                    args
+        }
 
 
 {-| -}

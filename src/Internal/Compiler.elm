@@ -158,18 +158,52 @@ makeImport (Module name maybeAlias) =
             Nothing
 
         _ ->
-            Just
-                (nodify
-                    { moduleName = nodify name
-                    , moduleAlias =
-                        Maybe.map
-                            (\al ->
-                                nodify [ al ]
-                            )
-                            maybeAlias
-                    , exposingList = Nothing
-                    }
-                )
+            if builtIn name && maybeAlias == Nothing then
+                Nothing
+
+            else
+                Just
+                    (nodify
+                        { moduleName = nodify name
+                        , moduleAlias =
+                            Maybe.map
+                                (\al ->
+                                    nodify [ al ]
+                                )
+                                maybeAlias
+                        , exposingList = Nothing
+                        }
+                    )
+
+
+resolveModuleName : Module -> List String
+resolveModuleName (Module mod maybeAlias) =
+    if builtIn mod then
+        []
+
+    else
+        case maybeAlias of
+            Nothing ->
+                mod
+
+            Just aliasStr ->
+                [ aliasStr ]
+
+
+builtIn : List String -> Bool
+builtIn name =
+    case name of
+        [ "List" ] ->
+            True
+
+        [ "Maybe" ] ->
+            True
+
+        [ "Basics" ] ->
+            True
+
+        _ ->
+            False
 
 
 fullModName : Module -> String
@@ -323,16 +357,6 @@ inModule mods =
 moduleAs : List String -> String -> Module
 moduleAs mods modAlias =
     Module (List.map formatType mods) (Just (formatType modAlias))
-
-
-unpack : Module -> ModuleName.ModuleName
-unpack (Module name maybeAlias) =
-    case maybeAlias of
-        Nothing ->
-            name
-
-        Just modAlias ->
-            [ modAlias ]
 
 
 denode : Node a -> a

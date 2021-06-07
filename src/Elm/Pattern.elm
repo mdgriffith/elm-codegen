@@ -198,7 +198,7 @@ would result in
 -}
 namedFrom : Module -> String -> List Pattern -> Pattern
 namedFrom moduleName name patterns =
-    Pattern.NamedPattern { moduleName = Util.unpack moduleName, name = name } (Util.nodifyAll patterns)
+    Pattern.NamedPattern { moduleName = Util.resolveModuleName moduleName, name = name } (Util.nodifyAll patterns)
         |> parensIf (not (List.isEmpty patterns))
 
 

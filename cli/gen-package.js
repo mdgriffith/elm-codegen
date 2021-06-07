@@ -4808,8 +4808,8 @@ var $author$project$Internal$Compiler$unifiableHelper = F3(
 							return _Debug_todo(
 								'Internal.Compiler',
 								{
-									start: {line: 674, column: 21},
-									end: {line: 674, column: 31}
+									start: {line: 708, column: 21},
+									end: {line: 708, column: 31}
 								})('');
 						default:
 							return _Utils_Tuple2(
@@ -5222,35 +5222,54 @@ var $author$project$Generate$elm = $author$project$Elm$moduleName(
 	_List_fromArray(
 		['Elm']));
 var $author$project$Generate$local = $author$project$Elm$moduleName(_List_Nil);
+var $author$project$Internal$Compiler$builtIn = function (name) {
+	_v0$3:
+	while (true) {
+		if (name.b && (!name.b.b)) {
+			switch (name.a) {
+				case 'List':
+					return true;
+				case 'Maybe':
+					return true;
+				case 'Basics':
+					return true;
+				default:
+					break _v0$3;
+			}
+		} else {
+			break _v0$3;
+		}
+	}
+	return false;
+};
+var $author$project$Internal$Compiler$resolveModuleName = function (_v0) {
+	var mod = _v0.a;
+	var maybeAlias = _v0.b;
+	if ($author$project$Internal$Compiler$builtIn(mod)) {
+		return _List_Nil;
+	} else {
+		if (maybeAlias.$ === 'Nothing') {
+			return mod;
+		} else {
+			var aliasStr = maybeAlias.a;
+			return _List_fromArray(
+				[aliasStr]);
+		}
+	}
+};
 var $author$project$Elm$Annotation$named = F2(
-	function (fullMod, name) {
-		var mod = fullMod.a;
-		var maybeAlias = fullMod.b;
+	function (mod, name) {
 		return $author$project$Internal$Compiler$Annotation(
 			{
-				annotation: function () {
-					if (maybeAlias.$ === 'Nothing') {
-						return A2(
-							$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Typed,
-							$author$project$Internal$Compiler$nodify(
-								_Utils_Tuple2(
-									mod,
-									$author$project$Internal$Compiler$formatType(name))),
-							_List_Nil);
-					} else {
-						var aliasStr = maybeAlias.a;
-						return A2(
-							$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Typed,
-							$author$project$Internal$Compiler$nodify(
-								_Utils_Tuple2(
-									_List_fromArray(
-										[aliasStr]),
-									$author$project$Internal$Compiler$formatType(name))),
-							_List_Nil);
-					}
-				}(),
+				annotation: A2(
+					$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Typed,
+					$author$project$Internal$Compiler$nodify(
+						_Utils_Tuple2(
+							$author$project$Internal$Compiler$resolveModuleName(mod),
+							$author$project$Internal$Compiler$formatType(name))),
+					_List_Nil),
 				imports: _List_fromArray(
-					[fullMod])
+					[mod])
 			});
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Expression$FunctionOrValue = F2(
@@ -5264,17 +5283,6 @@ var $author$project$Internal$Compiler$formatValue = function (str) {
 			A2($elm$core$String$left, 1, str)),
 		A2($elm$core$String$dropLeft, 1, str));
 };
-var $author$project$Internal$Compiler$unpack = function (_v0) {
-	var name = _v0.a;
-	var maybeAlias = _v0.b;
-	if (maybeAlias.$ === 'Nothing') {
-		return name;
-	} else {
-		var modAlias = maybeAlias.a;
-		return _List_fromArray(
-			[modAlias]);
-	}
-};
 var $author$project$Elm$valueWith = F3(
 	function (mod, name, ann) {
 		return $author$project$Internal$Compiler$Expression(
@@ -5283,7 +5291,7 @@ var $author$project$Elm$valueWith = F3(
 					$author$project$Internal$Compiler$getInnerAnnotation(ann)),
 				expression: A2(
 					$stil4m$elm_syntax$Elm$Syntax$Expression$FunctionOrValue,
-					$author$project$Internal$Compiler$unpack(mod),
+					$author$project$Internal$Compiler$resolveModuleName(mod),
 					$author$project$Internal$Compiler$formatValue(name)),
 				imports: A2(
 					$elm$core$List$cons,
@@ -6129,8 +6137,8 @@ var $elm$core$Tuple$second = function (_v0) {
 	var y = _v0.b;
 	return y;
 };
-var $author$project$Elm$file = F2(
-	function (mod, decs) {
+var $author$project$Elm$file = F3(
+	function (mod, docComment, decs) {
 		return $author$project$Elm$File(
 			{
 				body: decs,
@@ -6138,6 +6146,7 @@ var $author$project$Elm$file = F2(
 					$author$project$Elm$reduceDeclarationImports,
 					decs,
 					_Utils_Tuple2($elm$core$Set$empty, _List_Nil)).b,
+				moduleComment: docComment,
 				moduleDefinition: mod
 			});
 	});
@@ -6178,11 +6187,11 @@ var $author$project$Elm$lambdaWith = F2(
 							A3(
 								$elm$core$List$foldr,
 								F2(
-									function (ann, fn) {
+									function (ann, fnbody) {
 										return A2(
 											$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$FunctionTypeAnnotation,
 											$author$project$Internal$Compiler$nodify(ann),
-											$author$project$Internal$Compiler$nodify(fn));
+											$author$project$Internal$Compiler$nodify(fnbody));
 									}),
 								_return,
 								A2(
@@ -6209,7 +6218,7 @@ var $author$project$Elm$valueFrom = F2(
 				annotation: $elm$core$Result$Err(_List_Nil),
 				expression: A2(
 					$stil4m$elm_syntax$Elm$Syntax$Expression$FunctionOrValue,
-					$author$project$Internal$Compiler$unpack(mod),
+					$author$project$Internal$Compiler$resolveModuleName(mod),
 					$author$project$Internal$Compiler$formatValue(name)),
 				imports: _List_fromArray(
 					[mod]),
@@ -6996,9 +7005,10 @@ var $author$project$Generate$moduleToFile = function (docs) {
 		'Elm',
 		A2($elm$core$List$cons, 'Gen', sourceModName));
 	var blocks = $elm$project_metadata_utils$Elm$Docs$toBlocks(docs);
-	return A2(
+	return A3(
 		$author$project$Elm$file,
 		$author$project$Elm$moduleName(modName),
+		'',
 		A2(
 			$elm$core$List$cons,
 			$author$project$Elm$expose(
@@ -7050,12 +7060,25 @@ var $stil4m$elm_syntax$Elm$Syntax$Exposing$All = function (a) {
 var $stil4m$elm_syntax$Elm$Syntax$Exposing$Explicit = function (a) {
 	return {$: 'Explicit', a: a};
 };
+var $author$project$Internal$Comments$Markdown = function (a) {
+	return {$: 'Markdown', a: a};
+};
 var $stil4m$elm_syntax$Elm$Syntax$Module$NormalModule = function (a) {
 	return {$: 'NormalModule', a: a};
 };
 var $stil4m$elm_syntax$Elm$Syntax$Module$PortModule = function (a) {
 	return {$: 'PortModule', a: a};
 };
+var $author$project$Internal$Comments$Comment = function (a) {
+	return {$: 'Comment', a: a};
+};
+var $author$project$Internal$Comments$addPart = F2(
+	function (_v0, part) {
+		var parts = _v0.a;
+		return $author$project$Internal$Comments$Comment(
+			A2($elm$core$List$cons, part, parts));
+	});
+var $author$project$Internal$Comments$emptyComment = $author$project$Internal$Comments$Comment(_List_Nil);
 var $stil4m$elm_syntax$Elm$Syntax$Exposing$FunctionExpose = function (a) {
 	return {$: 'FunctionExpose', a: a};
 };
@@ -7204,7 +7227,7 @@ var $author$project$Internal$Compiler$makeImport = function (_v0) {
 	if (!name.b) {
 		return $elm$core$Maybe$Nothing;
 	} else {
-		return $elm$core$Maybe$Just(
+		return ($author$project$Internal$Compiler$builtIn(name) && _Utils_eq(maybeAlias, $elm$core$Maybe$Nothing)) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(
 			$author$project$Internal$Compiler$nodify(
 				{
 					exposingList: $elm$core$Maybe$Nothing,
@@ -10473,7 +10496,11 @@ var $author$project$Elm$render = function (_v0) {
 	var exposed = $author$project$Internal$Compiler$getExposed(fileDetails.body);
 	var body = $author$project$Internal$Write$write(
 		{
-			comments: $elm$core$Maybe$Nothing,
+			comments: $elm$core$Maybe$Just(
+				A2(
+					$author$project$Internal$Comments$addPart,
+					$author$project$Internal$Comments$emptyComment,
+					$author$project$Internal$Comments$Markdown(fileDetails.moduleComment))),
 			declarations: fileDetails.body,
 			imports: A2($elm$core$List$filterMap, $author$project$Internal$Compiler$makeImport, fileDetails.imports),
 			moduleDefinition: $author$project$Internal$Compiler$nodify(

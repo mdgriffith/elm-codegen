@@ -48,6 +48,7 @@ moduleToFile docs =
             "Elm" :: "Gen" :: sourceModName
     in
     Elm.file (Elm.moduleName modName)
+        ""
         ((Elm.declarationWith "moduleName_"
             (Annotation.named elm "Module")
             (Elm.apply

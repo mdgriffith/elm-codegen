@@ -10,7 +10,7 @@ module Elm exposing
     , lambda, lambda2, lambda3, lambda4, lambda5, lambdaWith
     , withAnnotation
     , Declaration, declaration, declarationWith
-    , function, functionWith
+    , function, functionWith, fn, fn2, fn3, fn4, fn5
     , alias, aliasWith
     , customType, customTypeWith
     , Module, moduleName, moduleAs
@@ -52,7 +52,7 @@ module Elm exposing
 
 @docs Declaration, declaration, declarationWith
 
-@docs function, functionWith
+@docs function, functionWith, fn, fn2, fn3, fn4, fn5
 
 @docs alias, aliasWith
 
@@ -294,7 +294,7 @@ value =
 valueFrom : Module -> String -> Expression
 valueFrom mod name =
     Compiler.Expression
-        { expression = Exp.FunctionOrValue (Compiler.unpack mod) (Compiler.formatValue name)
+        { expression = Exp.FunctionOrValue (Compiler.resolveModuleName mod) (Compiler.formatValue name)
         , annotation = Err []
         , imports = [ mod ]
         , skip = False
@@ -332,7 +332,7 @@ Then, when that list is generated, it will automatically have the type signature
 valueWith : Module -> String -> Elm.Annotation.Annotation -> Expression
 valueWith mod name ann =
     Compiler.Expression
-        { expression = Exp.FunctionOrValue (Compiler.unpack mod) (Compiler.formatValue name)
+        { expression = Exp.FunctionOrValue (Compiler.resolveModuleName mod) (Compiler.formatValue name)
         , annotation = Ok (Compiler.getInnerAnnotation ann)
         , imports = mod :: Compiler.getAnnotationImports ann
         , skip = False
@@ -876,10 +876,10 @@ lambdaWith args (Compiler.Expression expr) =
 
                 Ok return ->
                     List.foldr
-                        (\ann fn ->
+                        (\ann fnbody ->
                             Annotation.FunctionTypeAnnotation
                                 (Compiler.nodify ann)
-                                (Compiler.nodify fn)
+                                (Compiler.nodify fnbody)
                         )
                         return
                         (List.map (Compiler.getInnerAnnotation << Tuple.second) args)
@@ -912,10 +912,10 @@ lambda argBaseName argType toExpression =
 
                 Ok return ->
                     List.foldr
-                        (\ann fn ->
+                        (\ann fnbody ->
                             Annotation.FunctionTypeAnnotation
                                 (Compiler.nodify ann)
-                                (Compiler.nodify fn)
+                                (Compiler.nodify fnbody)
                         )
                         return
                         [ Compiler.getInnerAnnotation argType ]
@@ -959,10 +959,10 @@ lambda2 argBaseName oneType twoType toExpression =
 
                 Ok return ->
                     List.foldr
-                        (\ann fn ->
+                        (\ann fnbody ->
                             Annotation.FunctionTypeAnnotation
                                 (Compiler.nodify ann)
-                                (Compiler.nodify fn)
+                                (Compiler.nodify fnbody)
                         )
                         return
                         [ Compiler.getInnerAnnotation oneType
@@ -1013,10 +1013,10 @@ lambda3 argBaseName oneType twoType threeType toExpression =
 
                 Ok return ->
                     List.foldr
-                        (\ann fn ->
+                        (\ann fnbody ->
                             Annotation.FunctionTypeAnnotation
                                 (Compiler.nodify ann)
-                                (Compiler.nodify fn)
+                                (Compiler.nodify fnbody)
                         )
                         return
                         [ Compiler.getInnerAnnotation oneType
@@ -1073,10 +1073,10 @@ lambda4 argBaseName oneType twoType threeType fourType toExpression =
 
                 Ok return ->
                     List.foldr
-                        (\ann fn ->
+                        (\ann fnbody ->
                             Annotation.FunctionTypeAnnotation
                                 (Compiler.nodify ann)
-                                (Compiler.nodify fn)
+                                (Compiler.nodify fnbody)
                         )
                         return
                         [ Compiler.getInnerAnnotation oneType
@@ -1139,10 +1139,10 @@ lambda5 argBaseName oneType twoType threeType fourType fiveType toExpression =
 
                 Ok return ->
                     List.foldr
-                        (\ann fn ->
+                        (\ann fnbody ->
                             Annotation.FunctionTypeAnnotation
                                 (Compiler.nodify ann)
-                                (Compiler.nodify fn)
+                                (Compiler.nodify fnbody)
                         )
                         return
                         [ Compiler.getInnerAnnotation oneType
@@ -1280,6 +1280,302 @@ functionWith name args (Compiler.Expression body) =
                     >> Compiler.getAnnotationImports
                 )
                 args
+                ++ body.imports
+            )
+
+
+{-| -}
+fn : String -> ( String, Elm.Annotation.Annotation ) -> (Expression -> Expression) -> Declaration
+fn name ( oneName, oneType ) toBody =
+    let
+        arg1 =
+            valueWith (moduleName []) oneName oneType
+
+        (Compiler.Expression body) =
+            toBody arg1
+    in
+    { documentation = Compiler.nodifyMaybe Nothing
+    , signature =
+        case body.annotation of
+            Ok return ->
+                Just
+                    (Compiler.nodify
+                        { name = Compiler.nodify (Compiler.formatValue name)
+                        , typeAnnotation =
+                            Compiler.nodify <|
+                                Compiler.getInnerAnnotation <|
+                                    Elm.Annotation.function
+                                        [ oneType ]
+                                        (Compiler.noImports return)
+                        }
+                    )
+
+            Err _ ->
+                Nothing
+    , declaration =
+        Compiler.nodify
+            { name = Compiler.nodify (Compiler.formatValue name)
+            , arguments =
+                [ Compiler.nodify (Pattern.VarPattern oneName)
+                ]
+            , expression = Compiler.nodify body.expression
+            }
+    }
+        |> Declaration.FunctionDeclaration
+        |> Compiler.Declaration Compiler.NotExposed
+            (Compiler.getAnnotationImports oneType
+                ++ body.imports
+            )
+
+
+{-| -}
+fn2 :
+    String
+    -> ( String, Elm.Annotation.Annotation )
+    -> ( String, Elm.Annotation.Annotation )
+    -> (Expression -> Expression -> Expression)
+    -> Declaration
+fn2 name ( oneName, oneType ) ( twoName, twoType ) toBody =
+    let
+        arg1 =
+            valueWith (moduleName []) oneName oneType
+
+        arg2 =
+            valueWith (moduleName []) twoName twoType
+
+        (Compiler.Expression body) =
+            toBody arg1 arg2
+    in
+    { documentation = Compiler.nodifyMaybe Nothing
+    , signature =
+        case body.annotation of
+            Ok return ->
+                Just
+                    (Compiler.nodify
+                        { name = Compiler.nodify (Compiler.formatValue name)
+                        , typeAnnotation =
+                            Compiler.nodify <|
+                                Compiler.getInnerAnnotation <|
+                                    Elm.Annotation.function
+                                        [ oneType, twoType ]
+                                        (Compiler.noImports return)
+                        }
+                    )
+
+            Err _ ->
+                Nothing
+    , declaration =
+        Compiler.nodify
+            { name = Compiler.nodify (Compiler.formatValue name)
+            , arguments =
+                [ Compiler.nodify (Pattern.VarPattern oneName)
+                , Compiler.nodify (Pattern.VarPattern twoName)
+                ]
+            , expression = Compiler.nodify body.expression
+            }
+    }
+        |> Declaration.FunctionDeclaration
+        |> Compiler.Declaration Compiler.NotExposed
+            (Compiler.getAnnotationImports oneType
+                ++ Compiler.getAnnotationImports twoType
+                ++ body.imports
+            )
+
+
+{-| -}
+fn3 :
+    String
+    -> ( String, Elm.Annotation.Annotation )
+    -> ( String, Elm.Annotation.Annotation )
+    -> ( String, Elm.Annotation.Annotation )
+    -> (Expression -> Expression -> Expression -> Expression)
+    -> Declaration
+fn3 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) toBody =
+    let
+        arg1 =
+            valueWith (moduleName []) oneName oneType
+
+        arg2 =
+            valueWith (moduleName []) twoName twoType
+
+        arg3 =
+            valueWith (moduleName []) threeName threeType
+
+        (Compiler.Expression body) =
+            toBody arg1 arg2 arg3
+    in
+    { documentation = Compiler.nodifyMaybe Nothing
+    , signature =
+        case body.annotation of
+            Ok return ->
+                Just
+                    (Compiler.nodify
+                        { name = Compiler.nodify (Compiler.formatValue name)
+                        , typeAnnotation =
+                            Compiler.nodify <|
+                                Compiler.getInnerAnnotation <|
+                                    Elm.Annotation.function
+                                        [ oneType, twoType, threeType ]
+                                        (Compiler.noImports return)
+                        }
+                    )
+
+            Err _ ->
+                Nothing
+    , declaration =
+        Compiler.nodify
+            { name = Compiler.nodify (Compiler.formatValue name)
+            , arguments =
+                [ Compiler.nodify (Pattern.VarPattern oneName)
+                , Compiler.nodify (Pattern.VarPattern twoName)
+                , Compiler.nodify (Pattern.VarPattern threeName)
+                ]
+            , expression = Compiler.nodify body.expression
+            }
+    }
+        |> Declaration.FunctionDeclaration
+        |> Compiler.Declaration Compiler.NotExposed
+            (Compiler.getAnnotationImports oneType
+                ++ Compiler.getAnnotationImports twoType
+                ++ Compiler.getAnnotationImports threeType
+                ++ body.imports
+            )
+
+
+{-| -}
+fn4 :
+    String
+    -> ( String, Elm.Annotation.Annotation )
+    -> ( String, Elm.Annotation.Annotation )
+    -> ( String, Elm.Annotation.Annotation )
+    -> ( String, Elm.Annotation.Annotation )
+    -> (Expression -> Expression -> Expression -> Expression -> Expression)
+    -> Declaration
+fn4 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fourName, fourType ) toBody =
+    let
+        arg1 =
+            valueWith (moduleName []) oneName oneType
+
+        arg2 =
+            valueWith (moduleName []) twoName twoType
+
+        arg3 =
+            valueWith (moduleName []) threeName threeType
+
+        arg4 =
+            valueWith (moduleName []) fourName fourType
+
+        (Compiler.Expression body) =
+            toBody arg1 arg2 arg3 arg4
+    in
+    { documentation = Compiler.nodifyMaybe Nothing
+    , signature =
+        case body.annotation of
+            Ok return ->
+                Just
+                    (Compiler.nodify
+                        { name = Compiler.nodify (Compiler.formatValue name)
+                        , typeAnnotation =
+                            Compiler.nodify <|
+                                Compiler.getInnerAnnotation <|
+                                    Elm.Annotation.function
+                                        [ oneType, twoType, threeType, fourType ]
+                                        (Compiler.noImports return)
+                        }
+                    )
+
+            Err _ ->
+                Nothing
+    , declaration =
+        Compiler.nodify
+            { name = Compiler.nodify (Compiler.formatValue name)
+            , arguments =
+                [ Compiler.nodify (Pattern.VarPattern oneName)
+                , Compiler.nodify (Pattern.VarPattern twoName)
+                , Compiler.nodify (Pattern.VarPattern threeName)
+                , Compiler.nodify (Pattern.VarPattern fourName)
+                ]
+            , expression = Compiler.nodify body.expression
+            }
+    }
+        |> Declaration.FunctionDeclaration
+        |> Compiler.Declaration Compiler.NotExposed
+            (Compiler.getAnnotationImports oneType
+                ++ Compiler.getAnnotationImports twoType
+                ++ Compiler.getAnnotationImports threeType
+                ++ Compiler.getAnnotationImports fourType
+                ++ body.imports
+            )
+
+
+{-| -}
+fn5 :
+    String
+    -> ( String, Elm.Annotation.Annotation )
+    -> ( String, Elm.Annotation.Annotation )
+    -> ( String, Elm.Annotation.Annotation )
+    -> ( String, Elm.Annotation.Annotation )
+    -> ( String, Elm.Annotation.Annotation )
+    -> (Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
+    -> Declaration
+fn5 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fourName, fourType ) ( fiveName, fiveType ) toBody =
+    let
+        arg1 =
+            valueWith (moduleName []) oneName oneType
+
+        arg2 =
+            valueWith (moduleName []) twoName twoType
+
+        arg3 =
+            valueWith (moduleName []) threeName threeType
+
+        arg4 =
+            valueWith (moduleName []) fourName fourType
+
+        arg5 =
+            valueWith (moduleName []) fiveName fiveType
+
+        (Compiler.Expression body) =
+            toBody arg1 arg2 arg3 arg4 arg5
+    in
+    { documentation = Compiler.nodifyMaybe Nothing
+    , signature =
+        case body.annotation of
+            Ok return ->
+                Just
+                    (Compiler.nodify
+                        { name = Compiler.nodify (Compiler.formatValue name)
+                        , typeAnnotation =
+                            Compiler.nodify <|
+                                Compiler.getInnerAnnotation <|
+                                    Elm.Annotation.function
+                                        [ oneType, twoType, threeType, fourType, fiveType ]
+                                        (Compiler.noImports return)
+                        }
+                    )
+
+            Err _ ->
+                Nothing
+    , declaration =
+        Compiler.nodify
+            { name = Compiler.nodify (Compiler.formatValue name)
+            , arguments =
+                [ Compiler.nodify (Pattern.VarPattern oneName)
+                , Compiler.nodify (Pattern.VarPattern twoName)
+                , Compiler.nodify (Pattern.VarPattern threeName)
+                , Compiler.nodify (Pattern.VarPattern fourName)
+                , Compiler.nodify (Pattern.VarPattern fiveName)
+                ]
+            , expression = Compiler.nodify body.expression
+            }
+    }
+        |> Declaration.FunctionDeclaration
+        |> Compiler.Declaration Compiler.NotExposed
+            (Compiler.getAnnotationImports oneType
+                ++ Compiler.getAnnotationImports twoType
+                ++ Compiler.getAnnotationImports threeType
+                ++ Compiler.getAnnotationImports fourType
+                ++ Compiler.getAnnotationImports fiveType
                 ++ body.imports
             )
 
