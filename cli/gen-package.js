@@ -5276,13 +5276,6 @@ var $stil4m$elm_syntax$Elm$Syntax$Expression$FunctionOrValue = F2(
 	function (a, b) {
 		return {$: 'FunctionOrValue', a: a, b: b};
 	});
-var $elm$core$String$toLower = _String_toLower;
-var $author$project$Internal$Compiler$formatValue = function (str) {
-	return _Utils_ap(
-		$elm$core$String$toLower(
-			A2($elm$core$String$left, 1, str)),
-		A2($elm$core$String$dropLeft, 1, str));
-};
 var $author$project$Elm$valueWith = F3(
 	function (mod, name, ann) {
 		return $author$project$Internal$Compiler$Expression(
@@ -5292,7 +5285,7 @@ var $author$project$Elm$valueWith = F3(
 				expression: A2(
 					$stil4m$elm_syntax$Elm$Syntax$Expression$FunctionOrValue,
 					$author$project$Internal$Compiler$resolveModuleName(mod),
-					$author$project$Internal$Compiler$formatValue(name)),
+					name),
 				imports: A2(
 					$elm$core$List$cons,
 					mod,
@@ -5993,6 +5986,13 @@ var $stil4m$elm_syntax$Elm$Syntax$Declaration$FunctionDeclaration = function (a)
 	return {$: 'FunctionDeclaration', a: a};
 };
 var $author$project$Internal$Compiler$NotExposed = {$: 'NotExposed'};
+var $elm$core$String$toLower = _String_toLower;
+var $author$project$Internal$Compiler$formatValue = function (str) {
+	return _Utils_ap(
+		$elm$core$String$toLower(
+			A2($elm$core$String$left, 1, str)),
+		A2($elm$core$String$dropLeft, 1, str));
+};
 var $elm$core$Maybe$map = F2(
 	function (f, maybe) {
 		if (maybe.$ === 'Just') {
@@ -6219,7 +6219,7 @@ var $author$project$Elm$valueFrom = F2(
 				expression: A2(
 					$stil4m$elm_syntax$Elm$Syntax$Expression$FunctionOrValue,
 					$author$project$Internal$Compiler$resolveModuleName(mod),
-					$author$project$Internal$Compiler$formatValue(name)),
+					name),
 				imports: _List_fromArray(
 					[mod]),
 				skip: false
