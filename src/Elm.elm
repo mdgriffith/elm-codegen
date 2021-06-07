@@ -294,7 +294,9 @@ value =
 valueFrom : Module -> String -> Expression
 valueFrom mod name =
     Compiler.Expression
-        { expression = Exp.FunctionOrValue (Compiler.resolveModuleName mod) (Compiler.formatValue name)
+        { expression =
+            Exp.FunctionOrValue (Compiler.resolveModuleName mod)
+                name
         , annotation = Err []
         , imports = [ mod ]
         , skip = False
@@ -332,7 +334,7 @@ Then, when that list is generated, it will automatically have the type signature
 valueWith : Module -> String -> Elm.Annotation.Annotation -> Expression
 valueWith mod name ann =
     Compiler.Expression
-        { expression = Exp.FunctionOrValue (Compiler.resolveModuleName mod) (Compiler.formatValue name)
+        { expression = Exp.FunctionOrValue (Compiler.resolveModuleName mod) name
         , annotation = Ok (Compiler.getInnerAnnotation ann)
         , imports = mod :: Compiler.getAnnotationImports ann
         , skip = False
