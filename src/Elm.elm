@@ -4,10 +4,10 @@ module Elm exposing
     , value, valueFrom, valueWith
     , int, float, char, string, hex, unit
     , list, tuple, triple
-    , record, get
+    , record, get, updateRecord
     , caseOf
     , apply
-    , lambda, lambdaWith
+    , lambda, lambda2, lambda3, lambda4, lambda5, lambdaWith
     , withAnnotation
     , Declaration, declaration, declarationWith
     , function, functionWith
@@ -37,13 +37,13 @@ module Elm exposing
 
 @docs list, tuple, triple
 
-@docs record, get
+@docs record, get, updateRecord
 
 @docs caseOf
 
 @docs apply
 
-@docs lambda, lambdaWith
+@docs lambda, lambda2, lambda3, lambda4, lambda5, lambdaWith
 
 @docs withAnnotation
 
@@ -483,6 +483,30 @@ toList (Compiler.Expression exp) =
 
 
 {-| -}
+updateRecord : String -> List ( String, Expression ) -> Expression
+updateRecord name fields =
+    Compiler.Expression
+        { expression =
+            fields
+                |> List.map
+                    (\( fieldName, fieldExp ) ->
+                        Compiler.nodify
+                            ( Compiler.nodify fieldName
+                            , Compiler.nodify (Compiler.getInnerExpression fieldExp)
+                            )
+                    )
+                |> Exp.RecordUpdateExpression (Compiler.nodify name)
+        , annotation =
+            Err []
+        , imports =
+            List.concatMap
+                (Tuple.second >> Compiler.getImports)
+                fields
+        , skip = False
+        }
+
+
+{-| -}
 record : List ( String, Expression ) -> Expression
 record fields =
     let
@@ -837,22 +861,6 @@ type alias Pattern =
 
 
 {-| -}
-lambda : List Pattern -> Expression -> Expression
-lambda args (Compiler.Expression expr) =
-    Compiler.Expression
-        { expression =
-            Exp.LambdaExpression
-                { args = Compiler.nodifyAll args
-                , expression = Compiler.nodify expr.expression
-                }
-        , annotation =
-            Err []
-        , imports = expr.imports
-        , skip = False
-        }
-
-
-{-| -}
 lambdaWith : List ( Pattern, Elm.Annotation.Annotation ) -> Expression -> Expression
 lambdaWith args (Compiler.Expression expr) =
     Compiler.Expression
@@ -875,6 +883,274 @@ lambdaWith args (Compiler.Expression expr) =
                         )
                         return
                         (List.map (Compiler.getInnerAnnotation << Tuple.second) args)
+                        |> Ok
+        , imports = expr.imports
+        , skip = False
+        }
+
+
+{-| -}
+lambda : String -> Elm.Annotation.Annotation -> (Expression -> Expression) -> Expression
+lambda argBaseName argType toExpression =
+    let
+        arg1 =
+            valueWith (moduleName []) argBaseName argType
+
+        (Compiler.Expression expr) =
+            toExpression arg1
+    in
+    Compiler.Expression
+        { expression =
+            Exp.LambdaExpression
+                { args = [ Compiler.nodify (Pattern.VarPattern argBaseName) ]
+                , expression = Compiler.nodify expr.expression
+                }
+        , annotation =
+            case expr.annotation of
+                Err err ->
+                    Err err
+
+                Ok return ->
+                    List.foldr
+                        (\ann fn ->
+                            Annotation.FunctionTypeAnnotation
+                                (Compiler.nodify ann)
+                                (Compiler.nodify fn)
+                        )
+                        return
+                        [ Compiler.getInnerAnnotation argType ]
+                        |> Ok
+        , imports = expr.imports
+        , skip = False
+        }
+
+
+{-| -}
+lambda2 :
+    String
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> (Expression -> Expression -> Expression)
+    -> Expression
+lambda2 argBaseName oneType twoType toExpression =
+    let
+        arg1 =
+            valueWith (moduleName []) argBaseName oneType
+
+        arg2 =
+            valueWith (moduleName []) (argBaseName ++ "2") twoType
+
+        (Compiler.Expression expr) =
+            toExpression arg1 arg2
+    in
+    Compiler.Expression
+        { expression =
+            Exp.LambdaExpression
+                { args =
+                    [ Compiler.nodify (Pattern.VarPattern argBaseName)
+                    , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "2"))
+                    ]
+                , expression = Compiler.nodify expr.expression
+                }
+        , annotation =
+            case expr.annotation of
+                Err err ->
+                    Err err
+
+                Ok return ->
+                    List.foldr
+                        (\ann fn ->
+                            Annotation.FunctionTypeAnnotation
+                                (Compiler.nodify ann)
+                                (Compiler.nodify fn)
+                        )
+                        return
+                        [ Compiler.getInnerAnnotation oneType
+                        , Compiler.getInnerAnnotation twoType
+                        ]
+                        |> Ok
+        , imports = expr.imports
+        , skip = False
+        }
+
+
+{-| -}
+lambda3 :
+    String
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> (Expression -> Expression -> Expression -> Expression)
+    -> Expression
+lambda3 argBaseName oneType twoType threeType toExpression =
+    let
+        arg1 =
+            valueWith (moduleName []) argBaseName oneType
+
+        arg2 =
+            valueWith (moduleName []) (argBaseName ++ "2") twoType
+
+        arg3 =
+            valueWith (moduleName []) (argBaseName ++ "3") threeType
+
+        (Compiler.Expression expr) =
+            toExpression arg1 arg2 arg3
+    in
+    Compiler.Expression
+        { expression =
+            Exp.LambdaExpression
+                { args =
+                    [ Compiler.nodify (Pattern.VarPattern argBaseName)
+                    , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "2"))
+                    , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "3"))
+                    ]
+                , expression = Compiler.nodify expr.expression
+                }
+        , annotation =
+            case expr.annotation of
+                Err err ->
+                    Err err
+
+                Ok return ->
+                    List.foldr
+                        (\ann fn ->
+                            Annotation.FunctionTypeAnnotation
+                                (Compiler.nodify ann)
+                                (Compiler.nodify fn)
+                        )
+                        return
+                        [ Compiler.getInnerAnnotation oneType
+                        , Compiler.getInnerAnnotation twoType
+                        , Compiler.getInnerAnnotation threeType
+                        ]
+                        |> Ok
+        , imports = expr.imports
+        , skip = False
+        }
+
+
+{-| -}
+lambda4 :
+    String
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> (Expression -> Expression -> Expression -> Expression -> Expression)
+    -> Expression
+lambda4 argBaseName oneType twoType threeType fourType toExpression =
+    let
+        arg1 =
+            valueWith (moduleName []) argBaseName oneType
+
+        arg2 =
+            valueWith (moduleName []) (argBaseName ++ "2") twoType
+
+        arg3 =
+            valueWith (moduleName []) (argBaseName ++ "3") threeType
+
+        arg4 =
+            valueWith (moduleName []) (argBaseName ++ "4") fourType
+
+        (Compiler.Expression expr) =
+            toExpression arg1 arg2 arg3 arg4
+    in
+    Compiler.Expression
+        { expression =
+            Exp.LambdaExpression
+                { args =
+                    [ Compiler.nodify (Pattern.VarPattern argBaseName)
+                    , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "2"))
+                    , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "3"))
+                    , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "4"))
+                    ]
+                , expression = Compiler.nodify expr.expression
+                }
+        , annotation =
+            case expr.annotation of
+                Err err ->
+                    Err err
+
+                Ok return ->
+                    List.foldr
+                        (\ann fn ->
+                            Annotation.FunctionTypeAnnotation
+                                (Compiler.nodify ann)
+                                (Compiler.nodify fn)
+                        )
+                        return
+                        [ Compiler.getInnerAnnotation oneType
+                        , Compiler.getInnerAnnotation twoType
+                        , Compiler.getInnerAnnotation threeType
+                        , Compiler.getInnerAnnotation fourType
+                        ]
+                        |> Ok
+        , imports = expr.imports
+        , skip = False
+        }
+
+
+{-| -}
+lambda5 :
+    String
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> (Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
+    -> Expression
+lambda5 argBaseName oneType twoType threeType fourType fiveType toExpression =
+    let
+        arg1 =
+            valueWith (moduleName []) argBaseName oneType
+
+        arg2 =
+            valueWith (moduleName []) (argBaseName ++ "2") twoType
+
+        arg3 =
+            valueWith (moduleName []) (argBaseName ++ "3") threeType
+
+        arg4 =
+            valueWith (moduleName []) (argBaseName ++ "4") fourType
+
+        arg5 =
+            valueWith (moduleName []) (argBaseName ++ "5") fiveType
+
+        (Compiler.Expression expr) =
+            toExpression arg1 arg2 arg3 arg4 arg5
+    in
+    Compiler.Expression
+        { expression =
+            Exp.LambdaExpression
+                { args =
+                    [ Compiler.nodify (Pattern.VarPattern argBaseName)
+                    , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "2"))
+                    , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "3"))
+                    , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "4"))
+                    , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "5"))
+                    ]
+                , expression = Compiler.nodify expr.expression
+                }
+        , annotation =
+            case expr.annotation of
+                Err err ->
+                    Err err
+
+                Ok return ->
+                    List.foldr
+                        (\ann fn ->
+                            Annotation.FunctionTypeAnnotation
+                                (Compiler.nodify ann)
+                                (Compiler.nodify fn)
+                        )
+                        return
+                        [ Compiler.getInnerAnnotation oneType
+                        , Compiler.getInnerAnnotation twoType
+                        , Compiler.getInnerAnnotation threeType
+                        , Compiler.getInnerAnnotation fourType
+                        , Compiler.getInnerAnnotation fiveType
+                        ]
                         |> Ok
         , imports = expr.imports
         , skip = False

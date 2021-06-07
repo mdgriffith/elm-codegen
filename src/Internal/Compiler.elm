@@ -48,6 +48,16 @@ type alias ExpressionDetails =
     }
 
 
+getImports : Expression -> List Module
+getImports (Expression exp) =
+    exp.imports
+
+
+getInnerExpression : Expression -> Exp.Expression
+getInnerExpression (Expression exp) =
+    exp.expression
+
+
 {-| -}
 skip : Expression
 skip =
