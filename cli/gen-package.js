@@ -6692,88 +6692,90 @@ var $author$project$Generate$generateBlocks = function (block) {
 			var union = block.a;
 			return _List_fromArray(
 				[
+					$author$project$Elm$expose(
 					A2(
-					$author$project$Elm$withDocumentation,
-					union.comment,
-					A2(
-						$author$project$Elm$declaration,
-						'type' + union.name,
-						$author$project$Elm$record(
-							A2(
-								$elm$core$List$cons,
-								_Utils_Tuple2(
-									A2($author$project$Generate$chooseName, 'annotation', union.tags),
-									A2($author$project$Generate$annotationNamed, union.name, union.args)),
+						$author$project$Elm$withDocumentation,
+						union.comment,
+						A2(
+							$author$project$Elm$declaration,
+							'type' + union.name,
+							$author$project$Elm$record(
 								A2(
-									$elm$core$List$map,
-									function (_v1) {
-										var name = _v1.a;
-										var tags = _v1.b;
-										if (!tags.b) {
-											return _Utils_Tuple2(
-												name,
-												A3(
-													$author$project$Generate$valueWith,
-													$author$project$Generate$thisModuleName,
-													$author$project$Elm$string(name),
+									$elm$core$List$cons,
+									_Utils_Tuple2(
+										A2($author$project$Generate$chooseName, 'annotation', union.tags),
+										A2($author$project$Generate$annotationNamed, union.name, union.args)),
+									A2(
+										$elm$core$List$map,
+										function (_v1) {
+											var name = _v1.a;
+											var tags = _v1.b;
+											if (!tags.b) {
+												return _Utils_Tuple2(
+													name,
+													A3(
+														$author$project$Generate$valueWith,
+														$author$project$Generate$thisModuleName,
+														$author$project$Elm$string(name),
+														A2(
+															$elm$project_metadata_utils$Elm$Type$Type,
+															union.name,
+															A2($elm$core$List$map, $elm$project_metadata_utils$Elm$Type$Var, union.args))));
+											} else {
+												return _Utils_Tuple2(
+													name,
 													A2(
-														$elm$project_metadata_utils$Elm$Type$Type,
-														union.name,
-														A2($elm$core$List$map, $elm$project_metadata_utils$Elm$Type$Var, union.args))));
-										} else {
-											return _Utils_Tuple2(
-												name,
-												A2(
-													$author$project$Elm$lambdaWith,
-													A2(
-														$elm$core$List$indexedMap,
-														F2(
-															function (i, tag) {
-																return _Utils_Tuple2(
-																	$author$project$Elm$Pattern$var(
-																		'arg' + $elm$core$String$fromInt(i)),
-																	A2($author$project$Elm$Annotation$named, $author$project$Generate$elmAnnotation, 'Annotation'));
-															}),
-														tags),
-													A2(
-														$author$project$Elm$apply,
-														A3(
-															$author$project$Generate$valueWith,
-															$author$project$Generate$thisModuleName,
-															$author$project$Elm$string(name),
-															A2(
-																$elm$project_metadata_utils$Elm$Type$Type,
-																union.name,
-																A2($elm$core$List$map, $elm$project_metadata_utils$Elm$Type$Var, union.args))),
+														$author$project$Elm$lambdaWith,
 														A2(
 															$elm$core$List$indexedMap,
 															F2(
 																function (i, tag) {
-																	return $author$project$Elm$value(
-																		'arg' + $elm$core$String$fromInt(i));
+																	return _Utils_Tuple2(
+																		$author$project$Elm$Pattern$var(
+																			'ar' + $elm$core$String$fromInt(i)),
+																		A2($author$project$Elm$Annotation$named, $author$project$Generate$elmAnnotation, 'Annotation'));
 																}),
-															tags))));
-										}
-									},
-									union.tags)))))
+															tags),
+														A2(
+															$author$project$Generate$apply,
+															A3(
+																$author$project$Generate$valueWith,
+																$author$project$Generate$thisModuleName,
+																$author$project$Elm$string(name),
+																A2(
+																	$elm$project_metadata_utils$Elm$Type$Type,
+																	union.name,
+																	A2($elm$core$List$map, $elm$project_metadata_utils$Elm$Type$Var, union.args))),
+															A2(
+																$elm$core$List$indexedMap,
+																F2(
+																	function (i, tag) {
+																		return $author$project$Elm$value(
+																			'ar' + $elm$core$String$fromInt(i));
+																	}),
+																tags))));
+											}
+										},
+										union.tags))))))
 				]);
 		case 'AliasBlock':
 			var alias = block.a;
 			return _List_fromArray(
 				[
+					$author$project$Elm$expose(
 					A2(
-					$author$project$Elm$withDocumentation,
-					alias.comment,
-					A2(
-						$author$project$Elm$declaration,
-						'alias' + alias.name,
-						$author$project$Elm$record(
-							_List_fromArray(
-								[
-									_Utils_Tuple2(
-									'annotation',
-									A2($author$project$Generate$annotationNamed, alias.name, alias.args))
-								]))))
+						$author$project$Elm$withDocumentation,
+						alias.comment,
+						A2(
+							$author$project$Elm$declaration,
+							'alias' + alias.name,
+							$author$project$Elm$record(
+								_List_fromArray(
+									[
+										_Utils_Tuple2(
+										'annotation',
+										A2($author$project$Generate$annotationNamed, alias.name, alias.args))
+									])))))
 				]);
 		case 'ValueBlock':
 			var value = block.a;

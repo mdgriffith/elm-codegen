@@ -280,13 +280,13 @@ generateBlocks block =
                                         , Elm.lambdaWith
                                             (List.indexedMap
                                                 (\i tag ->
-                                                    ( Pattern.var ("arg" ++ String.fromInt i)
+                                                    ( Pattern.var ("ar" ++ String.fromInt i)
                                                     , Annotation.named elmAnnotation "Annotation"
                                                     )
                                                 )
                                                 tags
                                             )
-                                            (Elm.apply
+                                            (apply
                                                 (valueWith thisModuleName
                                                     (Elm.string name)
                                                     (Elm.Type.Type union.name
@@ -295,7 +295,7 @@ generateBlocks block =
                                                 )
                                                 (List.indexedMap
                                                     (\i tag ->
-                                                        Elm.value ("arg" ++ String.fromInt i)
+                                                        Elm.value ("ar" ++ String.fromInt i)
                                                     )
                                                     tags
                                                 )
@@ -306,6 +306,7 @@ generateBlocks block =
                     )
                 )
                 |> Elm.withDocumentation union.comment
+                |> Elm.expose
             ]
 
         Elm.Docs.AliasBlock alias ->
@@ -317,6 +318,7 @@ generateBlocks block =
                     ]
                 )
                 |> Elm.withDocumentation alias.comment
+                |> Elm.expose
             ]
 
         Elm.Docs.ValueBlock value ->

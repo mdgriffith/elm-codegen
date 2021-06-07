@@ -1,4 +1,4 @@
-module Elm.Gen.GraphQL.Engine exposing (arg, decodeId, encodeId, encodeOptionals, enum, field, fieldWith, id_, map, map2, maybeEnum, maybeScalarEncode, moduleName_, mutation, nullable, object, objectWith, optional, query, queryString, recover, select, union, with)
+module Elm.Gen.GraphQL.Engine exposing (arg, decodeId, encodeId, encodeOptionals, enum, field, fieldWith, id_, map, map2, maybeEnum, maybeScalarEncode, moduleName_, mutation, nullable, object, objectWith, optional, query, queryString, recover, select, typeArgument, typeId, typeMutation, typeOptional, typeQuery, typeSelection, union, with)
 
 import Elm
 import Elm.Annotation as Type
@@ -827,9 +827,10 @@ union arg1 =
 
 
 {-| -}
-typeSelection : { annotation : Type.Annotation }
 typeSelection =
-    { annotation = Type.named moduleName_ "Selection" }
+    { annotation =
+        \arg0 arg1 -> Type.namedWith moduleName_ "Selection" [ arg0, arg1 ]
+    }
 
 
 {-| -}
@@ -991,9 +992,8 @@ arg arg1 arg2 =
 
 
 {-| -}
-typeOptional : { annotation : Type.Annotation }
 typeOptional =
-    { annotation = Type.named moduleName_ "Optional" }
+    { annotation = \arg0 -> Type.namedWith moduleName_ "Optional" [ arg0 ] }
 
 
 {-|
@@ -1201,23 +1201,26 @@ queryString arg1 =
 But we can define anything else in terms of these:
 
 -}
-typeArgument :
-    { annotation : Type.Annotation
-    , argValue : Elm.Expression
-    , var : Elm.Expression
-    }
 typeArgument =
     { annotation = Type.named moduleName_ "Argument"
     , argValue =
-        Elm.valueWith
-            moduleName_
-            "ArgValue"
-            (Type.namedWith (Elm.moduleName []) "Argument" [])
+        \ar0 ar1 ->
+            Elm.apply
+                (Elm.valueWith
+                    moduleName_
+                    "ArgValue"
+                    (Type.namedWith (Elm.moduleName []) "Argument" [])
+                )
+                [ ar0, ar1 ]
     , var =
-        Elm.valueWith
-            moduleName_
-            "Var"
-            (Type.namedWith (Elm.moduleName []) "Argument" [])
+        \ar0 ->
+            Elm.apply
+                (Elm.valueWith
+                    moduleName_
+                    "Var"
+                    (Type.namedWith (Elm.moduleName []) "Argument" [])
+                )
+                [ ar0 ]
     }
 
 
