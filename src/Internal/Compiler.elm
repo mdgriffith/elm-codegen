@@ -176,6 +176,16 @@ makeImport (Module name maybeAlias) =
                     )
 
 
+resolveModuleNameForValue : Module -> List String
+resolveModuleNameForValue (Module mod maybeAlias) =
+    case maybeAlias of
+        Nothing ->
+            mod
+
+        Just aliasStr ->
+            [ aliasStr ]
+
+
 resolveModuleName : Module -> List String
 resolveModuleName (Module mod maybeAlias) =
     if builtIn mod then
@@ -197,6 +207,9 @@ builtIn name =
             True
 
         [ "Maybe" ] ->
+            True
+
+        [ "String" ] ->
             True
 
         [ "Basics" ] ->

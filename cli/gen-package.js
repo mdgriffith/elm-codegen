@@ -4808,8 +4808,8 @@ var $author$project$Internal$Compiler$unifiableHelper = F3(
 							return _Debug_todo(
 								'Internal.Compiler',
 								{
-									start: {line: 708, column: 21},
-									end: {line: 708, column: 31}
+									start: {line: 721, column: 21},
+									end: {line: 721, column: 31}
 								})('');
 						default:
 							return _Utils_Tuple2(
@@ -5223,7 +5223,7 @@ var $author$project$Generate$elm = $author$project$Elm$moduleName(
 		['Elm']));
 var $author$project$Generate$local = $author$project$Elm$moduleName(_List_Nil);
 var $author$project$Internal$Compiler$builtIn = function (name) {
-	_v0$3:
+	_v0$4:
 	while (true) {
 		if (name.b && (!name.b.b)) {
 			switch (name.a) {
@@ -5231,13 +5231,15 @@ var $author$project$Internal$Compiler$builtIn = function (name) {
 					return true;
 				case 'Maybe':
 					return true;
+				case 'String':
+					return true;
 				case 'Basics':
 					return true;
 				default:
-					break _v0$3;
+					break _v0$4;
 			}
 		} else {
-			break _v0$3;
+			break _v0$4;
 		}
 	}
 	return false;
@@ -5276,6 +5278,17 @@ var $stil4m$elm_syntax$Elm$Syntax$Expression$FunctionOrValue = F2(
 	function (a, b) {
 		return {$: 'FunctionOrValue', a: a, b: b};
 	});
+var $author$project$Internal$Compiler$resolveModuleNameForValue = function (_v0) {
+	var mod = _v0.a;
+	var maybeAlias = _v0.b;
+	if (maybeAlias.$ === 'Nothing') {
+		return mod;
+	} else {
+		var aliasStr = maybeAlias.a;
+		return _List_fromArray(
+			[aliasStr]);
+	}
+};
 var $author$project$Elm$valueWith = F3(
 	function (mod, name, ann) {
 		return $author$project$Internal$Compiler$Expression(
@@ -5284,7 +5297,7 @@ var $author$project$Elm$valueWith = F3(
 					$author$project$Internal$Compiler$getInnerAnnotation(ann)),
 				expression: A2(
 					$stil4m$elm_syntax$Elm$Syntax$Expression$FunctionOrValue,
-					$author$project$Internal$Compiler$resolveModuleName(mod),
+					$author$project$Internal$Compiler$resolveModuleNameForValue(mod),
 					name),
 				imports: A2(
 					$elm$core$List$cons,
@@ -6210,7 +6223,7 @@ var $author$project$Elm$lambdaWith = F2(
 				skip: false
 			});
 	});
-var $author$project$Internal$Compiler$emptyModule = $author$project$Internal$Compiler$inModule(_List_Nil);
+var $author$project$Elm$local = $author$project$Internal$Compiler$inModule(_List_Nil);
 var $author$project$Elm$valueFrom = F2(
 	function (mod, name) {
 		return $author$project$Internal$Compiler$Expression(
@@ -6218,14 +6231,14 @@ var $author$project$Elm$valueFrom = F2(
 				annotation: $elm$core$Result$Err(_List_Nil),
 				expression: A2(
 					$stil4m$elm_syntax$Elm$Syntax$Expression$FunctionOrValue,
-					$author$project$Internal$Compiler$resolveModuleName(mod),
+					$author$project$Internal$Compiler$resolveModuleNameForValue(mod),
 					name),
 				imports: _List_fromArray(
 					[mod]),
 				skip: false
 			});
 	});
-var $author$project$Elm$value = $author$project$Elm$valueFrom($author$project$Internal$Compiler$emptyModule);
+var $author$project$Elm$value = $author$project$Elm$valueFrom($author$project$Elm$local);
 var $stil4m$elm_syntax$Elm$Syntax$Pattern$VarPattern = function (a) {
 	return {$: 'VarPattern', a: a};
 };

@@ -13,7 +13,7 @@ module Elm exposing
     , function, functionWith, fn, fn2, fn3, fn4, fn5
     , alias, aliasWith
     , customType, customTypeWith
-    , Module, moduleName, moduleAs
+    , Module, local, moduleName, moduleAs
     , withDocumentation, expose, exposeConstructor
     , power, multiply, divide, intDivide, modulo, rem, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, pipe, pipeLeft, compose, composeLeft
     , keep, skip, slash, questionMark
@@ -58,7 +58,7 @@ module Elm exposing
 
 @docs customType, customTypeWith
 
-@docs Module, moduleName, moduleAs
+@docs Module, local, moduleName, moduleAs
 
 @docs withDocumentation, expose, exposeConstructor
 
@@ -284,10 +284,17 @@ moduleAs =
     Compiler.moduleAs
 
 
+{-| Reference values that are in the file you're working on.
+-}
+local : Module
+local =
+    Compiler.inModule []
+
+
 {-| -}
 value : String -> Expression
 value =
-    valueFrom Compiler.emptyModule
+    valueFrom local
 
 
 {-| -}
@@ -295,7 +302,7 @@ valueFrom : Module -> String -> Expression
 valueFrom mod name =
     Compiler.Expression
         { expression =
-            Exp.FunctionOrValue (Compiler.resolveModuleName mod)
+            Exp.FunctionOrValue (Compiler.resolveModuleNameForValue mod)
                 name
         , annotation = Err []
         , imports = [ mod ]
@@ -334,7 +341,7 @@ Then, when that list is generated, it will automatically have the type signature
 valueWith : Module -> String -> Elm.Annotation.Annotation -> Expression
 valueWith mod name ann =
     Compiler.Expression
-        { expression = Exp.FunctionOrValue (Compiler.resolveModuleName mod) name
+        { expression = Exp.FunctionOrValue (Compiler.resolveModuleNameForValue mod) name
         , annotation = Ok (Compiler.getInnerAnnotation ann)
         , imports = mod :: Compiler.getAnnotationImports ann
         , skip = False
