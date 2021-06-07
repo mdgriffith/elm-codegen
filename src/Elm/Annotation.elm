@@ -3,6 +3,7 @@ module Elm.Annotation exposing
     , named, namedWith
     , list, tuple, triple, set, dict, maybe, record, extensible
     , function
+    , toString
     )
 
 {-|
@@ -15,9 +16,12 @@ module Elm.Annotation exposing
 
 @docs function
 
+@docs toString
+
 -}
 
 import Elm.Syntax.TypeAnnotation as Annotation
+import Elm.Writer
 import Internal.Compiler as Compiler
 
 
@@ -33,6 +37,13 @@ type alias Declaration =
 {-| -}
 type alias Module =
     Compiler.Module
+
+
+{-| -}
+toString : Annotation -> String
+toString (Compiler.Annotation ann) =
+    Elm.Writer.writeTypeAnnotation (Compiler.nodify ann.annotation)
+        |> Elm.Writer.write
 
 
 {-| A type variable

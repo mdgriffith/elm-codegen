@@ -9,7 +9,7 @@
     "watch": "tsc --watch",
     "prefab": "npm run build; node dist/index.js",
     "build-gen-package": "cd cli/gen-package; elm make src/Generate.elm --output=../gen-package.js; cp ../gen-package.js ../../dist/gen-package.js",
-    "gen-package-local": "(npm run build; node dist/index.js src/Generate.elm --cwd cli/gen-package --flags-from playground/docs/gql-docs.json)",
+    "gen-package-local": "(npm run build; node dist/index.js src/Generate.elm --output engine --cwd cli/gen-package --flags-from playground/docs/gql-docs.json)",
     "gen-package": "(npm run build; node dist/index.js install elm/json)",
     "gen-package-core": "(npm run build; node dist/index.js install elm/core)",
     "playground": "(npm run build; node dist/index.js src/Gen.elm --cwd playground)"

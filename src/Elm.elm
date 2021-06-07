@@ -18,7 +18,7 @@ module Elm exposing
     , power, multiply, divide, intDivide, modulo, rem, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, pipe, pipeLeft, compose, composeLeft
     , keep, skip, slash, questionMark
     , portIncoming, portOutgoing
-    , File
+    , File, expressionToString, declarationToString
     , pass
     )
 
@@ -80,7 +80,7 @@ module Elm exposing
 
 # Util
 
-@docs File
+@docs File, expressionToString, declarationToString
 
 @docs pass
 
@@ -97,6 +97,8 @@ import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
 import Elm.Syntax.Range as Range
 import Elm.Syntax.TypeAnnotation as Annotation
+import Elm.Writer
+import Internal.Comments
 import Internal.Compiler as Compiler
 import Internal.Write
 import Set
@@ -110,6 +112,20 @@ type alias Module =
 {-| -}
 type alias Expression =
     Compiler.Expression
+
+
+{-| -}
+expressionToString : Expression -> String
+expressionToString (Compiler.Expression exp) =
+    Elm.Writer.writeExpression (Compiler.nodify exp.expression)
+        |> Elm.Writer.write
+
+
+{-| -}
+declarationToString : Declaration -> String
+declarationToString (Compiler.Declaration expos mods dec) =
+    Elm.Writer.writeDeclaration (Compiler.nodify dec)
+        |> Elm.Writer.write
 
 
 {-| Turn the AST into a pretty printed file
@@ -150,7 +166,12 @@ render (File fileDetails) =
                 , imports =
                     List.filterMap Compiler.makeImport fileDetails.imports
                 , declarations = fileDetails.body
-                , comments = Nothing --: Maybe (Comments.Comment Comments.FileComment)
+                , comments =
+                    Just
+                        (Internal.Comments.addPart
+                            Internal.Comments.emptyComment
+                            (Internal.Comments.Markdown fileDetails.moduleComment)
+                        )
                 }
     in
     { path =
@@ -162,6 +183,8 @@ render (File fileDetails) =
 {-| Build a file!
 
     Elm.file (Elm.moduleName [ "My", "Module" ])
+        """Here is the module comment!
+        """
         [ Elm.declaration "placeholder"
             (Elm.string "a fancy string!")
         ]
@@ -169,14 +192,15 @@ render (File fileDetails) =
 Once you have a file, you can render it using `Elm.toString`.
 
 -}
-file : Module -> List Declaration -> File
-file mod decs =
+file : Module -> String -> List Declaration -> File
+file mod docComment decs =
     File
         { moduleDefinition = mod
         , imports =
             reduceDeclarationImports decs ( Set.empty, [] )
                 |> Tuple.second
         , body = decs
+        , moduleComment = docComment
         }
 
 
@@ -219,8 +243,7 @@ type alias FileDetails =
     { moduleDefinition : Module
     , imports : List Module
     , body : List Declaration
-
-    -- , comments : Maybe (Comment FileComment)
+    , moduleComment : String
     }
 
 
