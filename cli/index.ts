@@ -219,9 +219,9 @@ async function run_package_generator(output: string, flags:any) {
 
     })
         .then((files:any) => {
-            console.log("Successfully generated, writing", files)
             for (const file of files) {
                 const fullpath = path.join(output, file.path)
+                console.log("Generating: " + chalk.cyan(fullpath))
                 fs.mkdirSync(path.dirname(fullpath), { recursive: true })
                 fs.writeFileSync(fullpath, file.contents)
             }

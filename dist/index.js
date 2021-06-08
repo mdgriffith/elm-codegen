@@ -150,10 +150,10 @@ function run_package_generator(output, flags) {
                 }
             })
                 .then(function (files) {
-                console.log("Successfully generated, writing", files);
                 for (var _i = 0, files_2 = files; _i < files_2.length; _i++) {
                     var file = files_2[_i];
                     var fullpath = path.join(output, file.path);
+                    console.log("Generating: " + chalk_1.default.cyan(fullpath));
                     fs.mkdirSync(path.dirname(fullpath), { recursive: true });
                     fs.writeFileSync(fullpath, file.contents);
                 }
