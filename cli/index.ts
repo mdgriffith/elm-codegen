@@ -285,7 +285,12 @@ async function action(cmd: string, pkg: string | null, options: Options, com:any
             ]))
 
     } else if (cmd == "install" && !!pkg) {
-        install(pkg, base, null)
+        if (pkg.endsWith(".json")) {
+            let docs = JSON.parse(fs.readFileSync(pkg).toString());
+            run_package_generator(output, docs)
+        } else {
+            install(pkg, base, null)
+        }
     } else {
 
         let flags:any | null = null

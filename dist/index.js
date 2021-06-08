@@ -208,7 +208,7 @@ function install(pkg, output, version) {
 }
 function action(cmd, pkg, options, com) {
     return __awaiter(this, void 0, void 0, function () {
-        var cwd, output, base, flags_1, moduleName_1;
+        var cwd, output, base, docs, flags_1, moduleName_1;
         return __generator(this, function (_a) {
             cwd = options.cwd || ".";
             output = path.join(cwd, options.output || "output");
@@ -229,7 +229,13 @@ function action(cmd, pkg, options, com) {
                     "Run your generator by running " + chalk_1.default.yellow("elm-prefab")]));
             }
             else if (cmd == "install" && !!pkg) {
-                install(pkg, base, null);
+                if (pkg.endsWith(".json")) {
+                    docs = JSON.parse(fs.readFileSync(pkg).toString());
+                    run_package_generator(output, docs);
+                }
+                else {
+                    install(pkg, base, null);
+                }
             }
             else {
                 flags_1 = null;
