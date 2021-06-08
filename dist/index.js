@@ -230,6 +230,7 @@ function action(cmd, pkg, options, com) {
             }
             else if (cmd == "install" && !!pkg) {
                 if (pkg.endsWith(".json")) {
+                    console.log(format_block(["Installing via json from " + chalk_1.default.cyan(pkg)]));
                     docs = JSON.parse(fs.readFileSync(pkg).toString());
                     run_package_generator(output, docs);
                 }

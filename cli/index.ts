@@ -286,6 +286,7 @@ async function action(cmd: string, pkg: string | null, options: Options, com:any
 
     } else if (cmd == "install" && !!pkg) {
         if (pkg.endsWith(".json")) {
+            console.log(format_block([ "Installing via json from " + chalk.cyan(pkg) ]))
             let docs = JSON.parse(fs.readFileSync(pkg).toString());
             run_package_generator(output, docs)
         } else {
