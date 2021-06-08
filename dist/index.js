@@ -209,34 +209,34 @@ function install(pkg, output, version) {
 }
 function action(cmd, pkg, options, com) {
     return __awaiter(this, void 0, void 0, function () {
-        var cwd, output, base, docs, flags_1, moduleName_1;
+        var cwd, output, install_dir, docs, flags_1, moduleName_1;
         return __generator(this, function (_a) {
             cwd = options.cwd || ".";
             output = path.join(cwd, options.output || "output");
-            base = "generators";
+            install_dir = path.join(cwd, options.output || "generators");
             if (cmd == "init") {
                 // create folder
-                if (fs.existsSync("./" + base)) {
-                    console.log(format_block(["Looks like there's already a " + chalk_1.default.cyan(base) + " folder."]));
+                if (fs.existsSync("./" + install_dir)) {
+                    console.log(format_block(["Looks like there's already a " + chalk_1.default.cyan(install_dir) + " folder."]));
                     process.exit(1);
                 }
-                fs.mkdirSync("./" + base);
-                fs.mkdirSync("./" + base + "/Elm");
-                fs.writeFileSync("./" + base + "/elm.json", elm_json_file);
-                fs.writeFileSync("./" + base + "/Generate.elm", elm_starter_file);
-                fs.writeFileSync("./" + base + "/Elm/Gen.elm", elm_gen_file);
-                install("elm/core", base, null);
-                console.log(format_block(["I've created the " + chalk_1.default.cyan(base) + " folder and added some files.", chalk_1.default.cyan(base + "/Generate.elm") + " is a good place to get start to see how everything works!", "",
+                fs.mkdirSync("./" + install_dir);
+                fs.mkdirSync("./" + install_dir + "/Elm");
+                fs.writeFileSync("./" + install_dir + "/elm.json", elm_json_file);
+                fs.writeFileSync("./" + install_dir + "/Generate.elm", elm_starter_file);
+                fs.writeFileSync("./" + install_dir + "/Elm/Gen.elm", elm_gen_file);
+                install("elm/core", install_dir, null);
+                console.log(format_block(["I've created the " + chalk_1.default.cyan(install_dir) + " folder and added some files.", chalk_1.default.cyan(install_dir + "/Generate.elm") + " is a good place to get start to see how everything works!", "",
                     "Run your generator by running " + chalk_1.default.yellow("elm-prefab")]));
             }
             else if (cmd == "install" && !!pkg) {
                 if (pkg.endsWith(".json")) {
                     console.log(format_block(["Installing via json from " + chalk_1.default.cyan(pkg)]));
                     docs = JSON.parse(fs.readFileSync(pkg).toString());
-                    run_package_generator(output, docs);
+                    run_package_generator(install_dir, docs);
                 }
                 else {
-                    install(pkg, base, null);
+                    install(pkg, install_dir, null);
                 }
             }
             else {

@@ -264,34 +264,35 @@ async function action(cmd: string, pkg: string | null, options: Options, com:any
 //     console.log(options)
     const cwd = options.cwd || "."
     const output = path.join(cwd, options.output || "output")
-    const base = "generators"
+    const install_dir = path.join(cwd, options.output || "generators")
     if (cmd == "init") {
         // create folder
-        if (fs.existsSync("./" + base)){
-            console.log(format_block(["Looks like there's already a "+ chalk.cyan(base) + " folder."]))
+        if (fs.existsSync("./" + install_dir)){
+            console.log(format_block(["Looks like there's already a "+ chalk.cyan(install_dir) + " folder."]))
             process.exit(1);
         }
 
-        fs.mkdirSync(`./${base}`)
-        fs.mkdirSync(`./${base}/Elm`)
-        fs.writeFileSync(`./${base}/elm.json`, elm_json_file)
-        fs.writeFileSync(`./${base}/Generate.elm`, elm_starter_file)
-        fs.writeFileSync(`./${base}/Elm/Gen.elm`, elm_gen_file)
-        install("elm/core", base, null)
+        fs.mkdirSync(`./${install_dir}`)
+        fs.mkdirSync(`./${install_dir}/Elm`)
+        fs.writeFileSync(`./${install_dir}/elm.json`, elm_json_file)
+        fs.writeFileSync(`./${install_dir}/Generate.elm`, elm_starter_file)
+        fs.writeFileSync(`./${install_dir}/Elm/Gen.elm`, elm_gen_file)
+        install("elm/core", install_dir, null)
         console.log(format_block(
-            [ "I've created the " + chalk.cyan(base) +  " folder and added some files.",
-             chalk.cyan(`${base}/Generate.elm`) + " is a good place to get start to see how everything works!"
+            [ "I've created the " + chalk.cyan(install_dir) +  " folder and added some files.",
+             chalk.cyan(`${install_dir}/Generate.elm`) + " is a good place to get start to see how everything works!"
             , ""
             , "Run your generator by running " + chalk.yellow("elm-prefab")
             ]))
 
     } else if (cmd == "install" && !!pkg) {
         if (pkg.endsWith(".json")) {
+
             console.log(format_block([ "Installing via json from " + chalk.cyan(pkg) ]))
             let docs = JSON.parse(fs.readFileSync(pkg).toString());
-            run_package_generator(output, docs)
+            run_package_generator(install_dir, docs)
         } else {
-            install(pkg, base, null)
+            install(pkg, install_dir, null)
         }
     } else {
 
