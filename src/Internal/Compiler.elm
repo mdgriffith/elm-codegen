@@ -188,16 +188,16 @@ resolveModuleNameForValue (Module mod maybeAlias) =
 
 resolveModuleName : Module -> List String
 resolveModuleName (Module mod maybeAlias) =
-    if builtIn mod then
-        []
+    --if builtIn mod then
+    --    []
+    --
+    --else
+    case maybeAlias of
+        Nothing ->
+            mod
 
-    else
-        case maybeAlias of
-            Nothing ->
-                mod
-
-            Just aliasStr ->
-                [ aliasStr ]
+        Just aliasStr ->
+            [ aliasStr ]
 
 
 builtIn : List String -> Bool
@@ -407,9 +407,42 @@ nodifyTuple ( a, b ) =
     ( nodify a, nodify b )
 
 
+{-|
+
+    This is used as a variable or as a record field.
+
+-}
 formatValue : String -> String
 formatValue str =
-    String.toLower (String.left 1 str) ++ String.dropLeft 1 str
+    let
+        formatted =
+            if String.toUpper str == str then
+                String.toLower str
+
+            else
+                String.toLower (String.left 1 str) ++ String.dropLeft 1 str
+    in
+    case formatted of
+        "in" ->
+            "in_"
+
+        "type" ->
+            "type_"
+
+        "case" ->
+            "case_"
+
+        "let" ->
+            "let_"
+
+        "module" ->
+            "module_"
+
+        "exposing" ->
+            "exposing_"
+
+        _ ->
+            formatted
 
 
 formatType : String -> String

@@ -4808,8 +4808,8 @@ var $author$project$Internal$Compiler$unifiableHelper = F3(
 							return _Debug_todo(
 								'Internal.Compiler',
 								{
-									start: {line: 721, column: 21},
-									end: {line: 721, column: 31}
+									start: {line: 754, column: 21},
+									end: {line: 754, column: 31}
 								})('');
 						default:
 							return _Utils_Tuple2(
@@ -5222,41 +5222,15 @@ var $author$project$Generate$elm = $author$project$Elm$moduleName(
 	_List_fromArray(
 		['Elm']));
 var $author$project$Generate$local = $author$project$Elm$moduleName(_List_Nil);
-var $author$project$Internal$Compiler$builtIn = function (name) {
-	_v0$4:
-	while (true) {
-		if (name.b && (!name.b.b)) {
-			switch (name.a) {
-				case 'List':
-					return true;
-				case 'Maybe':
-					return true;
-				case 'String':
-					return true;
-				case 'Basics':
-					return true;
-				default:
-					break _v0$4;
-			}
-		} else {
-			break _v0$4;
-		}
-	}
-	return false;
-};
 var $author$project$Internal$Compiler$resolveModuleName = function (_v0) {
 	var mod = _v0.a;
 	var maybeAlias = _v0.b;
-	if ($author$project$Internal$Compiler$builtIn(mod)) {
-		return _List_Nil;
+	if (maybeAlias.$ === 'Nothing') {
+		return mod;
 	} else {
-		if (maybeAlias.$ === 'Nothing') {
-			return mod;
-		} else {
-			var aliasStr = maybeAlias.a;
-			return _List_fromArray(
-				[aliasStr]);
-		}
+		var aliasStr = maybeAlias.a;
+		return _List_fromArray(
+			[aliasStr]);
 	}
 };
 var $author$project$Elm$Annotation$named = F2(
@@ -6001,10 +5975,28 @@ var $stil4m$elm_syntax$Elm$Syntax$Declaration$FunctionDeclaration = function (a)
 var $author$project$Internal$Compiler$NotExposed = {$: 'NotExposed'};
 var $elm$core$String$toLower = _String_toLower;
 var $author$project$Internal$Compiler$formatValue = function (str) {
-	return _Utils_ap(
+	var formatted = _Utils_eq(
+		$elm$core$String$toUpper(str),
+		str) ? $elm$core$String$toLower(str) : _Utils_ap(
 		$elm$core$String$toLower(
 			A2($elm$core$String$left, 1, str)),
 		A2($elm$core$String$dropLeft, 1, str));
+	switch (formatted) {
+		case 'in':
+			return 'in_';
+		case 'type':
+			return 'type_';
+		case 'case':
+			return 'case_';
+		case 'let':
+			return 'let_';
+		case 'module':
+			return 'module_';
+		case 'exposing':
+			return 'exposing_';
+		default:
+			return formatted;
+	}
 };
 var $elm$core$Maybe$map = F2(
 	function (f, maybe) {
@@ -7233,6 +7225,28 @@ var $author$project$Internal$Compiler$hasPorts = function (decls) {
 			}
 		},
 		decls);
+};
+var $author$project$Internal$Compiler$builtIn = function (name) {
+	_v0$4:
+	while (true) {
+		if (name.b && (!name.b.b)) {
+			switch (name.a) {
+				case 'List':
+					return true;
+				case 'Maybe':
+					return true;
+				case 'String':
+					return true;
+				case 'Basics':
+					return true;
+				default:
+					break _v0$4;
+			}
+		} else {
+			break _v0$4;
+		}
+	}
+	return false;
 };
 var $author$project$Internal$Compiler$makeImport = function (_v0) {
 	var name = _v0.a;
