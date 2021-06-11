@@ -15,7 +15,7 @@ module Elm exposing
     , customType, customTypeWith
     , Module, local, moduleName, moduleAs
     , withDocumentation, expose, exposeConstructor
-    , power, multiply, divide, intDivide, modulo, rem, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, pipe, pipeLeft, compose, composeLeft
+    , power, multiply, divide, intDivide, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, compose, composeLeft
     , keep, skip, slash, questionMark
     , portIncoming, portOutgoing
     , File, expressionToString, declarationToString
@@ -65,7 +65,7 @@ module Elm exposing
 
 # Operators
 
-@docs power, multiply, divide, intDivide, modulo, rem, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, pipe, pipeLeft, compose, composeLeft
+@docs power, multiply, divide, intDivide, modulo, rem, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, compose, composeLeft
 
 
 # Package specific operators
@@ -1760,126 +1760,262 @@ composeLeft =
 -}
 power : Expression -> Expression -> Expression
 power =
-    applyBinOp (BinOp "^" Infix.Right 8)
+    applyInfix (BinOp "^" Infix.Right 8)
+        (valueWith
+            local
+            "*"
+            (Elm.Annotation.function
+                [ Elm.Annotation.var "number", Elm.Annotation.var "number" ]
+                (Elm.Annotation.var "number")
+            )
+        )
 
 
 {-| `*`.
 -}
 multiply : Expression -> Expression -> Expression
 multiply =
-    applyBinOp (BinOp "*" Infix.Left 7)
+    applyInfix (BinOp "*" Infix.Left 7)
+        (valueWith
+            local
+            "*"
+            (Elm.Annotation.function
+                [ Elm.Annotation.var "number", Elm.Annotation.var "number" ]
+                (Elm.Annotation.var "number")
+            )
+        )
 
 
 {-| `/`.
 -}
 divide : Expression -> Expression -> Expression
 divide =
-    applyBinOp (BinOp "/" Infix.Left 7)
+    applyInfix (BinOp "/" Infix.Left 7)
+        (valueWith
+            local
+            "/"
+            (Elm.Annotation.function
+                [ Elm.Annotation.float, Elm.Annotation.float ]
+                Elm.Annotation.float
+            )
+        )
 
 
 {-| `//`.
 -}
 intDivide : Expression -> Expression -> Expression
 intDivide =
-    applyBinOp (BinOp "//" Infix.Left 7)
-
-
-{-| `%`.
--}
-modulo : Expression -> Expression -> Expression
-modulo =
-    applyBinOp (BinOp "%" Infix.Left 7)
-
-
-{-| `rem`.
--}
-rem : Expression -> Expression -> Expression
-rem =
-    applyBinOp (BinOp "rem" Infix.Left 7)
+    applyInfix (BinOp "//" Infix.Left 7)
+        (valueWith
+            local
+            "/"
+            (Elm.Annotation.function
+                [ Elm.Annotation.int, Elm.Annotation.int ]
+                Elm.Annotation.int
+            )
+        )
 
 
 {-| `+`.
 -}
 plus : Expression -> Expression -> Expression
 plus =
-    applyBinOp (BinOp "+" Infix.Left 6)
+    applyInfix (BinOp "+" Infix.Left 6)
+        (valueWith
+            local
+            "max"
+            (Elm.Annotation.function
+                [ Elm.Annotation.var "number", Elm.Annotation.var "number" ]
+                (Elm.Annotation.var "number")
+            )
+        )
 
 
 {-| `-`
 -}
 minus : Expression -> Expression -> Expression
 minus =
-    applyBinOp (BinOp "-" Infix.Left 6)
+    applyInfix (BinOp "-" Infix.Left 6)
+        (valueWith
+            local
+            "max"
+            (Elm.Annotation.function
+                [ Elm.Annotation.var "number", Elm.Annotation.var "number" ]
+                (Elm.Annotation.var "number")
+            )
+        )
 
 
 {-| `++`
 -}
 append : Expression -> Expression -> Expression
 append =
-    applyBinOp (BinOp "++" Infix.Right 5)
+    applyInfix
+        (BinOp "++" Infix.Right 5)
+        (valueWith
+            local
+            "append"
+            (Elm.Annotation.function
+                [ Elm.Annotation.namedWith
+                    (moduleName [ "List" ])
+                    "List"
+                    [ Elm.Annotation.var "a" ]
+                , Elm.Annotation.namedWith
+                    (moduleName [ "List" ])
+                    "List"
+                    [ Elm.Annotation.var "a" ]
+                ]
+                (Elm.Annotation.namedWith
+                    (moduleName [ "List" ])
+                    "List"
+                    [ Elm.Annotation.var "a" ]
+                )
+            )
+        )
 
 
 {-| `::`
 -}
 cons : Expression -> Expression -> Expression
 cons =
-    applyBinOp (BinOp "::" Infix.Right 5)
+    applyInfix (BinOp "::" Infix.Right 5)
+        (valueWith
+            local
+            "cons"
+            (Elm.Annotation.function
+                [ Elm.Annotation.var "a"
+                , Elm.Annotation.namedWith
+                    (moduleName [ "List" ])
+                    "List"
+                    [ Elm.Annotation.var "a" ]
+                ]
+                (Elm.Annotation.namedWith
+                    (moduleName [ "List" ])
+                    "List"
+                    [ Elm.Annotation.var "a" ]
+                )
+            )
+        )
 
 
 {-| `==`
 -}
 equal : Expression -> Expression -> Expression
 equal =
-    applyBinOp (BinOp "==" Infix.Left 4)
+    applyInfix (BinOp "==" Infix.Left 4)
+        (valueWith
+            local
+            "equal"
+            (Elm.Annotation.function
+                [ Elm.Annotation.var "a", Elm.Annotation.var "a" ]
+                Elm.Annotation.bool
+            )
+        )
 
 
 {-| `/=`
 -}
 notEqual : Expression -> Expression -> Expression
 notEqual =
-    applyBinOp (BinOp "/=" Infix.Left 4)
+    applyInfix (BinOp "/=" Infix.Left 4)
+        (valueWith
+            local
+            "equal"
+            (Elm.Annotation.function
+                [ Elm.Annotation.var "a", Elm.Annotation.var "a" ]
+                Elm.Annotation.bool
+            )
+        )
 
 
 {-| `<`
 -}
 lt : Expression -> Expression -> Expression
 lt =
-    applyBinOp (BinOp "<" Infix.Non 4)
+    applyInfix (BinOp "<" Infix.Non 4)
+        (valueWith
+            local
+            "equal"
+            (Elm.Annotation.function
+                [ Elm.Annotation.var "comparable", Elm.Annotation.var "comparable" ]
+                Elm.Annotation.bool
+            )
+        )
 
 
 {-| `>`
 -}
 gt : Expression -> Expression -> Expression
 gt =
-    applyBinOp (BinOp ">" Infix.Non 4)
+    applyInfix (BinOp ">" Infix.Non 4)
+        (valueWith
+            local
+            "equal"
+            (Elm.Annotation.function
+                [ Elm.Annotation.var "comparable", Elm.Annotation.var "comparable" ]
+                Elm.Annotation.bool
+            )
+        )
 
 
 {-| `<=`
 -}
 lte : Expression -> Expression -> Expression
 lte =
-    applyBinOp (BinOp "<=" Infix.Non 4)
+    applyInfix (BinOp "<=" Infix.Non 4)
+        (valueWith
+            local
+            "equal"
+            (Elm.Annotation.function
+                [ Elm.Annotation.var "comparable", Elm.Annotation.var "comparable" ]
+                Elm.Annotation.bool
+            )
+        )
 
 
 {-| `>=`
 -}
 gte : Expression -> Expression -> Expression
 gte =
-    applyBinOp (BinOp ">=" Infix.Non 4)
+    applyInfix (BinOp ">=" Infix.Non 4)
+        (valueWith
+            local
+            "equal"
+            (Elm.Annotation.function
+                [ Elm.Annotation.var "comparable", Elm.Annotation.var "comparable" ]
+                Elm.Annotation.bool
+            )
+        )
 
 
 {-| `&&`
 -}
 and : Expression -> Expression -> Expression
 and =
-    applyBinOp (BinOp "&&" Infix.Right 3)
+    applyInfix (BinOp "&&" Infix.Right 3)
+        (valueWith
+            local
+            "equal"
+            (Elm.Annotation.function
+                [ Elm.Annotation.bool, Elm.Annotation.bool ]
+                Elm.Annotation.bool
+            )
+        )
 
 
 {-| `||`
 -}
 or : Expression -> Expression -> Expression
 or =
-    applyBinOp (BinOp "||" Infix.Right 2)
+    applyInfix (BinOp "||" Infix.Right 2)
+        (valueWith
+            local
+            "equal"
+            (Elm.Annotation.function
+                [ Elm.Annotation.bool, Elm.Annotation.bool ]
+                Elm.Annotation.bool
+            )
+        )
 
 
 {-| used in the `elm/parser` library
@@ -1915,6 +2051,10 @@ questionMark =
 
 {-| `|>`
 
+These arent expose on purpose.
+
+The idea would be to do this automatically if appropriate
+
     Elm.value "thang"
         |> Elm.pipe (Elm.value "thang2")
         |> Elm.pipe (Elm.value "thang3")
@@ -1945,6 +2085,21 @@ applyBinOp (BinOp symbol dir _) (Compiler.Expression exprl) (Compiler.Expression
             Exp.OperatorApplication symbol dir (Compiler.nodify exprl.expression) (Compiler.nodify exprr.expression)
         , annotation = Err [ Compiler.SomeOtherIssue ]
         , imports = exprl.imports ++ exprr.imports
+        , skip = False
+        }
+
+
+applyInfix : BinOp -> Expression -> Expression -> Expression -> Expression
+applyInfix (BinOp symbol dir _) fnAnnotation (Compiler.Expression left) (Compiler.Expression right) =
+    Compiler.Expression
+        { expression =
+            Exp.OperatorApplication symbol dir (Compiler.nodify left.expression) (Compiler.nodify right.expression)
+        , annotation =
+            Compiler.applyType fnAnnotation
+                [ Compiler.Expression left
+                , Compiler.Expression right
+                ]
+        , imports = left.imports ++ right.imports
         , skip = False
         }
 
