@@ -59,25 +59,25 @@ var a =
 {-| -}
 bool : Annotation
 bool =
-    typed [ "Basics" ] "Bool" []
+    typed [] "Bool" []
 
 
 {-| -}
 int : Annotation
 int =
-    typed [ "Basics" ] "Int" []
+    typed [] "Int" []
 
 
 {-| -}
 float : Annotation
 float =
-    typed [ "Basics" ] "Float" []
+    typed [] "Float" []
 
 
 {-| -}
 string : Annotation
 string =
-    typed [ "String" ] "String" []
+    typed [] "String" []
 
 
 {-| -}
@@ -98,7 +98,7 @@ unit =
 {-| -}
 list : Annotation -> Annotation
 list inner =
-    typed [ "List" ] "List" [ inner ]
+    typed [] "List" [ inner ]
 
 
 {-| -}
@@ -152,7 +152,7 @@ dict keyArg valArg =
 {-| -}
 maybe : Annotation -> Annotation
 maybe maybeArg =
-    typed [ "Maybe" ] "Maybe" [ maybeArg ]
+    typed [] "Maybe" [ maybeArg ]
 
 
 {-| -}

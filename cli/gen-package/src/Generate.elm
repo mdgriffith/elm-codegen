@@ -178,17 +178,11 @@ valueWith mod name annotation =
                 ]
                 (Annotation.named elm "Expression")
             )
-         --|> Debug.log "   VALUE FROM "
-         --|> logAnnotation "   VALUE FROM "
         )
         [ mod
         , name
         , typeToExpression annotation
         ]
-
-
-
---|> logAnnotation "   VF APPLIED -> "
 
 
 apply : Elm.Expression -> List Elm.Expression -> Elm.Expression
@@ -638,10 +632,6 @@ typeToExpression elmType =
                     List.drop (fragsLength - 1) frags
                         |> List.head
                         |> Maybe.withDefault name
-
-                mod =
-                    List.take (fragsLength - 1) frags
-                        |> List.map Elm.string
             in
             Elm.apply
                 (Elm.valueWith elmAnnotation
@@ -654,16 +644,7 @@ typeToExpression elmType =
                         annotationType
                     )
                 )
-                [ Elm.apply
-                    (Elm.valueWith elm
-                        "moduleName"
-                        (Annotation.function
-                            [ Annotation.list Annotation.string
-                            ]
-                            (Annotation.named elm "Module")
-                        )
-                    )
-                    [ Elm.list mod ]
+                [ moduleName frags
                 , Elm.string typeName
                 , Elm.list (List.map typeToExpression types)
                 ]
@@ -721,3 +702,54 @@ typeToExpression elmType =
                                 fields
                             )
                         ]
+
+
+moduleName : List String -> Elm.Expression
+moduleName frags =
+    let
+        fragsLength =
+            List.length frags
+
+        modName =
+            case Debug.log "FRAG" frags of
+                [ "List", "List" ] ->
+                    Nothing
+
+                [ "Maybe", "Maybe" ] ->
+                    Nothing
+
+                [ "Basics", "Int" ] ->
+                    Nothing
+
+                [ "Basics", "Float" ] ->
+                    Nothing
+
+                [ "Basics", "Bool" ] ->
+                    Nothing
+
+                [ "String", "String" ] ->
+                    Nothing
+
+                _ ->
+                    List.take (fragsLength - 1) frags
+                        |> List.map Elm.string
+                        |> Just
+    in
+    case modName of
+        Nothing ->
+            Elm.valueWith elm
+                "local"
+                (Annotation.named elm "Module")
+
+        Just name ->
+            Elm.apply
+                (Elm.valueWith elm
+                    "moduleName"
+                    (Annotation.function
+                        [ Annotation.list Annotation.string
+                        ]
+                        (Annotation.named elm "Module")
+                    )
+                )
+                [ Elm.list name
+                ]

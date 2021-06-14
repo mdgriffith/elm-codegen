@@ -5454,8 +5454,7 @@ var $author$project$Elm$list = function (exprs) {
 var $author$project$Elm$Annotation$list = function (inner) {
 	return A3(
 		$author$project$Elm$Annotation$typed,
-		_List_fromArray(
-			['List']),
+		_List_Nil,
 		'List',
 		_List_fromArray(
 			[inner]));
@@ -5586,6 +5585,82 @@ var $elm$core$List$take = F2(
 	function (n, list) {
 		return A3($elm$core$List$takeFast, 0, n, list);
 	});
+var $author$project$Generate$moduleName = function (frags) {
+	var fragsLength = $elm$core$List$length(frags);
+	var modName = function () {
+		var _v1 = A2($elm$core$Debug$log, 'FRAG', frags);
+		_v1$5:
+		while (true) {
+			if ((_v1.b && _v1.b.b) && (!_v1.b.b.b)) {
+				switch (_v1.a) {
+					case 'List':
+						if (_v1.b.a === 'List') {
+							var _v2 = _v1.b;
+							return $elm$core$Maybe$Nothing;
+						} else {
+							break _v1$5;
+						}
+					case 'Maybe':
+						if (_v1.b.a === 'Maybe') {
+							var _v3 = _v1.b;
+							return $elm$core$Maybe$Nothing;
+						} else {
+							break _v1$5;
+						}
+					case 'Basics':
+						switch (_v1.b.a) {
+							case 'Int':
+								var _v4 = _v1.b;
+								return $elm$core$Maybe$Nothing;
+							case 'Float':
+								var _v5 = _v1.b;
+								return $elm$core$Maybe$Nothing;
+							case 'Bool':
+								var _v6 = _v1.b;
+								return $elm$core$Maybe$Nothing;
+							default:
+								break _v1$5;
+						}
+					default:
+						break _v1$5;
+				}
+			} else {
+				break _v1$5;
+			}
+		}
+		return $elm$core$Maybe$Just(
+			A2(
+				$elm$core$List$map,
+				$author$project$Elm$string,
+				A2($elm$core$List$take, fragsLength - 1, frags)));
+	}();
+	if (modName.$ === 'Nothing') {
+		return A3(
+			$author$project$Elm$valueWith,
+			$author$project$Generate$elm,
+			'local',
+			A2($author$project$Elm$Annotation$named, $author$project$Generate$elm, 'Module'));
+	} else {
+		var name = modName.a;
+		return A2(
+			$author$project$Elm$apply,
+			A3(
+				$author$project$Elm$valueWith,
+				$author$project$Generate$elm,
+				'moduleName',
+				A2(
+					$author$project$Elm$Annotation$function,
+					_List_fromArray(
+						[
+							$author$project$Elm$Annotation$list($author$project$Elm$Annotation$string)
+						]),
+					A2($author$project$Elm$Annotation$named, $author$project$Generate$elm, 'Module'))),
+			_List_fromArray(
+				[
+					$author$project$Elm$list(name)
+				]));
+	}
+};
 var $stil4m$elm_syntax$Elm$Syntax$Expression$TupledExpression = function (a) {
 	return {$: 'TupledExpression', a: a};
 };
@@ -5796,10 +5871,6 @@ var $author$project$Generate$typeToExpression = function (elmType) {
 			var types = elmType.b;
 			var frags = A2($elm$core$String$split, '.', name);
 			var fragsLength = $elm$core$List$length(frags);
-			var mod = A2(
-				$elm$core$List$map,
-				$author$project$Elm$string,
-				A2($elm$core$List$take, fragsLength - 1, frags));
 			var typeName = A2(
 				$elm$core$Maybe$withDefault,
 				name,
@@ -5822,23 +5893,7 @@ var $author$project$Generate$typeToExpression = function (elmType) {
 						$author$project$Generate$annotationType)),
 				_List_fromArray(
 					[
-						A2(
-						$author$project$Elm$apply,
-						A3(
-							$author$project$Elm$valueWith,
-							$author$project$Generate$elm,
-							'moduleName',
-							A2(
-								$author$project$Elm$Annotation$function,
-								_List_fromArray(
-									[
-										$author$project$Elm$Annotation$list($author$project$Elm$Annotation$string)
-									]),
-								A2($author$project$Elm$Annotation$named, $author$project$Generate$elm, 'Module'))),
-						_List_fromArray(
-							[
-								$author$project$Elm$list(mod)
-							])),
+						$author$project$Generate$moduleName(frags),
 						$author$project$Elm$string(typeName),
 						$author$project$Elm$list(
 						A2($elm$core$List$map, $author$project$Generate$typeToExpression, types))
@@ -6089,8 +6144,8 @@ var $elm$core$Set$insert = F2(
 		return $elm$core$Set$Set_elm_builtin(
 			A3($elm$core$Dict$insert, key, _Utils_Tuple0, dict));
 	});
-var $author$project$Elm$addImports = F2(
-	function (newImports, _v0) {
+var $author$project$Elm$addImports = F3(
+	function (self, newImports, _v0) {
 		addImports:
 		while (true) {
 			var set = _v0.a;
@@ -6101,17 +6156,23 @@ var $author$project$Elm$addImports = F2(
 				var _new = newImports.a;
 				var remain = newImports.b;
 				var full = $author$project$Internal$Compiler$fullModName(_new);
-				if (A2($elm$core$Set$member, full, set)) {
-					var $temp$newImports = remain,
+				if (A2($elm$core$Set$member, full, set) || _Utils_eq(
+					full,
+					$author$project$Internal$Compiler$fullModName(self))) {
+					var $temp$self = self,
+						$temp$newImports = remain,
 						$temp$_v0 = _Utils_Tuple2(set, deduped);
+					self = $temp$self;
 					newImports = $temp$newImports;
 					_v0 = $temp$_v0;
 					continue addImports;
 				} else {
-					var $temp$newImports = remain,
+					var $temp$self = self,
+						$temp$newImports = remain,
 						$temp$_v0 = _Utils_Tuple2(
 						A2($elm$core$Set$insert, full, set),
 						A2($elm$core$List$cons, _new, deduped));
+					self = $temp$self;
 					newImports = $temp$newImports;
 					_v0 = $temp$_v0;
 					continue addImports;
@@ -6119,8 +6180,8 @@ var $author$project$Elm$addImports = F2(
 			}
 		}
 	});
-var $author$project$Elm$reduceDeclarationImports = F2(
-	function (decs, imports) {
+var $author$project$Elm$reduceDeclarationImports = F3(
+	function (self, decs, imports) {
 		reduceDeclarationImports:
 		while (true) {
 			if (!decs.b) {
@@ -6130,8 +6191,10 @@ var $author$project$Elm$reduceDeclarationImports = F2(
 				var newImports = _v1.b;
 				var body = _v1.c;
 				var remain = decs.b;
-				var $temp$decs = remain,
-					$temp$imports = A2($author$project$Elm$addImports, newImports, imports);
+				var $temp$self = self,
+					$temp$decs = remain,
+					$temp$imports = A3($author$project$Elm$addImports, self, newImports, imports);
+				self = $temp$self;
 				decs = $temp$decs;
 				imports = $temp$imports;
 				continue reduceDeclarationImports;
@@ -6147,8 +6210,9 @@ var $author$project$Elm$file = F3(
 		return $author$project$Elm$File(
 			{
 				body: decs,
-				imports: A2(
+				imports: A3(
 					$author$project$Elm$reduceDeclarationImports,
+					mod,
 					decs,
 					_Utils_Tuple2($elm$core$Set$empty, _List_Nil)).b,
 				moduleComment: docComment,
