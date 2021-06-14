@@ -163,7 +163,7 @@ record fields =
             fields
                 |> List.map
                     (\( name, ann ) ->
-                        ( Compiler.nodify name
+                        ( Compiler.nodify (Compiler.formatValue name)
                         , Compiler.nodify (Compiler.getInnerAnnotation ann)
                         )
                     )

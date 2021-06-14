@@ -5171,12 +5171,7 @@ var $author$project$Elm$Annotation$typed = F3(
 				imports: A2($elm$core$List$concatMap, $author$project$Internal$Compiler$getAnnotationImports, args)
 			});
 	});
-var $author$project$Elm$Annotation$string = A3(
-	$author$project$Elm$Annotation$typed,
-	_List_fromArray(
-		['String']),
-	'String',
-	_List_Nil);
+var $author$project$Elm$Annotation$string = A3($author$project$Elm$Annotation$typed, _List_Nil, 'String', _List_Nil);
 var $author$project$Elm$string = function (literal) {
 	return $author$project$Internal$Compiler$Expression(
 		{
@@ -5435,10 +5430,7 @@ var $author$project$Elm$list = function (exprs) {
 					return A2(
 						$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Typed,
 						$author$project$Internal$Compiler$nodify(
-							_Utils_Tuple2(
-								_List_fromArray(
-									['List']),
-								'List')),
+							_Utils_Tuple2(_List_Nil, 'List')),
 						_List_fromArray(
 							[
 								$author$project$Internal$Compiler$nodify(inner)
@@ -5588,44 +5580,50 @@ var $elm$core$List$take = F2(
 var $author$project$Generate$moduleName = function (frags) {
 	var fragsLength = $elm$core$List$length(frags);
 	var modName = function () {
-		var _v1 = A2($elm$core$Debug$log, 'FRAG', frags);
-		_v1$5:
+		_v1$6:
 		while (true) {
-			if ((_v1.b && _v1.b.b) && (!_v1.b.b.b)) {
-				switch (_v1.a) {
+			if ((frags.b && frags.b.b) && (!frags.b.b.b)) {
+				switch (frags.a) {
 					case 'List':
-						if (_v1.b.a === 'List') {
-							var _v2 = _v1.b;
+						if (frags.b.a === 'List') {
+							var _v2 = frags.b;
 							return $elm$core$Maybe$Nothing;
 						} else {
-							break _v1$5;
+							break _v1$6;
 						}
 					case 'Maybe':
-						if (_v1.b.a === 'Maybe') {
-							var _v3 = _v1.b;
+						if (frags.b.a === 'Maybe') {
+							var _v3 = frags.b;
 							return $elm$core$Maybe$Nothing;
 						} else {
-							break _v1$5;
+							break _v1$6;
 						}
 					case 'Basics':
-						switch (_v1.b.a) {
+						switch (frags.b.a) {
 							case 'Int':
-								var _v4 = _v1.b;
+								var _v4 = frags.b;
 								return $elm$core$Maybe$Nothing;
 							case 'Float':
-								var _v5 = _v1.b;
+								var _v5 = frags.b;
 								return $elm$core$Maybe$Nothing;
 							case 'Bool':
-								var _v6 = _v1.b;
+								var _v6 = frags.b;
 								return $elm$core$Maybe$Nothing;
 							default:
-								break _v1$5;
+								break _v1$6;
+						}
+					case 'String':
+						if (frags.b.a === 'String') {
+							var _v7 = frags.b;
+							return $elm$core$Maybe$Nothing;
+						} else {
+							break _v1$6;
 						}
 					default:
-						break _v1$5;
+						break _v1$6;
 				}
 			} else {
-				break _v1$5;
+				break _v1$6;
 			}
 		}
 		return $elm$core$Maybe$Just(

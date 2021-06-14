@@ -711,7 +711,7 @@ moduleName frags =
             List.length frags
 
         modName =
-            case Debug.log "FRAG" frags of
+            case frags of
                 [ "List", "List" ] ->
                     Nothing
 
