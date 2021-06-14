@@ -197,26 +197,27 @@ file mod docComment decs =
     File
         { moduleDefinition = mod
         , imports =
-            reduceDeclarationImports decs ( Set.empty, [] )
+            reduceDeclarationImports mod decs ( Set.empty, [] )
                 |> Tuple.second
         , body = decs
         , moduleComment = docComment
         }
 
 
-reduceDeclarationImports : List Declaration -> ( Set.Set String, List Module ) -> ( Set.Set String, List Module )
-reduceDeclarationImports decs imports =
+reduceDeclarationImports : Module -> List Declaration -> ( Set.Set String, List Module ) -> ( Set.Set String, List Module )
+reduceDeclarationImports self decs imports =
     case decs of
         [] ->
             imports
 
         (Compiler.Declaration _ newImports body) :: remain ->
-            reduceDeclarationImports remain
-                (addImports newImports imports)
+            reduceDeclarationImports self
+                remain
+                (addImports self newImports imports)
 
 
-addImports : List Module -> ( Set.Set String, List Module ) -> ( Set.Set String, List Module )
-addImports newImports ( set, deduped ) =
+addImports : Module -> List Module -> ( Set.Set String, List Module ) -> ( Set.Set String, List Module )
+addImports self newImports ( set, deduped ) =
     case newImports of
         [] ->
             ( set, deduped )
@@ -226,11 +227,13 @@ addImports newImports ( set, deduped ) =
                 full =
                     Compiler.fullModName new
             in
-            if Set.member full set then
-                addImports remain ( set, deduped )
+            if Set.member full set || full == Compiler.fullModName self then
+                -- skip
+                addImports self remain ( set, deduped )
 
             else
-                addImports remain
+                addImports self
+                    remain
                     ( Set.insert full set, new :: deduped )
 
 
