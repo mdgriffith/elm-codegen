@@ -481,7 +481,7 @@ list exprs =
                 |> Result.map
                     (\inner ->
                         Annotation.Typed
-                            (Compiler.nodify ( [ "List" ], "List" ))
+                            (Compiler.nodify ( [], "List" ))
                             [ Compiler.nodify inner ]
                     )
         , imports = List.concatMap getImports exprs
@@ -1860,16 +1860,16 @@ append =
             "append"
             (Elm.Annotation.function
                 [ Elm.Annotation.namedWith
-                    (moduleName [ "List" ])
+                    (moduleName [])
                     "List"
                     [ Elm.Annotation.var "a" ]
                 , Elm.Annotation.namedWith
-                    (moduleName [ "List" ])
+                    (moduleName [])
                     "List"
                     [ Elm.Annotation.var "a" ]
                 ]
                 (Elm.Annotation.namedWith
-                    (moduleName [ "List" ])
+                    (moduleName [])
                     "List"
                     [ Elm.Annotation.var "a" ]
                 )
@@ -1888,12 +1888,12 @@ cons =
             (Elm.Annotation.function
                 [ Elm.Annotation.var "a"
                 , Elm.Annotation.namedWith
-                    (moduleName [ "List" ])
+                    (moduleName [])
                     "List"
                     [ Elm.Annotation.var "a" ]
                 ]
                 (Elm.Annotation.namedWith
-                    (moduleName [ "List" ])
+                    (moduleName [])
                     "List"
                     [ Elm.Annotation.var "a" ]
                 )
