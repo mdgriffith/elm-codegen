@@ -77,6 +77,7 @@ type InferenceError
     | FunctionAppliedToTooManyArgs
     | DuplicateFieldInRecord String
     | CaseBranchesReturnDifferentTypes
+    | CouldNotFindField String
 
 
 {-| -}

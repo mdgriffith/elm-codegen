@@ -704,10 +704,47 @@ get selector (Compiler.Expression expr) =
         { expression =
             Exp.RecordAccess (Compiler.nodify expr.expression) (Compiler.nodify (Compiler.formatValue selector))
         , annotation =
-            Err [ Compiler.SomeOtherIssue ]
+            case expr.annotation of
+                Ok (Annotation.Record fields) ->
+                    case getField (Compiler.formatValue selector) fields of
+                        Just ann ->
+                            Ok ann
+
+                        Nothing ->
+                            Err [ Compiler.CouldNotFindField selector ]
+
+                Ok (Annotation.GenericRecord name fields) ->
+                    case getField (Compiler.formatValue selector) (Compiler.denode fields) of
+                        Just ann ->
+                            Ok ann
+
+                        Nothing ->
+                            Err [ Compiler.CouldNotFindField selector ]
+
+                otherwise ->
+                    otherwise
         , imports = expr.imports
         , skip = False
         }
+
+
+getField :
+    String
+    -> List (Node.Node ( Node.Node String, Node.Node b ))
+    -> Maybe b
+getField selector fields =
+    case fields of
+        [] ->
+            Nothing
+
+        nodifiedTop :: remain ->
+            case Compiler.denode nodifiedTop of
+                ( fieldname, contents ) ->
+                    if Compiler.denode fieldname == selector then
+                        Just (Compiler.denode contents)
+
+                    else
+                        getField selector remain
 
 
 {-| A custom type declaration.
