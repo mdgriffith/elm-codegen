@@ -539,13 +539,13 @@ applyTypeHelper fn args =
                                     applyTypeHelper (denode two) rest
 
                         Err err ->
-                            let
-                                _ =
-                                    Debug.log "APPLAIL"
-                                        { fn = fn
-                                        , top = top
-                                        }
-                            in
+                            --let
+                            --    _ =
+                            --        Debug.log "APPLAIL"
+                            --            { fn = fn
+                            --            , top = top
+                            --            }
+                            --in
                             Err []
 
         final ->
@@ -622,8 +622,8 @@ unifiable one two =
                     ( one, two )
 
                 Err _ ->
-                    Debug.log "       Failed to unify"
-                        ( one, two )
+                    --Debug.log "       Failed to unify"
+                    ( one, two )
     in
     result
 

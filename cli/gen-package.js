@@ -4366,7 +4366,6 @@ var $stil4m$elm_syntax$Elm$Syntax$Node$value = function (_v0) {
 	return v;
 };
 var $author$project$Internal$Compiler$denode = $stil4m$elm_syntax$Elm$Syntax$Node$value;
-var $elm$core$Debug$log = _Debug_log;
 var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$FunctionTypeAnnotation = F2(
 	function (a, b) {
 		return {$: 'FunctionTypeAnnotation', a: a, b: b};
@@ -4974,10 +4973,7 @@ var $author$project$Internal$Compiler$unifiable = F2(
 			if (result.$ === 'Ok') {
 				return _Utils_Tuple2(one, two);
 			} else {
-				return A2(
-					$elm$core$Debug$log,
-					'       Failed to unify',
-					_Utils_Tuple2(one, two));
+				return _Utils_Tuple2(one, two);
 			}
 		}();
 		return result;
@@ -5011,10 +5007,6 @@ var $author$project$Internal$Compiler$applyTypeHelper = F2(
 						}
 					} else {
 						var err = _v2.a;
-						var _v4 = A2(
-							$elm$core$Debug$log,
-							'APPLAIL',
-							{fn: fn, top: top});
 						return $elm$core$Result$Err(_List_Nil);
 					}
 				}
