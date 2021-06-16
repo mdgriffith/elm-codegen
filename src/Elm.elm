@@ -776,7 +776,7 @@ customType name variants =
                 List.map
                     (\( varName, vars ) ->
                         Compiler.nodify
-                            { name = Compiler.nodify varName
+                            { name = Compiler.nodify (Compiler.formatType varName)
                             , arguments =
                                 List.map
                                     (Compiler.getInnerAnnotation
@@ -807,7 +807,7 @@ customTypeWith name args variants =
                 List.map
                     (\( varName, vars ) ->
                         Compiler.nodify
-                            { name = Compiler.nodify varName
+                            { name = Compiler.nodify (Compiler.formatType varName)
                             , arguments =
                                 List.map
                                     (Compiler.getInnerAnnotation
