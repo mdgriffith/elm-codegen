@@ -117,15 +117,13 @@ type alias Expression =
 {-| -}
 expressionToString : Expression -> String
 expressionToString (Compiler.Expression exp) =
-    Elm.Writer.writeExpression (Compiler.nodify exp.expression)
-        |> Elm.Writer.write
+    Internal.Write.writeExpression exp.expression
 
 
 {-| -}
 declarationToString : Declaration -> String
-declarationToString (Compiler.Declaration expos mods dec) =
-    Elm.Writer.writeDeclaration (Compiler.nodify dec)
-        |> Elm.Writer.write
+declarationToString dec =
+    Internal.Write.writeDeclaration dec
 
 
 {-| Turn the AST into a pretty printed file

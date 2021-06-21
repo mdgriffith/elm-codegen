@@ -1,4 +1,4 @@
-module Internal.Write exposing (write)
+module Internal.Write exposing (write, writeDeclaration, writeExpression)
 
 {-| This is borrowed basically in it's entirety from: <https://github.com/the-sett/elm-syntax-dsl/blob/master/src/Elm/Pretty.elm>
 
@@ -101,6 +101,18 @@ importsPretty file =
 write : File -> String
 write =
     pretty 80
+
+
+writeExpression : Expression -> String
+writeExpression exp =
+    prettyExpression exp
+        |> Pretty.pretty 80
+
+
+writeDeclaration : Util.Declaration -> String
+writeDeclaration exp =
+    prettyDeclaration 80 exp
+        |> Pretty.pretty 80
 
 
 {-| Prints a file of Elm code to the given page width, making use of the pretty
