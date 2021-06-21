@@ -58,6 +58,11 @@ getInnerExpression (Expression exp) =
     exp.expression
 
 
+getAnnotation : Expression -> Result (List InferenceError) Annotation.TypeAnnotation
+getAnnotation (Expression exp) =
+    exp.annotation
+
+
 {-| -}
 skip : Expression
 skip =
