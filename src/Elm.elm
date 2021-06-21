@@ -2,8 +2,8 @@ module Elm exposing
     ( file, render
     , Expression
     , value, valueFrom, valueWith
-    , int, float, char, string, hex, unit
-    , list, tuple, triple
+    , bool, int, float, char, string, hex, unit
+    , maybe, list, tuple, triple
     , record, get, updateRecord
     , caseOf
     , apply
@@ -33,9 +33,9 @@ module Elm exposing
 
 # Primitives
 
-@docs int, float, char, string, hex, unit
+@docs bool, int, float, char, string, hex, unit
 
-@docs list, tuple, triple
+@docs maybe, list, tuple, triple
 
 @docs record, get, updateRecord
 
@@ -361,6 +361,19 @@ unit =
 
 
 {-| -}
+bool : Bool -> Expression
+bool on =
+    valueWith local
+        (if on then
+            "True"
+
+         else
+            "False"
+        )
+        Elm.Annotation.bool
+
+
+{-| -}
 int : Int -> Expression
 int intVal =
     Compiler.Expression
@@ -465,6 +478,48 @@ triple (Compiler.Expression one) (Compiler.Expression two) (Compiler.Expression 
                 two.annotation
                 three.annotation
         , imports = one.imports ++ two.imports ++ three.imports
+        , skip = False
+        }
+
+
+{-| -}
+maybe : Maybe Expression -> Expression
+maybe content =
+    Compiler.Expression
+        { expression =
+            case content of
+                Nothing ->
+                    Exp.FunctionOrValue []
+                        "Nothing"
+
+                Just inner ->
+                    Exp.Application
+                        [ Exp.FunctionOrValue []
+                            "Just"
+                            |> Compiler.nodify
+                        , Exp.ParenthesizedExpression
+                            (Compiler.nodify (Compiler.getInnerExpression inner))
+                            |> Compiler.nodify
+                        ]
+        , annotation =
+            case content of
+                Nothing ->
+                    Ok
+                        (Compiler.getInnerAnnotation
+                            (Elm.Annotation.maybe (Elm.Annotation.var "a"))
+                        )
+
+                Just inner ->
+                    Result.map
+                        (\ann ->
+                            Annotation.Typed
+                                (Compiler.nodify ( [], "Maybe" ))
+                                [ Compiler.nodify ann ]
+                        )
+                        (Compiler.getAnnotation inner)
+        , imports =
+            Maybe.map getImports content
+                |> Maybe.withDefault []
         , skip = False
         }
 
