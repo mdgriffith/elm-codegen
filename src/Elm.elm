@@ -18,7 +18,8 @@ module Elm exposing
     , power, multiply, divide, intDivide, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, compose, composeLeft
     , keep, skip, slash, questionMark
     , portIncoming, portOutgoing
-    , File, expressionToString, declarationToString
+    , File, expressionToString, expressionImportsToString
+    , declarationToString
     , pass
     )
 
@@ -80,7 +81,9 @@ module Elm exposing
 
 # Util
 
-@docs File, expressionToString, declarationToString
+@docs File, expressionToString, expressionImportsToString
+
+@docs declarationToString, declarationImportsToString
 
 @docs pass
 
@@ -115,9 +118,23 @@ type alias Expression =
 
 
 {-| -}
+expressionImportsToString : Expression -> String
+expressionImportsToString (Compiler.Expression exp) =
+    List.filterMap Compiler.makeImport exp.imports
+        |> Internal.Write.writeImports
+
+
+{-| -}
 expressionToString : Expression -> String
 expressionToString (Compiler.Expression exp) =
     Internal.Write.writeExpression exp.expression
+
+
+{-| -}
+declarationImportsToString : Expression -> String
+declarationImportsToString (Compiler.Expression exp) =
+    List.filterMap Compiler.makeImport exp.imports
+        |> Internal.Write.writeImports
 
 
 {-| -}

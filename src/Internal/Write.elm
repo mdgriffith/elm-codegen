@@ -1,4 +1,4 @@
-module Internal.Write exposing (write, writeDeclaration, writeExpression)
+module Internal.Write exposing (write, writeDeclaration, writeExpression, writeImports)
 
 {-| This is borrowed basically in it's entirety from: <https://github.com/the-sett/elm-syntax-dsl/blob/master/src/Elm/Pretty.elm>
 
@@ -106,6 +106,12 @@ write =
 writeExpression : Expression -> String
 writeExpression exp =
     prettyExpression exp
+        |> Pretty.pretty 80
+
+
+writeImports : List (Node Import) -> String
+writeImports imports =
+    prettyImports (denodeAll imports)
         |> Pretty.pretty 80
 
 
