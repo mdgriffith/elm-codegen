@@ -33,6 +33,7 @@
     "chalk": "^4.1.1",
     "chokidar": "^3.5.1",
     "commander": "^7.2.0",
+    "elm-optimize-level-2": "^0.1.5",
     "node-elm-compiler": "^5.0.6",
     "node-fetch": "^2.6.1"
   }

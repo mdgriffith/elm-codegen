@@ -757,7 +757,7 @@ unifiableHelper vars one two =
                             unifiableHelper vars one foundTwo
 
                 Annotation.Record fieldsB ->
-                    Debug.todo ""
+                    ( vars, Err "Unable to unify function with non function type!" )
 
                 _ ->
                     ( vars, Err "Unable to unify function with non function type!" )

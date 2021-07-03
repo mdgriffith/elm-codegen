@@ -4534,7 +4534,6 @@ var $author$project$Internal$Compiler$nodify = function (exp) {
 	return A2($stil4m$elm_syntax$Elm$Syntax$Node$Node, $stil4m$elm_syntax$Elm$Syntax$Range$emptyRange, exp);
 };
 var $author$project$Internal$Compiler$nodifyAll = $elm$core$List$map($author$project$Internal$Compiler$nodify);
-var $elm$core$Debug$todo = _Debug_todo;
 var $author$project$Internal$Compiler$unifiableFields = F4(
 	function (vars, one, two, unified) {
 		unifiableFields:
@@ -4804,12 +4803,9 @@ var $author$project$Internal$Compiler$unifiableHelper = F3(
 							}
 						case 'Record':
 							var fieldsB = two.a;
-							return _Debug_todo(
-								'Internal.Compiler',
-								{
-									start: {line: 760, column: 21},
-									end: {line: 760, column: 31}
-								})('');
+							return _Utils_Tuple2(
+								vars,
+								$elm$core$Result$Err('Unable to unify function with non function type!'));
 						default:
 							return _Utils_Tuple2(
 								vars,

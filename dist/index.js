@@ -117,8 +117,8 @@ function run_generator(base, moduleName, elm_source, flags) {
     });
 }
 var program = new commander.Command();
-function generate(elm_file, moduleName, target_dir, base, flags) {
-    var data = elm_compiler.compileToStringSync([elm_file], { cwd: base });
+function generate(debug, elm_file, moduleName, target_dir, base, flags) {
+    var data = elm_compiler.compileToStringSync([elm_file], { cwd: base, optimize: !debug });
     if (data === "") {
         throw "Compiler error";
     }
@@ -255,14 +255,14 @@ function action(cmd, pkg, options, com) {
                 if (cmd.endsWith(".elm")) {
                     moduleName_1 = path.parse(cmd).name;
                     if (options.watch) {
-                        generate(cmd, moduleName_1, output, cwd, flags_1);
+                        generate(options.debug, cmd, moduleName_1, output, cwd, flags_1);
                         chokidar.watch(path.join(cwd, "**", "*.elm"), { ignored: path.join(output, "**") }).on('all', function (event, path) {
                             console.log("\nFile changed, regenerating");
-                            generate(cmd, moduleName_1, output, cwd, flags_1);
+                            generate(options.debug, cmd, moduleName_1, output, cwd, flags_1);
                         });
                     }
                     else {
-                        generate(cmd, moduleName_1, output, cwd, flags_1);
+                        generate(options.debug, cmd, moduleName_1, output, cwd, flags_1);
                     }
                 }
             }
@@ -273,6 +273,7 @@ function action(cmd, pkg, options, com) {
 program
     .version('0.1.0')
     .arguments('[cmd] [package]')
+    .option('--debug', 'Run your generator in debug mode, allowing you to use Debug.log in your elm.', false)
     .option('--watch', 'Watch the given file for changes and rerun the generator when a change is made.')
     .option('--cwd <dir>', 'Change the base directory for compiling your Elm generator')
     .option('--output <dir>', 'The directory where your generated files should go.')

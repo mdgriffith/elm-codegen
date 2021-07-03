@@ -63,8 +63,8 @@ async function run_generator(base:string, moduleName:string, elm_source:string, 
 const program = new commander.Command();
 
 
-function generate(elm_file: string, moduleName:string, target_dir: string, base: string, flags: any){
-    const data = elm_compiler.compileToStringSync([elm_file], {cwd: base });
+function generate(debug:boolean, elm_file: string, moduleName:string, target_dir: string, base: string, flags: any){
+    const data = elm_compiler.compileToStringSync([elm_file], {cwd: base, optimize: !debug });
     if (data === "") {
         throw "Compiler error";
     }
@@ -74,6 +74,7 @@ function generate(elm_file: string, moduleName:string, target_dir: string, base:
 
 
 type Options = {
+    debug: boolean
     cwd: string | null
     output: string | null
     flagsFrom: string | null
@@ -311,13 +312,13 @@ async function action(cmd: string, pkg: string | null, options: Options, com:any
             const moduleName = path.parse(cmd).name
 
             if (options.watch) {
-                generate(cmd, moduleName, output, cwd, flags)
+                generate(options.debug, cmd, moduleName, output, cwd, flags)
                 chokidar.watch(path.join(cwd, "**", "*.elm"), {ignored: path.join(output, "**")} ).on('all', (event, path) => {
                     console.log("\nFile changed, regenerating")
-                    generate(cmd, moduleName, output, cwd, flags)
+                    generate(options.debug, cmd, moduleName, output, cwd, flags)
                 });
             } else {
-               generate(cmd, moduleName, output, cwd, flags)
+               generate(options.debug, cmd, moduleName, output, cwd, flags)
             }
         }
     }
@@ -327,6 +328,7 @@ async function action(cmd: string, pkg: string | null, options: Options, com:any
 program
   .version('0.1.0')
   .arguments('[cmd] [package]')
+  .option('--debug', 'Run your generator in debug mode, allowing you to use Debug.log in your elm.', false)
   .option('--watch', 'Watch the given file for changes and rerun the generator when a change is made.')
   .option('--cwd <dir>', 'Change the base directory for compiling your Elm generator')
   .option('--output <dir>', 'The directory where your generated files should go.')
