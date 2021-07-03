@@ -279,5 +279,7 @@ program
     .option('--output <dir>', 'The directory where your generated files should go.')
     .option('--flags-from <file>', 'The file to feed to your elm app as flags.  If it has a json extension, it will be handed in as json.')
     .option('--flags <json>', 'Json to pass to your elm app.  if --flags-from is given, that will take precedence.')
+    //   .option('--import <file>', 'Parse an existing elm file and provide it to your generator')
+    //   .option('--import-dir <dir>', 'Parse an directory of existing elm files and provide them to your generator. If this is called with --flags, then a tuple will be passed to your generator.')
     .action(action);
 program.parseAsync();
