@@ -18,8 +18,9 @@ module Elm exposing
     , power, multiply, divide, intDivide, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, compose, composeLeft
     , keep, skip, slash, questionMark
     , portIncoming, portOutgoing
+    , parse
     , File, expressionToString, expressionImportsToString
-    , declarationToString
+    , declarationToString, declarationImportsToString
     , pass
     )
 
@@ -66,7 +67,7 @@ module Elm exposing
 
 # Operators
 
-@docs power, multiply, divide, intDivide, modulo, rem, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, compose, composeLeft
+@docs power, multiply, divide, intDivide, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, compose, composeLeft
 
 
 # Package specific operators
@@ -81,6 +82,8 @@ module Elm exposing
 
 # Util
 
+@docs parse
+
 @docs File, expressionToString, expressionImportsToString
 
 @docs declarationToString, declarationImportsToString
@@ -91,6 +94,8 @@ module Elm exposing
 
 import Elm.Annotation
 import Elm.Let as Let
+import Elm.Parser
+import Elm.Processing
 import Elm.Syntax.Declaration as Declaration exposing (Declaration(..))
 import Elm.Syntax.Exposing as Expose
 import Elm.Syntax.Expression as Exp
@@ -100,7 +105,6 @@ import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
 import Elm.Syntax.Range as Range
 import Elm.Syntax.TypeAnnotation as Annotation
-import Elm.Writer
 import Internal.Comments
 import Internal.Compiler as Compiler
 import Internal.Write
@@ -328,20 +332,6 @@ valueFrom mod name =
         }
 
 
-{-| Sometimes you may need to add a manual annotation.
-
-Though be sure elm-prefab isn't already doing this automatically for you!
-
--}
-withAnnotation : Elm.Annotation.Annotation -> Expression -> Expression
-withAnnotation ann (Compiler.Expression exp) =
-    Compiler.Expression
-        { exp
-            | annotation = Ok (Compiler.getInnerAnnotation ann)
-            , imports = exp.imports ++ Compiler.getAnnotationImports ann
-        }
-
-
 {-| Add an annotation to a value.
 
 **Note** this may not _literally_ add an annotation to the code, but will inform `elm-prefab`s type inference so that top level values can be auto-annotated.
@@ -363,6 +353,20 @@ valueWith mod name ann =
         , annotation = Ok (Compiler.getInnerAnnotation ann)
         , imports = mod :: Compiler.getAnnotationImports ann
         , skip = False
+        }
+
+
+{-| Sometimes you may need to add a manual annotation.
+
+Though be sure elm-prefab isn't already doing this automatically for you!
+
+-}
+withAnnotation : Elm.Annotation.Annotation -> Expression -> Expression
+withAnnotation ann (Compiler.Expression exp) =
+    Compiler.Expression
+        { exp
+            | annotation = Ok (Compiler.getInnerAnnotation ann)
+            , imports = exp.imports ++ Compiler.getAnnotationImports ann
         }
 
 
@@ -2218,3 +2222,131 @@ applyInfix (BinOp symbol dir _) fnAnnotation (Compiler.Expression left) (Compile
 pass : Compiler.Expression
 pass =
     Compiler.skip
+
+
+{-| -}
+parse : String -> Result String { declarations : List Declaration }
+parse source =
+    case Elm.Parser.parse source of
+        Err deadends ->
+            Err "Uh oh"
+
+        Ok raw ->
+            let
+                parsedFile =
+                    Elm.Processing.process Elm.Processing.init
+                        raw
+
+                exposedList =
+                    Compiler.denode parsedFile.moduleDefinition
+                        |> Elm.Syntax.Module.exposingList
+            in
+            Ok
+                { declarations =
+                    List.map
+                        (\dec ->
+                            Compiler.Declaration
+                                (determineExposure (Compiler.denode dec) exposedList)
+                                []
+                                (Compiler.denode dec)
+                        )
+                        parsedFile.declarations
+                }
+
+
+determineExposure : Declaration.Declaration -> Expose.Exposing -> Compiler.Expose
+determineExposure dec exposedDec =
+    case exposedDec of
+        Expose.All _ ->
+            Compiler.ExposedConstructor
+
+        Expose.Explicit nodes ->
+            case dec of
+                Declaration.FunctionDeclaration myFn ->
+                    case Compiler.denode myFn.declaration of
+                        implementation ->
+                            case Compiler.denode implementation.name of
+                                name ->
+                                    if List.any (valueIsExposed name) nodes then
+                                        Compiler.Exposed
+
+                                    else
+                                        Compiler.NotExposed
+
+                Declaration.AliasDeclaration typeAlias ->
+                    case Compiler.denode typeAlias.name of
+                        name ->
+                            if List.any (typeIsExposed name) nodes then
+                                Compiler.Exposed
+
+                            else
+                                Compiler.NotExposed
+
+                Declaration.CustomTypeDeclaration type_ ->
+                    case Compiler.denode type_.name of
+                        name ->
+                            if List.any (typeIsExposed name) nodes then
+                                Compiler.Exposed
+
+                            else if List.any (typeConstructorIsExposed name) nodes then
+                                Compiler.ExposedConstructor
+
+                            else
+                                Compiler.NotExposed
+
+                Declaration.PortDeclaration sig ->
+                    Compiler.NotExposed
+
+                Declaration.InfixDeclaration infixDec ->
+                    Compiler.NotExposed
+
+                Declaration.Destructuring pattern exp ->
+                    Compiler.NotExposed
+
+
+valueIsExposed : String -> Node.Node Expose.TopLevelExpose -> Bool
+valueIsExposed name node =
+    case Compiler.denode node of
+        Expose.InfixExpose _ ->
+            False
+
+        Expose.FunctionExpose fnName ->
+            fnName == name
+
+        Expose.TypeOrAliasExpose _ ->
+            False
+
+        Expose.TypeExpose _ ->
+            False
+
+
+typeIsExposed : String -> Node.Node Expose.TopLevelExpose -> Bool
+typeIsExposed name node =
+    case Compiler.denode node of
+        Expose.InfixExpose _ ->
+            False
+
+        Expose.FunctionExpose fnName ->
+            False
+
+        Expose.TypeOrAliasExpose typeName ->
+            name == typeName
+
+        Expose.TypeExpose _ ->
+            False
+
+
+typeConstructorIsExposed : String -> Node.Node Expose.TopLevelExpose -> Bool
+typeConstructorIsExposed name node =
+    case Compiler.denode node of
+        Expose.InfixExpose _ ->
+            False
+
+        Expose.FunctionExpose fnName ->
+            False
+
+        Expose.TypeOrAliasExpose typeName ->
+            name == typeName
+
+        Expose.TypeExpose myType ->
+            name == myType.name
