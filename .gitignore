@@ -5,6 +5,5 @@ repl-temp-*
 .idea
 node_modules
 generated
-dist
 yarn.lock
 generators
