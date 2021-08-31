@@ -3,10 +3,7 @@ module Gen exposing (main)
 {-| -}
 
 import Elm
-import Elm.Pattern as Pattern
-import Elm.Type as Type
 import Generate
-import Http
 
 
 main : Program {} () ()
@@ -30,6 +27,7 @@ main =
 
 file =
     Elm.file (Elm.moduleName [ "My", "Module" ])
+        ""
         [ Elm.declaration "placeholder"
             (Elm.valueFrom (Elm.moduleAs [ "Json", "Decode" ] "Json")
                 "map2"
