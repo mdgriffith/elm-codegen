@@ -39,6 +39,9 @@ async function run_generator(base: string, moduleName: string, elm_source: strin
     if (app.ports.onSuccessSend) {
       app.ports.onSuccessSend.subscribe(resolve)
     }
+    if (app.ports.onInfoSend) {
+      app.ports.onInfoSend.subscribe((info: string) => console.log(info))
+    }
     if (app.ports.onFailureSend) {
       app.ports.onFailureSend.subscribe(reject)
     }
@@ -53,7 +56,9 @@ async function run_generator(base: string, moduleName: string, elm_source: strin
       const s = files.length == 1 ? "" : "s"
       console.log(format_block([`${chalk.yellow(files.length)} file${s} generated!`]))
     })
-    .catch((reason) => console.error("Failure", reason))
+    .catch((reason) => {
+      console.error(format_title(reason.title), "\n\n" + reason.description + "\n")
+    })
   return promise
 }
 
@@ -82,39 +87,56 @@ type Options = {
 }
 
 const elm_gen_file = `
-port module Elm.Gen exposing (File, error, files)
+port module Elm.Gen exposing (File, files, error, info)
+
 
 import Json.Encode as Json
 
 
 type alias File =
-    { path : String
-    , contents : String
-    }
-
+       { path : String
+       , contents : String
+       }
 
 encodeFile : File -> Json.Value
 encodeFile file =
-    Json.object
-        [ ( "path", Json.string file.path )
-        , ( "contents", Json.string file.contents )
+   Json.object
+        [ ("path", (Json.string file.path))
+        , ("contents", (Json.string file.contents))
         ]
 
-
+{-|
+     Provide the list of files to be generated.
+     These files will be generated and the script will end.
+-}
 files : List File -> Cmd msg
 files list =
-    onSuccessSend (List.map encodeFile list)
+     onSuccessSend (List.map encodeFile list)
 
 
-error : String -> Cmd msg
+{-|
+     Report an error.  The script will end
+
+-}
+error : { title : String, description : String } -> Cmd msg
 error err =
-    onFailureSend err
+     onFailureSend err
+
+{-| Report some info.  The script will continue to run.
+
+-}
+info : String -> Cmd msg
+info err =
+     onInfoSend err
+
 
 
 port onSuccessSend : List Json.Value -> Cmd msg
 
+port onFailureSend : { title : String, description : String } -> Cmd msg
 
-port onFailureSend : String -> Cmd msg
+port onInfoSend : String -> Cmd msg
+
 `
 
 const elm_json_file = `
@@ -195,6 +217,11 @@ file =
 
 const docs_generator = { cwd: "cli/gen-package", file: "src/Generate.elm", moduleName: "Generate" }
 
+function format_title(title: string): string {
+  const tail = "-".repeat(80 - (title.length + 2))
+  return chalk.cyan("--" + title.toUpperCase() + tail)
+}
+
 function format_block(content: string[]) {
   return "\n    " + content.join("\n    ") + "\n"
 }
@@ -205,6 +232,9 @@ async function run_package_generator(output: string, flags: any) {
     const app = gen_package.Elm.Generate.init({ flags: flags })
     if (app.ports.onSuccessSend) {
       app.ports.onSuccessSend.subscribe(resolve)
+    }
+    if (app.ports.onInfoSend) {
+      app.ports.onInfoSend.subscribe((info: string) => console.log(info))
     }
     if (app.ports.onFailureSend) {
       app.ports.onFailureSend.subscribe(reject)
@@ -219,7 +249,9 @@ async function run_package_generator(output: string, flags: any) {
       }
       console.info("Success!")
     })
-    .catch((reason) => console.error("Failure", reason))
+    .catch((reason) => {
+      console.error(format_title(reason.title),  "\n\n" + reason.description  + "\n")
+    })
   return promise
 }
 

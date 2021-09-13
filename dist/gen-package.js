@@ -1987,9 +1987,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.bW,
-		impl.cd,
-		impl.ca,
+		impl.bX,
+		impl.ce,
+		impl.cb,
 		function() { return function() {} }
 	);
 });
@@ -4285,11 +4285,6 @@ var $elm$project_metadata_utils$Elm$Docs$decoder = A7(
 		$elm$json$Json$Decode$field,
 		'binops',
 		$elm$json$Json$Decode$list($elm$project_metadata_utils$Elm$Docs$binopDecoder)));
-var $elm$json$Json$Encode$string = _Json_wrap;
-var $author$project$Elm$Gen$onFailureSend = _Platform_outgoingPort('onFailureSend', $elm$json$Json$Encode$string);
-var $author$project$Elm$Gen$error = function (err) {
-	return $author$project$Elm$Gen$onFailureSend(err);
-};
 var $elm$json$Json$Encode$object = function (pairs) {
 	return _Json_wrap(
 		A3(
@@ -4303,13 +4298,31 @@ var $elm$json$Json$Encode$object = function (pairs) {
 			_Json_emptyObject(0),
 			pairs));
 };
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $author$project$Elm$Gen$onFailureSend = _Platform_outgoingPort(
+	'onFailureSend',
+	function ($) {
+		return $elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'description',
+					$elm$json$Json$Encode$string($.bO)),
+					_Utils_Tuple2(
+					'title',
+					$elm$json$Json$Encode$string($.cc))
+				]));
+	});
+var $author$project$Elm$Gen$error = function (err) {
+	return $author$project$Elm$Gen$onFailureSend(err);
+};
 var $author$project$Elm$Gen$encodeFile = function (file) {
 	return $elm$json$Json$Encode$object(
 		_List_fromArray(
 			[
 				_Utils_Tuple2(
 				'path',
-				$elm$json$Json$Encode$string(file.b4)),
+				$elm$json$Json$Encode$string(file.b5)),
 				_Utils_Tuple2(
 				'contents',
 				$elm$json$Json$Encode$string(file.bM))
@@ -7159,7 +7172,7 @@ var $author$project$Internal$Compiler$getExposed = function (decls) {
 								$stil4m$elm_syntax$Elm$Syntax$Exposing$TypeExpose(
 									{
 										i: typeName,
-										b2: $elm$core$Maybe$Just($stil4m$elm_syntax$Elm$Syntax$Range$emptyRange)
+										b3: $elm$core$Maybe$Just($stil4m$elm_syntax$Elm$Syntax$Range$emptyRange)
 									}));
 						case 3:
 							var myPort = decBody.a;
@@ -7259,8 +7272,8 @@ var $author$project$Internal$Compiler$makeImport = function (_v0) {
 		return ($author$project$Internal$Compiler$builtIn(name) && _Utils_eq(maybeAlias, $elm$core$Maybe$Nothing)) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(
 			$author$project$Internal$Compiler$nodify(
 				{
-					bS: $elm$core$Maybe$Nothing,
-					b_: A2(
+					bT: $elm$core$Maybe$Nothing,
+					b$: A2(
 						$elm$core$Maybe$map,
 						function (al) {
 							return $author$project$Internal$Compiler$nodify(
@@ -7268,7 +7281,7 @@ var $author$project$Internal$Compiler$makeImport = function (_v0) {
 									[al]));
 						},
 						maybeAlias),
-					b$: $author$project$Internal$Compiler$nodify(name)
+					b0: $author$project$Internal$Compiler$nodify(name)
 				}));
 	}
 };
@@ -7383,7 +7396,7 @@ var $author$project$Internal$Write$prettyTopLevelExpose = function (tlExpose) {
 			return $the_sett$elm_pretty_printer$Pretty$string(val);
 		default:
 			var exposedType = tlExpose.a;
-			var _v1 = exposedType.b2;
+			var _v1 = exposedType.b3;
 			if (_v1.$ === 1) {
 				return $the_sett$elm_pretty_printer$Pretty$string(exposedType.i);
 			} else {
@@ -7416,7 +7429,7 @@ var $author$project$Internal$ImportsAndExposing$combineTopLevelExposes = functio
 					var _v1 = _Utils_Tuple2(exp, result);
 					if (_v1.a.$ === 3) {
 						var typeExpose = _v1.a.a;
-						var _v2 = typeExpose.b2;
+						var _v2 = typeExpose.b3;
 						if (!_v2.$) {
 							return exp;
 						} else {
@@ -7425,7 +7438,7 @@ var $author$project$Internal$ImportsAndExposing$combineTopLevelExposes = functio
 					} else {
 						if (_v1.b.$ === 3) {
 							var typeExpose = _v1.b.a;
-							var _v3 = typeExpose.b2;
+							var _v3 = typeExpose.b3;
 							if (!_v3.$) {
 								return result;
 							} else {
@@ -7583,15 +7596,15 @@ var $author$project$Internal$Write$prettyImport = function (import_) {
 			[
 				$the_sett$elm_pretty_printer$Pretty$string('import'),
 				$author$project$Internal$Write$prettyModuleName(
-				$author$project$Internal$Compiler$denode(import_.b$)),
+				$author$project$Internal$Compiler$denode(import_.b0)),
 				A2(
 				$author$project$Internal$Write$prettyMaybe,
 				$author$project$Internal$Write$prettyModuleNameAlias,
-				$author$project$Internal$Compiler$denodeMaybe(import_.b_)),
+				$author$project$Internal$Compiler$denodeMaybe(import_.b$)),
 				A2(
 				$author$project$Internal$Write$prettyMaybe,
 				$author$project$Internal$Write$prettyExposing,
-				$author$project$Internal$Compiler$denodeMaybe(import_.bS))
+				$author$project$Internal$Compiler$denodeMaybe(import_.bT))
 			]));
 };
 var $author$project$Internal$ImportsAndExposing$denode = $stil4m$elm_syntax$Elm$Syntax$Node$value;
@@ -7673,9 +7686,9 @@ var $author$project$Internal$ImportsAndExposing$sortAndDedupExposing = function 
 var $author$project$Internal$ImportsAndExposing$combineImports = function (innerImports) {
 	if (!innerImports.b) {
 		return {
-			bS: $elm$core$Maybe$Nothing,
-			b_: $elm$core$Maybe$Nothing,
-			b$: $author$project$Internal$ImportsAndExposing$nodify(_List_Nil)
+			bT: $elm$core$Maybe$Nothing,
+			b$: $elm$core$Maybe$Nothing,
+			b0: $author$project$Internal$ImportsAndExposing$nodify(_List_Nil)
 		};
 	} else {
 		var hd = innerImports.a;
@@ -7685,13 +7698,13 @@ var $author$project$Internal$ImportsAndExposing$combineImports = function (inner
 			F2(
 				function (imp, result) {
 					return {
-						bS: $author$project$Internal$ImportsAndExposing$nodifyMaybe(
+						bT: $author$project$Internal$ImportsAndExposing$nodifyMaybe(
 							A2(
 								$author$project$Internal$ImportsAndExposing$joinMaybeExposings,
-								$author$project$Internal$ImportsAndExposing$denodeMaybe(imp.bS),
-								$author$project$Internal$ImportsAndExposing$denodeMaybe(result.bS))),
-						b_: A2($elm_community$maybe_extra$Maybe$Extra$or, imp.b_, result.b_),
-						b$: imp.b$
+								$author$project$Internal$ImportsAndExposing$denodeMaybe(imp.bT),
+								$author$project$Internal$ImportsAndExposing$denodeMaybe(result.bT))),
+						b$: A2($elm_community$maybe_extra$Maybe$Extra$or, imp.b$, result.b$),
+						b0: imp.b0
 					};
 				}),
 			hd,
@@ -7699,13 +7712,13 @@ var $author$project$Internal$ImportsAndExposing$combineImports = function (inner
 		return _Utils_update(
 			combinedImports,
 			{
-				bS: A2(
+				bT: A2(
 					$elm$core$Maybe$map,
 					A2(
 						$elm$core$Basics$composeR,
 						$author$project$Internal$ImportsAndExposing$denode,
 						A2($elm$core$Basics$composeR, $author$project$Internal$ImportsAndExposing$sortAndDedupExposing, $author$project$Internal$ImportsAndExposing$nodify)),
-					combinedImports.bS)
+					combinedImports.bT)
 			});
 	}
 };
@@ -7726,7 +7739,7 @@ var $author$project$Internal$ImportsAndExposing$groupByModuleName = function (in
 						var currName = _v2.a;
 						var currAccum = _v2.b;
 						var accum = _v2.c;
-						var nextName = $author$project$Internal$ImportsAndExposing$denode(imp.b$);
+						var nextName = $author$project$Internal$ImportsAndExposing$denode(imp.b0);
 						return _Utils_eq(nextName, currName) ? _Utils_Tuple3(
 							currName,
 							A2($elm$core$List$cons, imp, currAccum),
@@ -7737,7 +7750,7 @@ var $author$project$Internal$ImportsAndExposing$groupByModuleName = function (in
 							A2($elm$core$List$cons, currAccum, accum));
 					}),
 				_Utils_Tuple3(
-					$author$project$Internal$ImportsAndExposing$denode(hd.b$),
+					$author$project$Internal$ImportsAndExposing$denode(hd.b0),
 					_List_Nil,
 					_List_Nil),
 				innerImports);
@@ -7751,7 +7764,7 @@ var $author$project$Internal$ImportsAndExposing$groupByModuleName = function (in
 var $elm$core$List$sortBy = _List_sortBy;
 var $author$project$Internal$ImportsAndExposing$sortAndDedupImports = function (imports) {
 	var impName = function (imp) {
-		return $author$project$Internal$ImportsAndExposing$denode(imp.b$);
+		return $author$project$Internal$ImportsAndExposing$denode(imp.b0);
 	};
 	return A2(
 		$elm$core$List$map,
@@ -8751,7 +8764,7 @@ var $author$project$Internal$Write$prettyPatternInner = F2(
 						A2(
 							$the_sett$elm_pretty_printer$Pretty$a,
 							$the_sett$elm_pretty_printer$Pretty$string(qnRef.i),
-							$author$project$Internal$Write$prettyModuleNameDot(qnRef.b$)),
+							$author$project$Internal$Write$prettyModuleNameDot(qnRef.b0)),
 						A2(
 							$elm$core$List$map,
 							$author$project$Internal$Write$prettyPatternInner(false),
@@ -9758,16 +9771,16 @@ var $author$project$Internal$Write$prettyInfix = function (infix_) {
 				$the_sett$elm_pretty_printer$Pretty$string('infix'),
 				$the_sett$elm_pretty_printer$Pretty$string(
 				dirToString(
-					$author$project$Internal$Compiler$denode(infix_.bO))),
+					$author$project$Internal$Compiler$denode(infix_.bP))),
 				$the_sett$elm_pretty_printer$Pretty$string(
 				$elm$core$String$fromInt(
 					$author$project$Internal$Compiler$denode(infix_.O))),
 				$the_sett$elm_pretty_printer$Pretty$parens(
 				$the_sett$elm_pretty_printer$Pretty$string(
-					$author$project$Internal$Compiler$denode(infix_.b3))),
+					$author$project$Internal$Compiler$denode(infix_.b4))),
 				$the_sett$elm_pretty_printer$Pretty$string('='),
 				$the_sett$elm_pretty_printer$Pretty$string(
-				$author$project$Internal$Compiler$denode(infix_.bT))
+				$author$project$Internal$Compiler$denode(infix_.bU))
 			]));
 };
 var $author$project$Internal$Write$prettyPortDeclaration = function (sig) {
@@ -10334,9 +10347,9 @@ var $author$project$Internal$Write$prettyDefaultModuleData = function (moduleDat
 			[
 				$the_sett$elm_pretty_printer$Pretty$string('module'),
 				$author$project$Internal$Write$prettyModuleName(
-				$author$project$Internal$Compiler$denode(moduleData.b$)),
+				$author$project$Internal$Compiler$denode(moduleData.b0)),
 				$author$project$Internal$Write$prettyExposing(
-				$author$project$Internal$Compiler$denode(moduleData.bS))
+				$author$project$Internal$Compiler$denode(moduleData.bT))
 			]));
 };
 var $author$project$Internal$Write$prettyEffectModuleData = function (moduleData) {
@@ -10394,16 +10407,16 @@ var $author$project$Internal$Write$prettyEffectModuleData = function (moduleData
 			[
 				$the_sett$elm_pretty_printer$Pretty$string('effect module'),
 				$author$project$Internal$Write$prettyModuleName(
-				$author$project$Internal$Compiler$denode(moduleData.b$)),
+				$author$project$Internal$Compiler$denode(moduleData.b0)),
 				A2(
 				$author$project$Internal$Write$prettyMaybe,
 				$elm$core$Basics$identity,
 				A2(
 					prettyCmdAndSub,
 					$author$project$Internal$Compiler$denodeMaybe(moduleData.bK),
-					$author$project$Internal$Compiler$denodeMaybe(moduleData.b9))),
+					$author$project$Internal$Compiler$denodeMaybe(moduleData.ca))),
 				$author$project$Internal$Write$prettyExposing(
-				$author$project$Internal$Compiler$denode(moduleData.bS))
+				$author$project$Internal$Compiler$denode(moduleData.bT))
 			]));
 };
 var $author$project$Internal$Write$prettyPortModuleData = function (moduleData) {
@@ -10412,9 +10425,9 @@ var $author$project$Internal$Write$prettyPortModuleData = function (moduleData) 
 			[
 				$the_sett$elm_pretty_printer$Pretty$string('port module'),
 				$author$project$Internal$Write$prettyModuleName(
-				$author$project$Internal$Compiler$denode(moduleData.b$)),
+				$author$project$Internal$Compiler$denode(moduleData.b0)),
 				$author$project$Internal$Write$prettyExposing(
-				$author$project$Internal$Compiler$denode(moduleData.bS))
+				$author$project$Internal$Compiler$denode(moduleData.bT))
 			]));
 };
 var $author$project$Internal$Write$prettyModule = function (mod) {
@@ -10514,7 +10527,7 @@ var $author$project$Elm$render = function (_v0) {
 			ab: $author$project$Internal$Compiler$nodify(
 				($author$project$Internal$Compiler$hasPorts(fileDetails.Y) ? $stil4m$elm_syntax$Elm$Syntax$Module$PortModule : $stil4m$elm_syntax$Elm$Syntax$Module$NormalModule)(
 					{
-						bS: function () {
+						bT: function () {
 							if (!exposed.b) {
 								return $author$project$Internal$Compiler$nodify(
 									$stil4m$elm_syntax$Elm$Syntax$Exposing$All($stil4m$elm_syntax$Elm$Syntax$Range$emptyRange));
@@ -10524,19 +10537,19 @@ var $author$project$Elm$render = function (_v0) {
 										$author$project$Internal$Compiler$nodifyAll(exposed)));
 							}
 						}(),
-						b$: $author$project$Internal$Compiler$nodify(mod)
+						b0: $author$project$Internal$Compiler$nodify(mod)
 					}))
 		});
 	return {
 		bM: body,
-		b4: A2($elm$core$String$join, '/', mod) + '.elm'
+		b5: A2($elm$core$String$join, '/', mod) + '.elm'
 	};
 };
 var $elm$json$Json$Decode$value = _Json_decodeValue;
 var $elm$core$Platform$worker = _Platform_worker;
 var $author$project$Generate$main = $elm$core$Platform$worker(
 	{
-		bW: function (json) {
+		bX: function (json) {
 			var _v0 = A2(
 				$elm$json$Json$Decode$decodeValue,
 				$elm$json$Json$Decode$list($elm$project_metadata_utils$Elm$Docs$decoder),
@@ -10545,7 +10558,11 @@ var $author$project$Generate$main = $elm$core$Platform$worker(
 				var err = _v0.a;
 				return _Utils_Tuple2(
 					0,
-					$author$project$Elm$Gen$error('Issue decoding docs!'));
+					$author$project$Elm$Gen$error(
+						{
+							bO: $elm$json$Json$Decode$errorToString(err),
+							cc: 'Issue decoding docs'
+						}));
 			} else {
 				var docs = _v0.a;
 				return _Utils_Tuple2(
@@ -10557,10 +10574,10 @@ var $author$project$Generate$main = $elm$core$Platform$worker(
 							docs)));
 			}
 		},
-		ca: function (_v1) {
+		cb: function (_v1) {
 			return $elm$core$Platform$Sub$none;
 		},
-		cd: F2(
+		ce: F2(
 			function (msg, model) {
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			})

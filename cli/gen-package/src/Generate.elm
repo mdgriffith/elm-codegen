@@ -20,7 +20,11 @@ main =
                 case Json.decodeValue (Json.list Elm.Docs.decoder) json of
                     Err err ->
                         ( ()
-                        , Elm.Gen.error "Issue decoding docs!"
+                        , Elm.Gen.error
+                            { title = "Issue decoding docs"
+                            , description =
+                                Json.errorToString err
+                            }
                         )
 
                     Ok docs ->

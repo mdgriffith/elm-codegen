@@ -98,6 +98,9 @@ function run_generator(base, moduleName, elm_source, flags) {
                 if (app.ports.onSuccessSend) {
                     app.ports.onSuccessSend.subscribe(resolve);
                 }
+                if (app.ports.onInfoSend) {
+                    app.ports.onInfoSend.subscribe(function (info) { return console.log(info); });
+                }
                 if (app.ports.onFailureSend) {
                     app.ports.onFailureSend.subscribe(reject);
                 }
@@ -112,7 +115,9 @@ function run_generator(base, moduleName, elm_source, flags) {
                 var s = files.length == 1 ? "" : "s";
                 console.log(format_block([chalk_1.default.yellow(files.length) + " file" + s + " generated!"]));
             })
-                .catch(function (reason) { return console.error("Failure", reason); });
+                .catch(function (reason) {
+                console.error(format_title(reason.title), "\n\n" + reason.description + "\n");
+            });
             return [2 /*return*/, promise];
         });
     });
@@ -129,10 +134,14 @@ function generate(debug, elm_file, moduleName, target_dir, base, flags) {
         console.log(error);
     }
 }
-var elm_gen_file = "\nport module Elm.Gen exposing (File, error, files)\n\nimport Json.Encode as Json\n\n\ntype alias File =\n    { path : String\n    , contents : String\n    }\n\n\nencodeFile : File -> Json.Value\nencodeFile file =\n    Json.object\n        [ ( \"path\", Json.string file.path )\n        , ( \"contents\", Json.string file.contents )\n        ]\n\n\nfiles : List File -> Cmd msg\nfiles list =\n    onSuccessSend (List.map encodeFile list)\n\n\nerror : String -> Cmd msg\nerror err =\n    onFailureSend err\n\n\nport onSuccessSend : List Json.Value -> Cmd msg\n\n\nport onFailureSend : String -> Cmd msg\n";
+var elm_gen_file = "\nport module Elm.Gen exposing (File, files, error, info)\n\n\nimport Json.Encode as Json\n\n\ntype alias File =\n       { path : String\n       , contents : String\n       }\n\nencodeFile : File -> Json.Value\nencodeFile file =\n   Json.object\n        [ (\"path\", (Json.string file.path))\n        , (\"contents\", (Json.string file.contents))\n        ]\n\n{-|\n     Provide the list of files to be generated.\n     These files will be generated and the script will end.\n-}\nfiles : List File -> Cmd msg\nfiles list =\n     onSuccessSend (List.map encodeFile list)\n\n\n{-|\n     Report an error.  The script will end\n\n-}\nerror : { title : String, description : String } -> Cmd msg\nerror err =\n     onFailureSend err\n\n{-| Report some info.  The script will continue to run.\n\n-}\ninfo : String -> Cmd msg\ninfo err =\n     onInfoSend err\n\n\n\nport onSuccessSend : List Json.Value -> Cmd msg\n\nport onFailureSend : { title : String, description : String } -> Cmd msg\n\nport onInfoSend : String -> Cmd msg\n\n";
 var elm_json_file = "\n{\n    \"type\": \"application\",\n    \"source-directories\": [\n        \".\", \"../src\"\n    ],\n    \"elm-version\": \"0.19.1\",\n    \"dependencies\": {\n        \"direct\": {\n            \"elm/browser\": \"1.0.2\",\n            \"elm/core\": \"1.0.5\",\n            \"elm/html\": \"1.0.0\"\n        },\n        \"indirect\": {\n            \"elm/json\": \"1.1.3\",\n            \"elm/time\": \"1.0.0\",\n            \"elm/url\": \"1.0.0\",\n            \"elm/virtual-dom\": \"1.0.2\"\n        }\n    },\n    \"test-dependencies\": {\n        \"direct\": {},\n        \"indirect\": {}\n    }\n}\n";
 var elm_starter_file = "module Generator exposing (main)\n\n{-| -}\n\nimport Elm\nimport Elm.Pattern as Pattern\nimport Elm.Type as Type\nimport Elm.Gen\n\n\nmain : Program {} () ()\nmain =\n    Platform.worker\n        { init =\n            json ->\n                ( ()\n                , Elm.Gen.files\n                    [ Elm.render file\n                    ]\n                )\n        , update =\n            msg model ->\n                ( model, Cmd.none )\n        , subscriptions = _ -> Sub.none\n        }\n\n\nfile =\n    Elm.file (Elm.moduleName [ \"My\", \"Module\" ])\n        [ Elm.declaration \"placeholder\"\n            (Elm.valueFrom (Elm.moduleAs [ \"Json\", \"Decode\" ] \"Json\")\n                \"map2\"\n            )\n        , Elm.declaration \"myRecord\"\n            (Elm.record\n                [ ( \"one\", Elm.string \"My cool string\" )\n                , ( \"two\", Elm.int 5 )\n                , ( \"three\"\n                  , Elm.record\n                        [ ( \"four\", Elm.string \"My cool string\" )\n                        , ( \"five\", Elm.int 5 )\n                        ]\n                  )\n                ]\n            )\n            |> Elm.expose\n        ]\n";
 var docs_generator = { cwd: "cli/gen-package", file: "src/Generate.elm", moduleName: "Generate" };
+function format_title(title) {
+    var tail = "-".repeat(80 - (title.length + 2));
+    return chalk_1.default.cyan("--" + title.toUpperCase() + tail);
+}
 function format_block(content) {
     return "\n    " + content.join("\n    ") + "\n";
 }
@@ -146,6 +155,9 @@ function run_package_generator(output, flags) {
                 if (app.ports.onSuccessSend) {
                     app.ports.onSuccessSend.subscribe(resolve);
                 }
+                if (app.ports.onInfoSend) {
+                    app.ports.onInfoSend.subscribe(function (info) { return console.log(info); });
+                }
                 if (app.ports.onFailureSend) {
                     app.ports.onFailureSend.subscribe(reject);
                 }
@@ -158,11 +170,11 @@ function run_package_generator(output, flags) {
                     fs.mkdirSync(path.dirname(fullpath), { recursive: true });
                     fs.writeFileSync(fullpath, file.contents);
                 }
-            })
-                .then(function (what) {
                 console.info("Success!");
             })
-                .catch(function (reason) { return console.error("Failure", reason); });
+                .catch(function (reason) {
+                console.error(format_title(reason.title), "\n\n" + reason.description + "\n");
+            });
             return [2 /*return*/, promise];
         });
     });
