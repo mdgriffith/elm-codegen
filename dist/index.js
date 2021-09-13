@@ -109,8 +109,9 @@ function run_generator(base, moduleName, elm_source, flags) {
                     fs.mkdirSync(path.dirname(fullpath), { recursive: true });
                     fs.writeFileSync(fullpath, file.contents);
                 }
+                var s = files.length == 1 ? "" : "s";
+                console.log(format_block([chalk_1.default.yellow(files.length) + " file" + s + " generated!"]));
             })
-                .then(function (_) { return console.info("Success!"); })
                 .catch(function (reason) { return console.error("Failure", reason); });
             return [2 /*return*/, promise];
         });
@@ -118,12 +119,15 @@ function run_generator(base, moduleName, elm_source, flags) {
 }
 var program = new commander.Command();
 function generate(debug, elm_file, moduleName, target_dir, base, flags) {
-    var data = elm_compiler.compileToStringSync([elm_file], { cwd: base, optimize: !debug });
-    if (data === "") {
-        throw "Compiler error";
+    try {
+        var data = elm_compiler.compileToStringSync([elm_file], { cwd: base, optimize: !debug, processOpts: { stdio: [null, null, 'inherit'] } });
+        // @ts-ignore
+        return new run_generator(target_dir, moduleName, data.toString(), flags);
     }
-    // @ts-ignore
-    new run_generator(target_dir, moduleName, data.toString(), flags);
+    catch (error) {
+        // This is generally an elm make error from the elm_compiler
+        console.log(error);
+    }
 }
 var elm_gen_file = "\nport module Elm.Gen exposing (File, error, files)\n\nimport Json.Encode as Json\n\n\ntype alias File =\n    { path : String\n    , contents : String\n    }\n\n\nencodeFile : File -> Json.Value\nencodeFile file =\n    Json.object\n        [ ( \"path\", Json.string file.path )\n        , ( \"contents\", Json.string file.contents )\n        ]\n\n\nfiles : List File -> Cmd msg\nfiles list =\n    onSuccessSend (List.map encodeFile list)\n\n\nerror : String -> Cmd msg\nerror err =\n    onFailureSend err\n\n\nport onSuccessSend : List Json.Value -> Cmd msg\n\n\nport onFailureSend : String -> Cmd msg\n";
 var elm_json_file = "\n{\n    \"type\": \"application\",\n    \"source-directories\": [\n        \".\", \"../src\"\n    ],\n    \"elm-version\": \"0.19.1\",\n    \"dependencies\": {\n        \"direct\": {\n            \"elm/browser\": \"1.0.2\",\n            \"elm/core\": \"1.0.5\",\n            \"elm/html\": \"1.0.0\"\n        },\n        \"indirect\": {\n            \"elm/json\": \"1.1.3\",\n            \"elm/time\": \"1.0.0\",\n            \"elm/url\": \"1.0.0\",\n            \"elm/virtual-dom\": \"1.0.2\"\n        }\n    },\n    \"test-dependencies\": {\n        \"direct\": {},\n        \"indirect\": {}\n    }\n}\n";
@@ -155,12 +159,16 @@ function run_package_generator(output, flags) {
                     fs.writeFileSync(fullpath, file.contents);
                 }
             })
-                .then(function (_) { return console.info("Success!"); })
+                .then(function (what) {
+                console.info("Success!");
+            })
                 .catch(function (reason) { return console.error("Failure", reason); });
             return [2 /*return*/, promise];
         });
     });
 }
+// INSTALL
+//   Install bindings for a package
 function install(pkg, output, version) {
     return __awaiter(this, void 0, void 0, function () {
         var searchResp, search, _i, search_1, found, docsResp, docs;
@@ -197,10 +205,38 @@ function install(pkg, output, version) {
                     }
                     catch (error) {
                         console.log("There was an issue generating docs for " + pkg);
+                        // @ts-ignore
                         console.log(format_block([error]));
                     }
                     return [2 /*return*/];
             }
+        });
+    });
+}
+// INIT
+//    Start a new elm-prefab project
+//    Generates some files and installs `core`
+function init(install_dir) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            // create folder
+            if (fs.existsSync("./" + install_dir)) {
+                console.log(format_block(["Looks like there's already a " + chalk_1.default.cyan(install_dir) + " folder."]));
+                process.exit(1);
+            }
+            fs.mkdirSync("./" + install_dir);
+            fs.mkdirSync("./" + install_dir + "/Elm");
+            fs.writeFileSync("./" + install_dir + "/elm.json", elm_json_file);
+            fs.writeFileSync("./" + install_dir + "/Generate.elm", elm_starter_file);
+            fs.writeFileSync("./" + install_dir + "/Elm/Gen.elm", elm_gen_file);
+            install("elm/core", install_dir, null);
+            console.log(format_block([
+                "I've created the " + chalk_1.default.cyan(install_dir) + " folder and added some files.",
+                chalk_1.default.cyan(install_dir + "/Generate.elm") + " is a good place to get start to see how everything works!",
+                "",
+                "Run your generator by running " + chalk_1.default.yellow("elm-prefab"),
+            ]));
+            return [2 /*return*/];
         });
     });
 }
@@ -212,23 +248,7 @@ function action(cmd, pkg, options, com) {
             output = path.join(cwd, options.output || "output");
             install_dir = path.join(cwd, options.output || "generators");
             if (cmd == "init") {
-                // create folder
-                if (fs.existsSync("./" + install_dir)) {
-                    console.log(format_block(["Looks like there's already a " + chalk_1.default.cyan(install_dir) + " folder."]));
-                    process.exit(1);
-                }
-                fs.mkdirSync("./" + install_dir);
-                fs.mkdirSync("./" + install_dir + "/Elm");
-                fs.writeFileSync("./" + install_dir + "/elm.json", elm_json_file);
-                fs.writeFileSync("./" + install_dir + "/Generate.elm", elm_starter_file);
-                fs.writeFileSync("./" + install_dir + "/Elm/Gen.elm", elm_gen_file);
-                install("elm/core", install_dir, null);
-                console.log(format_block([
-                    "I've created the " + chalk_1.default.cyan(install_dir) + " folder and added some files.",
-                    chalk_1.default.cyan(install_dir + "/Generate.elm") + " is a good place to get start to see how everything works!",
-                    "",
-                    "Run your generator by running " + chalk_1.default.yellow("elm-prefab"),
-                ]));
+                init(install_dir);
             }
             else if (cmd == "install" && !!pkg) {
                 if (pkg.endsWith(".json")) {

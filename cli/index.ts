@@ -49,8 +49,10 @@ async function run_generator(base: string, moduleName: string, elm_source: strin
         fs.mkdirSync(path.dirname(fullpath), { recursive: true })
         fs.writeFileSync(fullpath, file.contents)
       }
+
+      const s = files.length == 1 ? "" : "s"
+      console.log(format_block([`${chalk.yellow(files.length)} file${s} generated!`]))
     })
-    .then((_) => console.info("Success!"))
     .catch((reason) => console.error("Failure", reason))
   return promise
 }
@@ -58,12 +60,16 @@ async function run_generator(base: string, moduleName: string, elm_source: strin
 const program = new commander.Command()
 
 function generate(debug: boolean, elm_file: string, moduleName: string, target_dir: string, base: string, flags: any) {
-  const data = elm_compiler.compileToStringSync([elm_file], { cwd: base, optimize: !debug })
-  if (data === "") {
-    throw "Compiler error"
+  try {
+    const data = elm_compiler.compileToStringSync([elm_file], { cwd: base, optimize: !debug, processOpts: {stdio: [null, null, 'inherit']} })
+
+    // @ts-ignore
+    return new run_generator(target_dir, moduleName, data.toString(), flags)
+
+  } catch (error : unknown) {
+    // This is generally an elm make error from the elm_compiler
+    console.log(error)
   }
-  // @ts-ignore
-  new run_generator(target_dir, moduleName, data.toString(), flags)
 }
 
 type Options = {
@@ -211,12 +217,14 @@ async function run_package_generator(output: string, flags: any) {
         fs.mkdirSync(path.dirname(fullpath), { recursive: true })
         fs.writeFileSync(fullpath, file.contents)
       }
+      console.info("Success!")
     })
-    .then((_) => console.info("Success!"))
     .catch((reason) => console.error("Failure", reason))
   return promise
 }
 
+// INSTALL
+//   Install bindings for a package
 async function install(pkg: string, output: string, version: string | null) {
   if (version == null) {
     const searchResp = await fetch("https://elm-package-cache-psi.vercel.app/search.json")
@@ -237,41 +245,52 @@ async function install(pkg: string, output: string, version: string | null) {
 
   try {
     run_package_generator(output, docs)
-  } catch (error) {
+  } catch (error:unknown) {
     console.log(`There was an issue generating docs for ${pkg}`)
+    // @ts-ignore
     console.log(format_block([error]))
   }
 }
 
+
+
+// INIT
+//    Start a new elm-prefab project
+//    Generates some files and installs `core`
+async function init(install_dir : string) {
+
+   // create folder
+   if (fs.existsSync("./" + install_dir)) {
+    console.log(format_block(["Looks like there's already a " + chalk.cyan(install_dir) + " folder."]))
+    process.exit(1)
+  }
+
+  fs.mkdirSync(`./${install_dir}`)
+  fs.mkdirSync(`./${install_dir}/Elm`)
+  fs.writeFileSync(`./${install_dir}/elm.json`, elm_json_file)
+  fs.writeFileSync(`./${install_dir}/Generate.elm`, elm_starter_file)
+  fs.writeFileSync(`./${install_dir}/Elm/Gen.elm`, elm_gen_file)
+  install("elm/core", install_dir, null)
+
+  console.log(
+    format_block([
+      "I've created the " + chalk.cyan(install_dir) + " folder and added some files.",
+      chalk.cyan(`${install_dir}/Generate.elm`) + " is a good place to get start to see how everything works!",
+      "",
+      "Run your generator by running " + chalk.yellow("elm-prefab"),
+    ])
+  )
+}
+
+
+
 async function action(cmd: string, pkg: string | null, options: Options, com: any) {
-  //     console.log("FILE:" , cmd)
-  //     console.log("PACKAGE:", pkg)
-  //     console.log(options)
+
   const cwd = options.cwd || "."
   const output = path.join(cwd, options.output || "output")
   const install_dir = path.join(cwd, options.output || "generators")
   if (cmd == "init") {
-    // create folder
-    if (fs.existsSync("./" + install_dir)) {
-      console.log(format_block(["Looks like there's already a " + chalk.cyan(install_dir) + " folder."]))
-      process.exit(1)
-    }
-
-    fs.mkdirSync(`./${install_dir}`)
-    fs.mkdirSync(`./${install_dir}/Elm`)
-    fs.writeFileSync(`./${install_dir}/elm.json`, elm_json_file)
-    fs.writeFileSync(`./${install_dir}/Generate.elm`, elm_starter_file)
-    fs.writeFileSync(`./${install_dir}/Elm/Gen.elm`, elm_gen_file)
-    install("elm/core", install_dir, null)
-
-    console.log(
-      format_block([
-        "I've created the " + chalk.cyan(install_dir) + " folder and added some files.",
-        chalk.cyan(`${install_dir}/Generate.elm`) + " is a good place to get start to see how everything works!",
-        "",
-        "Run your generator by running " + chalk.yellow("elm-prefab"),
-      ])
-    )
+    init(install_dir)
   } else if (cmd == "install" && !!pkg) {
     if (pkg.endsWith(".json")) {
       console.log(format_block(["Installing via json from " + chalk.cyan(pkg)]))

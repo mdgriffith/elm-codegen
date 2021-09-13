@@ -365,12 +365,6 @@ generateBlocks block =
             []
 
 
-logAnnotation str ((Util.Expression exp) as val) =
-    let
-        _ =
-            Debug.log str exp.annotation
-    in
-    val
 
 
 {-| Ultimately we want to capture
