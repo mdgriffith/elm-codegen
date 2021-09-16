@@ -11,8 +11,8 @@ module Elm exposing
     , caseOf, letIn, ifThen
     , apply
     , lambda, lambda2, lambda3, lambda4, lambda5, lambdaWith
-    , Declaration, declaration, declarationWith
-    , function, functionWith, fn, fn2, fn3, fn4, fn5
+    , Declaration, declaration
+    ,  fn, fn2, fn3, fn4, fn5, functionWith
     , alias, aliasWith
     , customType, customTypeWith
     , withDocumentation, expose, exposeConstructor
@@ -60,9 +60,9 @@ module Elm exposing
 
 # Top level
 
-@docs Declaration, declaration, declarationWith
+@docs Declaration, declaration
 
-@docs function, functionWith, fn, fn2, fn3, fn4, fn5
+@docs fn, fn2, fn3, fn4, fn5, functionWith
 
 @docs alias, aliasWith
 
@@ -938,10 +938,12 @@ customTypeWith name args variants =
 
 {-| A custom type declaration.
 
+    import Elm.Annotation as Type
+
     Elm.alias "MyAlias"
-        (Elm.Annotation.record
-            [ ( "one", Elm.Annotation.string )
-            , ( "two", Elm.Annotation.int )
+        (Type.record
+            [ ( "one", Type.string )
+            , ( "two", Type.int )
             ]
         )
 
@@ -968,8 +970,12 @@ alias name innerAnnotation =
 
 {-| You may need type variables.
 
-Elm.aliasWith "MyMaybe" ["a"]
-(Elm.Annotation.maybe (Elm.Annotation.var "a"))
+    import Elm.Annotation as Type
+
+    Elm.aliasWith "MyMaybe" ["a"]
+        (Type.maybe 
+            (Type.var "a")
+        )
 
 -}
 aliasWith : String -> List String -> Elm.Annotation.Annotation -> Declaration
@@ -1328,85 +1334,92 @@ type alias Declaration =
 
 {-| -}
 declaration : String -> Expression -> Declaration
-declaration name body =
-    function name [] body
-
-
-{-| If you have a specific type signature you would like you can add it here.
-
-Note, this library will autocalculate many type signatures! Make sure `Elm.declaration` doesnt already do this automatically for you!
-
--}
-declarationWith : String -> Elm.Annotation.Annotation -> Expression -> Declaration
-declarationWith name annotation (Compiler.Expression body) =
-    function name
-        []
-        -- note, we could do some type checking here
-        (Compiler.Expression
-            { body
-                | annotation = Ok (Compiler.getInnerAnnotation annotation)
-                , imports = body.imports ++ Compiler.getAnnotationImports annotation
-            }
-        )
-
-
-{-| Declare a function. Here's an example with a let:
-
-    import Elm.Pattern as Pattern
-
-    Elm.function "myFunc"
-        [ Pattern.var "one"
-        , Pattern.var "two"
-        ]
-        (Elm.letIn
-            [ Let.value "added"
-                (Elm.add (Elm.value "one") (Elm.value "two))
-            ]
-            (Elm.add (Elm.value "added") (Elm.int 5))
-        )
-
-will generate
-
-    myFunc one two =
-        let
-            added =
-                one + two
-        in
-        added + 5
-
--}
-function : String -> List Pattern -> Expression -> Declaration
-function name args (Compiler.Expression body) =
+declaration name (Compiler.Expression body) =
+    --function name [] body
     { documentation = Compiler.nodifyMaybe Nothing
     , signature =
         case body.annotation of
             Ok sig ->
-                case args of
-                    [] ->
-                        Just
-                            (Compiler.nodify
-                                { name = Compiler.nodify (Compiler.formatValue name)
-                                , typeAnnotation =
-                                    Compiler.nodify sig
-                                }
-                            )
+                Just
+                    (Compiler.nodify
+                        { name = Compiler.nodify (Compiler.formatValue name)
+                        , typeAnnotation =
+                            Compiler.nodify sig
+                        }
+                    )
 
-                    _ ->
-                        -- we dont know the types of the arguments
-                        -- maybe we only allow the `functionWith` version?
-                        Nothing
-
+                   
             Err _ ->
                 Nothing
     , declaration =
         Compiler.nodify
             { name = Compiler.nodify (Compiler.formatValue name)
-            , arguments = Compiler.nodifyAll args
+            , arguments = []
             , expression = Compiler.nodify body.expression
             }
     }
         |> Declaration.FunctionDeclaration
         |> Compiler.Declaration Compiler.NotExposed body.imports
+
+
+
+--{-| Declare a function. Here's an example with a let:
+
+--    import Elm.Pattern as Pattern
+
+--    Elm.function "myFunc"
+--        [ Pattern.var "one"
+--        , Pattern.var "two"
+--        ]
+--        (Elm.letIn
+--            [ Let.value "added"
+--                (Elm.add (Elm.value "one") (Elm.value "two))
+--            ]
+--            (Elm.add (Elm.value "added") (Elm.int 5))
+--        )
+
+--will generate
+
+--    myFunc one two =
+--        let
+--            added =
+--                one + two
+--        in
+--        added + 5
+
+---}
+--function : String -> List Pattern -> Expression -> Declaration
+--function name args (Compiler.Expression body) =
+    --{ documentation = Compiler.nodifyMaybe Nothing
+    --, signature =
+    --    case body.annotation of
+    --        Ok sig ->
+    --            case args of
+    --                [] ->
+    --                    Just
+    --                        (Compiler.nodify
+    --                            { name = Compiler.nodify (Compiler.formatValue name)
+    --                            , typeAnnotation =
+    --                                Compiler.nodify sig
+    --                            }
+    --                        )
+
+    --                _ ->
+    --                    -- we dont know the types of the arguments
+    --                    -- maybe we only allow the `functionWith` version?
+    --                    Nothing
+
+    --        Err _ ->
+    --            Nothing
+    --, declaration =
+    --    Compiler.nodify
+    --        { name = Compiler.nodify (Compiler.formatValue name)
+    --        , arguments = Compiler.nodifyAll args
+    --        , expression = Compiler.nodify body.expression
+    --        }
+    --}
+    --    |> Declaration.FunctionDeclaration
+    --    |> Compiler.Declaration Compiler.NotExposed body.imports
 
 
 {-| -}

@@ -50,33 +50,37 @@ moduleToFile docs =
 
         modName =
             "Elm" :: "Gen" :: sourceModName
+
+        modNameBlock =
+            Elm.declaration "moduleName_"
+                (Elm.apply
+                    (Elm.valueWith elm
+                        "moduleName"
+                        (Annotation.function
+                            [ Annotation.list Annotation.string
+                            ]
+                            (Annotation.named elm "Module")
+                        )
+                    )
+                    [ Elm.list (List.map Elm.string sourceModName)
+                    ]
+                    |> Elm.withAnnotation (Annotation.named elm "Module")
+                )
+                |> Elm.withDocumentation " The name of this module. "
+                |> Elm.expose
+
+        ids =
+            Elm.declaration "id_"
+                (Elm.record
+                    (List.filterMap blockToIdField blocks)
+                )
+                |> Elm.withDocumentation " Every value/function in this module in case you need to refer to it directly. "
+                |> Elm.expose
     in
     Elm.file modName
-        ((Elm.declarationWith "moduleName_"
-            (Annotation.named elm "Module")
-            (Elm.apply
-                (Elm.valueWith elm
-                    "moduleName"
-                    (Annotation.function
-                        [ Annotation.list Annotation.string
-                        ]
-                        (Annotation.named elm "Module")
-                    )
-                )
-                [ Elm.list (List.map Elm.string sourceModName)
-                ]
-            )
-            |> Elm.withDocumentation " The name of this module. "
-            |> Elm.expose
-         )
-            :: (Elm.declaration "id_"
-                    (Elm.record
-                        (List.filterMap blockToIdField blocks)
-                    )
-                    |> Elm.withDocumentation " Every value/function in this module in case you need to refer to it directly. "
-                    |> Elm.expose
-               )
+        (modNameBlock
             :: List.concatMap generateBlocks blocks
+            ++ [ ids ]
         )
 
 
@@ -349,12 +353,12 @@ generateBlocks block =
                     ]
 
                 _ ->
-                    [ Elm.declarationWith value.name
-                        expressionType
+                    [ Elm.declaration value.name
                         (valueWith
                             thisModuleName
                             (Elm.string value.name)
                             value.tipe
+                            |> Elm.withAnnotation expressionType
                         )
                         |> Elm.withDocumentation value.comment
                         |> Elm.expose
@@ -366,8 +370,6 @@ generateBlocks block =
 
         Elm.Docs.UnknownBlock str ->
             []
-
-
 
 
 {-| Ultimately we want to capture

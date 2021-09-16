@@ -1,11 +1,11 @@
 module Elm.Let exposing
-    ( Declaration, value, valueWith
+    ( Declaration, value, destructure
     , function
     )
 
 {-|
 
-@docs Declaration, value, valueWith
+@docs Declaration, value, destructure
 
 @docs function
 
@@ -28,12 +28,12 @@ type alias Declaration =
 {-| -}
 value : String -> Expression -> Declaration
 value name exp =
-    valueWith (Pattern.var name) exp
+    destructure (Pattern.var name) exp
 
 
 {-| -}
-valueWith : Pattern -> Expression -> Declaration
-valueWith pattern (Util.Expression expr) =
+destructure : Pattern -> Expression -> Declaration
+destructure pattern (Util.Expression expr) =
     Util.LetDeclaration expr.imports
         (Exp.LetDestructuring (Util.nodify pattern)
             (Util.nodify expr.expression)
@@ -68,10 +68,3 @@ function name args (Util.Expression body) =
         )
 
 
-
---
---{-| A value declared inside a let block.
----}
---letVal : String -> Expression -> LetDeclaration
---letVal valName expr =
---    LetDestructuring (varPattern valName |> nodify) (nodify expr)

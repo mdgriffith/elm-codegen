@@ -3006,11 +3006,11 @@ var $elm$core$Result$isOk = function (result) {
 var $elm$json$Json$Decode$decodeValue = _Json_run;
 var $elm$project_metadata_utils$Elm$Docs$Module = F6(
 	function (name, comment, unions, aliases, values, binops) {
-		return {X: aliases, aM: binops, ae: comment, i: name, ad: unions, V: values};
+		return {X: aliases, aM: binops, af: comment, i: name, ae: unions, V: values};
 	});
 var $elm$project_metadata_utils$Elm$Docs$Alias = F4(
 	function (name, comment, args, tipe) {
-		return {S: args, ae: comment, i: name, aj: tipe};
+		return {S: args, af: comment, i: name, ak: tipe};
 	});
 var $elm$json$Json$Decode$andThen = _Json_andThen;
 var $elm$json$Json$Decode$fail = _Json_fail;
@@ -4194,7 +4194,7 @@ var $elm$project_metadata_utils$Elm$Docs$aliasDecoder = A5(
 	A2($elm$json$Json$Decode$field, 'type', $elm$project_metadata_utils$Elm$Type$decoder));
 var $elm$project_metadata_utils$Elm$Docs$Binop = F5(
 	function (name, comment, tipe, associativity, precedence) {
-		return {bF: associativity, ae: comment, i: name, O: precedence, aj: tipe};
+		return {bF: associativity, af: comment, i: name, O: precedence, ak: tipe};
 	});
 var $elm$project_metadata_utils$Elm$Docs$Left = 0;
 var $elm$project_metadata_utils$Elm$Docs$None = 1;
@@ -4225,7 +4225,7 @@ var $elm$project_metadata_utils$Elm$Docs$binopDecoder = A6(
 var $elm$json$Json$Decode$map6 = _Json_map6;
 var $elm$project_metadata_utils$Elm$Docs$Union = F4(
 	function (name, comment, args, tags) {
-		return {S: args, ae: comment, i: name, bs: tags};
+		return {S: args, af: comment, i: name, bs: tags};
 	});
 var $elm$json$Json$Decode$index = _Json_decodeIndex;
 var $elm$json$Json$Decode$map2 = _Json_map2;
@@ -4255,7 +4255,7 @@ var $elm$project_metadata_utils$Elm$Docs$unionDecoder = A5(
 		$elm$json$Json$Decode$list($elm$project_metadata_utils$Elm$Docs$tagDecoder)));
 var $elm$project_metadata_utils$Elm$Docs$Value = F3(
 	function (name, comment, tipe) {
-		return {ae: comment, i: name, aj: tipe};
+		return {af: comment, i: name, ak: tipe};
 	});
 var $elm$json$Json$Decode$map3 = _Json_map3;
 var $elm$project_metadata_utils$Elm$Docs$valueDecoder = A4(
@@ -5973,7 +5973,7 @@ var $author$project$Generate$blockToIdField = function (block) {
 						$author$project$Generate$valueWith,
 						$author$project$Generate$thisModuleName,
 						$author$project$Elm$string(value.i),
-						value.aj)));
+						value.ak)));
 		case 4:
 			var binop = block.a;
 			return $elm$core$Maybe$Nothing;
@@ -6026,8 +6026,8 @@ var $elm$core$Maybe$map = F2(
 		}
 	});
 var $author$project$Internal$Compiler$nodifyMaybe = $elm$core$Maybe$map($author$project$Internal$Compiler$nodify);
-var $author$project$Elm$function = F3(
-	function (name, args, _v0) {
+var $author$project$Elm$declaration = F2(
+	function (name, _v0) {
 		var body = _v0;
 		return A3(
 			$author$project$Internal$Compiler$Declaration,
@@ -6037,7 +6037,7 @@ var $author$project$Elm$function = F3(
 				{
 					D: $author$project$Internal$Compiler$nodify(
 						{
-							y: $author$project$Internal$Compiler$nodifyAll(args),
+							y: _List_Nil,
 							b: $author$project$Internal$Compiler$nodify(body.b),
 							i: $author$project$Internal$Compiler$nodify(
 								$author$project$Internal$Compiler$formatValue(name))
@@ -6047,42 +6047,17 @@ var $author$project$Elm$function = F3(
 						var _v1 = body.c;
 						if (!_v1.$) {
 							var sig = _v1.a;
-							if (!args.b) {
-								return $elm$core$Maybe$Just(
-									$author$project$Internal$Compiler$nodify(
-										{
-											i: $author$project$Internal$Compiler$nodify(
-												$author$project$Internal$Compiler$formatValue(name)),
-											u: $author$project$Internal$Compiler$nodify(sig)
-										}));
-							} else {
-								return $elm$core$Maybe$Nothing;
-							}
+							return $elm$core$Maybe$Just(
+								$author$project$Internal$Compiler$nodify(
+									{
+										i: $author$project$Internal$Compiler$nodify(
+											$author$project$Internal$Compiler$formatValue(name)),
+										u: $author$project$Internal$Compiler$nodify(sig)
+									}));
 						} else {
 							return $elm$core$Maybe$Nothing;
 						}
 					}()
-				}));
-	});
-var $author$project$Elm$declaration = F2(
-	function (name, body) {
-		return A3($author$project$Elm$function, name, _List_Nil, body);
-	});
-var $author$project$Elm$declarationWith = F3(
-	function (name, annotation, _v0) {
-		var body = _v0;
-		return A3(
-			$author$project$Elm$function,
-			name,
-			_List_Nil,
-			_Utils_update(
-				body,
-				{
-					c: $elm$core$Result$Ok(
-						$author$project$Internal$Compiler$getInnerAnnotation(annotation)),
-					a: _Utils_ap(
-						body.a,
-						$author$project$Internal$Compiler$getAnnotationImports(annotation))
 				}));
 	});
 var $author$project$Internal$Compiler$Exposed = 1;
@@ -6163,8 +6138,9 @@ var $elm$core$Tuple$second = function (_v0) {
 	var y = _v0.b;
 	return y;
 };
-var $author$project$Elm$file = F3(
-	function (mod, docComment, decs) {
+var $author$project$Elm$file = F2(
+	function (pieces, decs) {
+		var mod = $author$project$Elm$moduleName(pieces);
 		return {
 			Y: decs,
 			a: A3(
@@ -6172,8 +6148,8 @@ var $author$project$Elm$file = F3(
 				mod,
 				decs,
 				_Utils_Tuple2($elm$core$Set$empty, _List_Nil)).b,
-			am: docComment,
-			ab: mod
+			ab: '',
+			ac: mod
 		};
 	});
 var $elm$core$List$maybeCons = F3(
@@ -6577,7 +6553,7 @@ var $author$project$Elm$record = function (fields) {
 				var fieldName = $author$project$Internal$Compiler$formatValue(unformattedFieldName);
 				return {
 					I: function () {
-						if (A2($elm$core$Set$member, fieldName, found.ai)) {
+						if (A2($elm$core$Set$member, fieldName, found.aj)) {
 							return A2(
 								$elm$core$List$cons,
 								$author$project$Internal$Compiler$DuplicateFieldInRecord(fieldName),
@@ -6612,17 +6588,17 @@ var $author$project$Elm$record = function (fields) {
 								found._);
 						}
 					}(),
-					af: A2(
+					ag: A2(
 						$elm$core$List$cons,
 						_Utils_Tuple2(
 							$author$project$Internal$Compiler$nodify(fieldName),
 							$author$project$Internal$Compiler$nodify(exp.b)),
-						found.af),
+						found.ag),
 					a: _Utils_ap(exp.a, found.a),
-					ai: A2($elm$core$Set$insert, fieldName, found.ai)
+					aj: A2($elm$core$Set$insert, fieldName, found.aj)
 				};
 			}),
-		{I: _List_Nil, _: _List_Nil, af: _List_Nil, a: _List_Nil, ai: $elm$core$Set$empty},
+		{I: _List_Nil, _: _List_Nil, ag: _List_Nil, a: _List_Nil, aj: $elm$core$Set$empty},
 		fields);
 	return {
 		c: function () {
@@ -6648,11 +6624,24 @@ var $author$project$Elm$record = function (fields) {
 		}(),
 		b: $stil4m$elm_syntax$Elm$Syntax$Expression$RecordExpr(
 			$author$project$Internal$Compiler$nodifyAll(
-				$elm$core$List$reverse(unified.af))),
+				$elm$core$List$reverse(unified.ag))),
 		a: unified.a,
 		g: false
 	};
 };
+var $author$project$Elm$withAnnotation = F2(
+	function (ann, _v0) {
+		var exp = _v0;
+		return _Utils_update(
+			exp,
+			{
+				c: $elm$core$Result$Ok(
+					$author$project$Internal$Compiler$getInnerAnnotation(ann)),
+				a: _Utils_ap(
+					exp.a,
+					$author$project$Internal$Compiler$getAnnotationImports(ann))
+			});
+	});
 var $stil4m$elm_syntax$Elm$Syntax$Declaration$AliasDeclaration = function (a) {
 	return {$: 1, a: a};
 };
@@ -6727,7 +6716,7 @@ var $author$project$Generate$generateBlocks = function (block) {
 					$author$project$Elm$expose(
 					A2(
 						$author$project$Elm$withDocumentation,
-						union.ae,
+						union.af,
 						A2(
 							$author$project$Elm$declaration,
 							'type' + union.i,
@@ -6797,7 +6786,7 @@ var $author$project$Generate$generateBlocks = function (block) {
 					$author$project$Elm$expose(
 					A2(
 						$author$project$Elm$withDocumentation,
-						alias.ae,
+						alias.af,
 						A2(
 							$author$project$Elm$declaration,
 							'alias' + alias.i,
@@ -6811,7 +6800,7 @@ var $author$project$Generate$generateBlocks = function (block) {
 				]);
 		case 3:
 			var value = block.a;
-			var _v3 = value.aj;
+			var _v3 = value.ak;
 			if (_v3.$ === 1) {
 				var one = _v3.a;
 				var two = _v3.b;
@@ -6834,7 +6823,7 @@ var $author$project$Generate$generateBlocks = function (block) {
 						$author$project$Elm$expose(
 						A2(
 							$author$project$Elm$withDocumentation,
-							value.ae,
+							value.af,
 							A3(
 								$author$project$Elm$functionWith,
 								value.i,
@@ -6846,7 +6835,7 @@ var $author$project$Generate$generateBlocks = function (block) {
 										$author$project$Generate$valueWith,
 										$author$project$Generate$thisModuleName,
 										$author$project$Elm$string(value.i),
-										value.aj),
+										value.ak),
 									$elm$core$List$reverse(
 										A2($elm$core$List$drop, 1, captured.V))))))
 					]);
@@ -6856,16 +6845,18 @@ var $author$project$Generate$generateBlocks = function (block) {
 						$author$project$Elm$expose(
 						A2(
 							$author$project$Elm$withDocumentation,
-							value.ae,
-							A3(
-								$author$project$Elm$declarationWith,
+							value.af,
+							A2(
+								$author$project$Elm$declaration,
 								value.i,
-								$author$project$Generate$expressionType,
-								A3(
-									$author$project$Generate$valueWith,
-									$author$project$Generate$thisModuleName,
-									$author$project$Elm$string(value.i),
-									value.aj))))
+								A2(
+									$author$project$Elm$withAnnotation,
+									$author$project$Generate$expressionType,
+									A3(
+										$author$project$Generate$valueWith,
+										$author$project$Generate$thisModuleName,
+										$author$project$Elm$string(value.i),
+										value.ak)))))
 					]);
 			}
 		case 4:
@@ -6944,7 +6935,7 @@ var $elm$project_metadata_utils$Elm$Docs$nameToBlock = F2(
 					$elm$project_metadata_utils$Elm$Docs$find,
 					$elm$project_metadata_utils$Elm$Docs$UnionBlock,
 					name,
-					docs.ad,
+					docs.ae,
 					A4(
 						$elm$project_metadata_utils$Elm$Docs$find,
 						$elm$project_metadata_utils$Elm$Docs$AliasBlock,
@@ -7006,7 +6997,7 @@ var $elm$project_metadata_utils$Elm$Docs$chunkToBlocks = F2(
 			A2($elm$core$String$split, ',', chunk));
 	});
 var $elm$project_metadata_utils$Elm$Docs$toBlocks = function (docs) {
-	var _v0 = A2($elm$core$String$split, '\n@docs ', docs.ae);
+	var _v0 = A2($elm$core$String$split, '\n@docs ', docs.af);
 	if (!_v0.b) {
 		return _List_Nil;
 	} else {
@@ -7023,55 +7014,58 @@ var $elm$project_metadata_utils$Elm$Docs$toBlocks = function (docs) {
 };
 var $author$project$Generate$moduleToFile = function (docs) {
 	var sourceModName = A2($elm$core$String$split, '.', docs.i);
+	var modNameBlock = $author$project$Elm$expose(
+		A2(
+			$author$project$Elm$withDocumentation,
+			' The name of this module. ',
+			A2(
+				$author$project$Elm$declaration,
+				'moduleName_',
+				A2(
+					$author$project$Elm$withAnnotation,
+					A2($author$project$Elm$Annotation$named, $author$project$Generate$elm, 'Module'),
+					A2(
+						$author$project$Elm$apply,
+						A3(
+							$author$project$Elm$valueWith,
+							$author$project$Generate$elm,
+							'moduleName',
+							A2(
+								$author$project$Elm$Annotation$function,
+								_List_fromArray(
+									[
+										$author$project$Elm$Annotation$list($author$project$Elm$Annotation$string)
+									]),
+								A2($author$project$Elm$Annotation$named, $author$project$Generate$elm, 'Module'))),
+						_List_fromArray(
+							[
+								$author$project$Elm$list(
+								A2($elm$core$List$map, $author$project$Elm$string, sourceModName))
+							]))))));
 	var modName = A2(
 		$elm$core$List$cons,
 		'Elm',
 		A2($elm$core$List$cons, 'Gen', sourceModName));
 	var blocks = $elm$project_metadata_utils$Elm$Docs$toBlocks(docs);
-	return A3(
+	var ids = $author$project$Elm$expose(
+		A2(
+			$author$project$Elm$withDocumentation,
+			' Every value/function in this module in case you need to refer to it directly. ',
+			A2(
+				$author$project$Elm$declaration,
+				'id_',
+				$author$project$Elm$record(
+					A2($elm$core$List$filterMap, $author$project$Generate$blockToIdField, blocks)))));
+	return A2(
 		$author$project$Elm$file,
-		$author$project$Elm$moduleName(modName),
-		'',
+		modName,
 		A2(
 			$elm$core$List$cons,
-			$author$project$Elm$expose(
-				A2(
-					$author$project$Elm$withDocumentation,
-					' The name of this module. ',
-					A3(
-						$author$project$Elm$declarationWith,
-						'moduleName_',
-						A2($author$project$Elm$Annotation$named, $author$project$Generate$elm, 'Module'),
-						A2(
-							$author$project$Elm$apply,
-							A3(
-								$author$project$Elm$valueWith,
-								$author$project$Generate$elm,
-								'moduleName',
-								A2(
-									$author$project$Elm$Annotation$function,
-									_List_fromArray(
-										[
-											$author$project$Elm$Annotation$list($author$project$Elm$Annotation$string)
-										]),
-									A2($author$project$Elm$Annotation$named, $author$project$Generate$elm, 'Module'))),
-							_List_fromArray(
-								[
-									$author$project$Elm$list(
-									A2($elm$core$List$map, $author$project$Elm$string, sourceModName))
-								]))))),
-			A2(
-				$elm$core$List$cons,
-				$author$project$Elm$expose(
-					A2(
-						$author$project$Elm$withDocumentation,
-						' Every value/function in this module in case you need to refer to it directly. ',
-						A2(
-							$author$project$Elm$declaration,
-							'id_',
-							$author$project$Elm$record(
-								A2($elm$core$List$filterMap, $author$project$Generate$blockToIdField, blocks))))),
-				A2($elm$core$List$concatMap, $author$project$Generate$generateBlocks, blocks))));
+			modNameBlock,
+			_Utils_ap(
+				A2($elm$core$List$concatMap, $author$project$Generate$generateBlocks, blocks),
+				_List_fromArray(
+					[ids]))));
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
@@ -8206,7 +8200,7 @@ var $author$project$Internal$Write$prettyCustomType = function (type_) {
 								A2(
 									$elm$core$List$map,
 									$the_sett$elm_pretty_printer$Pretty$string,
-									$author$project$Internal$Compiler$denodeAll(type_.ag)))
+									$author$project$Internal$Compiler$denodeAll(type_.ah)))
 							]))))));
 	return $the_sett$elm_pretty_printer$Pretty$lines(
 		_List_fromArray(
@@ -9812,7 +9806,7 @@ var $author$project$Internal$Write$prettyTypeAlias = function (tAlias) {
 							A2(
 								$elm$core$List$map,
 								$the_sett$elm_pretty_printer$Pretty$string,
-								$author$project$Internal$Compiler$denodeAll(tAlias.ag))),
+								$author$project$Internal$Compiler$denodeAll(tAlias.ah))),
 							$the_sett$elm_pretty_printer$Pretty$string('=')
 						])))));
 	return $the_sett$elm_pretty_printer$Pretty$lines(
@@ -10466,7 +10460,7 @@ var $author$project$Internal$Write$prepareLayout = F2(
 						E: $author$project$Internal$Compiler$nodifyAll(
 							layoutDeclComments(file.E)),
 						a: file.a,
-						ab: file.ab
+						ac: file.ac
 					},
 					innerTags);
 			} else {
@@ -10476,7 +10470,7 @@ var $author$project$Internal$Write$prepareLayout = F2(
 						E: $author$project$Internal$Compiler$nodifyAll(
 							layoutDeclComments(file.E)),
 						a: file.a,
-						ab: file.ab
+						ac: file.ac
 					},
 					_List_Nil);
 			}
@@ -10501,7 +10495,7 @@ var $author$project$Internal$Write$prepareLayout = F2(
 							$the_sett$elm_pretty_printer$Pretty$a,
 							$the_sett$elm_pretty_printer$Pretty$line,
 							$author$project$Internal$Write$prettyModule(
-								$author$project$Internal$Compiler$denode(innerFile.ab)))))));
+								$author$project$Internal$Compiler$denode(innerFile.ac)))))));
 	});
 var $author$project$Internal$Write$pretty = F2(
 	function (width, file) {
@@ -10513,7 +10507,7 @@ var $author$project$Internal$Write$pretty = F2(
 var $author$project$Internal$Write$write = $author$project$Internal$Write$pretty(80);
 var $author$project$Elm$render = function (_v0) {
 	var fileDetails = _v0;
-	var mod = $author$project$Internal$Compiler$getModule(fileDetails.ab);
+	var mod = $author$project$Internal$Compiler$getModule(fileDetails.ac);
 	var exposed = $author$project$Internal$Compiler$getExposed(fileDetails.Y);
 	var body = $author$project$Internal$Write$write(
 		{
@@ -10521,10 +10515,10 @@ var $author$project$Elm$render = function (_v0) {
 				A2(
 					$author$project$Internal$Comments$addPart,
 					$author$project$Internal$Comments$emptyComment,
-					$author$project$Internal$Comments$Markdown(fileDetails.am))),
+					$author$project$Internal$Comments$Markdown(fileDetails.ab))),
 			E: fileDetails.Y,
 			a: A2($elm$core$List$filterMap, $author$project$Internal$Compiler$makeImport, fileDetails.a),
-			ab: $author$project$Internal$Compiler$nodify(
+			ac: $author$project$Internal$Compiler$nodify(
 				($author$project$Internal$Compiler$hasPorts(fileDetails.Y) ? $stil4m$elm_syntax$Elm$Syntax$Module$PortModule : $stil4m$elm_syntax$Elm$Syntax$Module$NormalModule)(
 					{
 						bT: function () {
