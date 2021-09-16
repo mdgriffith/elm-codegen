@@ -28,8 +28,7 @@ main =
 
 
 file =
-    Elm.file (Elm.moduleName [ "My", "Module" ])
-        ""
+    Elm.file [ "My", "Module" ]
         [ Elm.declaration "placeholder"
             (Elm.valueFrom (Elm.moduleAs [ "Json", "Decode" ] "Json")
                 "map2"

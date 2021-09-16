@@ -1,22 +1,23 @@
 module Elm exposing
-    ( file, render
+    ( file, withModuleComment
+    , render
     , Expression
+    , withAnnotation
     , value, valueFrom, valueWith
+    , Module, local, moduleName, moduleAs
     , bool, int, float, char, string, hex, unit
     , maybe, list, tuple, triple
     , record, get, updateRecord
-    , caseOf
+    , caseOf, letIn, ifThen
     , apply
     , lambda, lambda2, lambda3, lambda4, lambda5, lambdaWith
-    , withAnnotation
     , Declaration, declaration, declarationWith
     , function, functionWith, fn, fn2, fn3, fn4, fn5
     , alias, aliasWith
     , customType, customTypeWith
-    , Module, local, moduleName, moduleAs
     , withDocumentation, expose, exposeConstructor
     , power, multiply, divide, intDivide, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, compose, composeLeft
-    , keep, skip, slash, questionMark
+    , keep, skip, slash, question
     , portIncoming, portOutgoing
     , parse
     , File, expressionToString, expressionImportsToString
@@ -26,11 +27,17 @@ module Elm exposing
 
 {-|
 
-@docs file, render
+@docs file, withModuleComment
+
+@docs render
 
 @docs Expression
 
+@docs withAnnotation
+
 @docs value, valueFrom, valueWith
+
+@docs Module, local, moduleName, moduleAs
 
 
 # Primitives
@@ -39,15 +46,16 @@ module Elm exposing
 
 @docs maybe, list, tuple, triple
 
+
+##
+
 @docs record, get, updateRecord
 
-@docs caseOf
+@docs caseOf, letIn, ifThen
 
 @docs apply
 
 @docs lambda, lambda2, lambda3, lambda4, lambda5, lambdaWith
-
-@docs withAnnotation
 
 
 # Top level
@@ -60,8 +68,6 @@ module Elm exposing
 
 @docs customType, customTypeWith
 
-@docs Module, local, moduleName, moduleAs
-
 @docs withDocumentation, expose, exposeConstructor
 
 
@@ -72,7 +78,7 @@ module Elm exposing
 
 # Package specific operators
 
-@docs keep, skip, slash, questionMark
+@docs keep, skip, slash, question
 
 
 # Ports
@@ -201,9 +207,7 @@ render (File fileDetails) =
 
 {-| Build a file!
 
-    Elm.file (Elm.moduleName [ "My", "Module" ])
-        """Here is the module comment!
-        """
+    Elm.file [ "My", "Module" ]
         [ Elm.declaration "placeholder"
             (Elm.string "a fancy string!")
         ]
@@ -211,16 +215,27 @@ render (File fileDetails) =
 Once you have a file, you can render it using `Elm.toString`.
 
 -}
-file : Module -> String -> List Declaration -> File
-file mod docComment decs =
+file : List String -> List Declaration -> File
+file pieces decs =
+    let
+        mod =
+            moduleName pieces
+    in
     File
         { moduleDefinition = mod
         , imports =
             reduceDeclarationImports mod decs ( Set.empty, [] )
                 |> Tuple.second
         , body = decs
-        , moduleComment = docComment
+        , moduleComment = ""
         }
+
+
+{-| -}
+withModuleComment : String -> File -> File
+withModuleComment modComment (File details) =
+    File
+        { details | moduleComment = details.moduleComment ++ modComment }
 
 
 reduceDeclarationImports : Module -> List Declaration -> ( Set.Set String, List Module ) -> ( Set.Set String, List Module )
@@ -714,6 +729,34 @@ letIn decls (Compiler.Expression within) =
         }
 
 
+{-|
+
+    ifThen (Elm.bool True)
+        (Elm.string "yes")
+        (Elm.string "no")
+
+    if True then
+        "yes"
+
+    else
+        "no"
+
+-}
+ifThen : Expression -> Expression -> Expression -> Expression
+ifThen (Compiler.Expression condition) (Compiler.Expression thenBranch) (Compiler.Expression elseBranch) =
+    Compiler.Expression
+        { expression =
+            Exp.IfBlock
+                (Compiler.nodify condition.expression)
+                (Compiler.nodify thenBranch.expression)
+                (Compiler.nodify elseBranch.expression)
+        , annotation =
+            thenBranch.annotation
+        , imports = condition.imports ++ thenBranch.imports ++ elseBranch.imports
+        , skip = False
+        }
+
+
 {-| -}
 caseOf : Expression -> List ( Pattern, Expression ) -> Expression
 caseOf (Compiler.Expression expr) cases =
@@ -741,8 +784,6 @@ caseOf (Compiler.Expression expr) cases =
                 , annotation = Nothing
                 }
                 cases
-
-        --
     in
     Compiler.Expression
         { expression =
@@ -2158,8 +2199,8 @@ slash =
 
 {-| `<?>` used in url parsing
 -}
-questionMark : Expression -> Expression -> Expression
-questionMark =
+question : Expression -> Expression -> Expression
+question =
     applyBinOp (BinOp "<?>" Infix.Left 8)
 
 
