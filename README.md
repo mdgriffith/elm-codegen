@@ -10,7 +10,7 @@ import Elm
 
 main =
     Elm.Gen.files
-        [ Elm.file (Elm.moduleName [ "My", "Module" ])
+        [ Elm.file [ "My", "Module" ]
             [ Elm.declaration "placeholder"
                 (Elm.string "a fancy string!")
             ]

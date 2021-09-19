@@ -30,7 +30,7 @@ main =
                     Ok docs ->
                         ( ()
                         , Elm.Gen.files
-                            (List.map (Elm.render << moduleToFile) docs)
+                            (List.map (moduleToFile) docs)
                         )
         , update =
             \msg model ->
@@ -64,7 +64,7 @@ moduleToFile docs =
                     )
                     [ Elm.list (List.map Elm.string sourceModName)
                     ]
-                    |> Elm.withAnnotation (Annotation.named elm "Module")
+                    |> Elm.withType (Annotation.named elm "Module")
                 )
                 |> Elm.withDocumentation " The name of this module. "
                 |> Elm.expose
@@ -358,7 +358,7 @@ generateBlocks block =
                             thisModuleName
                             (Elm.string value.name)
                             value.tipe
-                            |> Elm.withAnnotation expressionType
+                            |> Elm.withType expressionType
                         )
                         |> Elm.withDocumentation value.comment
                         |> Elm.expose
@@ -620,33 +620,7 @@ typeToExpression elmType =
                     Elm.valueWith elmAnnotation "unit" annotationType
 
         Elm.Type.Type name types ->
-            let
-                frags =
-                    String.split "." name
-
-                fragsLength =
-                    List.length frags
-
-                typeName =
-                    List.drop (fragsLength - 1) frags
-                        |> List.head
-                        |> Maybe.withDefault name
-            in
-            Elm.apply
-                (Elm.valueWith elmAnnotation
-                    "namedWith"
-                    (Annotation.function
-                        [ Annotation.named elm "Module"
-                        , Annotation.string
-                        , Annotation.list annotationType
-                        ]
-                        annotationType
-                    )
-                )
-                [ moduleName frags
-                , Elm.string typeName
-                , Elm.list (List.map typeToExpression types)
-                ]
+            namedWithType name types
 
         Elm.Type.Record fields maybeExtensible ->
             case maybeExtensible of
@@ -703,44 +677,119 @@ typeToExpression elmType =
                         ]
 
 
+
+namedWithType : String -> List Elm.Type.Type -> Elm.Expression
+namedWithType name types =
+    let
+        frags = String.split "." name
+    in
+    case frags of
+        [ "List", "List" ] ->
+            Elm.apply
+                (Elm.valueWith elmAnnotation "list"
+                    (Annotation.function [ annotationType ] annotationType
+
+                    )
+                )
+                (List.map typeToExpression types)
+
+        [ "Maybe", "Maybe" ] ->
+            Elm.apply
+                (Elm.valueWith elmAnnotation "maybe"
+                    (Annotation.function [ annotationType ] annotationType
+
+                    )
+                )
+                (List.map typeToExpression types)
+
+        [ "Basics", "Int" ] ->
+             Elm.valueWith elmAnnotation "int"
+                annotationType
+
+        [ "Basics", "Float" ] ->
+            Elm.valueWith elmAnnotation "float"
+                annotationType
+
+        [ "Basics", "Bool" ] ->
+           Elm.valueWith elmAnnotation "bool"
+                annotationType
+
+        [ "String", "String" ] ->
+            Elm.valueWith elmAnnotation "string"
+                annotationType
+
+        _ ->
+            let
+
+
+                fragsLength =
+                    List.length frags
+
+                typeName =
+                    List.drop (fragsLength - 1) frags
+                        |> List.head
+                        |> Maybe.withDefault name
+            in
+            Elm.apply
+                (Elm.valueWith elmAnnotation
+                    "namedWith"
+                    (Annotation.function
+                        [ Annotation.named elm "Module"
+                        , Annotation.string
+                        , Annotation.list annotationType
+                        ]
+                        annotationType
+                    )
+                )
+                [ moduleName frags
+                , Elm.string typeName
+                , Elm.list (List.map typeToExpression types)
+                ]
+
+
 moduleName : List String -> Elm.Expression
 moduleName frags =
-    let
-        fragsLength =
-            List.length frags
+    case frags of
+        [ "List", "List" ] ->
+            Elm.valueWith elm
+                "local2"
+                (Annotation.named (elm) "Module")
 
-        modName =
-            case frags of
-                [ "List", "List" ] ->
-                    Nothing
-
-                [ "Maybe", "Maybe" ] ->
-                    Nothing
-
-                [ "Basics", "Int" ] ->
-                    Nothing
-
-                [ "Basics", "Float" ] ->
-                    Nothing
-
-                [ "Basics", "Bool" ] ->
-                    Nothing
-
-                [ "String", "String" ] ->
-                    Nothing
-
-                _ ->
-                    List.take (fragsLength - 1) frags
-                        |> List.map Elm.string
-                        |> Just
-    in
-    case modName of
-        Nothing ->
+        [ "Maybe", "Maybe" ] ->
             Elm.valueWith elm
                 "local"
                 (Annotation.named elm "Module")
 
-        Just name ->
+        [ "Basics", "Int" ] ->
+            Elm.valueWith elm
+                "local"
+                (Annotation.named elm "Module")
+
+        [ "Basics", "Float" ] ->
+            Elm.valueWith elm
+                "local"
+                (Annotation.named elm "Module")
+
+        [ "Basics", "Bool" ] ->
+            Elm.valueWith elm
+                "local"
+                (Annotation.named elm "Module")
+
+        [ "String", "String" ] ->
+            Elm.valueWith elm
+                "local"
+                (Annotation.named elm "Module")
+
+        _ ->
+            let
+                fragsLength =
+                    List.length frags
+
+
+                name = List.take (fragsLength - 1) frags
+                        |> List.map Elm.string
+
+            in
             Elm.apply
                 (Elm.valueWith elm
                     "moduleName"

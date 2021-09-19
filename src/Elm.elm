@@ -1,8 +1,7 @@
 module Elm exposing
-    ( file, withModuleComment
-    , render
+    ( File, file
     , Expression
-    , withAnnotation
+    , withType
     , value, valueFrom, valueWith
     , Module, local, moduleName, moduleAs
     , bool, int, float, char, string, hex, unit
@@ -11,45 +10,50 @@ module Elm exposing
     , caseOf, letIn, ifThen
     , apply
     , lambda, lambda2, lambda3, lambda4, lambda5, lambdaWith
-    , Declaration, declaration
-    ,  fn, fn2, fn3, fn4, fn5, functionWith
-    , alias, aliasWith
-    , customType, customTypeWith
-    , withDocumentation, expose, exposeConstructor
-    , power, multiply, divide, intDivide, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, compose, composeLeft
-    , keep, skip, slash, question
+    , Declaration, comment, declaration
+    , fn, fn2, fn3, fn4, fn5, functionWith
+    , alias
+    , customType, Variant, variant, variantWith
+    , withDocumentation, expose, exposeConstructor, exposeAndGroup, exposeConstructorAndGroup
+    , equal, notEqual
+    , append, cons
+    , plus, minus, multiply, divide, intDivide, power
+    , keep, skip
+    , slash, question
     , portIncoming, portOutgoing
     , parse
-    , File, expressionToString, expressionImportsToString
-    , declarationToString, declarationImportsToString
+    , toString, expressionImports
+    , declarationToString, declarationImports
     , pass
+    , and, compose, composeLeft, gt, gte, lt, lte, or
     )
 
 {-|
 
-@docs file, withModuleComment
-
-@docs render
+@docs File, file
 
 @docs Expression
 
-@docs withAnnotation
+@docs withType
 
 @docs value, valueFrom, valueWith
 
 @docs Module, local, moduleName, moduleAs
 
 
-# Primitives
+## Basics
 
 @docs bool, int, float, char, string, hex, unit
 
 @docs maybe, list, tuple, triple
 
 
-##
+## Records
 
 @docs record, get, updateRecord
+
+
+## Flow control
 
 @docs caseOf, letIn, ifThen
 
@@ -58,27 +62,45 @@ module Elm exposing
 @docs lambda, lambda2, lambda3, lambda4, lambda5, lambdaWith
 
 
-# Top level
+## Top level
 
-@docs Declaration, declaration
+@docs Declaration
+
+@docs comment, declaration
+
+@docs withDocumentation
 
 @docs fn, fn2, fn3, fn4, fn5, functionWith
 
-@docs alias, aliasWith
+@docs alias
 
-@docs customType, customTypeWith
+@docs customType, Variant, variant, variantWith
 
-@docs withDocumentation, expose, exposeConstructor
+
+##
+
+@docs expose, exposeConstructor, exposeAndGroup, exposeConstructorAndGroup
 
 
 # Operators
 
-@docs power, multiply, divide, intDivide, plus, minus, append, cons, equal, notEqual, lt, gt, lte, gte, and, or, compose, composeLeft
+@docs equal, notEqual
+
+@docs append, cons
+
+@docs plus, minus, multiply, divide, intDivide, power
+
+@dodcs lt, gt, lte, gte, and, or, compose, composeLeft
 
 
-# Package specific operators
+## Parsing
 
-@docs keep, skip, slash, question
+@docs keep, skip
+
+
+## Url parsing
+
+@docs slash, question
 
 
 # Ports
@@ -86,13 +108,16 @@ module Elm exposing
 @docs portIncoming, portOutgoing
 
 
-# Util
+# Parsing existing Elm
 
 @docs parse
 
-@docs File, expressionToString, expressionImportsToString
 
-@docs declarationToString, declarationImportsToString
+# Rendering to string
+
+@docs toString, expressionImports
+
+@docs declarationToString, declarationImports
 
 @docs pass
 
@@ -128,81 +153,34 @@ type alias Expression =
 
 
 {-| -}
-expressionImportsToString : Expression -> String
-expressionImportsToString (Compiler.Expression exp) =
+expressionImports : Expression -> String
+expressionImports (Compiler.Expression exp) =
     List.filterMap Compiler.makeImport exp.imports
         |> Internal.Write.writeImports
 
 
 {-| -}
-expressionToString : Expression -> String
-expressionToString (Compiler.Expression exp) =
+toString : Expression -> String
+toString (Compiler.Expression exp) =
     Internal.Write.writeExpression exp.expression
 
 
 {-| -}
-declarationImportsToString : Expression -> String
-declarationImportsToString (Compiler.Expression exp) =
-    List.filterMap Compiler.makeImport exp.imports
-        |> Internal.Write.writeImports
+declarationImports : Declaration -> String
+declarationImports decl =
+    case decl of
+        Compiler.Declaration _ imps _ ->
+            List.filterMap Compiler.makeImport imps
+                |> Internal.Write.writeImports
+
+        Compiler.Comment _ ->
+            ""
 
 
 {-| -}
 declarationToString : Declaration -> String
 declarationToString dec =
     Internal.Write.writeDeclaration dec
-
-
-{-| Turn the AST into a pretty printed file
--}
-render : File -> { path : String, contents : String }
-render (File fileDetails) =
-    let
-        mod =
-            Compiler.getModule fileDetails.moduleDefinition
-
-        exposed =
-            Compiler.getExposed fileDetails.body
-
-        body =
-            Internal.Write.write
-                { moduleDefinition =
-                    Compiler.nodify
-                        ((if Compiler.hasPorts fileDetails.body then
-                            Elm.Syntax.Module.PortModule
-
-                          else
-                            Elm.Syntax.Module.NormalModule
-                         )
-                            { moduleName = Compiler.nodify mod
-                            , exposingList =
-                                case exposed of
-                                    [] ->
-                                        Compiler.nodify
-                                            (Expose.All Range.emptyRange)
-
-                                    _ ->
-                                        Compiler.nodify
-                                            (Expose.Explicit
-                                                (Compiler.nodifyAll exposed)
-                                            )
-                            }
-                        )
-                , imports =
-                    List.filterMap Compiler.makeImport fileDetails.imports
-                , declarations = fileDetails.body
-                , comments =
-                    Just
-                        (Internal.Comments.addPart
-                            Internal.Comments.emptyComment
-                            (Internal.Comments.Markdown fileDetails.moduleComment)
-                        )
-                }
-    in
-    { path =
-        String.join "/" mod ++ ".elm"
-    , contents = body
-    }
 
 
 {-| Build a file!
@@ -212,8 +190,6 @@ render (File fileDetails) =
             (Elm.string "a fancy string!")
         ]
 
-Once you have a file, you can render it using `Elm.toString`.
-
 -}
 file : List String -> List Declaration -> File
 file pieces decs =
@@ -221,7 +197,54 @@ file pieces decs =
         mod =
             moduleName pieces
     in
-    File
+    render renderStandardComment
+        { moduleDefinition = mod
+        , imports =
+            reduceDeclarationImports mod decs ( Set.empty, [] )
+                |> Tuple.second
+        , body = decs
+        , moduleComment = ""
+        }
+
+
+renderStandardComment :
+    List
+        { group : Maybe String
+        , members : List String
+        }
+    -> String
+renderStandardComment groups =
+    if List.isEmpty groups then
+        ""
+
+    else
+        List.foldl
+            (\grouped str ->
+                str ++ "@docs " ++ String.join ", " grouped.members ++ "\n\n"
+            )
+            "\n\n"
+            groups
+
+
+{-| Same as `file`, but you have more control over how the module comment is generated!
+-}
+fileWith :
+    List String
+    ->
+        (List
+            { group : Maybe String
+            , members : List String
+            }
+         -> String
+        )
+    -> List Declaration
+    -> File
+fileWith pieces toDocComment decs =
+    let
+        mod =
+            moduleName pieces
+    in
+    render toDocComment
         { moduleDefinition = mod
         , imports =
             reduceDeclarationImports mod decs ( Set.empty, [] )
@@ -232,10 +255,84 @@ file pieces decs =
 
 
 {-| -}
-withModuleComment : String -> File -> File
-withModuleComment modComment (File details) =
-    File
-        { details | moduleComment = details.moduleComment ++ modComment }
+render :
+    (List
+        { group : Maybe String
+        , members : List String
+        }
+     -> String
+    )
+    -> FileDetails
+    -> File
+render toDocComment fileDetails =
+    let
+        mod =
+            Compiler.getModule fileDetails.moduleDefinition
+
+        exposed =
+            Compiler.getExposed fileDetails.body
+
+        exposedGroups =
+            Compiler.getExposedGroups fileDetails.body
+
+        body =
+            Internal.Write.write
+                { moduleDefinition =
+                    (if Compiler.hasPorts fileDetails.body then
+                        Elm.Syntax.Module.PortModule
+
+                     else
+                        Elm.Syntax.Module.NormalModule
+                    )
+                        { moduleName = Compiler.nodify mod
+                        , exposingList =
+                            case exposed of
+                                [] ->
+                                    Compiler.nodify
+                                        (Expose.All Range.emptyRange)
+
+                                _ ->
+                                    Compiler.nodify
+                                        (Expose.Explicit
+                                            (Compiler.nodifyAll exposed)
+                                        )
+                        }
+                , imports =
+                    List.filterMap Compiler.makeImport fileDetails.imports
+                , declarations = fileDetails.body
+                , comments =
+                    Just
+                        (Internal.Comments.addPart
+                            Internal.Comments.emptyComment
+                            (Internal.Comments.Markdown
+                                (addExposedGroups exposedGroups fileDetails.moduleComment)
+                            )
+                        )
+                }
+    in
+    { path =
+        String.join "/" mod ++ ".elm"
+    , contents = body
+    }
+
+
+renderComments : { group : Maybe String, members : List String } -> String
+renderComments grouped =
+    "@docs " ++ String.join ", " grouped.members ++ "\n\n"
+
+
+addExposedGroups : List { group : Maybe String, members : List String } -> String -> String
+addExposedGroups groups commentStr =
+    if List.isEmpty groups then
+        commentStr
+
+    else
+        List.foldl
+            (\grouped str ->
+                str ++ "@docs " ++ String.join ", " grouped.members ++ "\n\n"
+            )
+            (commentStr ++ "\n\n")
+            groups
 
 
 reduceDeclarationImports : Module -> List Declaration -> ( Set.Set String, List Module ) -> ( Set.Set String, List Module )
@@ -243,6 +340,11 @@ reduceDeclarationImports self decs imports =
     case decs of
         [] ->
             imports
+
+        (Compiler.Comment _) :: remain ->
+            reduceDeclarationImports self
+                remain
+                imports
 
         (Compiler.Declaration _ newImports body) :: remain ->
             reduceDeclarationImports self
@@ -272,8 +374,15 @@ addImports self newImports ( set, deduped ) =
 
 
 {-| -}
-type File
-    = File FileDetails
+type alias File =
+    { path : String
+    , contents : String
+    }
+
+
+{-| -}
+type InternalFile
+    = InternalFile FileDetails
 
 
 type alias FileDetails =
@@ -371,13 +480,13 @@ valueWith mod name ann =
         }
 
 
-{-| Sometimes you may need to add a manual annotation.
+{-| Sometimes you may need to add a manual type annotation.
 
 Though be sure elm-prefab isn't already doing this automatically for you!
 
 -}
-withAnnotation : Elm.Annotation.Annotation -> Expression -> Expression
-withAnnotation ann (Compiler.Expression exp) =
+withType : Elm.Annotation.Annotation -> Expression -> Expression
+withType ann (Compiler.Expression exp) =
     Compiler.Expression
         { exp
             | annotation = Ok (Compiler.getInnerAnnotation ann)
@@ -865,31 +974,40 @@ getField selector fields =
 {-| A custom type declaration.
 
     Elm.customType "MyType"
-        [ ( "One", [] )
-        , ( "Two", [ Elm.Annotation.list Elm.Annotation.string ] )
+        [ Elm.variant "One"
+        , Elm.variantWith "Two" [ Elm.Annotation.list Elm.Annotation.string ]
         ]
 
-Should result in
+Will result in
 
     type MyType
         = One
         | Two (List String)
 
 -}
-customType : String -> List ( String, List Elm.Annotation.Annotation ) -> Declaration
+customType : String -> List Variant -> Declaration
 customType name variants =
     Compiler.Declaration Compiler.NotExposed
         (List.concatMap
-            (Tuple.second >> List.concatMap Compiler.getAnnotationImports)
+            (\(Variant _ listAnn) ->
+                List.concatMap Compiler.getAnnotationImports listAnn
+            )
             variants
         )
         (Declaration.CustomTypeDeclaration
             { documentation = Nothing
             , name = Compiler.nodify (Compiler.formatType name)
-            , generics = []
+            , generics =
+                List.concatMap
+                    (\(Variant _ listAnn) ->
+                        listAnn
+                            |> List.concatMap
+                                Compiler.getGenerics
+                    )
+                    variants
             , constructors =
                 List.map
-                    (\( varName, vars ) ->
+                    (\(Variant varName vars) ->
                         Compiler.nodify
                             { name = Compiler.nodify (Compiler.formatType varName)
                             , arguments =
@@ -905,35 +1023,21 @@ customType name variants =
         )
 
 
-{-| If you want type variables in your custom type!
--}
-customTypeWith : String -> List String -> List ( String, List Elm.Annotation.Annotation ) -> Declaration
-customTypeWith name args variants =
-    Compiler.Declaration Compiler.NotExposed
-        (List.concatMap
-            (Tuple.second >> List.concatMap Compiler.getAnnotationImports)
-            variants
-        )
-        (Declaration.CustomTypeDeclaration
-            { documentation = Nothing
-            , name = Compiler.nodify (Compiler.formatType name)
-            , generics = Compiler.nodifyAll args
-            , constructors =
-                List.map
-                    (\( varName, vars ) ->
-                        Compiler.nodify
-                            { name = Compiler.nodify (Compiler.formatType varName)
-                            , arguments =
-                                List.map
-                                    (Compiler.getInnerAnnotation
-                                        >> Compiler.nodify
-                                    )
-                                    vars
-                            }
-                    )
-                    variants
-            }
-        )
+{-| -}
+type Variant
+    = Variant String (List Elm.Annotation.Annotation)
+
+
+{-| -}
+variant : String -> Variant
+variant name =
+    Variant name []
+
+
+{-| -}
+variantWith : String -> List Elm.Annotation.Annotation -> Variant
+variantWith =
+    Variant
 
 
 {-| A custom type declaration.
@@ -944,14 +1048,16 @@ customTypeWith name args variants =
         (Type.record
             [ ( "one", Type.string )
             , ( "two", Type.int )
+            , ( "three", Type.var "content" )
             ]
         )
 
 Should result in
 
-    type alias MyAlias =
+    type alias MyAlias content =
         { one : String
-        , two : int
+        , two : Int
+        , three : content
         }
 
 -}
@@ -962,30 +1068,8 @@ alias name innerAnnotation =
         (Declaration.AliasDeclaration
             { documentation = Nothing
             , name = Compiler.nodify (Compiler.formatType name)
-            , generics = []
-            , typeAnnotation = Compiler.nodify (Compiler.getInnerAnnotation innerAnnotation)
-            }
-        )
-
-
-{-| You may need type variables.
-
-    import Elm.Annotation as Type
-
-    Elm.aliasWith "MyMaybe" ["a"]
-        (Type.maybe 
-            (Type.var "a")
-        )
-
--}
-aliasWith : String -> List String -> Elm.Annotation.Annotation -> Declaration
-aliasWith name args innerAnnotation =
-    Compiler.Declaration Compiler.NotExposed
-        (Compiler.getAnnotationImports innerAnnotation)
-        (Declaration.AliasDeclaration
-            { documentation = Nothing
-            , name = Compiler.nodify (Compiler.formatType name)
-            , generics = Compiler.nodifyAll args
+            , generics =
+                Compiler.getGenerics innerAnnotation
             , typeAnnotation = Compiler.nodify (Compiler.getInnerAnnotation innerAnnotation)
             }
         )
@@ -1333,6 +1417,12 @@ type alias Declaration =
 
 
 {-| -}
+comment : String -> Declaration
+comment content =
+    Compiler.Comment ("{- " ++ content ++ " -}")
+
+
+{-| -}
 declaration : String -> Expression -> Declaration
 declaration name (Compiler.Expression body) =
     --function name [] body
@@ -1348,7 +1438,6 @@ declaration name (Compiler.Expression body) =
                         }
                     )
 
-                   
             Err _ ->
                 Nothing
     , declaration =
@@ -1364,9 +1453,7 @@ declaration name (Compiler.Expression body) =
 
 
 --{-| Declare a function. Here's an example with a let:
-
 --    import Elm.Pattern as Pattern
-
 --    Elm.function "myFunc"
 --        [ Pattern.var "one"
 --        , Pattern.var "two"
@@ -1377,49 +1464,47 @@ declaration name (Compiler.Expression body) =
 --            ]
 --            (Elm.add (Elm.value "added") (Elm.int 5))
 --        )
-
 --will generate
-
 --    myFunc one two =
 --        let
 --            added =
 --                one + two
 --        in
 --        added + 5
-
 ---}
 --function : String -> List Pattern -> Expression -> Declaration
 --function name args (Compiler.Expression body) =
-    --{ documentation = Compiler.nodifyMaybe Nothing
-    --, signature =
-    --    case body.annotation of
-    --        Ok sig ->
-    --            case args of
-    --                [] ->
-    --                    Just
-    --                        (Compiler.nodify
-    --                            { name = Compiler.nodify (Compiler.formatValue name)
-    --                            , typeAnnotation =
-    --                                Compiler.nodify sig
-    --                            }
-    --                        )
+--{ documentation = Compiler.nodifyMaybe Nothing
+--, signature =
+--    case body.annotation of
+--        Ok sig ->
+--            case args of
+--                [] ->
+--                    Just
+--                        (Compiler.nodify
+--                            { name = Compiler.nodify (Compiler.formatValue name)
+--                            , typeAnnotation =
+--                                Compiler.nodify sig
+--                            }
+--                        )
+--                _ ->
+--                    -- we dont know the types of the arguments
+--                    -- maybe we only allow the `functionWith` version?
+--                    Nothing
+--        Err _ ->
+--            Nothing
+--, declaration =
+--    Compiler.nodify
+--        { name = Compiler.nodify (Compiler.formatValue name)
+--        , arguments = Compiler.nodifyAll args
+--        , expression = Compiler.nodify body.expression
+--        }
+--}
 
-    --                _ ->
-    --                    -- we dont know the types of the arguments
-    --                    -- maybe we only allow the `functionWith` version?
-    --                    Nothing
 
-    --        Err _ ->
-    --            Nothing
-    --, declaration =
-    --    Compiler.nodify
-    --        { name = Compiler.nodify (Compiler.formatValue name)
-    --        , arguments = Compiler.nodifyAll args
-    --        , expression = Compiler.nodify body.expression
-    --        }
-    --}
-    --    |> Declaration.FunctionDeclaration
-    --    |> Compiler.Declaration Compiler.NotExposed body.imports
+
+--    |> Declaration.FunctionDeclaration
+--    |> Compiler.Declaration Compiler.NotExposed body.imports
 
 
 {-| -}
@@ -1771,9 +1856,21 @@ expose =
 
 
 {-| -}
+exposeAndGroup : String -> Declaration -> Declaration
+exposeAndGroup =
+    Compiler.exposeAndGroup
+
+
+{-| -}
 exposeConstructor : Declaration -> Declaration
 exposeConstructor =
     Compiler.exposeConstructor
+
+
+{-| -}
+exposeConstructorAndGroup : String -> Declaration -> Declaration
+exposeConstructorAndGroup =
+    Compiler.exposeConstructorAndGroup
 
 
 {-|
@@ -1910,7 +2007,7 @@ type BinOp
     = BinOp String Infix.InfixDirection Int
 
 
-{-| `>>`.
+{-| `>>`
 -}
 compose : Expression -> Expression -> Expression
 compose =
@@ -1939,7 +2036,7 @@ power =
         )
 
 
-{-| `*`.
+{-| `*`
 -}
 multiply : Expression -> Expression -> Expression
 multiply =
@@ -1954,7 +2051,7 @@ multiply =
         )
 
 
-{-| `/`.
+{-| `/`
 -}
 divide : Expression -> Expression -> Expression
 divide =
@@ -1969,7 +2066,7 @@ divide =
         )
 
 
-{-| `//`.
+{-| `//`
 -}
 intDivide : Expression -> Expression -> Expression
 intDivide =
@@ -1984,7 +2081,7 @@ intDivide =
         )
 
 
-{-| `+`.
+{-| `+`
 -}
 plus : Expression -> Expression -> Expression
 plus =
@@ -2312,7 +2409,7 @@ determineExposure : Declaration.Declaration -> Expose.Exposing -> Compiler.Expos
 determineExposure dec exposedDec =
     case exposedDec of
         Expose.All _ ->
-            Compiler.ExposedConstructor
+            Compiler.Exposed { group = Nothing, exposeConstructor = True }
 
         Expose.Explicit nodes ->
             case dec of
@@ -2322,7 +2419,7 @@ determineExposure dec exposedDec =
                             case Compiler.denode implementation.name of
                                 name ->
                                     if List.any (valueIsExposed name) nodes then
-                                        Compiler.Exposed
+                                        Compiler.Exposed { group = Nothing, exposeConstructor = False }
 
                                     else
                                         Compiler.NotExposed
@@ -2331,7 +2428,7 @@ determineExposure dec exposedDec =
                     case Compiler.denode typeAlias.name of
                         name ->
                             if List.any (typeIsExposed name) nodes then
-                                Compiler.Exposed
+                                Compiler.Exposed { group = Nothing, exposeConstructor = False }
 
                             else
                                 Compiler.NotExposed
@@ -2340,10 +2437,10 @@ determineExposure dec exposedDec =
                     case Compiler.denode type_.name of
                         name ->
                             if List.any (typeIsExposed name) nodes then
-                                Compiler.Exposed
+                                Compiler.Exposed { group = Nothing, exposeConstructor = False }
 
                             else if List.any (typeConstructorIsExposed name) nodes then
-                                Compiler.ExposedConstructor
+                                Compiler.Exposed { group = Nothing, exposeConstructor = True }
 
                             else
                                 Compiler.NotExposed

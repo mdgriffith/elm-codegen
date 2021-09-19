@@ -14,6 +14,54 @@ type Annotation
     = Annotation AnnotationDetails
 
 
+getGenerics : Annotation -> List (Node String)
+getGenerics (Annotation details) =
+    getGenericsHelper details.annotation
+
+
+getGenericsHelper : Annotation.TypeAnnotation -> List (Node String)
+getGenericsHelper ann =
+    case ann of
+        Annotation.GenericType str ->
+            [ nodify str ]
+
+        Annotation.Typed modName anns ->
+            List.concatMap (getGenericsHelper << denode) anns
+
+        Annotation.Unit ->
+            []
+
+        Annotation.Tupled tupled ->
+            List.concatMap (getGenericsHelper << denode) tupled
+
+        Annotation.Record recordDefinition ->
+            List.concatMap
+                (\nodedField ->
+                    case denode nodedField of
+                        (name, field) ->
+                            getGenericsHelper  (denode field)
+
+                )
+                (recordDefinition)
+
+        Annotation.GenericRecord recordName recordDefinition ->
+            List.concatMap
+                (\nodedField ->
+                    case denode nodedField of
+                        (name, field) ->
+                            getGenericsHelper  (denode field)
+
+                )
+                (denode recordDefinition)
+
+        Annotation.FunctionTypeAnnotation one two ->
+            List.concatMap getGenericsHelper
+                [ denode one
+                , denode two
+                ]
+
+
+noImports : Annotation.TypeAnnotation -> Annotation
 noImports tipe =
     Annotation
         { annotation = tipe
@@ -21,10 +69,12 @@ noImports tipe =
         }
 
 
+getInnerAnnotation : Annotation -> Annotation.TypeAnnotation
 getInnerAnnotation (Annotation details) =
     details.annotation
 
 
+getAnnotationImports : Annotation -> List Module
 getAnnotationImports (Annotation details) =
     details.imports
 
@@ -92,56 +142,94 @@ type LetDeclaration
 
 type Declaration
     = Declaration Expose (List Module) Declaration.Declaration
+    | Comment String
 
 
 documentation : String -> Declaration -> Declaration
-documentation doc ((Declaration exp imports body) as decl) =
-    let
-        str =
-            "{-|" ++ doc ++ "-}"
-    in
-    case body of
-        Declaration.FunctionDeclaration func ->
-            Declaration exp
-                imports
-                (Declaration.FunctionDeclaration
-                    { func | documentation = Just (nodify str) }
-                )
-
-        Declaration.AliasDeclaration typealias ->
-            Declaration exp
-                imports
-                (Declaration.AliasDeclaration
-                    { typealias | documentation = Just (nodify str) }
-                )
-
-        Declaration.CustomTypeDeclaration typeDecl ->
-            Declaration exp
-                imports
-                (Declaration.CustomTypeDeclaration
-                    { typeDecl | documentation = Just (nodify str) }
-                )
-
-        Declaration.PortDeclaration sig ->
+documentation doc decl =
+    case decl of
+        Comment _ ->
             decl
 
-        Declaration.InfixDeclaration _ ->
-            decl
+        Declaration exp imports body ->
+            let
+                str =
+                    "{-|" ++ doc ++ "-}"
+            in
+            case body of
+                Declaration.FunctionDeclaration func ->
+                    Declaration exp
+                        imports
+                        (Declaration.FunctionDeclaration
+                            { func | documentation = Just (nodify str) }
+                        )
 
-        Declaration.Destructuring _ _ ->
-            decl
+                Declaration.AliasDeclaration typealias ->
+                    Declaration exp
+                        imports
+                        (Declaration.AliasDeclaration
+                            { typealias | documentation = Just (nodify str) }
+                        )
+
+                Declaration.CustomTypeDeclaration typeDecl ->
+                    Declaration exp
+                        imports
+                        (Declaration.CustomTypeDeclaration
+                            { typeDecl | documentation = Just (nodify str) }
+                        )
+
+                Declaration.PortDeclaration sig ->
+                    decl
+
+                Declaration.InfixDeclaration _ ->
+                    decl
+
+                Declaration.Destructuring _ _ ->
+                    decl
 
 
 {-| -}
 expose : Declaration -> Declaration
-expose (Declaration _ imports body) =
-    Declaration Exposed imports body
+expose decl =
+    case decl of
+        Comment _ ->
+            decl
+
+        Declaration _ imports body ->
+            Declaration (Exposed { group = Nothing, exposeConstructor = False }) imports body
+
+
+{-| -}
+exposeAndGroup : String -> Declaration -> Declaration
+exposeAndGroup group decl =
+    case decl of
+        Comment _ ->
+            decl
+
+        Declaration _ imports body ->
+            Declaration (Exposed { group = Just group, exposeConstructor = False }) imports body
 
 
 {-| -}
 exposeConstructor : Declaration -> Declaration
-exposeConstructor (Declaration metadata imports body) =
-    Declaration ExposedConstructor imports body
+exposeConstructor decl =
+    case decl of
+        Comment _ ->
+            decl
+
+        Declaration metadata imports body ->
+            Declaration (Exposed { group = Nothing, exposeConstructor = True }) imports body
+
+
+{-| -}
+exposeConstructorAndGroup : String -> Declaration -> Declaration
+exposeConstructorAndGroup group decl =
+    case decl of
+        Comment _ ->
+            decl
+
+        Declaration _ imports body ->
+            Declaration (Exposed { group = Just group, exposeConstructor = True }) imports body
 
 
 type Module
@@ -152,12 +240,10 @@ makeImport :
     Module
     ->
         Maybe
-            (Node
-                { moduleName : Node ModuleName.ModuleName
-                , moduleAlias : Maybe (Node (List String))
-                , exposingList : Maybe a
-                }
-            )
+            { moduleName : Node ModuleName.ModuleName
+            , moduleAlias : Maybe (Node (List String))
+            , exposingList : Maybe a
+            }
 makeImport (Module name maybeAlias) =
     case name of
         [] ->
@@ -169,17 +255,15 @@ makeImport (Module name maybeAlias) =
 
             else
                 Just
-                    (nodify
-                        { moduleName = nodify name
-                        , moduleAlias =
-                            Maybe.map
-                                (\al ->
-                                    nodify [ al ]
-                                )
-                                maybeAlias
-                        , exposingList = Nothing
-                        }
-                    )
+                    { moduleName = nodify name
+                    , moduleAlias =
+                        Maybe.map
+                            (\al ->
+                                nodify [ al ]
+                            )
+                            maybeAlias
+                    , exposingList = Nothing
+                    }
 
 
 resolveModuleNameForValue : Module -> List String
@@ -234,26 +318,23 @@ fullModName (Module name _) =
 hasPorts : List Declaration -> Bool
 hasPorts decls =
     List.any
-        (\(Declaration exp _ decBody) ->
-            case exp of
-                NotExposed ->
+        (\decl ->
+            case decl of
+                Comment _ ->
                     False
 
-                Exposed ->
-                    case decBody of
-                        Declaration.PortDeclaration myPort ->
-                            True
-
-                        _ ->
+                Declaration exp _ decBody ->
+                    case exp of
+                        NotExposed ->
                             False
 
-                ExposedConstructor ->
-                    case decBody of
-                        Declaration.PortDeclaration myPort ->
-                            True
+                        Exposed _ ->
+                            case decBody of
+                                Declaration.PortDeclaration myPort ->
+                                    True
 
-                        _ ->
-                            False
+                                _ ->
+                                    False
         )
         decls
 
@@ -261,95 +342,174 @@ hasPorts decls =
 getExposed : List Declaration -> List Expose.TopLevelExpose
 getExposed decls =
     List.filterMap
-        (\(Declaration exp _ decBody) ->
-            case exp of
-                NotExposed ->
+        (\decl ->
+            case decl of
+                Comment _ ->
                     Nothing
 
-                Exposed ->
-                    case decBody of
-                        Declaration.FunctionDeclaration fn ->
-                            let
-                                fnName =
-                                    denode (.name (denode fn.declaration))
-                            in
-                            Expose.FunctionExpose fnName
-                                |> Just
-
-                        Declaration.AliasDeclaration synonym ->
-                            let
-                                aliasName =
-                                    denode synonym.name
-                            in
-                            Expose.TypeOrAliasExpose aliasName
-                                |> Just
-
-                        Declaration.CustomTypeDeclaration myType ->
-                            let
-                                typeName =
-                                    denode myType.name
-                            in
-                            Expose.TypeOrAliasExpose typeName
-                                |> Just
-
-                        Declaration.PortDeclaration myPort ->
-                            let
-                                typeName =
-                                    denode myPort.name
-                            in
-                            Expose.FunctionExpose typeName
-                                |> Just
-
-                        Declaration.InfixDeclaration infix ->
+                Declaration exp _ decBody ->
+                    case exp of
+                        NotExposed ->
                             Nothing
 
-                        Declaration.Destructuring _ _ ->
-                            Nothing
+                        Exposed details ->
+                            case decBody of
+                                Declaration.FunctionDeclaration fn ->
+                                    let
+                                        fnName =
+                                            denode (.name (denode fn.declaration))
+                                    in
+                                    Expose.FunctionExpose fnName
+                                        |> Just
 
-                ExposedConstructor ->
-                    case decBody of
-                        Declaration.FunctionDeclaration fn ->
-                            let
-                                fnName =
-                                    denode (.name (denode fn.declaration))
-                            in
-                            Expose.FunctionExpose fnName
-                                |> Just
+                                Declaration.AliasDeclaration synonym ->
+                                    let
+                                        aliasName =
+                                            denode synonym.name
+                                    in
+                                    Expose.TypeOrAliasExpose aliasName
+                                        |> Just
 
-                        Declaration.AliasDeclaration synonym ->
-                            let
-                                aliasName =
-                                    denode synonym.name
-                            in
-                            Expose.TypeOrAliasExpose aliasName
-                                |> Just
+                                Declaration.CustomTypeDeclaration myType ->
+                                    let
+                                        typeName =
+                                            denode myType.name
+                                    in
+                                    if details.exposeConstructor then
+                                        Expose.TypeExpose
+                                            { name = typeName
+                                            , open = Just Range.emptyRange
+                                            }
+                                            |> Just
 
-                        Declaration.CustomTypeDeclaration myType ->
-                            let
-                                typeName =
-                                    denode myType.name
-                            in
-                            Expose.TypeExpose
-                                { name = typeName
-                                , open = Just Range.emptyRange
-                                }
-                                |> Just
+                                    else
+                                        Expose.TypeOrAliasExpose typeName
+                                            |> Just
 
-                        Declaration.PortDeclaration myPort ->
-                            let
-                                typeName =
-                                    denode myPort.name
-                            in
-                            Expose.FunctionExpose typeName
-                                |> Just
+                                Declaration.PortDeclaration myPort ->
+                                    let
+                                        typeName =
+                                            denode myPort.name
+                                    in
+                                    Expose.FunctionExpose typeName
+                                        |> Just
 
-                        Declaration.InfixDeclaration inf ->
-                            Nothing
+                                Declaration.InfixDeclaration infix ->
+                                    Nothing
 
-                        Declaration.Destructuring _ _ ->
-                            Nothing
+                                Declaration.Destructuring _ _ ->
+                                    Nothing
         )
         decls
+
+
+getExposedGroups :
+    List Declaration
+    -> List { group : Maybe String, members : List String }
+getExposedGroups decls =
+    List.filterMap
+        (\decl ->
+            case decl of
+                Comment _ ->
+                    Nothing
+
+                Declaration exp _ decBody ->
+                    case exp of
+                        NotExposed ->
+                            Nothing
+
+                        Exposed details ->
+                            case declName decl of
+                                Nothing ->
+                                    Nothing
+
+                                Just name ->
+                                    Just ( details.group, name )
+        )
+        decls
+        |> List.sortBy
+            (\( group, _ ) ->
+                case group of
+                    Nothing ->
+                        "zzzzzzzzz"
+
+                    Just name ->
+                        name
+            )
+        |> groupExposing
+
+
+matchName : Maybe a -> Maybe a -> Bool
+matchName one two =
+    case one of
+        Nothing ->
+            case two of
+                Nothing ->
+                    True
+
+                _ ->
+                    False
+
+        Just oneName ->
+            case two of
+                Nothing ->
+                    False
+
+                Just twoName ->
+                    oneName == twoName
+
+
+groupExposing : List ( Maybe String, String ) -> List { group : Maybe String, members : List String }
+groupExposing items =
+    List.foldr
+        (\( maybeGroup, name ) acc ->
+            case acc of
+                [] ->
+                    [ { group = maybeGroup, members = [ name ] } ]
+
+                top :: groups ->
+                    if matchName maybeGroup top.group then
+                        { group = top.group
+                        , members = name :: top.members
+                        }
+                            :: groups
+
+                    else
+                        { group = maybeGroup, members = [ name ] } :: acc
+        )
+        []
+        items
+
+
+declName : Declaration -> Maybe String
+declName decl =
+    case decl of
+        Comment _ ->
+            Nothing
+
+        Declaration exp _ decBody ->
+            case decBody of
+                Declaration.FunctionDeclaration fn ->
+                    denode (.name (denode fn.declaration))
+                        |> Just
+
+                Declaration.AliasDeclaration synonym ->
+                    denode synonym.name
+                        |> Just
+
+                Declaration.CustomTypeDeclaration myType ->
+                    denode myType.name
+                        |> Just
+
+                Declaration.PortDeclaration myPort ->
+                    denode myPort.name
+                        |> Just
+
+                Declaration.InfixDeclaration infix ->
+                    Nothing
+
+                Declaration.Destructuring _ _ ->
+                    Nothing
 
 
 getModule : Module -> ModuleName.ModuleName
@@ -360,7 +520,9 @@ getModule (Module name _) =
 type Expose
     = NotExposed
     | Exposed
-    | ExposedConstructor
+        { group : Maybe String
+        , exposeConstructor : Bool
+        }
 
 
 emptyModule : Module
@@ -631,6 +793,14 @@ unifiable one two =
                     ( one, two )
     in
     result
+
+
+
+-- unifiableHelper :
+--     Dict.Dict String Annotation.TypeAnnotation
+--     -> Annotation.TypeAnnotation
+--     -> Annotation.TypeAnnotation
+--     -> ( Dict.Dict String Annotation.TypeAnnotation, Result String Annotation.TypeAnnotation )
 
 
 unifiableHelper vars one two =

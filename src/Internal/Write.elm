@@ -31,8 +31,8 @@ import Pretty exposing (Doc)
 
 
 type alias File =
-    { moduleDefinition : Node Module
-    , imports : List (Node Import)
+    { moduleDefinition : Module
+    , imports : List Import
     , declarations : List Util.Declaration
     , comments : Maybe (Comments.Comment Comments.FileComment)
     }
@@ -47,52 +47,35 @@ used to go directly from a `File` to a `String`, if that is more convenient.
 -}
 prepareLayout : Int -> File -> Doc t
 prepareLayout width file =
-    let
-        layoutDeclComments decls =
-            List.map
-                (prettyDocComment width)
-                decls
-
-        ( innerFile, tags ) =
-            case file.comments of
-                Just comment ->
-                    let
-                        ( fileCommentStr, innerTags ) =
-                            Comments.prettyFileComment width comment
-                    in
-                    ( { moduleDefinition = file.moduleDefinition
-                      , imports = file.imports
-                      , declarations = layoutDeclComments file.declarations |> nodifyAll
-                      , comments = nodifyAll [ fileCommentStr ]
-                      }
-                    , innerTags
-                    )
-
-                Nothing ->
-                    ( { moduleDefinition = file.moduleDefinition
-                      , imports = file.imports
-                      , declarations = layoutDeclComments file.declarations |> nodifyAll
-                      , comments = []
-                      }
-                    , []
-                    )
-    in
-    prettyModule (denode innerFile.moduleDefinition)
+    prettyModule file.moduleDefinition
         |> Pretty.a Pretty.line
         |> Pretty.a Pretty.line
-        |> Pretty.a (prettyComments (denodeAll innerFile.comments))
-        |> Pretty.a (importsPretty innerFile)
-        |> Pretty.a (prettyDeclarations (denodeAll innerFile.declarations))
+        |> (\doc ->
+                case file.comments of
+                    Nothing ->
+                        doc
+
+                    Just fileComment ->
+                        let
+                            ( fileCommentStr, innerTags ) =
+                                Comments.prettyFileComment width fileComment
+                        in
+                        doc
+                            |> Pretty.a (prettyComments [ fileCommentStr ])
+                            |> Pretty.a Pretty.line
+           )
+        |> Pretty.a (importsPretty file.imports)
+        |> Pretty.a (prettyDeclarations file.declarations)
 
 
-importsPretty : Elm.Syntax.File.File -> Doc t
-importsPretty file =
-    case file.imports of
+importsPretty : List Import -> Doc t
+importsPretty imports =
+    case imports of
         [] ->
             Pretty.line
 
         _ ->
-            prettyImports (denodeAll file.imports)
+            prettyImports imports
                 |> Pretty.a Pretty.line
                 |> Pretty.a Pretty.line
                 |> Pretty.a Pretty.line
@@ -109,9 +92,9 @@ writeExpression exp =
         |> Pretty.pretty 80
 
 
-writeImports : List (Node Import) -> String
+writeImports : List Import -> String
 writeImports imports =
-    prettyImports (denodeAll imports)
+    prettyImports imports
         |> Pretty.pretty 80
 
 
@@ -318,19 +301,16 @@ prettyTopLevelExpose tlExpose =
                         |> Pretty.a (Pretty.string "(..)")
 
 
-
---== Declarations
-
-
 {-| Pretty prints a single top-level declaration.
 -}
 prettyDeclaration : Int -> Util.Declaration -> Doc t
 prettyDeclaration width decl =
-    let
-        innerDecl =
-            prettyDocComment width decl
-    in
-    prettyElmSyntaxDeclaration innerDecl
+    case decl of
+        Util.Declaration exp mods innerDecl ->
+            prettyElmSyntaxDeclaration innerDecl
+
+        Util.Comment content ->
+            Pretty.string content
 
 
 {-| Pretty prints an elm-syntax declaration.
@@ -357,29 +337,25 @@ prettyElmSyntaxDeclaration decl =
             prettyDestructuring (denode pattern) (denode expr)
 
 
-prettyDeclarations : List Elm.Syntax.Declaration.Declaration -> Doc t
+prettyDeclarations : List Util.Declaration -> Doc t
 prettyDeclarations decls =
-    List.map
-        (\decl ->
-            prettyElmSyntaxDeclaration decl
-                |> Pretty.a Pretty.line
+    List.foldl
+        (\decl doc ->
+            case decl of
+                Util.Comment content ->
+                    doc
+                        |> Pretty.a (Pretty.string (content ++ "\n\n"))
+                        |> Pretty.a Pretty.line
+
+                Util.Declaration _ _ innerDecl ->
+                    doc
+                        |> Pretty.a (prettyElmSyntaxDeclaration innerDecl)
+                        |> Pretty.a Pretty.line
+                        |> Pretty.a Pretty.line
+                        |> Pretty.a Pretty.line
         )
+        Pretty.empty
         decls
-        |> doubleLines
-
-
-{-| Pretty prints any doc comments on a declaration to string format, and provides
-the result as an elm-syntax declaration.
--}
-prettyDocComment : Int -> Util.Declaration -> Elm.Syntax.Declaration.Declaration
-prettyDocComment width decl =
-    -- case decl of
-    --     DeclWithComment comment declFn ->
-    --         declFn (Comments.prettyDocComment width comment)
-    --     DeclNoComment declNoComment ->
-    case decl of
-        Util.Declaration _ _ declaration ->
-            declaration
 
 
 {-| Pretty prints an Elm function, which may include documentation and a signature too.
