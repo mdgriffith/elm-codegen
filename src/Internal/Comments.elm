@@ -206,12 +206,8 @@ prettyCommentPart part =
 
 
 prettyMarkdown val =
-    -- List.map Pretty.string (String.words val)
-    --     |> Pretty.join Pretty.softline
-    -- Why is softline so slow?
     Pretty.string val
-        |> Pretty.a Pretty.line
-        |> Pretty.a Pretty.line
+
 
 
 prettyCode val =
