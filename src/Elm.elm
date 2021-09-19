@@ -10,14 +10,17 @@ module Elm exposing
     , caseOf, letIn, ifThen
     , apply
     , lambda, lambda2, lambda3, lambda4, lambda5, lambdaWith
-    , Declaration, comment, declaration
+    , Declaration
+    , comment, declaration
+    , withDocumentation
     , fn, fn2, fn3, fn4, fn5, functionWith
     , alias
     , customType, Variant, variant, variantWith
-    , withDocumentation, expose, exposeConstructor, exposeAndGroup, exposeConstructorAndGroup
+    , expose, exposeConstructor, exposeAndGroup, exposeConstructorAndGroup
     , equal, notEqual
     , append, cons
     , plus, minus, multiply, divide, intDivide, power
+    , lt, gt, lte, gte, and, or, compose, composeLeft
     , keep, skip
     , slash, question
     , portIncoming, portOutgoing
@@ -25,7 +28,6 @@ module Elm exposing
     , toString, expressionImports
     , declarationToString, declarationImports
     , pass
-    , and, compose, composeLeft, gt, gte, lt, lte, or
     )
 
 {-|
@@ -77,7 +79,10 @@ module Elm exposing
 @docs customType, Variant, variant, variantWith
 
 
-##
+## Exposing values
+
+If nothing is specifically tagged as being exposed for a module, then all values will be exposed via `(..)`
+
 
 @docs expose, exposeConstructor, exposeAndGroup, exposeConstructorAndGroup
 
@@ -90,7 +95,7 @@ module Elm exposing
 
 @docs plus, minus, multiply, divide, intDivide, power
 
-@dodcs lt, gt, lte, gte, and, or, compose, composeLeft
+@docs lt, gt, lte, gte, and, or, compose, composeLeft
 
 
 ## Parsing
@@ -227,6 +232,12 @@ renderStandardComment groups =
 
 
 {-| Same as `file`, but you have more control over how the module comment is generated!
+
+Pass in a function that determines how to render a `@doc` comment.
+
+Each exposed item is grouped based on the string used in `Elm.exposeAndGroup "my-group"`.
+
+
 -}
 fileWith :
     List String
@@ -305,7 +316,7 @@ render toDocComment fileDetails =
                         (Internal.Comments.addPart
                             Internal.Comments.emptyComment
                             (Internal.Comments.Markdown
-                                (addExposedGroups exposedGroups fileDetails.moduleComment)
+                                (toDocComment exposedGroups)
                             )
                         )
                 }
@@ -315,24 +326,6 @@ render toDocComment fileDetails =
     , contents = body
     }
 
-
-renderComments : { group : Maybe String, members : List String } -> String
-renderComments grouped =
-    "@docs " ++ String.join ", " grouped.members ++ "\n\n"
-
-
-addExposedGroups : List { group : Maybe String, members : List String } -> String -> String
-addExposedGroups groups commentStr =
-    if List.isEmpty groups then
-        commentStr
-
-    else
-        List.foldl
-            (\grouped str ->
-                str ++ "@docs " ++ String.join ", " grouped.members ++ "\n\n"
-            )
-            (commentStr ++ "\n\n")
-            groups
 
 
 reduceDeclarationImports : Module -> List Declaration -> ( Set.Set String, List Module ) -> ( Set.Set String, List Module )
@@ -449,7 +442,7 @@ valueFrom mod name =
     Compiler.Expression
         { expression =
             Exp.FunctionOrValue (Compiler.resolveModuleNameForValue mod)
-                name
+                (Compiler.sanitize name)
         , annotation = Err []
         , imports = [ mod ]
         , skip = False
@@ -473,7 +466,7 @@ Then, when that list is generated, it will automatically have the type signature
 valueWith : Module -> String -> Elm.Annotation.Annotation -> Expression
 valueWith mod name ann =
     Compiler.Expression
-        { expression = Exp.FunctionOrValue (Compiler.resolveModuleNameForValue mod) name
+        { expression = Exp.FunctionOrValue (Compiler.resolveModuleNameForValue mod) (Compiler.sanitize name)
         , annotation = Ok (Compiler.getInnerAnnotation ann)
         , imports = mod :: Compiler.getAnnotationImports ann
         , skip = False
@@ -1452,59 +1445,6 @@ declaration name (Compiler.Expression body) =
 
 
 
---{-| Declare a function. Here's an example with a let:
---    import Elm.Pattern as Pattern
---    Elm.function "myFunc"
---        [ Pattern.var "one"
---        , Pattern.var "two"
---        ]
---        (Elm.letIn
---            [ Let.value "added"
---                (Elm.add (Elm.value "one") (Elm.value "two))
---            ]
---            (Elm.add (Elm.value "added") (Elm.int 5))
---        )
---will generate
---    myFunc one two =
---        let
---            added =
---                one + two
---        in
---        added + 5
----}
---function : String -> List Pattern -> Expression -> Declaration
---function name args (Compiler.Expression body) =
---{ documentation = Compiler.nodifyMaybe Nothing
---, signature =
---    case body.annotation of
---        Ok sig ->
---            case args of
---                [] ->
---                    Just
---                        (Compiler.nodify
---                            { name = Compiler.nodify (Compiler.formatValue name)
---                            , typeAnnotation =
---                                Compiler.nodify sig
---                            }
---                        )
---                _ ->
---                    -- we dont know the types of the arguments
---                    -- maybe we only allow the `functionWith` version?
---                    Nothing
---        Err _ ->
---            Nothing
---, declaration =
---    Compiler.nodify
---        { name = Compiler.nodify (Compiler.formatValue name)
---        , arguments = Compiler.nodifyAll args
---        , expression = Compiler.nodify body.expression
---        }
---}
-
-
-
---    |> Declaration.FunctionDeclaration
---    |> Compiler.Declaration Compiler.NotExposed body.imports
 
 
 {-| -}
@@ -2391,17 +2331,41 @@ parse source =
                 exposedList =
                     Compiler.denode parsedFile.moduleDefinition
                         |> Elm.Syntax.Module.exposingList
+
+                declarations =
+                    List.map
+                        (\dec ->
+                            let
+                                declar =
+                                    Compiler.denode dec
+                            in
+                            ( Node.range dec
+                                |> (.start >> .row)
+                            , Compiler.Declaration
+                                (determineExposure declar exposedList)
+                                []
+                                declar
+                            )
+                        )
+                        parsedFile.declarations
+
+                comments =
+                    List.map
+                        (\nodedComment ->
+                            ( Node.range nodedComment
+                                |> (.start >> .row)
+                            , Compiler.Comment
+                                (Compiler.denode nodedComment)
+                            )
+                        )
+                        parsedFile.comments
             in
             Ok
                 { declarations =
-                    List.map
-                        (\dec ->
-                            Compiler.Declaration
-                                (determineExposure (Compiler.denode dec) exposedList)
-                                []
-                                (Compiler.denode dec)
-                        )
-                        parsedFile.declarations
+                    List.sortBy
+                        Tuple.first
+                        (declarations ++ comments)
+                        |> List.map Tuple.second
                 }
 
 

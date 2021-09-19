@@ -590,7 +590,12 @@ formatValue str =
             else
                 String.toLower (String.left 1 str) ++ String.dropLeft 1 str
     in
-    case formatted of
+    sanitize formatted
+
+
+sanitize : String -> String
+sanitize str =
+     case str of
         "in" ->
             "in_"
 
@@ -610,8 +615,7 @@ formatValue str =
             "exposing_"
 
         _ ->
-            formatted
-
+            str
 
 formatType : String -> String
 formatType str =
