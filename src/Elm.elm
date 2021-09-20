@@ -20,7 +20,8 @@ module Elm exposing
     , equal, notEqual
     , append, cons
     , plus, minus, multiply, divide, intDivide, power
-    , lt, gt, lte, gte, and, or, compose, composeLeft
+    , lt, gt, lte, gte, and, or
+    , pipe, pipeLeft, compose, composeLeft
     , keep, skip
     , slash, question
     , portIncoming, portOutgoing
@@ -83,7 +84,6 @@ module Elm exposing
 
 If nothing is specifically tagged as being exposed for a module, then all values will be exposed via `(..)`
 
-
 @docs expose, exposeConstructor, exposeAndGroup, exposeConstructorAndGroup
 
 
@@ -95,7 +95,9 @@ If nothing is specifically tagged as being exposed for a module, then all values
 
 @docs plus, minus, multiply, divide, intDivide, power
 
-@docs lt, gt, lte, gte, and, or, compose, composeLeft
+@docs lt, gt, lte, gte, and, or
+
+@docs pipe, pipeLeft, compose, composeLeft
 
 
 ## Parsing
@@ -237,7 +239,6 @@ Pass in a function that determines how to render a `@doc` comment.
 
 Each exposed item is grouped based on the string used in `Elm.exposeAndGroup "my-group"`.
 
-
 -}
 fileWith :
     List String
@@ -325,7 +326,6 @@ render toDocComment fileDetails =
         String.join "/" mod ++ ".elm"
     , contents = body
     }
-
 
 
 reduceDeclarationImports : Module -> List Declaration -> ( Set.Set String, List Module ) -> ( Set.Set String, List Module )
@@ -1444,9 +1444,6 @@ declaration name (Compiler.Expression body) =
         |> Compiler.Declaration Compiler.NotExposed body.imports
 
 
-
-
-
 {-| -}
 functionWith : String -> List ( Elm.Annotation.Annotation, Pattern ) -> Expression -> Declaration
 functionWith name args (Compiler.Expression body) =
@@ -2256,15 +2253,11 @@ question =
 
 {-| `|>`
 
-These arent expose on purpose.
-
-The idea would be to do this automatically if appropriate
-
     Elm.value "thang"
         |> Elm.pipe (Elm.value "thang2")
         |> Elm.pipe (Elm.value "thang3")
 
-    Results in
+Results in
 
     thang
         |> thang2
