@@ -7,11 +7,11 @@
     elm-prefab Gen.elm --watch
         -> recompile and run when the file changes
 
-    elm-prefab elm/json --output=./dir
+    elm-prefab install elm/json --output=./dir
         -> generate bindings for the elm/json package based on it's docs.json
         -> puts generated code in ./dir
 
-    elm-prefab docs.json
+    elm-prefab install docs.json
         -> same as above, but from a local set of docs
 
 */
@@ -264,7 +264,7 @@ function action(cmd, pkg, options, com) {
             }
             else if (cmd == "install" && !!pkg) {
                 if (pkg.endsWith(".json")) {
-                    console.log(format_block(["Installing via json from " + chalk_1.default.cyan(pkg)]));
+                    console.log(format_block(["Installing via docs.json from " + chalk_1.default.cyan(pkg)]));
                     docs = JSON.parse(fs.readFileSync(pkg).toString());
                     run_package_generator(install_dir, docs);
                 }
@@ -312,7 +312,5 @@ program
     .option("--output <dir>", "The directory where your generated files should go.")
     .option("--flags-from <file>", "The file to feed to your elm app as flags.  If it has a json extension, it will be handed in as json.")
     .option("--flags <json>", "Json to pass to your elm app.  if --flags-from is given, that will take precedence.")
-    //   .option('--import <file>', 'Parse an existing elm file and provide it to your generator')
-    //   .option('--import-dir <dir>', 'Parse an directory of existing elm files and provide them to your generator. If this is called with --flags, then a tuple will be passed to your generator.')
     .action(action);
 program.parseAsync();

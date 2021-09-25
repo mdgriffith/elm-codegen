@@ -6,11 +6,11 @@
     elm-prefab Gen.elm --watch
         -> recompile and run when the file changes
 
-    elm-prefab elm/json --output=./dir
+    elm-prefab install elm/json --output=./dir
         -> generate bindings for the elm/json package based on it's docs.json
         -> puts generated code in ./dir
 
-    elm-prefab docs.json
+    elm-prefab install docs.json
         -> same as above, but from a local set of docs
 
 */
@@ -21,9 +21,9 @@ import * as path from "path"
 import * as fs from "fs"
 import { XMLHttpRequest } from "./run/vendor/XMLHttpRequest"
 import * as chokidar from "chokidar"
-import * as https from "https"
 import fetch from "node-fetch"
 import chalk from "chalk"
+import templates from "./templates"
 const gen_package = require("./gen-package")
 
 // We have to stub this in the allow Elm the ability to make http requests.
@@ -299,9 +299,9 @@ async function init(install_dir : string) {
 
   fs.mkdirSync(`./${install_dir}`)
   fs.mkdirSync(`./${install_dir}/Elm`)
-  fs.writeFileSync(`./${install_dir}/elm.json`, elm_json_file)
-  fs.writeFileSync(`./${install_dir}/Generate.elm`, elm_starter_file)
-  fs.writeFileSync(`./${install_dir}/Elm/Gen.elm`, elm_gen_file)
+  fs.writeFileSync(`./${install_dir}/elm.json`, templates.init.elmJson())
+  fs.writeFileSync(`./${install_dir}/Generate.elm`, templates.init.starter())
+  fs.writeFileSync(`./${install_dir}/Elm/Gen.elm`, templates.init.elmGen())
   install("elm/core", install_dir, null)
 
   console.log(
@@ -315,6 +315,25 @@ async function init(install_dir : string) {
 }
 
 
+// INIT
+//    Start a new elm-prefab project
+//    Generates some files and installs `core`
+async function make(elm_file: string, moduleName: string, target_dir: string, base: string, flags: any) {
+
+  try {
+    const data = elm_compiler.compileToStringSync([elm_file], { cwd: base, optimize: true, processOpts: {stdio: [null, null, 'inherit']} })
+
+    // @ts-ignore
+    return new run_generator(target_dir, moduleName, data.toString(), flags)
+
+  } catch (error : unknown) {
+    // This is generally an elm make error from the elm_compiler
+    console.log(error)
+  }
+}
+
+
+
 
 async function action(cmd: string, pkg: string | null, options: Options, com: any) {
 
@@ -325,7 +344,7 @@ async function action(cmd: string, pkg: string | null, options: Options, com: an
     init(install_dir)
   } else if (cmd == "install" && !!pkg) {
     if (pkg.endsWith(".json")) {
-      console.log(format_block(["Installing via json from " + chalk.cyan(pkg)]))
+      console.log(format_block(["Installing via docs.json from " + chalk.cyan(pkg)]))
       let docs = JSON.parse(fs.readFileSync(pkg).toString())
       run_package_generator(install_dir, docs)
     } else {
@@ -371,8 +390,6 @@ program
     "The file to feed to your elm app as flags.  If it has a json extension, it will be handed in as json."
   )
   .option("--flags <json>", "Json to pass to your elm app.  if --flags-from is given, that will take precedence.")
-  //   .option('--import <file>', 'Parse an existing elm file and provide it to your generator')
-  //   .option('--import-dir <dir>', 'Parse an directory of existing elm files and provide them to your generator. If this is called with --flags, then a tuple will be passed to your generator.')
   .action(action)
 
 program.parseAsync()
