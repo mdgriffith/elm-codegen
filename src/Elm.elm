@@ -1,11 +1,11 @@
 module Elm exposing
     ( File, file
     , Expression
-    , withType
-    , value, valueFrom, valueWith
-    , Module, local, moduleName, moduleAs
     , bool, int, float, char, string, hex, unit
     , maybe, list, tuple, triple
+    , value, valueFrom, valueWith
+    , withType
+    , Module, local, moduleName, moduleAs
     , record, get, updateRecord
     , caseOf, letIn, ifThen
     , apply
@@ -14,9 +14,11 @@ module Elm exposing
     , comment, declaration
     , withDocumentation
     , fn, fn2, fn3, fn4, fn5, functionWith
-    , alias
     , customType, Variant, variant, variantWith
-    , expose, exposeConstructor, exposeAndGroup, exposeConstructorAndGroup
+    , alias
+    , expose, exposeConstructor
+    , exposeAndGroup, exposeConstructorAndGroup
+    , fileWith
     , equal, notEqual
     , append, cons
     , plus, minus, multiply, divide, intDivide, power
@@ -35,20 +37,23 @@ module Elm exposing
 
 @docs File, file
 
-@docs Expression
-
-@docs withType
-
-@docs value, valueFrom, valueWith
-
-@docs Module, local, moduleName, moduleAs
-
 
 ## Basics
+
+@docs Expression
 
 @docs bool, int, float, char, string, hex, unit
 
 @docs maybe, list, tuple, triple
+
+@docs value, valueFrom, valueWith
+
+@docs withType
+
+
+## Module names
+
+@docs Module, local, moduleName, moduleAs
 
 
 ## Records
@@ -75,16 +80,32 @@ module Elm exposing
 
 @docs fn, fn2, fn3, fn4, fn5, functionWith
 
-@docs alias
+
+## Custom Types
 
 @docs customType, Variant, variant, variantWith
+
+@docs alias
 
 
 ## Exposing values
 
-If nothing is specifically tagged as being exposed for a module, then all values will be exposed via `(..)`
+By default, everything is exposed for your module.
 
-@docs expose, exposeConstructor, exposeAndGroup, exposeConstructorAndGroup
+However, you can tag specific declarations you want exposed, and then only those things will be exposed.
+
+@docs expose, exposeConstructor
+
+
+## Grouping exposed values in the module comment
+
+You can also add a group tag to an exposed value. This will automatically group the `docs` statements in the module docs.
+
+For precise control over what is rendered for the module comment, use [fileWith](#fileWith)
+
+@docs exposeAndGroup, exposeConstructorAndGroup
+
+@docs fileWith
 
 
 # Operators
@@ -233,11 +254,11 @@ renderStandardComment groups =
             groups
 
 
-{-| Same as `file`, but you have more control over how the module comment is generated!
+{-| Same as [file](#file), but you have more control over how the module comment is generated!
 
 Pass in a function that determines how to render a `@doc` comment.
 
-Each exposed item is grouped based on the string used in `Elm.exposeAndGroup "my-group"`.
+Each exposed item is grouped based on the string used in [exposeAndGroup](#exposeAndGroup)
 
 -}
 fileWith :
@@ -474,6 +495,11 @@ valueWith mod name ann =
 
 
 {-| Sometimes you may need to add a manual type annotation.
+
+    import Elm.Annotation as Type
+
+    Elm.value "myString"
+        |> Elm.withType (Type.string)
 
 Though be sure elm-prefab isn't already doing this automatically for you!
 
@@ -799,7 +825,7 @@ Check out `Elm.Let` to add things to it.
         [ Let.value "one" (Elm.int 5)
         , Let.value "two" (Elm.int 10)
         ]
-        (Elm.add (Elm.value "one) (Elm.value "two))
+        (Elm.add (Elm.value "one") (Elm.value "two"))
 
 -}
 letIn : List Let.Declaration -> Expression -> Expression
@@ -1814,11 +1840,16 @@ exposeConstructorAndGroup =
 
     import Elm.Annotation as Type
 
-    Elm.portIncoming "receiveMessageFromTheWorld" [ Type.string, Type.int ]
+    Elm.portIncoming "receiveMessageFromTheWorld"
+        [ Type.string
+        , Type.int
+        ]
 
 Results in
 
-    port receiveMessageFromTheWorld : (String -> Int -> msg) -> Sub msg
+    port receiveMessageFromTheWorld :
+            (String -> Int -> msg)
+                -> Sub msg
 
 **Note** You generally only need one incoming and one outgoing port!
 
