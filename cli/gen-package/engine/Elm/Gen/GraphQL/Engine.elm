@@ -1,4 +1,4 @@
-module Elm.Gen.GraphQL.Engine exposing (arg, decodeId, encodeId, encodeOptionals, enum, field, fieldWith, id_, map, map2, maybeEnum, maybeScalarEncode, moduleName_, mutation, nullable, object, objectWith, optional, query, queryString, recover, select, typeArgument, typeId, typeMutation, typeOptional, typeQuery, typeSelection, union, with)
+module Elm.Gen.GraphQL.Engine exposing (arg, decodeId, encodeId, encodeOptionals, enum, field, fieldWith, id_, make_, map, map2, maybeEnum, maybeScalarEncode, moduleName_, mutation, nullable, object, objectWith, optional, query, queryString, recover, select, types_, union, with)
 
 {-| 
 -}
@@ -12,6 +12,55 @@ import Elm.Annotation as Type
 moduleName_ : List String
 moduleName_ =
     [ "GraphQL", "Engine" ]
+
+
+types_ :
+    { id : Type.Annotation
+    , argument : Type.Annotation
+    , mutation : Type.Annotation
+    , query : Type.Annotation
+    , optional : Type.Annotation -> Type.Annotation
+    , selection : Type.Annotation -> Type.Annotation -> Type.Annotation
+    }
+types_ =
+    { id = Type.named moduleName_ "Id"
+    , argument = Type.named moduleName_ "Argument"
+    , mutation = Type.named moduleName_ "Mutation"
+    , query = Type.named moduleName_ "Query"
+    , optional = \arg0 -> Type.namedWith moduleName_ "Optional" [ arg0 ]
+    , selection =
+        \arg0 arg1 -> Type.namedWith moduleName_ "Selection" [ arg0, arg1 ]
+    }
+
+
+make_ :
+    { argument :
+        { argValue : Elm.Expression -> Elm.Expression -> Elm.Expression
+        , var : Elm.Expression -> Elm.Expression
+        }
+    }
+make_ =
+    { argument =
+        { argValue =
+            \ar0 ar1 ->
+                Elm.apply
+                    (Elm.valueWith
+                        moduleName_
+                        "ArgValue"
+                        (Type.namedWith [] "Argument" [])
+                    )
+                    [ ar0, ar1 ]
+        , var =
+            \ar0 ->
+                Elm.apply
+                    (Elm.valueWith
+                        moduleName_
+                        "Var"
+                        (Type.namedWith [] "Argument" [])
+                    )
+                    [ ar0 ]
+        }
+    }
 
 
 {-| Used in generated code to handle maybes
@@ -212,13 +261,6 @@ union arg1 =
 
 
 {-| -}
-typeSelection =
-    { annotation =
-        \arg0 arg1 -> Type.namedWith moduleName_ "Selection" [ arg0, arg1 ]
-    }
-
-
-{-| -}
 select : Elm.Expression -> Elm.Expression
 select arg1 =
     Elm.apply
@@ -367,11 +409,6 @@ arg arg1 arg2 =
         [ arg1, arg2 ]
 
 
-{-| -}
-typeOptional =
-    { annotation = \arg0 -> Type.namedWith moduleName_ "Optional" [ arg0 ] }
-
-
 {-|
 
     Encode the nullability in the argument itself.
@@ -395,12 +432,6 @@ optional arg1 arg2 =
             )
         )
         [ arg1, arg2 ]
-
-
-{-| -}
-typeQuery : { annotation : Type.Annotation }
-typeQuery =
-    { annotation = Type.named moduleName_ "Query" }
 
 
 {-| -}
@@ -440,12 +471,6 @@ query arg1 arg2 =
             )
         )
         [ arg1, arg2 ]
-
-
-{-| -}
-typeMutation : { annotation : Type.Annotation }
-typeMutation =
-    { annotation = Type.named moduleName_ "Mutation" }
 
 
 {-| -}
@@ -504,37 +529,6 @@ queryString arg1 =
         [ arg1 ]
 
 
-{-| We can also accept:
-
-  - Enum values (unquoted)
-  - custom scalars
-
-But we can define anything else in terms of these:
-
--}
-typeArgument =
-    { annotation = Type.named moduleName_ "Argument"
-    , argValue =
-        \ar0 ar1 ->
-            Elm.apply
-                (Elm.valueWith
-                    moduleName_
-                    "ArgValue"
-                    (Type.namedWith [] "Argument" [])
-                )
-                [ ar0, ar1 ]
-    , var =
-        \ar0 ->
-            Elm.apply
-                (Elm.valueWith
-                    moduleName_
-                    "Var"
-                    (Type.namedWith [] "Argument" [])
-                )
-                [ ar0 ]
-    }
-
-
 {-| -}
 maybeScalarEncode :
     (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
@@ -553,12 +547,6 @@ maybeScalarEncode arg1 arg2 =
             )
         )
         [ arg1 Elm.pass, arg2 ]
-
-
-{-| -}
-typeId : { annotation : Type.Annotation }
-typeId =
-    { annotation = Type.named moduleName_ "Id" }
 
 
 {-| -}

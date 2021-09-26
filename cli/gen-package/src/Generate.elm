@@ -32,7 +32,7 @@ main =
                     Ok docs ->
                         ( ()
                         , Elm.Gen.files
-                            (List.map (moduleToFile) docs)
+                            (List.map moduleToFile docs)
                         )
         , update =
             \msg model ->
@@ -55,12 +55,7 @@ moduleToFile docs =
 
         modNameBlock =
             Elm.declaration "moduleName_"
-                (
-
-
-                        (Elm.list (List.map Elm.string sourceModName))
-
-                )
+                (Elm.list (List.map Elm.string sourceModName))
                 |> Elm.withDocumentation " The name of this module. "
                 |> Elm.expose
 
@@ -77,11 +72,12 @@ moduleToFile docs =
             \docGroups ->
                 ""
         , aliases =
-            [ ( [ "Elm", "Annotation" ], "Type")
-
+            [ ( [ "Elm", "Annotation" ], "Type" )
             ]
         }
         (modNameBlock
+            :: generateTypeRecord blocks []
+            :: generateTypeBuilderRecord blocks []
             :: List.concatMap generateBlocks blocks
             ++ [ ids ]
         )
@@ -89,7 +85,7 @@ moduleToFile docs =
 
 elmAnnotation : List String
 elmAnnotation =
-     [ "Elm", "Annotation" ]
+    [ "Elm", "Annotation" ]
 
 
 annotationType : Annotation.Annotation
@@ -99,12 +95,12 @@ annotationType =
 
 elm : List String
 elm =
-     [ "Elm" ]
+    [ "Elm" ]
 
 
 local : List String
 local =
-     []
+    []
 
 
 thisModuleName : Elm.Expression
@@ -124,8 +120,6 @@ annotationNamed name tags =
             GenType.named thisModuleName
                 (Elm.string name)
 
-
-
         nonEmpty ->
             Elm.lambdaWith
                 (List.indexedMap
@@ -137,22 +131,19 @@ annotationNamed name tags =
                     nonEmpty
                 )
                 (GenType.namedWith
-
                     thisModuleName
                     (Elm.string name)
                     (Elm.list
                         (List.indexedMap
                             (\i arg ->
                                 Elm.value ("arg" ++ String.fromInt i)
+                                    |> Elm.withType
+                                        (Annotation.named elmAnnotation "Annotation")
                             )
                             nonEmpty
-                        ))
-
+                        )
+                    )
                 )
-
-
-
-
 
 
 valueWith : Elm.Expression -> Elm.Expression -> Elm.Type.Type -> Elm.Expression
@@ -166,19 +157,6 @@ valueWith mod name annotation =
 apply : Elm.Expression -> List Elm.Expression -> Elm.Expression
 apply fn args =
     ElmGen.apply fn (Elm.list args)
-
-
-chooseName base tags =
-    case tags of
-        [] ->
-            base
-
-        ( name, _ ) :: rest ->
-            if name == base then
-                chooseName (base ++ "_") rest
-
-            else
-                chooseName base rest
 
 
 blockToIdField : Elm.Docs.Block -> Maybe Elm.Field
@@ -210,6 +188,164 @@ blockToIdField block =
             Nothing
 
 
+{-| Types are referenced via a big record.
+
+    types =
+        { mutation :
+            { annotation: arg1 -> Elm.Annotation }
+        , make :
+            { ...variants that can be made
+            }
+
+        }
+
+This creates that record
+
+-}
+generateTypeBuilderRecord : List Elm.Docs.Block -> List Elm.Field -> Elm.Declaration
+generateTypeBuilderRecord blocks fields =
+    case blocks of
+        [] ->
+            Elm.declaration "make_"
+                (Elm.record fields)
+                |> Elm.expose
+
+        top :: remain ->
+            case generateTypeBuilderRecordHelper top of
+                Nothing ->
+                    generateTypeBuilderRecord remain fields
+
+                Just field ->
+                    generateTypeBuilderRecord remain (field :: fields)
+
+generateTypeBuilderRecordHelper : Elm.Docs.Block ->
+generateTypeBuilderRecordHelper block =
+    case block of
+        Elm.Docs.MarkdownBlock str ->
+            Nothing
+
+        Elm.Docs.UnionBlock union ->
+            case union.tags of
+                [] ->
+                    -- This type has not been exposed and can't be constructed
+                    Nothing
+
+                _ ->
+                    Elm.field union.name
+                        (Elm.record
+                            (List.map
+                                (\( name, tags ) ->
+                                    case tags of
+                                        [] ->
+                                            Elm.field name
+                                                (valueWith thisModuleName
+                                                    (Elm.string name)
+                                                    (Elm.Type.Type union.name
+                                                        (List.map Elm.Type.Var union.args)
+                                                    )
+                                                )
+
+                                        _ ->
+                                            Elm.field name
+                                                (Elm.lambdaWith
+                                                    (List.indexedMap
+                                                        (\i tag ->
+                                                            ( Pattern.var ("ar" ++ String.fromInt i)
+                                                            , expressionType
+                                                            )
+                                                        )
+                                                        tags
+                                                    )
+                                                    (apply
+                                                        (valueWith thisModuleName
+                                                            (Elm.string name)
+                                                            (Elm.Type.Type union.name
+                                                                (List.map Elm.Type.Var union.args)
+                                                            )
+                                                        )
+                                                        (List.indexedMap
+                                                            (\i tag ->
+                                                                Elm.value ("ar" ++ String.fromInt i)
+                                                                    |> Elm.withType expressionType
+                                                            )
+                                                            tags
+                                                        )
+                                                    )
+                                                )
+                                )
+                                union.tags
+                            )
+                        )
+                        |> Just
+
+        Elm.Docs.AliasBlock alias ->
+            Nothing
+
+        Elm.Docs.ValueBlock value ->
+            Nothing
+
+        Elm.Docs.BinopBlock binop ->
+            Nothing
+
+        Elm.Docs.UnknownBlock str ->
+            Nothing
+
+
+{-| Types are referenced via a big record.
+
+    types =
+        { mutation :
+            { annotation: arg1 -> Elm.Annotation }
+        , make :
+            { ...variants that can be made
+            }
+
+        }
+
+This creates that record
+
+-}
+generateTypeRecord : List Elm.Docs.Block -> List Elm.Field -> Elm.Declaration
+generateTypeRecord blocks fields =
+    case blocks of
+        [] ->
+            Elm.declaration "types_"
+                (Elm.record fields)
+                |> Elm.expose
+
+        top :: remain ->
+            case generateTypeRecordHelper top of
+                Nothing ->
+                    generateTypeRecord remain fields
+
+                Just field ->
+                    generateTypeRecord remain (field :: fields)
+
+generateTypeRecordHelper : Elm.Docs.Block -> Maybe Elm.Field
+generateTypeRecordHelper block =
+    case block of
+        Elm.Docs.MarkdownBlock str ->
+            Nothing
+
+        Elm.Docs.UnionBlock union ->
+            Elm.field union.name (annotationNamed union.name union.args)
+                |> Just
+
+        Elm.Docs.AliasBlock alias ->
+            Elm.field alias.name
+                (annotationNamed alias.name alias.args)
+                |> Just
+
+        Elm.Docs.ValueBlock value ->
+            Nothing
+
+        Elm.Docs.BinopBlock binop ->
+            Nothing
+
+        Elm.Docs.UnknownBlock str ->
+            Nothing
+
+
 generateBlocks : Elm.Docs.Block -> List Elm.Declaration
 generateBlocks block =
     case block of
@@ -220,68 +356,10 @@ generateBlocks block =
             -- we need a way to expose both the constructors and
             -- the annotation
             -- It's also possible no contructors are exposed.
-            [ Elm.declaration ("type" ++ union.name)
-                (Elm.record
-                    (Elm.field
-                        (chooseName "annotation" union.tags)
-                        (annotationNamed union.name union.args)
-                        :: List.map
-                            (\( name, tags ) ->
-                                case tags of
-                                    [] ->
-                                        Elm.field name
-                                             (valueWith thisModuleName
-                                            (Elm.string name)
-                                            (Elm.Type.Type union.name
-                                                (List.map Elm.Type.Var union.args)
-                                            ))
-
-
-                                    _ ->
-                                        Elm.field name
-                                        ( Elm.lambdaWith
-                                            (List.indexedMap
-                                                (\i tag ->
-                                                    ( Pattern.var ("ar" ++ String.fromInt i)
-                                                    , Annotation.named elmAnnotation "Annotation"
-                                                    )
-                                                )
-                                                tags
-                                            )
-                                            (apply
-                                                (valueWith thisModuleName
-                                                    (Elm.string name)
-                                                    (Elm.Type.Type union.name
-                                                        (List.map Elm.Type.Var union.args)
-                                                    )
-                                                )
-                                                (List.indexedMap
-                                                    (\i tag ->
-                                                        Elm.value ("ar" ++ String.fromInt i)
-                                                    )
-                                                    tags
-                                                )
-                                            )
-                                        )
-                            )
-                            union.tags
-                    )
-                )
-                |> Elm.withDocumentation union.comment
-                |> Elm.expose
-            ]
+            []
 
         Elm.Docs.AliasBlock alias ->
-            [ Elm.declaration ("alias" ++ alias.name)
-                (Elm.record
-                    [ Elm.field "annotation"
-                       (annotationNamed alias.name alias.args)
-
-                    ]
-                )
-                |> Elm.withDocumentation alias.comment
-                |> Elm.expose
-            ]
+            []
 
         Elm.Docs.ValueBlock value ->
             case value.tipe of
@@ -507,7 +585,6 @@ chompLambdas exps tipe =
                 (typeToExpression tipe)
 
 
-
 typeToExpression : Elm.Type.Type -> Elm.Expression
 typeToExpression elmType =
     case elmType of
@@ -558,7 +635,6 @@ typeToExpression elmType =
                             )
                         )
 
-
                 Just base ->
                     GenType.extensible
                         (Elm.string base)
@@ -574,18 +650,18 @@ typeToExpression elmType =
                         )
 
 
-
-
 namedWithType : String -> List Elm.Type.Type -> Elm.Expression
 namedWithType name types =
     let
-        frags = String.split "." name
+        frags =
+            String.split "." name
     in
     case frags of
         [ "List", "List" ] ->
             case types of
                 [ inner ] ->
                     GenType.list (typeToExpression inner)
+
                 _ ->
                     GenType.unit
 
@@ -593,6 +669,7 @@ namedWithType name types =
             case types of
                 [ inner ] ->
                     GenType.maybe (typeToExpression inner)
+
                 _ ->
                     GenType.unit
 
@@ -610,8 +687,6 @@ namedWithType name types =
 
         _ ->
             let
-
-
                 fragsLength =
                     List.length frags
 
@@ -624,5 +699,3 @@ namedWithType name types =
                 (Elm.list (List.map Elm.string (List.take (fragsLength - 1) frags)))
                 (Elm.string typeName)
                 (Elm.list (List.map typeToExpression types))
-
-
