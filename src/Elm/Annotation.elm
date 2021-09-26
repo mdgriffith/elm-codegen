@@ -1,7 +1,8 @@
 module Elm.Annotation exposing
     ( Annotation, var, bool, int, float, string, char, unit
     , named, namedWith
-    , list, tuple, triple, set, dict, maybe, record, extensible
+    , maybe, list, tuple, triple, set, dict, result
+    , record, extensible
     , function
     , toString
     )
@@ -12,7 +13,9 @@ module Elm.Annotation exposing
 
 @docs named, namedWith
 
-@docs list, tuple, triple, set, dict, maybe, record, extensible
+@docs maybe, list, tuple, triple, set, dict, result
+
+@docs record, extensible
 
 @docs function
 
@@ -28,15 +31,6 @@ import Internal.Compiler as Compiler
 {-| -}
 type alias Annotation =
     Compiler.Annotation
-
-
-type alias Declaration =
-    Compiler.Declaration
-
-
-{-| -}
-type alias Module =
-    Compiler.Module
 
 
 {-| -}
@@ -99,6 +93,12 @@ unit =
 list : Annotation -> Annotation
 list inner =
     typed [] "List" [ inner ]
+
+
+{-| -}
+result : Annotation -> Annotation -> Annotation
+result err ok =
+    typed [] "Result" [ err, ok ]
 
 
 {-| -}
@@ -197,13 +197,13 @@ extensible base fields =
 
 
 {-| -}
-named : Module -> String -> Annotation
+named : List String -> String -> Annotation
 named mod name =
     Compiler.Annotation
         { annotation =
             Annotation.Typed
                 (Compiler.nodify
-                    ( Compiler.resolveModuleName mod, Compiler.formatType name )
+                    ( mod, Compiler.formatType name )
                 )
                 []
         , imports = [ mod ]
@@ -211,11 +211,16 @@ named mod name =
 
 
 {-| -}
-namedWith : Module -> String -> List Annotation -> Annotation
+namedWith : List String -> String -> List Annotation -> Annotation
 namedWith mod name args =
     Compiler.Annotation
         { annotation =
-            Annotation.Typed (Compiler.nodify ( Compiler.resolveModuleName mod, Compiler.formatType name ))
+            Annotation.Typed
+                (Compiler.nodify
+                    ( mod
+                    , Compiler.formatType name
+                    )
+                )
                 (Compiler.nodifyAll
                     (List.map Compiler.getInnerAnnotation
                         args

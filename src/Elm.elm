@@ -5,8 +5,7 @@ module Elm exposing
     , maybe, list, tuple, triple
     , value, valueFrom, valueWith
     , withType
-    , Module, local, moduleName, moduleAs
-    , record, get, updateRecord
+    , record, field, Field, get, updateRecord
     , caseOf, letIn, ifThen
     , apply
     , lambda, lambda2, lambda3, lambda4, lambda5, lambdaWith
@@ -51,14 +50,9 @@ module Elm exposing
 @docs withType
 
 
-## Module names
-
-@docs Module, local, moduleName, moduleAs
-
-
 ## Records
 
-@docs record, get, updateRecord
+@docs record, field, Field, get, updateRecord
 
 
 ## Flow control
@@ -171,11 +165,6 @@ import Set
 
 
 {-| -}
-type alias Module =
-    Compiler.Module
-
-
-{-| -}
 type alias Expression =
     Compiler.Expression
 
@@ -183,7 +172,7 @@ type alias Expression =
 {-| -}
 expressionImports : Expression -> String
 expressionImports (Compiler.Expression exp) =
-    List.filterMap Compiler.makeImport exp.imports
+    List.filterMap (Compiler.makeImport []) exp.imports
         |> Internal.Write.writeImports
 
 
@@ -198,7 +187,7 @@ declarationImports : Declaration -> String
 declarationImports decl =
     case decl of
         Compiler.Declaration _ imps _ ->
-            List.filterMap Compiler.makeImport imps
+            List.filterMap (Compiler.makeImport []) imps
                 |> Internal.Write.writeImports
 
         Compiler.Comment _ ->
@@ -220,17 +209,14 @@ declarationToString dec =
 
 -}
 file : List String -> List Declaration -> File
-file pieces decs =
-    let
-        mod =
-            moduleName pieces
-    in
+file mod decs =
     render renderStandardComment
         { moduleDefinition = mod
         , imports =
             reduceDeclarationImports mod decs ( Set.empty, [] )
                 |> Tuple.second
         , body = decs
+        , aliases = []
         , moduleComment = ""
         }
 
@@ -264,24 +250,23 @@ Each exposed item is grouped based on the string used in [exposeAndGroup](#expos
 fileWith :
     List String
     ->
-        (List
-            { group : Maybe String
-            , members : List String
-            }
-         -> String
-        )
+        { docs :
+            List
+                { group : Maybe String
+                , members : List String
+                }
+            -> String
+        , aliases : List ( List String, String )
+        }
     -> List Declaration
     -> File
-fileWith pieces toDocComment decs =
-    let
-        mod =
-            moduleName pieces
-    in
-    render toDocComment
+fileWith mod options decs =
+    render options.docs
         { moduleDefinition = mod
         , imports =
             reduceDeclarationImports mod decs ( Set.empty, [] )
                 |> Tuple.second
+        , aliases = options.aliases
         , body = decs
         , moduleComment = ""
         }
@@ -300,7 +285,7 @@ render :
 render toDocComment fileDetails =
     let
         mod =
-            Compiler.getModule fileDetails.moduleDefinition
+            fileDetails.moduleDefinition
 
         exposed =
             Compiler.getExposed fileDetails.body
@@ -330,8 +315,9 @@ render toDocComment fileDetails =
                                             (Compiler.nodifyAll exposed)
                                         )
                         }
+                , aliases = fileDetails.aliases
                 , imports =
-                    List.filterMap Compiler.makeImport fileDetails.imports
+                    List.filterMap (Compiler.makeImport fileDetails.aliases) fileDetails.imports
                 , declarations = fileDetails.body
                 , comments =
                     Just
@@ -347,6 +333,10 @@ render toDocComment fileDetails =
         String.join "/" mod ++ ".elm"
     , contents = body
     }
+
+
+type alias Module =
+    List String
 
 
 reduceDeclarationImports : Module -> List Declaration -> ( Set.Set String, List Module ) -> ( Set.Set String, List Module )
@@ -402,67 +392,24 @@ type InternalFile
 type alias FileDetails =
     { moduleDefinition : Module
     , imports : List Module
+    , aliases : List ( Module, String )
     , body : List Declaration
     , moduleComment : String
     }
 
 
-{-| A modules name
-
-        Elm.moduleName
-            [ "Html"
-            , "Attributes"
-            ]
-
-    will refer to
-
-        Html.Attributes
-
-Note also that this will force capitalization on each segment to prevent silly errors.
-
--}
-moduleName : List String -> Module
-moduleName =
-    Compiler.inModule
-
-
-{-| A modules name
-
-        Elm.moduleAs
-            [ "Html"
-            , "Attributes"
-            ]
-            "Html"
-
-    will refer to
-
-        Html.Attributes as Html
-
--}
-moduleAs : List String -> String -> Module
-moduleAs =
-    Compiler.moduleAs
-
-
-{-| Reference values that are in the file you're working on.
--}
-local : Module
-local =
-    Compiler.inModule []
-
-
 {-| -}
 value : String -> Expression
 value =
-    valueFrom local
+    valueFrom []
 
 
 {-| -}
-valueFrom : Module -> String -> Expression
+valueFrom : List String -> String -> Expression
 valueFrom mod name =
     Compiler.Expression
         { expression =
-            Exp.FunctionOrValue (Compiler.resolveModuleNameForValue mod)
+            Exp.FunctionOrValue mod
                 (Compiler.sanitize name)
         , annotation = Err []
         , imports = [ mod ]
@@ -484,10 +431,10 @@ So, for example, if we have.
 Then, when that list is generated, it will automatically have the type signature `List String`
 
 -}
-valueWith : Module -> String -> Elm.Annotation.Annotation -> Expression
+valueWith : List String -> String -> Elm.Annotation.Annotation -> Expression
 valueWith mod name ann =
     Compiler.Expression
-        { expression = Exp.FunctionOrValue (Compiler.resolveModuleNameForValue mod) (Compiler.sanitize name)
+        { expression = Exp.FunctionOrValue mod (Compiler.sanitize name)
         , annotation = Ok (Compiler.getInnerAnnotation ann)
         , imports = mod :: Compiler.getAnnotationImports ann
         , skip = False
@@ -527,7 +474,7 @@ unit =
 {-| -}
 bool : Bool -> Expression
 bool on =
-    valueWith local
+    valueWith []
         (if on then
             "True"
 
@@ -736,13 +683,13 @@ updateRecord name fields =
 
 
 {-| -}
-record : List ( String, Expression ) -> Expression
+record : List Field -> Expression
 record fields =
     let
         unified =
             fields
                 |> List.foldl
-                    (\( unformattedFieldName, Compiler.Expression exp ) found ->
+                    (\(Field unformattedFieldName (Compiler.Expression exp)) found ->
                         let
                             fieldName =
                                 Compiler.formatValue unformattedFieldName
@@ -813,6 +760,17 @@ record fields =
             unified.imports
         , skip = False
         }
+
+
+{-| -}
+type Field
+    = Field String Expression
+
+
+{-| -}
+field : String -> Expression -> Field
+field =
+    Field
 
 
 {-| A let block.
@@ -1167,7 +1125,7 @@ lambda : String -> Elm.Annotation.Annotation -> (Expression -> Expression) -> Ex
 lambda argBaseName argType toExpression =
     let
         arg1 =
-            valueWith (moduleName []) argBaseName argType
+            valueWith [] argBaseName argType
 
         (Compiler.Expression expr) =
             toExpression arg1
@@ -1208,10 +1166,10 @@ lambda2 :
 lambda2 argBaseName oneType twoType toExpression =
     let
         arg1 =
-            valueWith (moduleName []) argBaseName oneType
+            valueWith [] argBaseName oneType
 
         arg2 =
-            valueWith (moduleName []) (argBaseName ++ "2") twoType
+            valueWith [] (argBaseName ++ "2") twoType
 
         (Compiler.Expression expr) =
             toExpression arg1 arg2
@@ -1258,13 +1216,13 @@ lambda3 :
 lambda3 argBaseName oneType twoType threeType toExpression =
     let
         arg1 =
-            valueWith (moduleName []) argBaseName oneType
+            valueWith [] argBaseName oneType
 
         arg2 =
-            valueWith (moduleName []) (argBaseName ++ "2") twoType
+            valueWith [] (argBaseName ++ "2") twoType
 
         arg3 =
-            valueWith (moduleName []) (argBaseName ++ "3") threeType
+            valueWith [] (argBaseName ++ "3") threeType
 
         (Compiler.Expression expr) =
             toExpression arg1 arg2 arg3
@@ -1314,16 +1272,16 @@ lambda4 :
 lambda4 argBaseName oneType twoType threeType fourType toExpression =
     let
         arg1 =
-            valueWith (moduleName []) argBaseName oneType
+            valueWith [] argBaseName oneType
 
         arg2 =
-            valueWith (moduleName []) (argBaseName ++ "2") twoType
+            valueWith [] (argBaseName ++ "2") twoType
 
         arg3 =
-            valueWith (moduleName []) (argBaseName ++ "3") threeType
+            valueWith [] (argBaseName ++ "3") threeType
 
         arg4 =
-            valueWith (moduleName []) (argBaseName ++ "4") fourType
+            valueWith [] (argBaseName ++ "4") fourType
 
         (Compiler.Expression expr) =
             toExpression arg1 arg2 arg3 arg4
@@ -1376,19 +1334,19 @@ lambda5 :
 lambda5 argBaseName oneType twoType threeType fourType fiveType toExpression =
     let
         arg1 =
-            valueWith (moduleName []) argBaseName oneType
+            valueWith [] argBaseName oneType
 
         arg2 =
-            valueWith (moduleName []) (argBaseName ++ "2") twoType
+            valueWith [] (argBaseName ++ "2") twoType
 
         arg3 =
-            valueWith (moduleName []) (argBaseName ++ "3") threeType
+            valueWith [] (argBaseName ++ "3") threeType
 
         arg4 =
-            valueWith (moduleName []) (argBaseName ++ "4") fourType
+            valueWith [] (argBaseName ++ "4") fourType
 
         arg5 =
-            valueWith (moduleName []) (argBaseName ++ "5") fiveType
+            valueWith [] (argBaseName ++ "5") fiveType
 
         (Compiler.Expression expr) =
             toExpression arg1 arg2 arg3 arg4 arg5
@@ -1514,7 +1472,7 @@ fn : String -> ( String, Elm.Annotation.Annotation ) -> (Expression -> Expressio
 fn name ( oneName, oneType ) toBody =
     let
         arg1 =
-            valueWith (moduleName []) oneName oneType
+            valueWith [] oneName oneType
 
         (Compiler.Expression body) =
             toBody arg1
@@ -1563,10 +1521,10 @@ fn2 :
 fn2 name ( oneName, oneType ) ( twoName, twoType ) toBody =
     let
         arg1 =
-            valueWith (moduleName []) oneName oneType
+            valueWith [] oneName oneType
 
         arg2 =
-            valueWith (moduleName []) twoName twoType
+            valueWith [] twoName twoType
 
         (Compiler.Expression body) =
             toBody arg1 arg2
@@ -1618,13 +1576,13 @@ fn3 :
 fn3 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) toBody =
     let
         arg1 =
-            valueWith (moduleName []) oneName oneType
+            valueWith [] oneName oneType
 
         arg2 =
-            valueWith (moduleName []) twoName twoType
+            valueWith [] twoName twoType
 
         arg3 =
-            valueWith (moduleName []) threeName threeType
+            valueWith [] threeName threeType
 
         (Compiler.Expression body) =
             toBody arg1 arg2 arg3
@@ -1679,16 +1637,16 @@ fn4 :
 fn4 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fourName, fourType ) toBody =
     let
         arg1 =
-            valueWith (moduleName []) oneName oneType
+            valueWith [] oneName oneType
 
         arg2 =
-            valueWith (moduleName []) twoName twoType
+            valueWith [] twoName twoType
 
         arg3 =
-            valueWith (moduleName []) threeName threeType
+            valueWith [] threeName threeType
 
         arg4 =
-            valueWith (moduleName []) fourName fourType
+            valueWith [] fourName fourType
 
         (Compiler.Expression body) =
             toBody arg1 arg2 arg3 arg4
@@ -1746,19 +1704,19 @@ fn5 :
 fn5 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fourName, fourType ) ( fiveName, fiveType ) toBody =
     let
         arg1 =
-            valueWith (moduleName []) oneName oneType
+            valueWith [] oneName oneType
 
         arg2 =
-            valueWith (moduleName []) twoName twoType
+            valueWith [] twoName twoType
 
         arg3 =
-            valueWith (moduleName []) threeName threeType
+            valueWith [] threeName threeType
 
         arg4 =
-            valueWith (moduleName []) fourName fourType
+            valueWith [] fourName fourType
 
         arg5 =
-            valueWith (moduleName []) fiveName fiveType
+            valueWith [] fiveName fiveType
 
         (Compiler.Expression body) =
             toBody arg1 arg2 arg3 arg4 arg5
@@ -1995,8 +1953,8 @@ power : Expression -> Expression -> Expression
 power =
     applyInfix (BinOp "^" Infix.Right 8)
         (valueWith
-            local
-            "*"
+            []
+            "^"
             (Elm.Annotation.function
                 [ Elm.Annotation.var "number", Elm.Annotation.var "number" ]
                 (Elm.Annotation.var "number")
@@ -2010,7 +1968,7 @@ multiply : Expression -> Expression -> Expression
 multiply =
     applyInfix (BinOp "*" Infix.Left 7)
         (valueWith
-            local
+            []
             "*"
             (Elm.Annotation.function
                 [ Elm.Annotation.var "number", Elm.Annotation.var "number" ]
@@ -2025,7 +1983,7 @@ divide : Expression -> Expression -> Expression
 divide =
     applyInfix (BinOp "/" Infix.Left 7)
         (valueWith
-            local
+            []
             "/"
             (Elm.Annotation.function
                 [ Elm.Annotation.float, Elm.Annotation.float ]
@@ -2040,7 +1998,7 @@ intDivide : Expression -> Expression -> Expression
 intDivide =
     applyInfix (BinOp "//" Infix.Left 7)
         (valueWith
-            local
+            []
             "/"
             (Elm.Annotation.function
                 [ Elm.Annotation.int, Elm.Annotation.int ]
@@ -2055,7 +2013,7 @@ plus : Expression -> Expression -> Expression
 plus =
     applyInfix (BinOp "+" Infix.Left 6)
         (valueWith
-            local
+            []
             "max"
             (Elm.Annotation.function
                 [ Elm.Annotation.var "number", Elm.Annotation.var "number" ]
@@ -2070,7 +2028,7 @@ minus : Expression -> Expression -> Expression
 minus =
     applyInfix (BinOp "-" Infix.Left 6)
         (valueWith
-            local
+            []
             "max"
             (Elm.Annotation.function
                 [ Elm.Annotation.var "number", Elm.Annotation.var "number" ]
@@ -2086,20 +2044,20 @@ append =
     applyInfix
         (BinOp "++" Infix.Right 5)
         (valueWith
-            local
+            []
             "append"
             (Elm.Annotation.function
                 [ Elm.Annotation.namedWith
-                    (moduleName [])
+                    []
                     "List"
                     [ Elm.Annotation.var "a" ]
                 , Elm.Annotation.namedWith
-                    (moduleName [])
+                    []
                     "List"
                     [ Elm.Annotation.var "a" ]
                 ]
                 (Elm.Annotation.namedWith
-                    (moduleName [])
+                    []
                     "List"
                     [ Elm.Annotation.var "a" ]
                 )
@@ -2113,20 +2071,13 @@ cons : Expression -> Expression -> Expression
 cons =
     applyInfix (BinOp "::" Infix.Right 5)
         (valueWith
-            local
+            []
             "cons"
             (Elm.Annotation.function
                 [ Elm.Annotation.var "a"
-                , Elm.Annotation.namedWith
-                    (moduleName [])
-                    "List"
-                    [ Elm.Annotation.var "a" ]
+                , Elm.Annotation.list (Elm.Annotation.var "a")
                 ]
-                (Elm.Annotation.namedWith
-                    (moduleName [])
-                    "List"
-                    [ Elm.Annotation.var "a" ]
-                )
+                (Elm.Annotation.list (Elm.Annotation.var "a"))
             )
         )
 
@@ -2137,10 +2088,12 @@ equal : Expression -> Expression -> Expression
 equal =
     applyInfix (BinOp "==" Infix.Left 4)
         (valueWith
-            local
+            []
             "equal"
             (Elm.Annotation.function
-                [ Elm.Annotation.var "a", Elm.Annotation.var "a" ]
+                [ Elm.Annotation.var "a"
+                , Elm.Annotation.var "a"
+                ]
                 Elm.Annotation.bool
             )
         )
@@ -2152,7 +2105,7 @@ notEqual : Expression -> Expression -> Expression
 notEqual =
     applyInfix (BinOp "/=" Infix.Left 4)
         (valueWith
-            local
+            []
             "equal"
             (Elm.Annotation.function
                 [ Elm.Annotation.var "a", Elm.Annotation.var "a" ]
@@ -2167,7 +2120,7 @@ lt : Expression -> Expression -> Expression
 lt =
     applyInfix (BinOp "<" Infix.Non 4)
         (valueWith
-            local
+            []
             "equal"
             (Elm.Annotation.function
                 [ Elm.Annotation.var "comparable", Elm.Annotation.var "comparable" ]
@@ -2182,7 +2135,7 @@ gt : Expression -> Expression -> Expression
 gt =
     applyInfix (BinOp ">" Infix.Non 4)
         (valueWith
-            local
+            []
             "equal"
             (Elm.Annotation.function
                 [ Elm.Annotation.var "comparable", Elm.Annotation.var "comparable" ]
@@ -2197,7 +2150,7 @@ lte : Expression -> Expression -> Expression
 lte =
     applyInfix (BinOp "<=" Infix.Non 4)
         (valueWith
-            local
+            []
             "equal"
             (Elm.Annotation.function
                 [ Elm.Annotation.var "comparable", Elm.Annotation.var "comparable" ]
@@ -2212,7 +2165,7 @@ gte : Expression -> Expression -> Expression
 gte =
     applyInfix (BinOp ">=" Infix.Non 4)
         (valueWith
-            local
+            []
             "equal"
             (Elm.Annotation.function
                 [ Elm.Annotation.var "comparable", Elm.Annotation.var "comparable" ]
@@ -2227,7 +2180,7 @@ and : Expression -> Expression -> Expression
 and =
     applyInfix (BinOp "&&" Infix.Right 3)
         (valueWith
-            local
+            []
             "equal"
             (Elm.Annotation.function
                 [ Elm.Annotation.bool, Elm.Annotation.bool ]
@@ -2242,7 +2195,7 @@ or : Expression -> Expression -> Expression
 or =
     applyInfix (BinOp "||" Infix.Right 2)
         (valueWith
-            local
+            []
             "equal"
             (Elm.Annotation.function
                 [ Elm.Annotation.bool, Elm.Annotation.bool ]
@@ -2334,7 +2287,7 @@ applyInfix (BinOp symbol dir _) fnAnnotation (Compiler.Expression left) (Compile
 
 
 {-| -}
-pass : Compiler.Expression
+pass : Expression
 pass =
     Compiler.skip
 

@@ -38,19 +38,17 @@ getGenericsHelper ann =
             List.concatMap
                 (\nodedField ->
                     case denode nodedField of
-                        (name, field) ->
-                            getGenericsHelper  (denode field)
-
+                        ( name, field ) ->
+                            getGenericsHelper (denode field)
                 )
-                (recordDefinition)
+                recordDefinition
 
         Annotation.GenericRecord recordName recordDefinition ->
             List.concatMap
                 (\nodedField ->
                     case denode nodedField of
-                        (name, field) ->
-                            getGenericsHelper  (denode field)
-
+                        ( name, field ) ->
+                            getGenericsHelper (denode field)
                 )
                 (denode recordDefinition)
 
@@ -232,62 +230,58 @@ exposeConstructorAndGroup group decl =
             Declaration (Exposed { group = Just group, exposeConstructor = True }) imports body
 
 
-type Module
-    = Module ModuleName.ModuleName (Maybe String)
+type alias Module =
+    List String
 
 
 makeImport :
-    Module
+    List ( Module, String )
+    -> Module
     ->
         Maybe
             { moduleName : Node ModuleName.ModuleName
             , moduleAlias : Maybe (Node (List String))
             , exposingList : Maybe a
             }
-makeImport (Module name maybeAlias) =
+makeImport aliases name =
     case name of
         [] ->
             Nothing
 
         _ ->
-            if builtIn name && maybeAlias == Nothing then
-                Nothing
+            case findAlias name aliases of
+                Nothing ->
+                    if builtIn name then
+                        Nothing
+
+                    else
+                        Just
+                            { moduleName = nodify name
+                            , moduleAlias = Nothing
+                            , exposingList = Nothing
+                            }
+
+                Just alias ->
+                    Just
+                        { moduleName = nodify name
+                        , moduleAlias =
+                            Just (nodify [ alias ])
+                        , exposingList = Nothing
+                        }
+
+
+findAlias : List String -> List ( Module, String ) -> Maybe String
+findAlias modName aliases =
+    case aliases of
+        [] ->
+            Nothing
+
+        ( aliasModName, alias ) :: remain ->
+            if modName == aliasModName then
+                Just alias
 
             else
-                Just
-                    { moduleName = nodify name
-                    , moduleAlias =
-                        Maybe.map
-                            (\al ->
-                                nodify [ al ]
-                            )
-                            maybeAlias
-                    , exposingList = Nothing
-                    }
-
-
-resolveModuleNameForValue : Module -> List String
-resolveModuleNameForValue (Module mod maybeAlias) =
-    case maybeAlias of
-        Nothing ->
-            mod
-
-        Just aliasStr ->
-            [ aliasStr ]
-
-
-resolveModuleName : Module -> List String
-resolveModuleName (Module mod maybeAlias) =
-    --if builtIn mod then
-    --    []
-    --
-    --else
-    case maybeAlias of
-        Nothing ->
-            mod
-
-        Just aliasStr ->
-            [ aliasStr ]
+                findAlias modName remain
 
 
 builtIn : List String -> Bool
@@ -310,7 +304,7 @@ builtIn name =
 
 
 fullModName : Module -> String
-fullModName (Module name _) =
+fullModName name =
     String.join "." name
 
 
@@ -512,32 +506,12 @@ declName decl =
                     Nothing
 
 
-getModule : Module -> ModuleName.ModuleName
-getModule (Module name _) =
-    name
-
-
 type Expose
     = NotExposed
     | Exposed
         { group : Maybe String
         , exposeConstructor : Bool
         }
-
-
-emptyModule : Module
-emptyModule =
-    inModule []
-
-
-inModule : List String -> Module
-inModule mods =
-    Module (List.map formatType mods) Nothing
-
-
-moduleAs : List String -> String -> Module
-moduleAs mods modAlias =
-    Module (List.map formatType mods) (Just (formatType modAlias))
 
 
 denode : Node a -> a
@@ -595,7 +569,7 @@ formatValue str =
 
 sanitize : String -> String
 sanitize str =
-     case str of
+    case str of
         "in" ->
             "in_"
 
@@ -616,6 +590,7 @@ sanitize str =
 
         _ ->
             str
+
 
 formatType : String -> String
 formatType str =

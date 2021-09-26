@@ -196,9 +196,13 @@ would result in
     Result.Ok value
 
 -}
-namedFrom : Module -> String -> List Pattern -> Pattern
+namedFrom : List String -> String -> List Pattern -> Pattern
 namedFrom moduleName name patterns =
-    Pattern.NamedPattern { moduleName = Util.resolveModuleName moduleName, name = name } (Util.nodifyAll patterns)
+    Pattern.NamedPattern
+        { moduleName = moduleName
+        , name = name
+        }
+        (Util.nodifyAll patterns)
         |> parensIf (not (List.isEmpty patterns))
 
 
