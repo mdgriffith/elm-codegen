@@ -82,6 +82,7 @@ var XMLHttpRequest_1 = require("./run/vendor/XMLHttpRequest");
 var chokidar = __importStar(require("chokidar"));
 var node_fetch_1 = __importDefault(require("node-fetch"));
 var chalk_1 = __importDefault(require("chalk"));
+var templates_1 = __importDefault(require("./templates"));
 var gen_package = require("./gen-package");
 // We have to stub this in the allow Elm the ability to make http requests.
 // @ts-ignore
@@ -188,7 +189,7 @@ function install(pkg, output, version) {
             switch (_a.label) {
                 case 0:
                     if (!(version == null)) return [3 /*break*/, 3];
-                    return [4 /*yield*/, node_fetch_1.default("https://elm-package-cache-psi.vercel.app/search.json")];
+                    return [4 /*yield*/, (0, node_fetch_1.default)("https://elm-package-cache-psi.vercel.app/search.json")];
                 case 1:
                     searchResp = _a.sent();
                     return [4 /*yield*/, searchResp.json()];
@@ -206,7 +207,7 @@ function install(pkg, output, version) {
                         process.exit();
                     }
                     _a.label = 3;
-                case 3: return [4 /*yield*/, node_fetch_1.default("https://elm-package-cache-psi.vercel.app/packages/" + pkg + "/" + version + "/docs.json")];
+                case 3: return [4 /*yield*/, (0, node_fetch_1.default)("https://elm-package-cache-psi.vercel.app/packages/" + pkg + "/" + version + "/docs.json")];
                 case 4:
                     docsResp = _a.sent();
                     return [4 /*yield*/, docsResp.json()];
@@ -238,9 +239,9 @@ function init(install_dir) {
             }
             fs.mkdirSync("./" + install_dir);
             fs.mkdirSync("./" + install_dir + "/Elm");
-            fs.writeFileSync("./" + install_dir + "/elm.json", elm_json_file);
-            fs.writeFileSync("./" + install_dir + "/Generate.elm", elm_starter_file);
-            fs.writeFileSync("./" + install_dir + "/Elm/Gen.elm", elm_gen_file);
+            fs.writeFileSync("./" + install_dir + "/elm.json", templates_1.default.init.elmJson());
+            fs.writeFileSync("./" + install_dir + "/Generate.elm", templates_1.default.init.starter());
+            fs.writeFileSync("./" + install_dir + "/Elm/Gen.elm", templates_1.default.init.elmGen());
             install("elm/core", install_dir, null);
             console.log(format_block([
                 "I've created the " + chalk_1.default.cyan(install_dir) + " folder and added some files.",
@@ -248,6 +249,26 @@ function init(install_dir) {
                 "",
                 "Run your generator by running " + chalk_1.default.yellow("elm-prefab"),
             ]));
+            return [2 /*return*/];
+        });
+    });
+}
+// INIT
+//    Start a new elm-prefab project
+//    Generates some files and installs `core`
+function make(elm_file, moduleName, target_dir, base, flags) {
+    return __awaiter(this, void 0, void 0, function () {
+        var data;
+        return __generator(this, function (_a) {
+            try {
+                data = elm_compiler.compileToStringSync([elm_file], { cwd: base, optimize: true, processOpts: { stdio: [null, null, 'inherit'] } });
+                // @ts-ignore
+                return [2 /*return*/, new run_generator(target_dir, moduleName, data.toString(), flags)];
+            }
+            catch (error) {
+                // This is generally an elm make error from the elm_compiler
+                console.log(error);
+            }
             return [2 /*return*/];
         });
     });
