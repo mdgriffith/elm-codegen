@@ -86,134 +86,6 @@ type Options = {
   watch: boolean
 }
 
-const elm_gen_file = `
-port module Elm.Gen exposing (File, files, error, info)
-
-
-import Json.Encode as Json
-
-
-type alias File =
-       { path : String
-       , contents : String
-       }
-
-encodeFile : File -> Json.Value
-encodeFile file =
-   Json.object
-        [ ("path", (Json.string file.path))
-        , ("contents", (Json.string file.contents))
-        ]
-
-{-|
-     Provide the list of files to be generated.
-     These files will be generated and the script will end.
--}
-files : List File -> Cmd msg
-files list =
-     onSuccessSend (List.map encodeFile list)
-
-
-{-|
-     Report an error.  The script will end
-
--}
-error : { title : String, description : String } -> Cmd msg
-error err =
-     onFailureSend err
-
-{-| Report some info.  The script will continue to run.
-
--}
-info : String -> Cmd msg
-info err =
-     onInfoSend err
-
-
-
-port onSuccessSend : List Json.Value -> Cmd msg
-
-port onFailureSend : { title : String, description : String } -> Cmd msg
-
-port onInfoSend : String -> Cmd msg
-
-`
-
-const elm_json_file = `
-{
-    "type": "application",
-    "source-directories": [
-        ".", "../src"
-    ],
-    "elm-version": "0.19.1",
-    "dependencies": {
-        "direct": {
-            "elm/browser": "1.0.2",
-            "elm/core": "1.0.5",
-            "elm/html": "1.0.0"
-        },
-        "indirect": {
-            "elm/json": "1.1.3",
-            "elm/time": "1.0.0",
-            "elm/url": "1.0.0",
-            "elm/virtual-dom": "1.0.2"
-        }
-    },
-    "test-dependencies": {
-        "direct": {},
-        "indirect": {}
-    }
-}
-`
-
-const elm_starter_file = `module Generator exposing (main)
-
-{-| -}
-
-import Elm
-import Elm.Pattern as Pattern
-import Elm.Type as Type
-import Elm.Gen
-
-
-main : Program {} () ()
-main =
-    Platform.worker
-        { init =
-            \json ->
-                ( ()
-                , Elm.Gen.files
-                    [ Elm.render file
-                    ]
-                )
-        , update =
-            \msg model ->
-                ( model, Cmd.none )
-        , subscriptions = \_ -> Sub.none
-        }
-
-
-file =
-    Elm.file [ "My", "Module" ]
-        [ Elm.declaration "placeholder"
-            (Elm.valueFrom (Elm.moduleAs [ "Json", "Decode" ] "Json")
-                "map2"
-            )
-        , Elm.declaration "myRecord"
-            (Elm.record
-                [ ( "one", Elm.string "My cool string" )
-                , ( "two", Elm.int 5 )
-                , ( "three"
-                  , Elm.record
-                        [ ( "four", Elm.string "My cool string" )
-                        , ( "five", Elm.int 5 )
-                        ]
-                  )
-                ]
-            )
-            |> Elm.expose
-        ]
-`
 
 const docs_generator = { cwd: "cli/gen-package", file: "src/Generate.elm", moduleName: "Generate" }
 
@@ -229,7 +101,7 @@ function format_block(content: string[]) {
 async function run_package_generator(output: string, flags: any) {
   const promise = new Promise((resolve, reject) => {
     // @ts-ignore
-    const app = gen_package.Elm.Generate.init({ flags: flags })
+    const app = gen_package.Elm.Generate.init({ flags: { docs: flags } })
     if (app.ports.onSuccessSend) {
       app.ports.onSuccessSend.subscribe(resolve)
     }
@@ -257,7 +129,7 @@ async function run_package_generator(output: string, flags: any) {
 
 // INSTALL
 //   Install bindings for a package
-async function install(pkg: string, output: string, version: string | null) {
+async function install_package(pkg: string, output: string, version: string | null) {
   if (version == null) {
     const searchResp = await fetch("https://elm-package-cache-psi.vercel.app/search.json")
     const search = await searchResp.json()
@@ -302,7 +174,7 @@ async function init(install_dir : string) {
   fs.writeFileSync(`./${install_dir}/elm.json`, templates.init.elmJson())
   fs.writeFileSync(`./${install_dir}/Generate.elm`, templates.init.starter())
   fs.writeFileSync(`./${install_dir}/Elm/Gen.elm`, templates.init.elmGen())
-  install("elm/core", install_dir, null)
+  install_package("elm/core", install_dir, null)
 
   console.log(
     format_block([
@@ -348,7 +220,7 @@ async function action(cmd: string, pkg: string | null, options: Options, com: an
       let docs = JSON.parse(fs.readFileSync(pkg).toString())
       run_package_generator(install_dir, docs)
     } else {
-      install(pkg, install_dir, null)
+      install_package(pkg, install_dir, null)
     }
   } else {
     let flags: any | null = null
