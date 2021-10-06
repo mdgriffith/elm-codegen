@@ -12,33 +12,81 @@ import Elm.Pattern as Pattern
 import Elm.Type
 import Internal.Compiler as Util
 import Json.Decode as Json
-
+import DocsFromSource
 
 main : Program Json.Value () ()
 main =
     Platform.worker
         { init =
             \json ->
-                case Json.decodeValue (Json.list Elm.Docs.decoder) json of
+                case Json.decodeValue flagsDecoder json of
                     Err err ->
                         ( ()
                         , Elm.Gen.error
-                            { title = "Issue decoding docs"
+                            { title = "Invalid docs"
                             , description =
                                 Json.errorToString err
                             }
                         )
 
-                    Ok docs ->
+                    Ok (Docs docs) ->
                         ( ()
                         , Elm.Gen.files
                             (List.map moduleToFile docs)
                         )
+
+                    Ok (ElmSource srcs) ->
+                        case parseSources srcs [] of
+                            Ok docs ->
+                                ( ()
+                                , Elm.Gen.files
+                                    (List.map moduleToFile docs)
+                                )
+
+                            Err err ->
+                                ( ()
+                                , Elm.Gen.error
+                                    { title = "Error generating docs"
+                                    , description =
+                                        err
+                                    }
+                                )
         , update =
             \msg model ->
                 ( model, Cmd.none )
         , subscriptions = \_ -> Sub.none
         }
+
+
+parseSources : List String -> List Elm.Docs.Module -> Result String (List Elm.Docs.Module)
+parseSources srcs parsed =
+    case srcs of
+        [] ->
+            Ok parsed
+
+        (top :: remain) ->
+            case DocsFromSource.fromSource top of
+                Err err ->
+                    Err err
+
+                Ok topParsed ->
+                    parseSources remain (topParsed :: parsed)
+
+
+type Flags
+    = Docs (List Elm.Docs.Module)
+    | ElmSource (List String)
+
+
+flagsDecoder : Json.Decoder Flags
+flagsDecoder =
+    Json.oneOf
+        [ Json.field "docs"
+            (Json.list Elm.Docs.decoder)
+                |> Json.map Docs
+        , Json.field "elmSource" (Json.list Json.string)
+            |> Json.map ElmSource
+        ]
 
 
 moduleToFile : Elm.Docs.Module -> Elm.File
@@ -218,7 +266,8 @@ generateTypeBuilderRecord blocks fields =
                 Just field ->
                     generateTypeBuilderRecord remain (field :: fields)
 
-generateTypeBuilderRecordHelper : Elm.Docs.Block ->
+
+generateTypeBuilderRecordHelper : Elm.Docs.Block -> Maybe Elm.Field
 generateTypeBuilderRecordHelper block =
     case block of
         Elm.Docs.MarkdownBlock str ->
