@@ -5,7 +5,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc && npm run build-gen-package",
+    "build": "tsc && npm run pkg:build",
     "watch": "tsc --watch",
     "prefab": "npm run build; node dist/index.js",
     "pkg:build": "cd cli/gen-package; elm make src/Generate.elm --optimize --output=../../dist/gen-package.js",
