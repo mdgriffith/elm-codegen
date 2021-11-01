@@ -16,8 +16,8 @@ import Elm.Syntax.Expression as Exp
 import Internal.Compiler as Util
 
 
-type alias Expression =
-    Util.Expression
+type alias Expression generated =
+    Util.Expression generated
 
 
 {-| -}
@@ -26,13 +26,13 @@ type alias Declaration =
 
 
 {-| -}
-value : String -> Expression -> Declaration
+value : String -> Expression a -> Declaration
 value name exp =
     destructure (Pattern.var name) exp
 
 
 {-| -}
-destructure : Pattern -> Expression -> Declaration
+destructure : Pattern -> Expression a -> Declaration
 destructure pattern (Util.Expression expr) =
     Util.LetDeclaration expr.imports
         (Exp.LetDestructuring (Util.nodify pattern)
@@ -41,7 +41,7 @@ destructure pattern (Util.Expression expr) =
 
 
 {-| -}
-function : String -> List Pattern -> Expression -> Declaration
+function : String -> List Pattern -> Expression a -> Declaration
 function name args (Util.Expression body) =
     Util.LetDeclaration body.imports
         (Exp.LetFunction
@@ -66,5 +66,3 @@ function name args (Util.Expression body) =
                     }
             }
         )
-
-

@@ -26,15 +26,16 @@ module Elm.Annotation exposing
 import Elm.Syntax.TypeAnnotation as Annotation
 import Elm.Writer
 import Internal.Compiler as Compiler
+import Set exposing (Set)
 
 
 {-| -}
-type alias Annotation =
-    Compiler.Annotation
+type alias Annotation tipe =
+    Compiler.Annotation tipe
 
 
 {-| -}
-toString : Annotation -> String
+toString : Annotation a -> String
 toString (Compiler.Annotation ann) =
     Elm.Writer.writeTypeAnnotation (Compiler.nodify ann.annotation)
         |> Elm.Writer.write
@@ -42,7 +43,7 @@ toString (Compiler.Annotation ann) =
 
 {-| A type variable
 -}
-var : String -> Annotation
+var : String -> Annotation a
 var a =
     Compiler.Annotation
         { annotation = Annotation.GenericType (Compiler.formatValue a)
@@ -51,37 +52,37 @@ var a =
 
 
 {-| -}
-bool : Annotation
+bool : Annotation Bool
 bool =
     typed [] "Bool" []
 
 
 {-| -}
-int : Annotation
+int : Annotation Int
 int =
     typed [] "Int" []
 
 
 {-| -}
-float : Annotation
+float : Annotation Float
 float =
     typed [] "Float" []
 
 
 {-| -}
-string : Annotation
+string : Annotation String
 string =
     typed [] "String" []
 
 
 {-| -}
-char : Annotation
+char : Annotation Char
 char =
     typed [ "Char" ] "Char" []
 
 
 {-| -}
-unit : Annotation
+unit : Annotation ()
 unit =
     Compiler.Annotation
         { annotation = Annotation.Unit
@@ -90,19 +91,19 @@ unit =
 
 
 {-| -}
-list : Annotation -> Annotation
+list : Annotation a -> Annotation (List a)
 list inner =
     typed [] "List" [ inner ]
 
 
 {-| -}
-result : Annotation -> Annotation -> Annotation
+result : Annotation err -> Annotation ok -> Annotation (Result err ok)
 result err ok =
     typed [] "Result" [ err, ok ]
 
 
 {-| -}
-tuple : Annotation -> Annotation -> Annotation
+tuple : Annotation a -> Annotation b -> Annotation ( a, b )
 tuple one two =
     Compiler.Annotation
         { annotation =
@@ -119,7 +120,7 @@ tuple one two =
 
 
 {-| -}
-triple : Annotation -> Annotation -> Annotation -> Annotation
+triple : Annotation a -> Annotation b -> Annotation c -> Annotation ( a, b, c )
 triple one two three =
     Compiler.Annotation
         { annotation =
@@ -138,25 +139,37 @@ triple one two three =
 
 
 {-| -}
-set : Annotation -> Annotation
+set : Annotation a -> Annotation (Set a)
 set setArg =
     typed [ "Set" ] "Set" [ setArg ]
 
 
 {-| -}
-dict : Annotation -> Annotation -> Annotation
+dict : Annotation comparable -> Annotation value -> Annotation (Dict comparable value)
 dict keyArg valArg =
     typed [ "Dict" ] "Dict" [ keyArg, valArg ]
 
 
 {-| -}
-maybe : Annotation -> Annotation
+maybe : Annotation a -> Annotation (Maybe a)
 maybe maybeArg =
     typed [] "Maybe" [ maybeArg ]
 
 
+type Field
+    = Field String (Annotation Whatever)
+
+
+type Whatever
+    = Whatever
+
+
+type Record
+    = Record
+
+
 {-| -}
-record : List ( String, Annotation ) -> Annotation
+record : List Field -> Annotation Record
 record fields =
     Compiler.Annotation
         { annotation =
@@ -176,7 +189,7 @@ record fields =
 
 
 {-| -}
-extensible : String -> List ( String, Annotation ) -> Annotation
+extensible : String -> List Field -> Annotation Record
 extensible base fields =
     Compiler.Annotation
         { annotation =
@@ -196,41 +209,40 @@ extensible base fields =
         }
 
 
-{-| -}
-named : List String -> String -> Annotation
-named mod name =
-    Compiler.Annotation
-        { annotation =
-            Annotation.Typed
-                (Compiler.nodify
-                    ( mod, Compiler.formatType name )
-                )
-                []
-        , imports = [ mod ]
-        }
 
-
-{-| -}
-namedWith : List String -> String -> List Annotation -> Annotation
-namedWith mod name args =
-    Compiler.Annotation
-        { annotation =
-            Annotation.Typed
-                (Compiler.nodify
-                    ( mod
-                    , Compiler.formatType name
-                    )
-                )
-                (Compiler.nodifyAll
-                    (List.map Compiler.getInnerAnnotation
-                        args
-                    )
-                )
-        , imports =
-            mod
-                :: List.concatMap Compiler.getAnnotationImports
-                    args
-        }
+-- {-| -}
+-- named : List String -> String -> Annotation
+-- named mod name =
+--     Compiler.Annotation
+--         { annotation =
+--             Annotation.Typed
+--                 (Compiler.nodify
+--                     ( mod, Compiler.formatType name )
+--                 )
+--                 []
+--         , imports = [ mod ]
+--         }
+-- {-| -}
+-- namedWith : List String -> String -> List Annotation -> Annotation
+-- namedWith mod name args =
+--     Compiler.Annotation
+--         { annotation =
+--             Annotation.Typed
+--                 (Compiler.nodify
+--                     ( mod
+--                     , Compiler.formatType name
+--                     )
+--                 )
+--                 (Compiler.nodifyAll
+--                     (List.map Compiler.getInnerAnnotation
+--                         args
+--                     )
+--                 )
+--         , imports =
+--             mod
+--                 :: List.concatMap Compiler.getAnnotationImports
+--                     args
+--         }
 
 
 {-| -}
@@ -239,7 +251,7 @@ typed mod name args =
     Compiler.Annotation
         { annotation =
             Annotation.Typed
-                (Compiler.nodify ( mod, name ))
+                (Compiler.nodify ( mod, Compiler.formatType name ))
                 (Compiler.nodifyAll
                     (List.map Compiler.getInnerAnnotation args)
                 )

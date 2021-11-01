@@ -8,11 +8,11 @@ module Elm exposing
     , record, field, Field, get, updateRecord
     , caseOf, letIn, ifThen
     , apply
-    , lambda, lambda2, lambda3, lambda4, lambda5, lambdaWith
+    , lambda, lambda2, lambda3, lambda4, lambda5
     , Declaration
     , comment, declaration
     , withDocumentation
-    , fn, fn2, fn3, fn4, fn5, functionWith
+    , fn, fn2, fn3, fn4, fn5
     , customType, Variant, variant, variantWith
     , alias
     , expose, exposeConstructor
@@ -23,13 +23,13 @@ module Elm exposing
     , plus, minus, multiply, divide, intDivide, power
     , lt, gt, lte, gte, and, or
     , pipe, pipeLeft, compose, composeLeft
-    , keep, skip
-    , slash, question
     , portIncoming, portOutgoing
     , parse
     , toString, expressionImports
     , declarationToString, declarationImports
     , pass
+    -- , keep, skip
+    -- , slash, question
     )
 
 {-|
@@ -61,7 +61,7 @@ module Elm exposing
 
 @docs apply
 
-@docs lambda, lambda2, lambda3, lambda4, lambda5, lambdaWith
+@docs lambda, lambda2, lambda3, lambda4, lambda5
 
 
 ## Top level
@@ -165,19 +165,19 @@ import Set
 
 
 {-| -}
-type alias Expression =
-    Compiler.Expression
+type alias Expression generated =
+    Compiler.Expression generated
 
 
 {-| -}
-expressionImports : Expression -> String
+expressionImports : Expression generated -> String
 expressionImports (Compiler.Expression exp) =
     List.filterMap (Compiler.makeImport []) exp.imports
         |> Internal.Write.writeImports
 
 
 {-| -}
-toString : Expression -> String
+toString : Expression generated -> String
 toString (Compiler.Expression exp) =
     Internal.Write.writeExpression exp.expression
 
@@ -384,11 +384,6 @@ type alias File =
     }
 
 
-{-| -}
-type InternalFile
-    = InternalFile FileDetails
-
-
 type alias FileDetails =
     { moduleDefinition : Module
     , imports : List Module
@@ -398,14 +393,18 @@ type alias FileDetails =
     }
 
 
+type WRONG
+    = WRONG
+
+
 {-| -}
-value : String -> Expression
+value : String -> Expression WRONG
 value =
     valueFrom []
 
 
 {-| -}
-valueFrom : List String -> String -> Expression
+valueFrom : List String -> String -> Expression WRONG
 valueFrom mod name =
     Compiler.Expression
         { expression =
@@ -431,7 +430,7 @@ So, for example, if we have.
 Then, when that list is generated, it will automatically have the type signature `List String`
 
 -}
-valueWith : List String -> String -> Elm.Annotation.Annotation -> Expression
+valueWith : List String -> String -> Elm.Annotation.Annotation -> Expression WRONG
 valueWith mod name ann =
     Compiler.Expression
         { expression = Exp.FunctionOrValue mod (Compiler.sanitize name)
@@ -451,7 +450,7 @@ valueWith mod name ann =
 Though be sure elm-prefab isn't already doing this automatically for you!
 
 -}
-withType : Elm.Annotation.Annotation -> Expression -> Expression
+withType : Elm.Annotation.Annotation -> Expression a -> Expression WRONG
 withType ann (Compiler.Expression exp) =
     Compiler.Expression
         { exp
@@ -461,7 +460,7 @@ withType ann (Compiler.Expression exp) =
 
 
 {-| -}
-unit : Expression
+unit : Expression ()
 unit =
     Compiler.Expression
         { expression = Exp.UnitExpr
@@ -472,7 +471,7 @@ unit =
 
 
 {-| -}
-bool : Bool -> Expression
+bool : Bool -> Expression Bool
 bool on =
     valueWith []
         (if on then
@@ -485,7 +484,7 @@ bool on =
 
 
 {-| -}
-int : Int -> Expression
+int : Int -> Expression Int
 int intVal =
     Compiler.Expression
         { expression = Exp.Integer intVal
@@ -496,7 +495,7 @@ int intVal =
 
 
 {-| -}
-hex : Int -> Expression
+hex : Int -> Expression Int
 hex hexVal =
     Compiler.Expression
         { expression = Exp.Hex hexVal
@@ -507,7 +506,7 @@ hex hexVal =
 
 
 {-| -}
-float : Float -> Expression
+float : Float -> Expression Float
 float floatVal =
     Compiler.Expression
         { expression = Exp.Floatable floatVal
@@ -518,7 +517,7 @@ float floatVal =
 
 
 {-| -}
-string : String -> Expression
+string : String -> Expression String
 string literal =
     Compiler.Expression
         { expression = Exp.Literal literal
@@ -529,7 +528,7 @@ string literal =
 
 
 {-| -}
-char : Char -> Expression
+char : Char -> Expression Char
 char charVal =
     Compiler.Expression
         { expression = Exp.CharLiteral charVal
@@ -548,7 +547,7 @@ char charVal =
 
 
 {-| -}
-tuple : Expression -> Expression -> Expression
+tuple : Expression a -> Expression b -> Expression ( a, b )
 tuple (Compiler.Expression one) (Compiler.Expression two) =
     Compiler.Expression
         { expression = Exp.TupledExpression (Compiler.nodifyAll [ one.expression, two.expression ])
@@ -568,7 +567,7 @@ tuple (Compiler.Expression one) (Compiler.Expression two) =
 
 
 {-| -}
-triple : Expression -> Expression -> Expression -> Expression
+triple : Expression a -> Expression b -> Expression c -> Expression ( a, b, c )
 triple (Compiler.Expression one) (Compiler.Expression two) (Compiler.Expression three) =
     Compiler.Expression
         { expression =
@@ -594,7 +593,7 @@ triple (Compiler.Expression one) (Compiler.Expression two) (Compiler.Expression 
 
 
 {-| -}
-maybe : Maybe Expression -> Expression
+maybe : Maybe (Expression a) -> Expression (Maybe a)
 maybe content =
     Compiler.Expression
         { expression =
@@ -636,7 +635,7 @@ maybe content =
 
 
 {-| -}
-list : List Expression -> Expression
+list : List (Expression a) -> Expression a
 list exprs =
     Compiler.Expression
         { expression = Exp.ListExpr (List.map toList exprs)
@@ -653,19 +652,19 @@ list exprs =
         }
 
 
-toList : Expression -> Node.Node Exp.Expression
+toList : Expression a -> Node.Node Exp.Expression
 toList (Compiler.Expression exp) =
     Compiler.nodify exp.expression
 
 
 {-| -}
-updateRecord : String -> List ( String, Expression ) -> Expression
+updateRecord : String -> List Field -> Expression Record
 updateRecord name fields =
     Compiler.Expression
         { expression =
             fields
                 |> List.map
-                    (\( fieldName, fieldExp ) ->
+                    (\(Field fieldName fieldExp) ->
                         Compiler.nodify
                             ( Compiler.nodify fieldName
                             , Compiler.nodify (Compiler.getInnerExpression fieldExp)
@@ -676,14 +675,14 @@ updateRecord name fields =
             Err []
         , imports =
             List.concatMap
-                (Tuple.second >> Compiler.getImports)
+                (\(Field _ exp) -> Compiler.getImports exp)
                 fields
         , skip = False
         }
 
 
 {-| -}
-record : List Field -> Expression
+record : List Field -> Expression Record
 record fields =
     let
         unified =
@@ -764,13 +763,17 @@ record fields =
 
 {-| -}
 type Field
-    = Field String Expression
+    = Field String (Expression Whatever)
+
+
+type Whatever
+    = Whatever
 
 
 {-| -}
-field : String -> Expression -> Field
-field =
-    Field
+field : String -> Expression a -> Field
+field name payload =
+    Field name (Compiler.unsafe payload)
 
 
 {-| A let block.
@@ -786,7 +789,7 @@ Check out `Elm.Let` to add things to it.
         (Elm.add (Elm.value "one") (Elm.value "two"))
 
 -}
-letIn : List Let.Declaration -> Expression -> Expression
+letIn : List Let.Declaration -> Expression a -> Expression a
 letIn decls (Compiler.Expression within) =
     let
         gathered =
@@ -828,7 +831,7 @@ letIn decls (Compiler.Expression within) =
         "no"
 
 -}
-ifThen : Expression -> Expression -> Expression -> Expression
+ifThen : Expression Bool -> Expression a -> Expression a -> Expression a
 ifThen (Compiler.Expression condition) (Compiler.Expression thenBranch) (Compiler.Expression elseBranch) =
     Compiler.Expression
         { expression =
@@ -844,7 +847,7 @@ ifThen (Compiler.Expression condition) (Compiler.Expression thenBranch) (Compile
 
 
 {-| -}
-caseOf : Expression -> List ( Pattern, Expression ) -> Expression
+caseOf : Expression incoming -> List ( Pattern, Expression result ) -> Expression result
 caseOf (Compiler.Expression expr) cases =
     let
         gathered =
@@ -889,6 +892,10 @@ caseOf (Compiler.Expression expr) cases =
         }
 
 
+type Record
+    = Record
+
+
 {-|
 
     record
@@ -899,7 +906,7 @@ results in
     record.field
 
 -}
-get : String -> Expression -> Expression
+get : String -> Expression Record -> Expression WRONG
 get selector (Compiler.Expression expr) =
     Compiler.Expression
         { expression =
@@ -1059,22 +1066,40 @@ parens expr =
     Exp.ParenthesizedExpression (Compiler.nodify expr)
 
 
-getExpression : Expression -> Exp.Expression
+getExpression : Expression a -> Exp.Expression
 getExpression (Compiler.Expression exp) =
     exp.expression
 
 
-getImports : Expression -> List Compiler.Module
+getImports : Expression a -> List Compiler.Module
 getImports (Compiler.Expression exp) =
     exp.imports
 
 
+
+-- {-| -}
+-- apply : Expression -> List Expression -> Expression
+-- apply ((Compiler.Expression exp) as top) allArgs =
+--     let
+--         args =
+--             List.filter (\(Compiler.Expression arg) -> not arg.skip) allArgs
+--     in
+--     Compiler.Expression
+--         { expression =
+--             Exp.Application (Compiler.nodifyAll (exp.expression :: List.map (parens << getExpression) args))
+--         , annotation =
+--             Compiler.applyType top args
+--         , imports = exp.imports ++ List.concatMap getImports args
+--         , skip = False
+--         }
+
+
 {-| -}
-apply : Expression -> List Expression -> Expression
-apply ((Compiler.Expression exp) as top) allArgs =
+apply : Expression (a -> b) -> Expression a -> Expression b
+apply ((Compiler.Expression exp) as top) arg =
     let
         args =
-            List.filter (\(Compiler.Expression arg) -> not arg.skip) allArgs
+            List.filter (\(Compiler.Expression a) -> not a.skip) [ arg ]
     in
     Compiler.Expression
         { expression =
@@ -1091,37 +1116,37 @@ type alias Pattern =
     Pattern.Pattern
 
 
+
+-- {-| -}
+-- lambdaWith : List ( Pattern, Elm.Annotation.Annotation ) -> Expression a -> Expression a
+-- lambdaWith args (Compiler.Expression expr) =
+--     Compiler.Expression
+--         { expression =
+--             Exp.LambdaExpression
+--                 { args = Compiler.nodifyAll (List.map Tuple.first args)
+--                 , expression = Compiler.nodify expr.expression
+--                 }
+--         , annotation =
+--             case expr.annotation of
+--                 Err err ->
+--                     Err err
+--                 Ok return ->
+--                     List.foldr
+--                         (\ann fnbody ->
+--                             Annotation.FunctionTypeAnnotation
+--                                 (Compiler.nodify ann)
+--                                 (Compiler.nodify fnbody)
+--                         )
+--                         return
+--                         (List.map (Compiler.getInnerAnnotation << Tuple.second) args)
+--                         |> Ok
+--         , imports = expr.imports
+--         , skip = False
+--         }
+
+
 {-| -}
-lambdaWith : List ( Pattern, Elm.Annotation.Annotation ) -> Expression -> Expression
-lambdaWith args (Compiler.Expression expr) =
-    Compiler.Expression
-        { expression =
-            Exp.LambdaExpression
-                { args = Compiler.nodifyAll (List.map Tuple.first args)
-                , expression = Compiler.nodify expr.expression
-                }
-        , annotation =
-            case expr.annotation of
-                Err err ->
-                    Err err
-
-                Ok return ->
-                    List.foldr
-                        (\ann fnbody ->
-                            Annotation.FunctionTypeAnnotation
-                                (Compiler.nodify ann)
-                                (Compiler.nodify fnbody)
-                        )
-                        return
-                        (List.map (Compiler.getInnerAnnotation << Tuple.second) args)
-                        |> Ok
-        , imports = expr.imports
-        , skip = False
-        }
-
-
-{-| -}
-lambda : String -> Elm.Annotation.Annotation -> (Expression -> Expression) -> Expression
+lambda : String -> Elm.Annotation.Annotation -> (Expression a -> Expression result) -> Expression result
 lambda argBaseName argType toExpression =
     let
         arg1 =
@@ -1161,8 +1186,8 @@ lambda2 :
     String
     -> Elm.Annotation.Annotation
     -> Elm.Annotation.Annotation
-    -> (Expression -> Expression -> Expression)
-    -> Expression
+    -> (Expression a -> Expression b -> Expression c)
+    -> Expression c
 lambda2 argBaseName oneType twoType toExpression =
     let
         arg1 =
@@ -1211,8 +1236,8 @@ lambda3 :
     -> Elm.Annotation.Annotation
     -> Elm.Annotation.Annotation
     -> Elm.Annotation.Annotation
-    -> (Expression -> Expression -> Expression -> Expression)
-    -> Expression
+    -> (Expression a -> Expression b -> Expression c -> Expression d)
+    -> Expression d
 lambda3 argBaseName oneType twoType threeType toExpression =
     let
         arg1 =
@@ -1267,8 +1292,8 @@ lambda4 :
     -> Elm.Annotation.Annotation
     -> Elm.Annotation.Annotation
     -> Elm.Annotation.Annotation
-    -> (Expression -> Expression -> Expression -> Expression -> Expression)
-    -> Expression
+    -> (Expression a -> Expression b -> Expression c -> Expression d -> Expression e)
+    -> Expression e
 lambda4 argBaseName oneType twoType threeType fourType toExpression =
     let
         arg1 =
@@ -1329,8 +1354,8 @@ lambda5 :
     -> Elm.Annotation.Annotation
     -> Elm.Annotation.Annotation
     -> Elm.Annotation.Annotation
-    -> (Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
-    -> Expression
+    -> (Expression a -> Expression b -> Expression c -> Expression d -> Expression e -> Expression f)
+    -> Expression f
 lambda5 argBaseName oneType twoType threeType fourType fiveType toExpression =
     let
         arg1 =
@@ -1400,7 +1425,7 @@ comment content =
 
 
 {-| -}
-declaration : String -> Expression -> Declaration
+declaration : String -> Expression a -> Declaration
 declaration name (Compiler.Expression body) =
     --function name [] body
     { documentation = Compiler.nodifyMaybe Nothing
@@ -1428,47 +1453,47 @@ declaration name (Compiler.Expression body) =
         |> Compiler.Declaration Compiler.NotExposed body.imports
 
 
+
+-- {-| -}
+-- functionWith : String -> List ( Elm.Annotation.Annotation, Pattern ) -> Expression -> Declaration
+-- functionWith name args (Compiler.Expression body) =
+--     { documentation = Compiler.nodifyMaybe Nothing
+--     , signature =
+--         case body.annotation of
+--             Ok return ->
+--                 Just
+--                     (Compiler.nodify
+--                         { name = Compiler.nodify (Compiler.formatValue name)
+--                         , typeAnnotation =
+--                             Compiler.nodify <|
+--                                 Compiler.getInnerAnnotation <|
+--                                     Elm.Annotation.function
+--                                         (List.map Tuple.first args)
+--                                         (Compiler.noImports return)
+--                         }
+--                     )
+--             Err _ ->
+--                 Nothing
+--     , declaration =
+--         Compiler.nodify
+--             { name = Compiler.nodify (Compiler.formatValue name)
+--             , arguments = Compiler.nodifyAll (List.map Tuple.second args)
+--             , expression = Compiler.nodify body.expression
+--             }
+--     }
+--         |> Declaration.FunctionDeclaration
+--         |> Compiler.Declaration Compiler.NotExposed
+--             (List.concatMap
+--                 (Tuple.first
+--                     >> Compiler.getAnnotationImports
+--                 )
+--                 args
+--                 ++ body.imports
+--             )
+
+
 {-| -}
-functionWith : String -> List ( Elm.Annotation.Annotation, Pattern ) -> Expression -> Declaration
-functionWith name args (Compiler.Expression body) =
-    { documentation = Compiler.nodifyMaybe Nothing
-    , signature =
-        case body.annotation of
-            Ok return ->
-                Just
-                    (Compiler.nodify
-                        { name = Compiler.nodify (Compiler.formatValue name)
-                        , typeAnnotation =
-                            Compiler.nodify <|
-                                Compiler.getInnerAnnotation <|
-                                    Elm.Annotation.function
-                                        (List.map Tuple.first args)
-                                        (Compiler.noImports return)
-                        }
-                    )
-
-            Err _ ->
-                Nothing
-    , declaration =
-        Compiler.nodify
-            { name = Compiler.nodify (Compiler.formatValue name)
-            , arguments = Compiler.nodifyAll (List.map Tuple.second args)
-            , expression = Compiler.nodify body.expression
-            }
-    }
-        |> Declaration.FunctionDeclaration
-        |> Compiler.Declaration Compiler.NotExposed
-            (List.concatMap
-                (Tuple.first
-                    >> Compiler.getAnnotationImports
-                )
-                args
-                ++ body.imports
-            )
-
-
-{-| -}
-fn : String -> ( String, Elm.Annotation.Annotation ) -> (Expression -> Expression) -> Declaration
+fn : String -> ( String, Elm.Annotation.Annotation ) -> (Expression a -> Expression b) -> Declaration
 fn name ( oneName, oneType ) toBody =
     let
         arg1 =
@@ -1516,7 +1541,7 @@ fn2 :
     String
     -> ( String, Elm.Annotation.Annotation )
     -> ( String, Elm.Annotation.Annotation )
-    -> (Expression -> Expression -> Expression)
+    -> (Expression a -> Expression b -> Expression c)
     -> Declaration
 fn2 name ( oneName, oneType ) ( twoName, twoType ) toBody =
     let
@@ -1571,7 +1596,7 @@ fn3 :
     -> ( String, Elm.Annotation.Annotation )
     -> ( String, Elm.Annotation.Annotation )
     -> ( String, Elm.Annotation.Annotation )
-    -> (Expression -> Expression -> Expression -> Expression)
+    -> (Expression a -> Expression b -> Expression c -> Expression d)
     -> Declaration
 fn3 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) toBody =
     let
@@ -1632,7 +1657,7 @@ fn4 :
     -> ( String, Elm.Annotation.Annotation )
     -> ( String, Elm.Annotation.Annotation )
     -> ( String, Elm.Annotation.Annotation )
-    -> (Expression -> Expression -> Expression -> Expression -> Expression)
+    -> (Expression a -> Expression b -> Expression c -> Expression d -> Expression e)
     -> Declaration
 fn4 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fourName, fourType ) toBody =
     let
@@ -1699,7 +1724,7 @@ fn5 :
     -> ( String, Elm.Annotation.Annotation )
     -> ( String, Elm.Annotation.Annotation )
     -> ( String, Elm.Annotation.Annotation )
-    -> (Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
+    -> (Expression a -> Expression b -> Expression c -> Expression d -> Expression e -> Expression f)
     -> Declaration
 fn5 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fourName, fourType ) ( fiveName, fiveType ) toBody =
     let
@@ -1935,21 +1960,21 @@ type BinOp
 
 {-| `>>`
 -}
-compose : Expression -> Expression -> Expression
+compose : Expression (a -> b) -> Expression (b -> c) -> Expression (a -> c)
 compose =
     applyBinOp (BinOp ">>" Infix.Left 9)
 
 
 {-| `<<`
 -}
-composeLeft : Expression -> Expression -> Expression
+composeLeft : Expression (b -> c) -> Expression (a -> b) -> Expression (a -> c)
 composeLeft =
     applyBinOp (BinOp "<<" Infix.Right 9)
 
 
 {-| The to-the-power-of operator `^`
 -}
-power : Expression -> Expression -> Expression
+power : Expression number -> Expression number -> Expression number
 power =
     applyInfix (BinOp "^" Infix.Right 8)
         (valueWith
@@ -1964,7 +1989,7 @@ power =
 
 {-| `*`
 -}
-multiply : Expression -> Expression -> Expression
+multiply : Expression number -> Expression number -> Expression number
 multiply =
     applyInfix (BinOp "*" Infix.Left 7)
         (valueWith
@@ -1979,7 +2004,7 @@ multiply =
 
 {-| `/`
 -}
-divide : Expression -> Expression -> Expression
+divide : Expression Float -> Expression Float -> Expression Float
 divide =
     applyInfix (BinOp "/" Infix.Left 7)
         (valueWith
@@ -1994,7 +2019,7 @@ divide =
 
 {-| `//`
 -}
-intDivide : Expression -> Expression -> Expression
+intDivide : Expression Int -> Expression Int -> Expression Int
 intDivide =
     applyInfix (BinOp "//" Infix.Left 7)
         (valueWith
@@ -2009,7 +2034,7 @@ intDivide =
 
 {-| `+`
 -}
-plus : Expression -> Expression -> Expression
+plus : Expression number -> Expression number -> Expression number
 plus =
     applyInfix (BinOp "+" Infix.Left 6)
         (valueWith
@@ -2024,7 +2049,7 @@ plus =
 
 {-| `-`
 -}
-minus : Expression -> Expression -> Expression
+minus : Expression number -> Expression number -> Expression number
 minus =
     applyInfix (BinOp "-" Infix.Left 6)
         (valueWith
@@ -2039,7 +2064,7 @@ minus =
 
 {-| `++`
 -}
-append : Expression -> Expression -> Expression
+append : Expression (List a) -> Expression (List a) -> Expression (List a)
 append =
     applyInfix
         (BinOp "++" Infix.Right 5)
@@ -2067,7 +2092,7 @@ append =
 
 {-| `::`
 -}
-cons : Expression -> Expression -> Expression
+cons : Expression a -> Expression (List a) -> Expression (List a)
 cons =
     applyInfix (BinOp "::" Infix.Right 5)
         (valueWith
@@ -2084,7 +2109,7 @@ cons =
 
 {-| `==`
 -}
-equal : Expression -> Expression -> Expression
+equal : Expression a -> Expression a -> Expression Bool
 equal =
     applyInfix (BinOp "==" Infix.Left 4)
         (valueWith
@@ -2101,7 +2126,7 @@ equal =
 
 {-| `/=`
 -}
-notEqual : Expression -> Expression -> Expression
+notEqual : Expression a -> Expression a -> Expression Bool
 notEqual =
     applyInfix (BinOp "/=" Infix.Left 4)
         (valueWith
@@ -2116,7 +2141,7 @@ notEqual =
 
 {-| `<`
 -}
-lt : Expression -> Expression -> Expression
+lt : Expression comparable -> Expression comparable -> Expression Bool
 lt =
     applyInfix (BinOp "<" Infix.Non 4)
         (valueWith
@@ -2131,7 +2156,7 @@ lt =
 
 {-| `>`
 -}
-gt : Expression -> Expression -> Expression
+gt : Expression comparable -> Expression comparable -> Expression Bool
 gt =
     applyInfix (BinOp ">" Infix.Non 4)
         (valueWith
@@ -2146,7 +2171,7 @@ gt =
 
 {-| `<=`
 -}
-lte : Expression -> Expression -> Expression
+lte : Expression comparable -> Expression comparable -> Expression Bool
 lte =
     applyInfix (BinOp "<=" Infix.Non 4)
         (valueWith
@@ -2161,7 +2186,7 @@ lte =
 
 {-| `>=`
 -}
-gte : Expression -> Expression -> Expression
+gte : Expression comparable -> Expression comparable -> Expression Bool
 gte =
     applyInfix (BinOp ">=" Infix.Non 4)
         (valueWith
@@ -2176,7 +2201,7 @@ gte =
 
 {-| `&&`
 -}
-and : Expression -> Expression -> Expression
+and : Expression Bool -> Expression Bool -> Expression Bool
 and =
     applyInfix (BinOp "&&" Infix.Right 3)
         (valueWith
@@ -2191,7 +2216,7 @@ and =
 
 {-| `||`
 -}
-or : Expression -> Expression -> Expression
+or : Expression Bool -> Expression Bool -> Expression Bool
 or =
     applyInfix (BinOp "||" Infix.Right 2)
         (valueWith
@@ -2204,35 +2229,28 @@ or =
         )
 
 
-{-| used in the `elm/parser` library
 
-`|=`
-
--}
-keep : Expression -> Expression -> Expression
-keep =
-    applyBinOp (BinOp "|=" Infix.Left 5)
-
-
-{-| `|.`
--}
-skip : Expression -> Expression -> Expression
-skip =
-    applyBinOp (BinOp "|." Infix.Left 6)
-
-
-{-| `</>` used in url parsing
--}
-slash : Expression -> Expression -> Expression
-slash =
-    applyBinOp (BinOp "</>" Infix.Right 7)
-
-
-{-| `<?>` used in url parsing
--}
-question : Expression -> Expression -> Expression
-question =
-    applyBinOp (BinOp "<?>" Infix.Left 8)
+-- {-| used in the `elm/parser` library
+-- `|=`
+-- -}
+-- keep : Expression -> Expression -> Expression
+-- keep =
+--     applyBinOp (BinOp "|=" Infix.Left 5)
+-- {-| `|.`
+-- -}
+-- skip : Expression -> Expression -> Expression
+-- skip =
+--     applyBinOp (BinOp "|." Infix.Left 6)
+-- {-| `</>` used in url parsing
+-- -}
+-- slash : Expression -> Expression -> Expression
+-- slash =
+--     applyBinOp (BinOp "</>" Infix.Right 7)
+-- {-| `<?>` used in url parsing
+-- -}
+-- question : Expression -> Expression -> Expression
+-- question =
+--     applyBinOp (BinOp "<?>" Infix.Left 8)
 
 
 {-| `|>`
@@ -2248,19 +2266,19 @@ Results in
         |> thang3
 
 -}
-pipe : Expression -> Expression -> Expression
+pipe : Expression a -> Expression (a -> b) -> Expression b
 pipe =
     applyBinOp (BinOp "|>" Infix.Left 0)
 
 
 {-| `<|`
 -}
-pipeLeft : Expression -> Expression -> Expression
+pipeLeft : Expression (a -> b) -> Expression a -> Expression b
 pipeLeft =
     applyBinOp (BinOp "<|" Infix.Right 0)
 
 
-applyBinOp : BinOp -> Expression -> Expression -> Expression
+applyBinOp : BinOp -> Expression a -> Expression b -> Expression c
 applyBinOp (BinOp symbol dir _) (Compiler.Expression exprl) (Compiler.Expression exprr) =
     Compiler.Expression
         { expression =
@@ -2271,7 +2289,7 @@ applyBinOp (BinOp symbol dir _) (Compiler.Expression exprl) (Compiler.Expression
         }
 
 
-applyInfix : BinOp -> Expression -> Expression -> Expression -> Expression
+applyInfix : BinOp -> Expression a -> Expression b -> Expression c -> Expression d
 applyInfix (BinOp symbol dir _) fnAnnotation (Compiler.Expression left) (Compiler.Expression right) =
     Compiler.Expression
         { expression =
@@ -2287,7 +2305,7 @@ applyInfix (BinOp symbol dir _) fnAnnotation (Compiler.Expression left) (Compile
 
 
 {-| -}
-pass : Expression
+pass : Expression skip
 pass =
     Compiler.skip
 

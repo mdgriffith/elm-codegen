@@ -10,11 +10,11 @@ import Elm.Syntax.Range as Range
 import Elm.Syntax.TypeAnnotation as Annotation
 
 
-type Annotation
+type Annotation a
     = Annotation AnnotationDetails
 
 
-getGenerics : Annotation -> List (Node String)
+getGenerics : Annotation a -> List (Node String)
 getGenerics (Annotation details) =
     getGenericsHelper details.annotation
 
@@ -59,7 +59,7 @@ getGenericsHelper ann =
                 ]
 
 
-noImports : Annotation.TypeAnnotation -> Annotation
+noImports : Annotation.TypeAnnotation -> Annotation a
 noImports tipe =
     Annotation
         { annotation = tipe
@@ -67,12 +67,12 @@ noImports tipe =
         }
 
 
-getInnerAnnotation : Annotation -> Annotation.TypeAnnotation
+getInnerAnnotation : Annotation a -> Annotation.TypeAnnotation
 getInnerAnnotation (Annotation details) =
     details.annotation
 
 
-getAnnotationImports : Annotation -> List Module
+getAnnotationImports : Annotation a -> List Module
 getAnnotationImports (Annotation details) =
     details.imports
 
@@ -84,7 +84,7 @@ type alias AnnotationDetails =
 
 
 {-| -}
-type Expression
+type Expression generated
     = Expression ExpressionDetails
 
 
@@ -96,23 +96,28 @@ type alias ExpressionDetails =
     }
 
 
-getImports : Expression -> List Module
+unsafe : Expression a -> Expression whatever
+unsafe (Expression details) =
+    Expression details
+
+
+getImports : Expression a -> List Module
 getImports (Expression exp) =
     exp.imports
 
 
-getInnerExpression : Expression -> Exp.Expression
+getInnerExpression : Expression a -> Exp.Expression
 getInnerExpression (Expression exp) =
     exp.expression
 
 
-getAnnotation : Expression -> Result (List InferenceError) Annotation.TypeAnnotation
+getAnnotation : Expression a -> Result (List InferenceError) Annotation.TypeAnnotation
 getAnnotation (Expression exp) =
     exp.annotation
 
 
 {-| -}
-skip : Expression
+skip : Expression a
 skip =
     Expression
         { skip = True
@@ -597,7 +602,7 @@ formatType str =
     String.toUpper (String.left 1 str) ++ String.dropLeft 1 str
 
 
-getTypeAnnotation : Expression -> Maybe Annotation.TypeAnnotation
+getTypeAnnotation : Expression a -> Maybe Annotation.TypeAnnotation
 getTypeAnnotation (Expression exp) =
     case exp.annotation of
         Err _ ->
@@ -608,7 +613,7 @@ getTypeAnnotation (Expression exp) =
 
 
 extractListAnnotation :
-    List Expression
+    List (Expression a)
     -> List Annotation.TypeAnnotation
     -> Result (List InferenceError) (List Annotation.TypeAnnotation)
 extractListAnnotation expressions annotations =
@@ -630,7 +635,7 @@ extractListAnnotation expressions annotations =
 
 
 {-| -}
-applyType : Expression -> List Expression -> Result (List InferenceError) Annotation.TypeAnnotation
+applyType : Expression a -> List (Expression a) -> Result (List InferenceError) Annotation.TypeAnnotation
 applyType (Expression exp) args =
     case exp.annotation of
         Err err ->
@@ -649,7 +654,7 @@ applyType (Expression exp) args =
                     Err err
 
 
-autoReduce : Int -> Expression -> Expression
+autoReduce : Int -> Expression a -> Expression a
 autoReduce count ((Expression fn) as unchanged) =
     if count <= 0 then
         unchanged
@@ -703,7 +708,7 @@ applyTypeHelper fn args =
                     Err [ FunctionAppliedToTooManyArgs ]
 
 
-unify : List Expression -> Result (List InferenceError) Annotation.TypeAnnotation
+unify : List (Expression a) -> Result (List InferenceError) Annotation.TypeAnnotation
 unify exps =
     case exps of
         [] ->
@@ -719,7 +724,7 @@ unify exps =
 
 
 unifyHelper :
-    List Expression
+    List (Expression a)
     -> Annotation.TypeAnnotation
     -> Result (List InferenceError) Annotation.TypeAnnotation
 unifyHelper exps existing =
