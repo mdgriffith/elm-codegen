@@ -16,7 +16,7 @@ main =
             \\json ->
                 ( ()
                 , Elm.Gen.files
-                    [ Elm.render file
+                    [ file
                     ]
                 )
         , update =
