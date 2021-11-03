@@ -523,6 +523,16 @@ asArgument index tipe =
             , Pattern.var (argName index)
             )
 
+        Elm.Type.Type "List.List" [ _ ] ->
+            ( Annotation.list expressionType
+            , Pattern.var (argName index)
+            )
+
+        Elm.Type.Record fields Nothing ->
+            ( Annotation.record <| List.map (\( fieldName, _ ) -> ( fieldName, expressionType )) fields
+            , Pattern.var (argName index)
+            )
+
         _ ->
             ( expressionType
             , Pattern.var (argName index)
@@ -536,6 +546,9 @@ asArgumentTypeHelper tipe =
             Annotation.function
                 [ asArgumentTypeHelper one ]
                 (asArgumentTypeHelper two)
+
+        Elm.Type.Type "List.List" [ _ ] ->
+            Annotation.list expressionType
 
         _ ->
             expressionType
@@ -556,9 +569,40 @@ asValueHelper index tipe args =
         _ ->
             case args of
                 [] ->
-                    Elm.valueWith local
-                        (argName index)
-                        expressionType
+                    case tipe of
+                        Elm.Type.Type "List.List" [ _ ] ->
+                            Elm.valueWith
+                                local
+                                (argName index)
+                                (Annotation.list expressionType)
+                                |> ElmGen.list
+
+                        Elm.Type.Record fields Nothing ->
+                            let
+                                recordTipe =
+                                    fields
+                                        |> List.map (\( fieldName, _ ) -> ( fieldName, expressionType ))
+                                        |> Annotation.record
+                            in
+                            fields
+                                |> List.map
+                                    (\( fieldName, _ ) ->
+                                        ElmGen.field
+                                            (Elm.string fieldName)
+                                            (Elm.valueWith
+                                                local
+                                                (argName index)
+                                                recordTipe
+                                                |> Elm.get fieldName
+                                            )
+                                    )
+                                |> Elm.list
+                                |> ElmGen.record
+
+                        _ ->
+                            Elm.valueWith local
+                                (argName index)
+                                expressionType
 
                 _ ->
                     Elm.apply
