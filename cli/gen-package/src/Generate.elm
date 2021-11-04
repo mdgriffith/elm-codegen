@@ -2,17 +2,18 @@ module Generate exposing (main)
 
 {-| -}
 
+import DocsFromSource
 import Elm
 import Elm.Annotation as Annotation
+import Elm.Debug exposing (annotation)
 import Elm.Docs
 import Elm.Gen
 import Elm.Gen.Elm as ElmGen
 import Elm.Gen.Elm.Annotation as GenType
 import Elm.Pattern as Pattern
 import Elm.Type
-import Internal.Compiler as Util
 import Json.Decode as Json
-import DocsFromSource
+
 
 main : Program Json.Value () ()
 main =
@@ -64,7 +65,7 @@ parseSources srcs parsed =
         [] ->
             Ok parsed
 
-        (top :: remain) ->
+        top :: remain ->
             case DocsFromSource.fromSource top of
                 Err err ->
                     Err err
@@ -83,7 +84,7 @@ flagsDecoder =
     Json.oneOf
         [ Json.field "docs"
             (Json.list Elm.Docs.decoder)
-                |> Json.map Docs
+            |> Json.map Docs
         , Json.field "elmSource" (Json.list Json.string)
             |> Json.map ElmSource
         ]
@@ -370,6 +371,7 @@ generateTypeRecord blocks fields =
                 Just field ->
                     generateTypeRecord remain (field :: fields)
 
+
 generateTypeRecordHelper : Elm.Docs.Block -> Maybe Elm.Field
 generateTypeRecordHelper block =
     case block of
@@ -434,6 +436,7 @@ generateBlocks block =
                                 value.tipe
                             )
                             (List.reverse (List.drop 1 captured.values))
+                            |> Elm.withType expressionType
                         )
                         |> Elm.withDocumentation value.comment
                         |> Elm.expose
@@ -517,26 +520,9 @@ argName index =
 
 asArgument : Int -> Elm.Type.Type -> ( Annotation.Annotation, Pattern.Pattern )
 asArgument index tipe =
-    case tipe of
-        Elm.Type.Lambda one two ->
-            ( asArgumentTypeHelper tipe
-            , Pattern.var (argName index)
-            )
-
-        Elm.Type.Type "List.List" [ _ ] ->
-            ( Annotation.list expressionType
-            , Pattern.var (argName index)
-            )
-
-        Elm.Type.Record fields Nothing ->
-            ( Annotation.record <| List.map (\( fieldName, _ ) -> ( fieldName, expressionType )) fields
-            , Pattern.var (argName index)
-            )
-
-        _ ->
-            ( expressionType
-            , Pattern.var (argName index)
-            )
+    ( asArgumentTypeHelper tipe
+    , Pattern.var (argName index)
+    )
 
 
 asArgumentTypeHelper : Elm.Type.Type -> Annotation.Annotation
@@ -547,8 +533,20 @@ asArgumentTypeHelper tipe =
                 [ asArgumentTypeHelper one ]
                 (asArgumentTypeHelper two)
 
-        Elm.Type.Type "List.List" [ _ ] ->
-            Annotation.list expressionType
+        Elm.Type.Type "List.List" [ inner ] ->
+            Annotation.list <| asArgumentTypeHelper inner
+
+        Elm.Type.Record fields Nothing ->
+            Annotation.record <|
+                List.map
+                    (\( fieldName, fieldType ) ->
+                        let
+                            fieldAnnotation =
+                                asArgumentTypeHelper fieldType
+                        in
+                        ( fieldName, fieldAnnotation )
+                    )
+                    fields
 
         _ ->
             expressionType
@@ -557,63 +555,42 @@ asArgumentTypeHelper tipe =
 {-| -}
 asValue : Int -> Elm.Type.Type -> Elm.Expression
 asValue index tipe =
-    asValueHelper index tipe []
+    getArgumentUnpacker tipe <|
+        Elm.valueFrom
+            local
+            (argName index)
 
 
-asValueHelper : Int -> Elm.Type.Type -> List Elm.Expression -> Elm.Expression
-asValueHelper index tipe args =
+getArgumentUnpacker : Elm.Type.Type -> Elm.Expression -> Elm.Expression
+getArgumentUnpacker tipe value =
     case tipe of
-        Elm.Type.Lambda one two ->
-            asValueHelper index two (ElmGen.pass :: args)
+        Elm.Type.Lambda _ two ->
+            let
+                f =
+                    getArgumentUnpacker two value
+            in
+            Elm.apply f [ ElmGen.pass ]
+
+        Elm.Type.Type "List.List" [ inner ] ->
+            let
+                f =
+                    getArgumentUnpacker inner value
+            in
+            ElmGen.list f
+
+        Elm.Type.Record fields Nothing ->
+            fields
+                |> List.map
+                    (\( fieldName, fieldType ) ->
+                        ElmGen.field
+                            (Elm.string fieldName)
+                            (getArgumentUnpacker fieldType <| Elm.get fieldName value)
+                    )
+                |> Elm.list
+                |> ElmGen.record
 
         _ ->
-            case args of
-                [] ->
-                    case tipe of
-                        Elm.Type.Type "List.List" [ _ ] ->
-                            Elm.valueWith
-                                local
-                                (argName index)
-                                (Annotation.list expressionType)
-                                |> ElmGen.list
-
-                        Elm.Type.Record fields Nothing ->
-                            let
-                                recordTipe =
-                                    fields
-                                        |> List.map (\( fieldName, _ ) -> ( fieldName, expressionType ))
-                                        |> Annotation.record
-                            in
-                            fields
-                                |> List.map
-                                    (\( fieldName, _ ) ->
-                                        ElmGen.field
-                                            (Elm.string fieldName)
-                                            (Elm.valueWith
-                                                local
-                                                (argName index)
-                                                recordTipe
-                                                |> Elm.get fieldName
-                                            )
-                                    )
-                                |> Elm.list
-                                |> ElmGen.record
-
-                        _ ->
-                            Elm.valueWith local
-                                (argName index)
-                                expressionType
-
-                _ ->
-                    Elm.apply
-                        (Elm.valueWith local
-                            (argName index)
-                            (Annotation.function
-                                (List.repeat (List.length args) expressionType)
-                                expressionType
-                            )
-                        )
-                        (List.reverse args)
+            value
 
 
 {-|

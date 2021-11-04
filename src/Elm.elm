@@ -2249,8 +2249,8 @@ Results in
 
 -}
 pipe : Expression -> Expression -> Expression
-pipe =
-    applyBinOp (BinOp "|>" Infix.Left 0)
+pipe r l =
+    applyBinOp (BinOp "|>" Infix.Left 0) l r
 
 
 {-| `<|`
