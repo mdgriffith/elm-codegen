@@ -555,26 +555,37 @@ asArgumentTypeHelper tipe =
 {-| -}
 asValue : Int -> Elm.Type.Type -> Elm.Expression
 asValue index tipe =
-    getArgumentUnpacker tipe <|
+    getArgumentUnpacker 0 tipe <|
         Elm.valueFrom
             local
             (argName index)
 
 
-getArgumentUnpacker : Elm.Type.Type -> Elm.Expression -> Elm.Expression
-getArgumentUnpacker tipe value =
+getArgumentUnpacker : Int -> Elm.Type.Type -> Elm.Expression -> Elm.Expression
+getArgumentUnpacker freshCount tipe value =
     case tipe of
-        Elm.Type.Lambda _ two ->
+        Elm.Type.Lambda one two ->
             let
                 f =
-                    getArgumentUnpacker two value
+                    getArgumentUnpacker (freshCount + 1)
+                        two
+                        (Elm.apply value [ Elm.value varName ])
+
+                varName =
+                    "lambdaArg" ++ String.fromInt freshCount
             in
-            Elm.apply f [ ElmGen.pass ]
+            ElmGen.lambda (Elm.string varName)
+                (typeToExpression one)
+                (\_ ->
+                    Elm.lambda varName
+                        (typeToAnnotation one)
+                        (\_ -> f)
+                )
 
         Elm.Type.Type "List.List" [ inner ] ->
             let
                 f =
-                    getArgumentUnpacker inner value
+                    getArgumentUnpacker freshCount inner value
             in
             ElmGen.list f
 
@@ -584,7 +595,9 @@ getArgumentUnpacker tipe value =
                     (\( fieldName, fieldType ) ->
                         ElmGen.field
                             (Elm.string fieldName)
-                            (getArgumentUnpacker fieldType <| Elm.get fieldName value)
+                            (getArgumentUnpacker freshCount fieldType <|
+                                Elm.get fieldName value
+                            )
                     )
                 |> Elm.list
                 |> ElmGen.record
