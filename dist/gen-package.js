@@ -10341,6 +10341,110 @@ var $author$project$Elm$get = F2(
 			g: false
 		};
 	});
+var $stil4m$elm_syntax$Elm$Syntax$Expression$LambdaExpression = function (a) {
+	return {$: 17, a: a};
+};
+var $author$project$Elm$lambda = F3(
+	function (argBaseName, argType, toExpression) {
+		var arg1 = A3($author$project$Elm$valueWith, _List_Nil, argBaseName, argType);
+		var _v0 = toExpression(arg1);
+		var expr = _v0;
+		return {
+			c: function () {
+				var _v1 = expr.c;
+				if (_v1.$ === 1) {
+					var err = _v1.a;
+					return $elm$core$Result$Err(err);
+				} else {
+					var _return = _v1.a;
+					return $elm$core$Result$Ok(
+						A3(
+							$elm$core$List$foldr,
+							F2(
+								function (ann, fnbody) {
+									return A2(
+										$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$FunctionTypeAnnotation,
+										$author$project$Internal$Compiler$nodify(ann),
+										$author$project$Internal$Compiler$nodify(fnbody));
+								}),
+							_return,
+							_List_fromArray(
+								[
+									$author$project$Internal$Compiler$getInnerAnnotation(argType)
+								])));
+				}
+			}(),
+			b: $stil4m$elm_syntax$Elm$Syntax$Expression$LambdaExpression(
+				{
+					aX: _List_fromArray(
+						[
+							$author$project$Internal$Compiler$nodify(
+							$stil4m$elm_syntax$Elm$Syntax$Pattern$VarPattern(argBaseName))
+						]),
+					b: $author$project$Internal$Compiler$nodify(expr.b)
+				}),
+			a: expr.a,
+			g: false
+		};
+	});
+var $stil4m$elm_syntax$Elm$Syntax$Expression$UnitExpr = {$: 0};
+var $author$project$Internal$Compiler$skip = {
+	c: $elm$core$Result$Err(_List_Nil),
+	b: $stil4m$elm_syntax$Elm$Syntax$Expression$UnitExpr,
+	a: _List_Nil,
+	g: true
+};
+var $author$project$Elm$pass = $author$project$Internal$Compiler$skip;
+var $author$project$Elm$Gen$Elm$lambda = F3(
+	function (arg1, arg2, arg3) {
+		return A2(
+			$author$project$Elm$apply,
+			A3(
+				$author$project$Elm$valueWith,
+				$author$project$Elm$Gen$Elm$moduleName_,
+				'lambda',
+				A2(
+					$author$project$Elm$Annotation$function,
+					_List_fromArray(
+						[
+							$author$project$Elm$Annotation$string,
+							A3(
+							$author$project$Elm$Annotation$namedWith,
+							_List_fromArray(
+								['Elm', 'Annotation']),
+							'Annotation',
+							_List_Nil),
+							A2(
+							$author$project$Elm$Annotation$function,
+							_List_fromArray(
+								[
+									A3(
+									$author$project$Elm$Annotation$namedWith,
+									_List_fromArray(
+										['Elm']),
+									'Expression',
+									_List_Nil)
+								]),
+							A3(
+								$author$project$Elm$Annotation$namedWith,
+								_List_fromArray(
+									['Elm']),
+								'Expression',
+								_List_Nil))
+						]),
+					A3(
+						$author$project$Elm$Annotation$namedWith,
+						_List_fromArray(
+							['Elm']),
+						'Expression',
+						_List_Nil))),
+			_List_fromArray(
+				[
+					arg1,
+					arg2,
+					arg3($author$project$Elm$pass)
+				]));
+	});
 var $author$project$Elm$Gen$Elm$list = function (arg1) {
 	return A2(
 		$author$project$Elm$apply,
@@ -10369,16 +10473,6 @@ var $author$project$Elm$Gen$Elm$list = function (arg1) {
 		_List_fromArray(
 			[arg1]));
 };
-var $author$project$Elm$Gen$Elm$pass = A3(
-	$author$project$Elm$valueWith,
-	$author$project$Elm$Gen$Elm$moduleName_,
-	'pass',
-	A3(
-		$author$project$Elm$Annotation$namedWith,
-		_List_fromArray(
-			['Elm']),
-		'Expression',
-		_List_Nil));
 var $author$project$Elm$Gen$Elm$record = function (arg1) {
 	return A2(
 		$author$project$Elm$apply,
@@ -10407,57 +10501,144 @@ var $author$project$Elm$Gen$Elm$record = function (arg1) {
 		_List_fromArray(
 			[arg1]));
 };
-var $author$project$Generate$getArgumentUnpacker = F2(
-	function (tipe, value) {
-		_v0$3:
-		while (true) {
-			switch (tipe.$) {
-				case 1:
-					var two = tipe.b;
-					var f = A2($author$project$Generate$getArgumentUnpacker, two, value);
-					return A2(
-						$author$project$Elm$apply,
-						f,
-						_List_fromArray(
-							[$author$project$Elm$Gen$Elm$pass]));
-				case 3:
-					if (((tipe.a === 'List.List') && tipe.b.b) && (!tipe.b.b.b)) {
-						var _v1 = tipe.b;
-						var inner = _v1.a;
-						var f = A2($author$project$Generate$getArgumentUnpacker, inner, value);
-						return $author$project$Elm$Gen$Elm$list(f);
-					} else {
-						break _v0$3;
-					}
-				case 4:
-					if (tipe.b.$ === 1) {
-						var fields = tipe.a;
-						var _v2 = tipe.b;
-						return $author$project$Elm$Gen$Elm$record(
-							$author$project$Elm$list(
-								A2(
-									$elm$core$List$map,
-									function (_v3) {
-										var fieldName = _v3.a;
-										var fieldType = _v3.b;
-										return A2(
-											$author$project$Elm$Gen$Elm$field,
-											$author$project$Elm$string(fieldName),
-											A2(
-												$author$project$Generate$getArgumentUnpacker,
-												fieldType,
-												A2($author$project$Elm$get, fieldName, value)));
-									},
-									fields)));
-					} else {
-						break _v0$3;
-					}
-				default:
-					break _v0$3;
-			}
-		}
-		return value;
+var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$GenericRecord = F2(
+	function (a, b) {
+		return {$: 5, a: a, b: b};
 	});
+var $author$project$Elm$Annotation$extensible = F2(
+	function (base, fields) {
+		return {
+			c: A2(
+				$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$GenericRecord,
+				$author$project$Internal$Compiler$nodify(
+					$author$project$Internal$Compiler$formatValue(base)),
+				$author$project$Internal$Compiler$nodify(
+					$author$project$Internal$Compiler$nodifyAll(
+						A2(
+							$elm$core$List$map,
+							function (_v0) {
+								var name = _v0.a;
+								var ann = _v0.b;
+								return _Utils_Tuple2(
+									$author$project$Internal$Compiler$nodify(name),
+									$author$project$Internal$Compiler$nodify(
+										$author$project$Internal$Compiler$getInnerAnnotation(ann)));
+							},
+							fields)))),
+			a: A2(
+				$elm$core$List$concatMap,
+				A2($elm$core$Basics$composeR, $elm$core$Tuple$second, $author$project$Internal$Compiler$getAnnotationImports),
+				fields)
+		};
+	});
+var $author$project$Elm$Annotation$triple = F3(
+	function (one, two, three) {
+		return {
+			c: $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Tupled(
+				$author$project$Internal$Compiler$nodifyAll(
+					_List_fromArray(
+						[
+							$author$project$Internal$Compiler$getInnerAnnotation(one),
+							$author$project$Internal$Compiler$getInnerAnnotation(two),
+							$author$project$Internal$Compiler$getInnerAnnotation(three)
+						]))),
+			a: _Utils_ap(
+				$author$project$Internal$Compiler$getAnnotationImports(one),
+				_Utils_ap(
+					$author$project$Internal$Compiler$getAnnotationImports(two),
+					$author$project$Internal$Compiler$getAnnotationImports(three)))
+		};
+	});
+var $author$project$Elm$Annotation$unit = {c: $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Unit, a: _List_Nil};
+var $author$project$Elm$Annotation$var = function (a) {
+	return {
+		c: $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$GenericType(
+			$author$project$Internal$Compiler$formatValue(a)),
+		a: _List_Nil
+	};
+};
+var $author$project$Generate$typeToAnnotation = function (elmType) {
+	switch (elmType.$) {
+		case 0:
+			var string = elmType.a;
+			return $author$project$Elm$Annotation$var(string);
+		case 1:
+			var one = elmType.a;
+			var two = elmType.b;
+			return A2(
+				$author$project$Elm$Annotation$function,
+				_List_fromArray(
+					[
+						$author$project$Generate$typeToAnnotation(one)
+					]),
+				$author$project$Generate$typeToAnnotation(two));
+		case 2:
+			var types = elmType.a;
+			_v1$3:
+			while (true) {
+				if (!types.b) {
+					return $author$project$Elm$Annotation$unit;
+				} else {
+					if (types.b.b) {
+						if (!types.b.b.b) {
+							var one = types.a;
+							var _v2 = types.b;
+							var two = _v2.a;
+							return A2(
+								$author$project$Elm$Annotation$tuple,
+								$author$project$Generate$typeToAnnotation(one),
+								$author$project$Generate$typeToAnnotation(two));
+						} else {
+							if (!types.b.b.b.b) {
+								var one = types.a;
+								var _v3 = types.b;
+								var two = _v3.a;
+								var _v4 = _v3.b;
+								var three = _v4.a;
+								return A3(
+									$author$project$Elm$Annotation$triple,
+									$author$project$Generate$typeToAnnotation(one),
+									$author$project$Generate$typeToAnnotation(two),
+									$author$project$Generate$typeToAnnotation(three));
+							} else {
+								break _v1$3;
+							}
+						}
+					} else {
+						break _v1$3;
+					}
+				}
+			}
+			return $author$project$Elm$Annotation$unit;
+		case 3:
+			var name = elmType.a;
+			var types = elmType.b;
+			return A3(
+				$author$project$Elm$Annotation$namedWith,
+				_List_Nil,
+				name,
+				A2($elm$core$List$map, $author$project$Generate$typeToAnnotation, types));
+		default:
+			var fields = elmType.a;
+			var maybeExtensible = elmType.b;
+			if (maybeExtensible.$ === 1) {
+				return $author$project$Elm$Annotation$record(
+					A2(
+						$elm$core$List$map,
+						$elm$core$Tuple$mapSecond($author$project$Generate$typeToAnnotation),
+						fields));
+			} else {
+				var base = maybeExtensible.a;
+				return A2(
+					$author$project$Elm$Annotation$extensible,
+					base,
+					A2(
+						$elm$core$List$map,
+						$elm$core$Tuple$mapSecond($author$project$Generate$typeToAnnotation),
+						fields));
+			}
+	}
+};
 var $author$project$Elm$valueFrom = F2(
 	function (mod, name) {
 		return {
@@ -10471,10 +10652,84 @@ var $author$project$Elm$valueFrom = F2(
 			g: false
 		};
 	});
+var $author$project$Elm$value = $author$project$Elm$valueFrom(_List_Nil);
+var $author$project$Generate$getArgumentUnpacker = F3(
+	function (freshCount, tipe, value) {
+		_v0$3:
+		while (true) {
+			switch (tipe.$) {
+				case 1:
+					var one = tipe.a;
+					var two = tipe.b;
+					var varName = 'lambdaArg' + $elm$core$String$fromInt(freshCount);
+					var f = A3(
+						$author$project$Generate$getArgumentUnpacker,
+						freshCount + 1,
+						two,
+						A2(
+							$author$project$Elm$apply,
+							value,
+							_List_fromArray(
+								[
+									$author$project$Elm$value(varName)
+								])));
+					return A3(
+						$author$project$Elm$Gen$Elm$lambda,
+						$author$project$Elm$string(varName),
+						$author$project$Generate$typeToExpression(one),
+						function (arg) {
+							return A3(
+								$author$project$Elm$lambda,
+								varName,
+								$author$project$Generate$typeToAnnotation(one),
+								function (_v1) {
+									return f;
+								});
+						});
+				case 3:
+					if (((tipe.a === 'List.List') && tipe.b.b) && (!tipe.b.b.b)) {
+						var _v2 = tipe.b;
+						var inner = _v2.a;
+						var f = A3($author$project$Generate$getArgumentUnpacker, freshCount, inner, value);
+						return $author$project$Elm$Gen$Elm$list(f);
+					} else {
+						break _v0$3;
+					}
+				case 4:
+					if (tipe.b.$ === 1) {
+						var fields = tipe.a;
+						var _v3 = tipe.b;
+						return $author$project$Elm$Gen$Elm$record(
+							$author$project$Elm$list(
+								A2(
+									$elm$core$List$map,
+									function (_v4) {
+										var fieldName = _v4.a;
+										var fieldType = _v4.b;
+										return A2(
+											$author$project$Elm$Gen$Elm$field,
+											$author$project$Elm$string(fieldName),
+											A3(
+												$author$project$Generate$getArgumentUnpacker,
+												freshCount,
+												fieldType,
+												A2($author$project$Elm$get, fieldName, value)));
+									},
+									fields)));
+					} else {
+						break _v0$3;
+					}
+				default:
+					break _v0$3;
+			}
+		}
+		return value;
+	});
 var $author$project$Generate$asValue = F2(
 	function (index, tipe) {
-		return A2(
+		return A3(
 			$author$project$Generate$getArgumentUnpacker,
+			0,
 			tipe,
 			A2(
 				$author$project$Elm$valueFrom,
@@ -10725,9 +10980,6 @@ var $author$project$Generate$generateBlocks = function (block) {
 			return _List_Nil;
 	}
 };
-var $stil4m$elm_syntax$Elm$Syntax$Expression$LambdaExpression = function (a) {
-	return {$: 17, a: a};
-};
 var $author$project$Elm$lambdaWith = F2(
 	function (args, _v0) {
 		var expr = _v0;
@@ -10859,7 +11111,6 @@ var $author$project$Elm$record = function (fields) {
 		g: false
 	};
 };
-var $author$project$Elm$value = $author$project$Elm$valueFrom(_List_Nil);
 var $author$project$Generate$generateTypeBuilderRecordHelper = function (block) {
 	switch (block.$) {
 		case 0:
@@ -11486,7 +11737,6 @@ var $stil4m$elm_syntax$Elm$Syntax$Expression$RecordUpdateExpression = F2(
 	function (a, b) {
 		return {$: 22, a: a, b: b};
 	});
-var $stil4m$elm_syntax$Elm$Syntax$Expression$UnitExpr = {$: 0};
 var $stil4m$elm_syntax$Combine$andThen = F2(
 	function (f, _v0) {
 		var p = _v0;
@@ -13081,10 +13331,6 @@ var $stil4m$elm_syntax$Elm$Syntax$Signature$Signature = F2(
 		return {I: name, aV: typeAnnotation};
 	});
 var $stil4m$elm_syntax$Elm$Parser$TypeAnnotation$Eager = 0;
-var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$GenericRecord = F2(
-	function (a, b) {
-		return {$: 5, a: a, b: b};
-	});
 var $stil4m$elm_syntax$Elm$Parser$TypeAnnotation$Lazy = 1;
 var $stil4m$elm_syntax$Elm$Parser$TypeAnnotation$asTypeAnnotation = F2(
 	function (x, xs) {
