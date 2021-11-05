@@ -1206,11 +1206,21 @@ betaReduce e =
 
                 _ ->
                     Nothing
+
+        -- If the list is nonempty, returns a tuple with the beginning of the list and the last element (denoded).
+        popLast : List (Node.Node a) -> Maybe ( List (Node.Node a), a )
+        popLast lst =
+            case List.reverse lst of
+                [] ->
+                    Nothing
+
+                last :: initReverse ->
+                    Just ( List.reverse initReverse, Compiler.denode last )
     in
     case e of
         Exp.LambdaExpression { args, expression } ->
-            case List.reverse <| Compiler.denodeAll args of
-                (Pattern.VarPattern lastLambdaArg) :: initLambdaArgsReversed ->
+            case popLast args of
+                Just ( initLambdaArgs, Pattern.VarPattern lastLambdaArg ) ->
                     case Compiler.denode expression of
                         Exp.RecordAccess argNode fieldNode ->
                             let
@@ -1232,36 +1242,31 @@ betaReduce e =
                                     e
 
                         Exp.Application applicationArgs ->
-                            case List.reverse <| Compiler.denodeAll applicationArgs of
-                                [ uniqueApplicationArg ] ->
+                            case popLast applicationArgs of
+                                Just ( [], uniqueApplicationArg ) ->
                                     if extractLastArg uniqueApplicationArg == Just lastLambdaArg then
                                         Exp.FunctionOrValue [] "identity"
 
                                     else
                                         e
 
-                                lastApplicationArg :: initApplicationArgsReversed ->
+                                Just ( initApplicationArgs, lastApplicationArg ) ->
                                     if extractLastArg lastApplicationArg == Just lastLambdaArg then
-                                        if List.isEmpty initLambdaArgsReversed then
-                                            case initApplicationArgsReversed of
+                                        if List.isEmpty initLambdaArgs then
+                                            case initApplicationArgs of
                                                 [ s ] ->
-                                                    betaReduce s
+                                                    betaReduce <| Compiler.denode s
 
                                                 _ ->
-                                                    betaReduce <|
-                                                        Exp.Application <|
-                                                            Compiler.nodifyAll <|
-                                                                List.reverse initApplicationArgsReversed
+                                                    Exp.Application initApplicationArgs
 
                                         else
                                             betaReduce <|
                                                 Exp.LambdaExpression
-                                                    { args = Compiler.nodifyAll <| List.reverse initLambdaArgsReversed
+                                                    { args = initLambdaArgs
                                                     , expression =
                                                         Compiler.nodify <|
-                                                            Exp.Application <|
-                                                                Compiler.nodifyAll <|
-                                                                    List.reverse initApplicationArgsReversed
+                                                            Exp.Application initApplicationArgs
                                                     }
 
                                     else
