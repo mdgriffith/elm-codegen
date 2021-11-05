@@ -577,7 +577,7 @@ getArgumentUnpacker freshCount tipe value =
             ElmGen.lambdaBetaReduced (Elm.string varName)
                 (typeToExpression one)
                 (\_ ->
-                    Elm.lambda varName
+                    Elm.lambdaBetaReduced varName
                         (typeToAnnotation one)
                         (\_ -> f)
                 )

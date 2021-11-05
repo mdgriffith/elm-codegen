@@ -10344,7 +10344,120 @@ var $author$project$Elm$get = F2(
 var $stil4m$elm_syntax$Elm$Syntax$Expression$LambdaExpression = function (a) {
 	return {$: 17, a: a};
 };
-var $author$project$Elm$lambda = F3(
+var $stil4m$elm_syntax$Elm$Syntax$Expression$RecordAccessFunction = function (a) {
+	return {$: 21, a: a};
+};
+var $elm$core$List$isEmpty = function (xs) {
+	if (!xs.b) {
+		return true;
+	} else {
+		return false;
+	}
+};
+var $author$project$Elm$betaReduce = function (e) {
+	betaReduce:
+	while (true) {
+		var extractLastArg = function (arg) {
+			_v0$2:
+			while (true) {
+				switch (arg.$) {
+					case 3:
+						if (!arg.a.b) {
+							var n = arg.b;
+							return $elm$core$Maybe$Just(n);
+						} else {
+							break _v0$2;
+						}
+					case 14:
+						var p = arg.a;
+						return extractLastArg(
+							$author$project$Internal$Compiler$denode(p));
+					default:
+						break _v0$2;
+				}
+			}
+			return $elm$core$Maybe$Nothing;
+		};
+		if (e.$ === 17) {
+			var args = e.a.aX;
+			var expression = e.a.a;
+			var _v2 = $elm$core$List$reverse(
+				$author$project$Internal$Compiler$denodeAll(args));
+			if (_v2.b && (_v2.a.$ === 11)) {
+				var lastLambdaArg = _v2.a.a;
+				var initLambdaArgsReversed = _v2.b;
+				var _v3 = $author$project$Internal$Compiler$denode(expression);
+				switch (_v3.$) {
+					case 20:
+						var argNode = _v3.a;
+						var fieldNode = _v3.b;
+						var fieldName = $author$project$Internal$Compiler$denode(fieldNode);
+						var arg = $author$project$Internal$Compiler$denode(argNode);
+						if ((arg.$ === 3) && (!arg.a.b)) {
+							var argName = arg.b;
+							return _Utils_eq(argName, lastLambdaArg) ? $stil4m$elm_syntax$Elm$Syntax$Expression$RecordAccessFunction('.' + fieldName) : e;
+						} else {
+							return e;
+						}
+					case 1:
+						var applicationArgs = _v3.a;
+						var _v5 = $elm$core$List$reverse(
+							$author$project$Internal$Compiler$denodeAll(applicationArgs));
+						if (_v5.b) {
+							if (!_v5.b.b) {
+								var uniqueApplicationArg = _v5.a;
+								return _Utils_eq(
+									extractLastArg(uniqueApplicationArg),
+									$elm$core$Maybe$Just(lastLambdaArg)) ? A2($stil4m$elm_syntax$Elm$Syntax$Expression$FunctionOrValue, _List_Nil, 'identity') : e;
+							} else {
+								var lastApplicationArg = _v5.a;
+								var initApplicationArgsReversed = _v5.b;
+								if (_Utils_eq(
+									extractLastArg(lastApplicationArg),
+									$elm$core$Maybe$Just(lastLambdaArg))) {
+									if ($elm$core$List$isEmpty(initLambdaArgsReversed)) {
+										if (initApplicationArgsReversed.b && (!initApplicationArgsReversed.b.b)) {
+											var s = initApplicationArgsReversed.a;
+											var $temp$e = s;
+											e = $temp$e;
+											continue betaReduce;
+										} else {
+											return $author$project$Elm$betaReduce(
+												$stil4m$elm_syntax$Elm$Syntax$Expression$Application(
+													$author$project$Internal$Compiler$nodifyAll(
+														$elm$core$List$reverse(initApplicationArgsReversed))));
+										}
+									} else {
+										return $author$project$Elm$betaReduce(
+											$stil4m$elm_syntax$Elm$Syntax$Expression$LambdaExpression(
+												{
+													aX: $author$project$Internal$Compiler$nodifyAll(
+														$elm$core$List$reverse(initLambdaArgsReversed)),
+													a: $author$project$Internal$Compiler$nodify(
+														$stil4m$elm_syntax$Elm$Syntax$Expression$Application(
+															$author$project$Internal$Compiler$nodifyAll(
+																$elm$core$List$reverse(initApplicationArgsReversed))))
+												}));
+									}
+								} else {
+									return e;
+								}
+							}
+						} else {
+							return e;
+						}
+					default:
+						return e;
+				}
+			} else {
+				return e;
+			}
+		} else {
+			return e;
+		}
+	}
+};
+var $author$project$Elm$lambdaBetaReduced = F3(
 	function (argBaseName, argType, toExpression) {
 		var arg1 = A3($author$project$Elm$valueWith, _List_Nil, argBaseName, argType);
 		var _v0 = toExpression(arg1);
@@ -10374,15 +10487,16 @@ var $author$project$Elm$lambda = F3(
 								])));
 				}
 			}(),
-			a: $stil4m$elm_syntax$Elm$Syntax$Expression$LambdaExpression(
-				{
-					aX: _List_fromArray(
-						[
-							$author$project$Internal$Compiler$nodify(
-							$stil4m$elm_syntax$Elm$Syntax$Pattern$VarPattern(argBaseName))
-						]),
-					a: $author$project$Internal$Compiler$nodify(expr.a)
-				}),
+			a: $author$project$Elm$betaReduce(
+				$stil4m$elm_syntax$Elm$Syntax$Expression$LambdaExpression(
+					{
+						aX: _List_fromArray(
+							[
+								$author$project$Internal$Compiler$nodify(
+								$stil4m$elm_syntax$Elm$Syntax$Pattern$VarPattern(argBaseName))
+							]),
+						a: $author$project$Internal$Compiler$nodify(expr.a)
+					})),
 			b: expr.b,
 			g: false
 		};
@@ -10679,7 +10793,7 @@ var $author$project$Generate$getArgumentUnpacker = F3(
 						$author$project$Generate$typeToExpression(one),
 						function (_v1) {
 							return A3(
-								$author$project$Elm$lambda,
+								$author$project$Elm$lambdaBetaReduced,
 								varName,
 								$author$project$Generate$typeToAnnotation(one),
 								function (_v2) {
@@ -14012,9 +14126,6 @@ var $stil4m$elm_syntax$Elm$Parser$Tokens$prefixOperatorToken = $stil4m$elm_synta
 var $stil4m$elm_syntax$Elm$Syntax$Node$range = function (_v0) {
 	var r = _v0.a;
 	return r;
-};
-var $stil4m$elm_syntax$Elm$Syntax$Expression$RecordAccessFunction = function (a) {
-	return {$: 21, a: a};
 };
 var $stil4m$elm_syntax$Elm$Parser$Declarations$recordAccessFunctionExpression = $stil4m$elm_syntax$Elm$Parser$Node$parser(
 	A2(
