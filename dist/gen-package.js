@@ -4401,7 +4401,7 @@ var $elm$core$List$concatMap = F2(
 	});
 var $author$project$Internal$Compiler$getAnnotationImports = function (_v0) {
 	var details = _v0;
-	return details.a;
+	return details.b;
 };
 var $stil4m$elm_syntax$Elm$Syntax$Node$Node = F2(
 	function (a, b) {
@@ -4424,7 +4424,7 @@ var $author$project$Elm$Annotation$typed = F3(
 					_Utils_Tuple2(mod, name)),
 				$author$project$Internal$Compiler$nodifyAll(
 					A2($elm$core$List$map, $author$project$Internal$Compiler$getInnerAnnotation, args))),
-			a: A2($elm$core$List$concatMap, $author$project$Internal$Compiler$getAnnotationImports, args)
+			b: A2($elm$core$List$concatMap, $author$project$Internal$Compiler$getAnnotationImports, args)
 		};
 	});
 var $author$project$Elm$Annotation$string = A3($author$project$Elm$Annotation$typed, _List_Nil, 'String', _List_Nil);
@@ -4432,8 +4432,8 @@ var $author$project$Elm$string = function (literal) {
 	return {
 		c: $elm$core$Result$Ok(
 			$author$project$Internal$Compiler$getInnerAnnotation($author$project$Elm$Annotation$string)),
-		b: $stil4m$elm_syntax$Elm$Syntax$Expression$Literal(literal),
-		a: _List_Nil,
+		a: $stil4m$elm_syntax$Elm$Syntax$Expression$Literal(literal),
+		b: _List_Nil,
 		g: false
 	};
 };
@@ -4473,11 +4473,11 @@ var $author$project$Elm$valueWith = F3(
 		return {
 			c: $elm$core$Result$Ok(
 				$author$project$Internal$Compiler$getInnerAnnotation(ann)),
-			b: A2(
+			a: A2(
 				$stil4m$elm_syntax$Elm$Syntax$Expression$FunctionOrValue,
 				mod,
 				$author$project$Internal$Compiler$sanitize(name)),
-			a: A2(
+			b: A2(
 				$elm$core$List$cons,
 				mod,
 				$author$project$Internal$Compiler$getAnnotationImports(ann)),
@@ -4521,7 +4521,7 @@ var $author$project$Elm$Annotation$named = F2(
 						mod,
 						$author$project$Internal$Compiler$formatType(name))),
 				_List_Nil),
-			a: _List_fromArray(
+			b: _List_fromArray(
 				[mod])
 		};
 	});
@@ -4539,7 +4539,7 @@ var $author$project$Elm$Annotation$namedWith = F3(
 						$author$project$Internal$Compiler$formatType(name))),
 				$author$project$Internal$Compiler$nodifyAll(
 					A2($elm$core$List$map, $author$project$Internal$Compiler$getInnerAnnotation, args))),
-			a: A2(
+			b: A2(
 				$elm$core$List$cons,
 				mod,
 				A2($elm$core$List$concatMap, $author$project$Internal$Compiler$getAnnotationImports, args))
@@ -5283,11 +5283,11 @@ var $elm$core$List$filter = F2(
 	});
 var $author$project$Elm$getExpression = function (_v0) {
 	var exp = _v0;
-	return exp.b;
+	return exp.a;
 };
 var $author$project$Elm$getImports = function (_v0) {
 	var exp = _v0;
-	return exp.a;
+	return exp.b;
 };
 var $stil4m$elm_syntax$Elm$Syntax$Expression$ParenthesizedExpression = function (a) {
 	return {$: 14, a: a};
@@ -5308,17 +5308,17 @@ var $author$project$Elm$apply = F2(
 			allArgs);
 		return {
 			c: A2($author$project$Internal$Compiler$applyType, top, args),
-			b: $stil4m$elm_syntax$Elm$Syntax$Expression$Application(
+			a: $stil4m$elm_syntax$Elm$Syntax$Expression$Application(
 				$author$project$Internal$Compiler$nodifyAll(
 					A2(
 						$elm$core$List$cons,
-						exp.b,
+						exp.a,
 						A2(
 							$elm$core$List$map,
 							A2($elm$core$Basics$composeL, $author$project$Elm$parens, $author$project$Elm$getExpression),
 							args)))),
-			a: _Utils_ap(
-				exp.a,
+			b: _Utils_ap(
+				exp.b,
 				A2($elm$core$List$concatMap, $author$project$Elm$getImports, args)),
 			g: false
 		};
@@ -5337,7 +5337,7 @@ var $author$project$Elm$Annotation$function = F2(
 					}),
 				$author$project$Internal$Compiler$getInnerAnnotation(_return),
 				A2($elm$core$List$map, $author$project$Internal$Compiler$getInnerAnnotation, anns)),
-			a: _Utils_ap(
+			b: _Utils_ap(
 				$author$project$Internal$Compiler$getAnnotationImports(_return),
 				A2($elm$core$List$concatMap, $author$project$Internal$Compiler$getAnnotationImports, anns))
 		};
@@ -5352,7 +5352,7 @@ var $author$project$Elm$Annotation$tuple = F2(
 							$author$project$Internal$Compiler$getInnerAnnotation(one),
 							$author$project$Internal$Compiler$getInnerAnnotation(two)
 						]))),
-			a: _Utils_ap(
+			b: _Utils_ap(
 				$author$project$Internal$Compiler$getAnnotationImports(one),
 				$author$project$Internal$Compiler$getAnnotationImports(two))
 		};
@@ -5470,7 +5470,7 @@ var $elm$core$Result$map = F2(
 	});
 var $author$project$Elm$toList = function (_v0) {
 	var exp = _v0;
-	return $author$project$Internal$Compiler$nodify(exp.b);
+	return $author$project$Internal$Compiler$nodify(exp.a);
 };
 var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$GenericType = function (a) {
 	return {$: 0, a: a};
@@ -5545,9 +5545,9 @@ var $author$project$Elm$list = function (exprs) {
 						]));
 			},
 			$author$project$Internal$Compiler$unify(exprs)),
-		b: $stil4m$elm_syntax$Elm$Syntax$Expression$ListExpr(
+		a: $stil4m$elm_syntax$Elm$Syntax$Expression$ListExpr(
 			A2($elm$core$List$map, $author$project$Elm$toList, exprs)),
-		a: A2($elm$core$List$concatMap, $author$project$Elm$getImports, exprs),
+		b: A2($elm$core$List$concatMap, $author$project$Elm$getImports, exprs),
 		g: false
 	};
 };
@@ -5864,7 +5864,7 @@ var $elm$core$Result$map2 = F3(
 		}
 	});
 var $author$project$Internal$Compiler$noImports = function (tipe) {
-	return {c: tipe, a: _List_Nil};
+	return {c: tipe, b: _List_Nil};
 };
 var $author$project$Elm$tuple = F2(
 	function (_v0, _v1) {
@@ -5883,11 +5883,11 @@ var $author$project$Elm$tuple = F2(
 					}),
 				one.c,
 				two.c),
-			b: $stil4m$elm_syntax$Elm$Syntax$Expression$TupledExpression(
+			a: $stil4m$elm_syntax$Elm$Syntax$Expression$TupledExpression(
 				$author$project$Internal$Compiler$nodifyAll(
 					_List_fromArray(
-						[one.b, two.b]))),
-			a: _Utils_ap(one.a, two.a),
+						[one.a, two.a]))),
+			b: _Utils_ap(one.b, two.b),
 			g: false
 		};
 	});
@@ -6266,13 +6266,13 @@ var $author$project$Elm$declaration = F2(
 		return A3(
 			$author$project$Internal$Compiler$Declaration,
 			$author$project$Internal$Compiler$NotExposed,
-			body.a,
+			body.b,
 			$stil4m$elm_syntax$Elm$Syntax$Declaration$FunctionDeclaration(
 				{
 					bX: $author$project$Internal$Compiler$nodify(
 						{
 							bG: _List_Nil,
-							b: $author$project$Internal$Compiler$nodify(body.b),
+							a: $author$project$Internal$Compiler$nodify(body.a),
 							I: $author$project$Internal$Compiler$nodify(
 								$author$project$Internal$Compiler$formatValue(name))
 						}),
@@ -8453,7 +8453,7 @@ var $author$project$Internal$Write$prettyCaseBlock = F3(
 				aliases,
 				$author$project$Internal$Write$topContext,
 				4,
-				$author$project$Internal$Compiler$denode(caseBlock.b));
+				$author$project$Internal$Compiler$denode(caseBlock.a));
 			var caseExpression = _v28.a;
 			var alwaysBreak = _v28.b;
 			return A2(
@@ -8646,7 +8646,7 @@ var $author$project$Internal$Write$prettyFunctionImplementation = F2(
 				A2(
 					$author$project$Internal$Write$prettyExpression,
 					aliases,
-					$author$project$Internal$Compiler$denode(impl.b)),
+					$author$project$Internal$Compiler$denode(impl.a)),
 				A2(
 					$the_sett$elm_pretty_printer$Pretty$a,
 					$the_sett$elm_pretty_printer$Pretty$line,
@@ -8774,7 +8774,7 @@ var $author$project$Internal$Write$prettyLambdaExpression = F3(
 			aliases,
 			$author$project$Internal$Write$topContext,
 			4,
-			$author$project$Internal$Compiler$denode(lambda.b));
+			$author$project$Internal$Compiler$denode(lambda.a));
 		var prettyExpr = _v22.a;
 		var alwaysBreak = _v22.b;
 		return _Utils_Tuple2(
@@ -8825,7 +8825,7 @@ var $author$project$Internal$Write$prettyLetBlock = F3(
 							aliases,
 							$author$project$Internal$Write$topContext,
 							4,
-							$author$project$Internal$Compiler$denode(letBlock.b)).a
+							$author$project$Internal$Compiler$denode(letBlock.a)).a
 						]))),
 			true);
 	});
@@ -9989,7 +9989,7 @@ var $author$project$Internal$Write$prepareLayout = F2(
 			A2($author$project$Internal$Write$prettyDeclarations, file.ah, file.b_),
 			A2(
 				$the_sett$elm_pretty_printer$Pretty$a,
-				$author$project$Internal$Write$importsPretty(file.a),
+				$author$project$Internal$Write$importsPretty(file.b),
 				function (doc) {
 					var _v0 = file.a$;
 					if (_v0.$ === 1) {
@@ -10041,10 +10041,10 @@ var $author$project$Elm$render = F2(
 						$author$project$Internal$Comments$Markdown(
 							toDocComment(exposedGroups)))),
 				b_: fileDetails.R,
-				a: A2(
+				b: A2(
 					$elm$core$List$filterMap,
 					$author$project$Internal$Compiler$makeImport(fileDetails.ah),
-					fileDetails.a),
+					fileDetails.b),
 				cO: ($author$project$Internal$Compiler$hasPorts(fileDetails.R) ? $stil4m$elm_syntax$Elm$Syntax$Module$PortModule : $stil4m$elm_syntax$Elm$Syntax$Module$NormalModule)(
 					{
 						b9: function () {
@@ -10077,7 +10077,7 @@ var $author$project$Elm$fileWith = F3(
 			{
 				ah: options.ah,
 				R: decs,
-				a: A3(
+				b: A3(
 					$author$project$Elm$reduceDeclarationImports,
 					mod,
 					decs,
@@ -10150,7 +10150,7 @@ var $author$project$Elm$Annotation$record = function (fields) {
 								$author$project$Internal$Compiler$getInnerAnnotation(ann)));
 					},
 					fields))),
-		a: A2(
+		b: A2(
 			$elm$core$List$concatMap,
 			A2($elm$core$Basics$composeR, $elm$core$Tuple$second, $author$project$Internal$Compiler$getAnnotationImports),
 			fields)
@@ -10332,12 +10332,12 @@ var $author$project$Elm$get = F2(
 				var otherwise = _v1;
 				return otherwise;
 			}(),
-			b: A2(
+			a: A2(
 				$stil4m$elm_syntax$Elm$Syntax$Expression$RecordAccess,
-				$author$project$Internal$Compiler$nodify(expr.b),
+				$author$project$Internal$Compiler$nodify(expr.a),
 				$author$project$Internal$Compiler$nodify(
 					$author$project$Internal$Compiler$formatValue(selector))),
-			a: expr.a,
+			b: expr.b,
 			g: false
 		};
 	});
@@ -10374,35 +10374,35 @@ var $author$project$Elm$lambda = F3(
 								])));
 				}
 			}(),
-			b: $stil4m$elm_syntax$Elm$Syntax$Expression$LambdaExpression(
+			a: $stil4m$elm_syntax$Elm$Syntax$Expression$LambdaExpression(
 				{
 					aX: _List_fromArray(
 						[
 							$author$project$Internal$Compiler$nodify(
 							$stil4m$elm_syntax$Elm$Syntax$Pattern$VarPattern(argBaseName))
 						]),
-					b: $author$project$Internal$Compiler$nodify(expr.b)
+					a: $author$project$Internal$Compiler$nodify(expr.a)
 				}),
-			a: expr.a,
+			b: expr.b,
 			g: false
 		};
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Expression$UnitExpr = {$: 0};
 var $author$project$Internal$Compiler$skip = {
 	c: $elm$core$Result$Err(_List_Nil),
-	b: $stil4m$elm_syntax$Elm$Syntax$Expression$UnitExpr,
-	a: _List_Nil,
+	a: $stil4m$elm_syntax$Elm$Syntax$Expression$UnitExpr,
+	b: _List_Nil,
 	g: true
 };
 var $author$project$Elm$pass = $author$project$Internal$Compiler$skip;
-var $author$project$Elm$Gen$Elm$lambda = F3(
+var $author$project$Elm$Gen$Elm$lambdaBetaReduced = F3(
 	function (arg1, arg2, arg3) {
 		return A2(
 			$author$project$Elm$apply,
 			A3(
 				$author$project$Elm$valueWith,
 				$author$project$Elm$Gen$Elm$moduleName_,
-				'lambda',
+				'lambdaBetaReduced',
 				A2(
 					$author$project$Elm$Annotation$function,
 					_List_fromArray(
@@ -10525,7 +10525,7 @@ var $author$project$Elm$Annotation$extensible = F2(
 										$author$project$Internal$Compiler$getInnerAnnotation(ann)));
 							},
 							fields)))),
-			a: A2(
+			b: A2(
 				$elm$core$List$concatMap,
 				A2($elm$core$Basics$composeR, $elm$core$Tuple$second, $author$project$Internal$Compiler$getAnnotationImports),
 				fields)
@@ -10542,19 +10542,19 @@ var $author$project$Elm$Annotation$triple = F3(
 							$author$project$Internal$Compiler$getInnerAnnotation(two),
 							$author$project$Internal$Compiler$getInnerAnnotation(three)
 						]))),
-			a: _Utils_ap(
+			b: _Utils_ap(
 				$author$project$Internal$Compiler$getAnnotationImports(one),
 				_Utils_ap(
 					$author$project$Internal$Compiler$getAnnotationImports(two),
 					$author$project$Internal$Compiler$getAnnotationImports(three)))
 		};
 	});
-var $author$project$Elm$Annotation$unit = {c: $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Unit, a: _List_Nil};
+var $author$project$Elm$Annotation$unit = {c: $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Unit, b: _List_Nil};
 var $author$project$Elm$Annotation$var = function (a) {
 	return {
 		c: $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$GenericType(
 			$author$project$Internal$Compiler$formatValue(a)),
-		a: _List_Nil
+		b: _List_Nil
 	};
 };
 var $author$project$Generate$typeToAnnotation = function (elmType) {
@@ -10643,11 +10643,11 @@ var $author$project$Elm$valueFrom = F2(
 	function (mod, name) {
 		return {
 			c: $elm$core$Result$Err(_List_Nil),
-			b: A2(
+			a: A2(
 				$stil4m$elm_syntax$Elm$Syntax$Expression$FunctionOrValue,
 				mod,
 				$author$project$Internal$Compiler$sanitize(name)),
-			a: _List_fromArray(
+			b: _List_fromArray(
 				[mod]),
 			g: false
 		};
@@ -10674,22 +10674,22 @@ var $author$project$Generate$getArgumentUnpacker = F3(
 									$author$project$Elm$value(varName)
 								])));
 					return A3(
-						$author$project$Elm$Gen$Elm$lambda,
+						$author$project$Elm$Gen$Elm$lambdaBetaReduced,
 						$author$project$Elm$string(varName),
 						$author$project$Generate$typeToExpression(one),
-						function (arg) {
+						function (_v1) {
 							return A3(
 								$author$project$Elm$lambda,
 								varName,
 								$author$project$Generate$typeToAnnotation(one),
-								function (_v1) {
+								function (_v2) {
 									return f;
 								});
 						});
 				case 3:
 					if (((tipe.a === 'List.List') && tipe.b.b) && (!tipe.b.b.b)) {
-						var _v2 = tipe.b;
-						var inner = _v2.a;
+						var _v3 = tipe.b;
+						var inner = _v3.a;
 						var f = A3($author$project$Generate$getArgumentUnpacker, freshCount, inner, value);
 						return $author$project$Elm$Gen$Elm$list(f);
 					} else {
@@ -10698,14 +10698,14 @@ var $author$project$Generate$getArgumentUnpacker = F3(
 				case 4:
 					if (tipe.b.$ === 1) {
 						var fields = tipe.a;
-						var _v3 = tipe.b;
+						var _v4 = tipe.b;
 						return $author$project$Elm$Gen$Elm$record(
 							$author$project$Elm$list(
 								A2(
 									$elm$core$List$map,
-									function (_v4) {
-										var fieldName = _v4.a;
-										var fieldType = _v4.b;
+									function (_v5) {
+										var fieldName = _v5.a;
+										var fieldType = _v5.b;
 										return A2(
 											$author$project$Elm$Gen$Elm$field,
 											$author$project$Elm$string(fieldName),
@@ -10784,14 +10784,14 @@ var $author$project$Elm$functionWith = F3(
 					$elm$core$List$concatMap,
 					A2($elm$core$Basics$composeR, $elm$core$Tuple$first, $author$project$Internal$Compiler$getAnnotationImports),
 					args),
-				body.a),
+				body.b),
 			$stil4m$elm_syntax$Elm$Syntax$Declaration$FunctionDeclaration(
 				{
 					bX: $author$project$Internal$Compiler$nodify(
 						{
 							bG: $author$project$Internal$Compiler$nodifyAll(
 								A2($elm$core$List$map, $elm$core$Tuple$second, args)),
-							b: $author$project$Internal$Compiler$nodify(body.b),
+							a: $author$project$Internal$Compiler$nodify(body.a),
 							I: $author$project$Internal$Compiler$nodify(
 								$author$project$Internal$Compiler$formatValue(name))
 						}),
@@ -10892,8 +10892,8 @@ var $author$project$Elm$withType = F2(
 			{
 				c: $elm$core$Result$Ok(
 					$author$project$Internal$Compiler$getInnerAnnotation(ann)),
-				a: _Utils_ap(
-					exp.a,
+				b: _Utils_ap(
+					exp.b,
 					$author$project$Internal$Compiler$getAnnotationImports(ann))
 			});
 	});
@@ -11008,13 +11008,13 @@ var $author$project$Elm$lambdaWith = F2(
 								args)));
 				}
 			}(),
-			b: $stil4m$elm_syntax$Elm$Syntax$Expression$LambdaExpression(
+			a: $stil4m$elm_syntax$Elm$Syntax$Expression$LambdaExpression(
 				{
 					aX: $author$project$Internal$Compiler$nodifyAll(
 						A2($elm$core$List$map, $elm$core$Tuple$first, args)),
-					b: $author$project$Internal$Compiler$nodify(expr.b)
+					a: $author$project$Internal$Compiler$nodify(expr.a)
 				}),
-			a: expr.a,
+			b: expr.b,
 			g: false
 		};
 	});
@@ -11074,13 +11074,13 @@ var $author$project$Elm$record = function (fields) {
 						$elm$core$List$cons,
 						_Utils_Tuple2(
 							$author$project$Internal$Compiler$nodify(fieldName),
-							$author$project$Internal$Compiler$nodify(exp.b)),
+							$author$project$Internal$Compiler$nodify(exp.a)),
 						found.as),
-					a: _Utils_ap(exp.a, found.a),
+					b: _Utils_ap(exp.b, found.b),
 					au: A2($elm$core$Set$insert, fieldName, found.au)
 				};
 			}),
-		{S: _List_Nil, an: _List_Nil, as: _List_Nil, a: _List_Nil, au: $elm$core$Set$empty},
+		{S: _List_Nil, an: _List_Nil, as: _List_Nil, b: _List_Nil, au: $elm$core$Set$empty},
 		fields);
 	return {
 		c: function () {
@@ -11104,10 +11104,10 @@ var $author$project$Elm$record = function (fields) {
 				return $elm$core$Result$Err(errs);
 			}
 		}(),
-		b: $stil4m$elm_syntax$Elm$Syntax$Expression$RecordExpr(
+		a: $stil4m$elm_syntax$Elm$Syntax$Expression$RecordExpr(
 			$author$project$Internal$Compiler$nodifyAll(
 				$elm$core$List$reverse(unified.as))),
-		a: unified.a,
+		b: unified.b,
 		g: false
 	};
 };
@@ -11563,7 +11563,7 @@ var $stil4m$elm_syntax$Elm$Parser$State$State = $elm$core$Basics$identity;
 var $stil4m$elm_syntax$Elm$Parser$State$emptyState = {a$: _List_Nil, T: _List_Nil};
 var $stil4m$elm_syntax$Elm$Syntax$File$File = F4(
 	function (moduleDefinition, imports, declarations, comments) {
-		return {a$: comments, b_: declarations, a: imports, cO: moduleDefinition};
+		return {a$: comments, b_: declarations, b: imports, cO: moduleDefinition};
 	});
 var $stil4m$elm_syntax$Combine$Parser = $elm$core$Basics$identity;
 var $stil4m$elm_syntax$Combine$andMap = F2(
@@ -11683,7 +11683,7 @@ var $stil4m$elm_syntax$Elm$Syntax$Node$combine = F3(
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Expression$CaseBlock = F2(
 	function (expression, cases) {
-		return {ai: cases, b: expression};
+		return {ai: cases, a: expression};
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Expression$CaseExpression = function (a) {
 	return {$: 16, a: a};
@@ -11697,7 +11697,7 @@ var $stil4m$elm_syntax$Elm$Syntax$Expression$Function = F3(
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Expression$FunctionImplementation = F3(
 	function (name, _arguments, expression) {
-		return {bG: _arguments, b: expression, I: name};
+		return {bG: _arguments, a: expression, I: name};
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Expression$IfBlock = F3(
 	function (a, b, c) {
@@ -11705,11 +11705,11 @@ var $stil4m$elm_syntax$Elm$Syntax$Expression$IfBlock = F3(
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Expression$Lambda = F2(
 	function (args, expression) {
-		return {aX: args, b: expression};
+		return {aX: args, a: expression};
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Expression$LetBlock = F2(
 	function (declarations, expression) {
-		return {b_: declarations, b: expression};
+		return {b_: declarations, a: expression};
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Expression$LetDestructuring = F2(
 	function (a, b) {
@@ -14989,7 +14989,7 @@ var $stil4m$elm_syntax$Elm$Syntax$Expression$functionRange = function (_function
 				var r = _v4.a;
 				return r;
 			}(
-				$stil4m$elm_syntax$Elm$Syntax$Node$value(_function.bX).b)
+				$stil4m$elm_syntax$Elm$Syntax$Node$value(_function.bX).a)
 			]));
 };
 var $stil4m$elm_syntax$Elm$Parser$Declarations$function = $stil4m$elm_syntax$Combine$lazy(
@@ -16236,7 +16236,7 @@ var $stil4m$elm_syntax$Elm$Inspector$inspectFunction = F3(
 				A2(
 					$stil4m$elm_syntax$Elm$Inspector$inspectExpression,
 					config,
-					$stil4m$elm_syntax$Elm$Syntax$Node$value(_function.bX).b),
+					$stil4m$elm_syntax$Elm$Syntax$Node$value(_function.bX).a),
 				A2(
 					$elm$core$Maybe$withDefault,
 					$elm$core$Basics$identity,
@@ -16341,11 +16341,11 @@ var $stil4m$elm_syntax$Elm$Inspector$inspectInnerExpression = F3(
 				var next = A2(
 					$elm$core$Basics$composeR,
 					A2($stil4m$elm_syntax$Elm$Inspector$inspectLetDeclarations, config, letBlock.b_),
-					A2($stil4m$elm_syntax$Elm$Inspector$inspectExpression, config, letBlock.b));
+					A2($stil4m$elm_syntax$Elm$Inspector$inspectExpression, config, letBlock.a));
 				return A4($stil4m$elm_syntax$Elm$Inspector$actionLambda, config.aI, next, letBlock, context);
 			case 16:
 				var caseBlock = expression.a;
-				var context2 = A3($stil4m$elm_syntax$Elm$Inspector$inspectExpression, config, caseBlock.b, context);
+				var context2 = A3($stil4m$elm_syntax$Elm$Inspector$inspectExpression, config, caseBlock.a, context);
 				var context3 = A3(
 					$elm$core$List$foldl,
 					F2(
@@ -16360,7 +16360,7 @@ var $stil4m$elm_syntax$Elm$Inspector$inspectInnerExpression = F3(
 				return A4(
 					$stil4m$elm_syntax$Elm$Inspector$actionLambda,
 					config.aH,
-					A2($stil4m$elm_syntax$Elm$Inspector$inspectExpression, config, lambda.b),
+					A2($stil4m$elm_syntax$Elm$Inspector$inspectExpression, config, lambda.a),
 					lambda,
 					context);
 			case 19:
@@ -16569,7 +16569,7 @@ var $stil4m$elm_syntax$Elm$Inspector$inspect = F3(
 			config.aC,
 			A2(
 				$elm$core$Basics$composeR,
-				A2($stil4m$elm_syntax$Elm$Inspector$inspectImports, config, file.a),
+				A2($stil4m$elm_syntax$Elm$Inspector$inspectImports, config, file.b),
 				A2($stil4m$elm_syntax$Elm$Inspector$inspectDeclarations, config, file.b_)),
 			file,
 			context);
@@ -16994,7 +16994,7 @@ var $stil4m$elm_syntax$Elm$DefaultImports$defaults = _List_fromArray(
 	]);
 var $stil4m$elm_syntax$Elm$RawFile$imports = function (_v0) {
 	var file = _v0;
-	return A2($elm$core$List$map, $stil4m$elm_syntax$Elm$Syntax$Node$value, file.a);
+	return A2($elm$core$List$map, $stil4m$elm_syntax$Elm$Syntax$Node$value, file.b);
 };
 var $stil4m$elm_syntax$Elm$Processing$tableForFile = F2(
 	function (rawFile, _v0) {
@@ -17071,7 +17071,7 @@ var $stil4m$elm_syntax$Elm$Processing$visitExpressionInner = F3(
 						return $stil4m$elm_syntax$Elm$Syntax$Expression$LetExpression(
 							{
 								b_: A3($stil4m$elm_syntax$Elm$Processing$visitLetDeclarations, visitor, context, letBlock.b_),
-								b: subVisit(letBlock.b)
+								a: subVisit(letBlock.a)
 							});
 					case 16:
 						var caseBlock = expression.a;
@@ -17081,7 +17081,7 @@ var $stil4m$elm_syntax$Elm$Processing$visitExpressionInner = F3(
 									$elm$core$List$map,
 									$elm$core$Tuple$mapSecond(subVisit),
 									caseBlock.ai),
-								b: subVisit(caseBlock.b)
+								a: subVisit(caseBlock.a)
 							});
 					case 17:
 						var lambda = expression.a;
@@ -17089,7 +17089,7 @@ var $stil4m$elm_syntax$Elm$Processing$visitExpressionInner = F3(
 							_Utils_update(
 								lambda,
 								{
-									b: subVisit(lambda.b)
+									a: subVisit(lambda.a)
 								}));
 					case 18:
 						var expressionStringList = expression.a;
@@ -17131,10 +17131,10 @@ var $stil4m$elm_syntax$Elm$Processing$visitFunctionDecl = F3(
 	});
 var $stil4m$elm_syntax$Elm$Processing$visitFunctionDeclaration = F3(
 	function (visitor, context, functionDeclaration) {
-		var newExpression = A3($stil4m$elm_syntax$Elm$Processing$visitExpression, visitor, context, functionDeclaration.b);
+		var newExpression = A3($stil4m$elm_syntax$Elm$Processing$visitExpression, visitor, context, functionDeclaration.a);
 		return _Utils_update(
 			functionDeclaration,
-			{b: newExpression});
+			{a: newExpression});
 	});
 var $stil4m$elm_syntax$Elm$Processing$visitLetDeclaration = F3(
 	function (visitor, context, _v0) {

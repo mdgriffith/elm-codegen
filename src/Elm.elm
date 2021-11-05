@@ -8,7 +8,7 @@ module Elm exposing
     , record, field, Field, get, updateRecord
     , caseOf, letIn, ifThen
     , apply
-    , lambda, lambda2, lambda3, lambda4, lambda5, lambdaWith
+    , lambda, lambda2, lambda3, lambda4, lambda5, lambdaWith, lambdaBetaReduced
     , Declaration
     , comment, declaration
     , withDocumentation
@@ -61,7 +61,7 @@ module Elm exposing
 
 @docs apply
 
-@docs lambda, lambda2, lambda3, lambda4, lambda5, lambdaWith
+@docs lambda, lambda2, lambda3, lambda4, lambda5, lambdaWith, lambdaBetaReduced
 
 
 ## Top level
@@ -1157,6 +1157,130 @@ lambda argBaseName argType toExpression =
 
 
 {-| -}
+lambdaBetaReduced : String -> Elm.Annotation.Annotation -> (Expression -> Expression) -> Expression
+lambdaBetaReduced argBaseName argType toExpression =
+    let
+        arg1 =
+            valueWith [] argBaseName argType
+
+        (Compiler.Expression expr) =
+            toExpression arg1
+    in
+    Compiler.Expression
+        { expression =
+            betaReduce <|
+                Exp.LambdaExpression
+                    { args = [ Compiler.nodify (Pattern.VarPattern argBaseName) ]
+                    , expression = Compiler.nodify expr.expression
+                    }
+        , annotation =
+            case expr.annotation of
+                Err err ->
+                    Err err
+
+                Ok return ->
+                    List.foldr
+                        (\ann fnbody ->
+                            Annotation.FunctionTypeAnnotation
+                                (Compiler.nodify ann)
+                                (Compiler.nodify fnbody)
+                        )
+                        return
+                        [ Compiler.getInnerAnnotation argType ]
+                        |> Ok
+        , imports = expr.imports
+        , skip = False
+        }
+
+
+betaReduce : Exp.Expression -> Exp.Expression
+betaReduce e =
+    let
+        extractLastArg arg =
+            case arg of
+                Exp.FunctionOrValue [] n ->
+                    Just n
+
+                Exp.ParenthesizedExpression p ->
+                    extractLastArg <| Compiler.denode p
+
+                _ ->
+                    Nothing
+    in
+    case e of
+        Exp.LambdaExpression { args, expression } ->
+            case List.reverse <| Compiler.denodeAll args of
+                (Pattern.VarPattern lastLambdaArg) :: initLambdaArgsReversed ->
+                    case Compiler.denode expression of
+                        Exp.RecordAccess argNode fieldNode ->
+                            let
+                                fieldName =
+                                    Compiler.denode fieldNode
+
+                                arg =
+                                    Compiler.denode argNode
+                            in
+                            case arg of
+                                Exp.FunctionOrValue [] argName ->
+                                    if argName == lastLambdaArg then
+                                        Exp.RecordAccessFunction <| "." ++ fieldName
+
+                                    else
+                                        e
+
+                                _ ->
+                                    e
+
+                        Exp.Application applicationArgs ->
+                            case List.reverse <| Compiler.denodeAll applicationArgs of
+                                [ uniqueApplicationArg ] ->
+                                    if extractLastArg uniqueApplicationArg == Just lastLambdaArg then
+                                        Exp.FunctionOrValue [] "identity"
+
+                                    else
+                                        e
+
+                                lastApplicationArg :: initApplicationArgsReversed ->
+                                    if extractLastArg lastApplicationArg == Just lastLambdaArg then
+                                        if List.isEmpty initLambdaArgsReversed then
+                                            case initApplicationArgsReversed of
+                                                [ s ] ->
+                                                    betaReduce s
+
+                                                _ ->
+                                                    betaReduce <|
+                                                        Exp.Application <|
+                                                            Compiler.nodifyAll <|
+                                                                List.reverse initApplicationArgsReversed
+
+                                        else
+                                            betaReduce <|
+                                                Exp.LambdaExpression
+                                                    { args = Compiler.nodifyAll <| List.reverse initLambdaArgsReversed
+                                                    , expression =
+                                                        Compiler.nodify <|
+                                                            Exp.Application <|
+                                                                Compiler.nodifyAll <|
+                                                                    List.reverse initApplicationArgsReversed
+                                                    }
+
+                                    else
+                                        e
+
+                                _ ->
+                                    e
+
+                        _ ->
+                            e
+
+                _ ->
+                    e
+
+        _ ->
+            e
+
+
+{-| -}
 lambda2 :
     String
     -> Elm.Annotation.Annotation
@@ -1806,8 +1930,8 @@ exposeConstructorAndGroup =
 Results in
 
     port receiveMessageFromTheWorld :
-            (String -> Int -> msg)
-                -> Sub msg
+        (String -> Int -> msg)
+        -> Sub msg
 
 **Note** You generally only need one incoming and one outgoing port!
 

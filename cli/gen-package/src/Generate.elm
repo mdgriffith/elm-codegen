@@ -574,7 +574,7 @@ getArgumentUnpacker freshCount tipe value =
                 varName =
                     "lambdaArg" ++ String.fromInt freshCount
             in
-            ElmGen.lambda (Elm.string varName)
+            ElmGen.lambdaBetaReduced (Elm.string varName)
                 (typeToExpression one)
                 (\_ ->
                     Elm.lambda varName
