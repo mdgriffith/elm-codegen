@@ -320,8 +320,29 @@ generateTypeBuilderRecordHelper block =
                         )
                         |> Just
 
-        Elm.Docs.AliasBlock alias ->
-            Nothing
+        Elm.Docs.AliasBlock { name, tipe } ->
+            case tipe of
+                Elm.Type.Record fields Nothing ->
+                    let
+                        lambdaArgType =
+                            fields
+                                |> List.map (\( fieldName, _ ) -> ( fieldName, expressionType ))
+                                |> Annotation.record
+
+                        lambdaValue arg =
+                            fields
+                                |> List.map
+                                    (\( fieldName, _ ) ->
+                                        ElmGen.field (Elm.string fieldName) (Elm.get fieldName arg)
+                                    )
+                                |> Elm.list
+                                |> ElmGen.record
+                    in
+                    Elm.field name (Elm.lambda "arg" lambdaArgType lambdaValue)
+                        |> Just
+
+                _ ->
+                    Nothing
 
         Elm.Docs.ValueBlock value ->
             Nothing

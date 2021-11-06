@@ -11098,6 +11098,49 @@ var $author$project$Generate$generateBlocks = function (block) {
 			return _List_Nil;
 	}
 };
+var $author$project$Elm$lambda = F3(
+	function (argBaseName, argType, toExpression) {
+		var arg1 = A3($author$project$Elm$valueWith, _List_Nil, argBaseName, argType);
+		var _v0 = toExpression(arg1);
+		var expr = _v0;
+		return {
+			c: function () {
+				var _v1 = expr.c;
+				if (_v1.$ === 1) {
+					var err = _v1.a;
+					return $elm$core$Result$Err(err);
+				} else {
+					var _return = _v1.a;
+					return $elm$core$Result$Ok(
+						A3(
+							$elm$core$List$foldr,
+							F2(
+								function (ann, fnbody) {
+									return A2(
+										$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$FunctionTypeAnnotation,
+										$author$project$Internal$Compiler$nodify(ann),
+										$author$project$Internal$Compiler$nodify(fnbody));
+								}),
+							_return,
+							_List_fromArray(
+								[
+									$author$project$Internal$Compiler$getInnerAnnotation(argType)
+								])));
+				}
+			}(),
+			a: $stil4m$elm_syntax$Elm$Syntax$Expression$LambdaExpression(
+				{
+					aX: _List_fromArray(
+						[
+							$author$project$Internal$Compiler$nodify(
+							$stil4m$elm_syntax$Elm$Syntax$Pattern$VarPattern(argBaseName))
+						]),
+					a: $author$project$Internal$Compiler$nodify(expr.a)
+				}),
+			b: expr.b,
+			g: false
+		};
+	});
 var $author$project$Elm$lambdaWith = F2(
 	function (args, _v0) {
 		var expr = _v0;
@@ -11304,8 +11347,41 @@ var $author$project$Generate$generateTypeBuilderRecordHelper = function (block) 
 								union.dh))));
 			}
 		case 2:
-			var alias = block.a;
-			return $elm$core$Maybe$Nothing;
+			var name = block.a.I;
+			var tipe = block.a.aU;
+			if ((tipe.$ === 4) && (tipe.b.$ === 1)) {
+				var fields = tipe.a;
+				var _v5 = tipe.b;
+				var lambdaValue = function (arg) {
+					return $author$project$Elm$Gen$Elm$record(
+						$author$project$Elm$list(
+							A2(
+								$elm$core$List$map,
+								function (_v7) {
+									var fieldName = _v7.a;
+									return A2(
+										$author$project$Elm$Gen$Elm$field,
+										$author$project$Elm$string(fieldName),
+										A2($author$project$Elm$get, fieldName, arg));
+								},
+								fields)));
+				};
+				var lambdaArgType = $author$project$Elm$Annotation$record(
+					A2(
+						$elm$core$List$map,
+						function (_v6) {
+							var fieldName = _v6.a;
+							return _Utils_Tuple2(fieldName, $author$project$Generate$expressionType);
+						},
+						fields));
+				return $elm$core$Maybe$Just(
+					A2(
+						$author$project$Elm$field,
+						name,
+						A3($author$project$Elm$lambda, 'arg', lambdaArgType, lambdaValue)));
+			} else {
+				return $elm$core$Maybe$Nothing;
+			}
 		case 3:
 			var value = block.a;
 			return $elm$core$Maybe$Nothing;
