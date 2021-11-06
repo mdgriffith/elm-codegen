@@ -1,4 +1,4 @@
-module Elm.Gen.Elm exposing (alias, aliasDeclaration, aliasExpression, aliasFile, and, append, apply, bool, caseOf, char, comment, compose, composeLeft, cons, customType, declaration, declarationImports, declarationToString, divide, equal, expose, exposeAndGroup, exposeConstructor, exposeConstructorAndGroup, expressionImports, field, file, fileWith, float, fn, fn2, fn3, fn4, fn5, functionWith, get, gt, gte, hex, id_, ifThen, int, intDivide, keep, lambda, lambda2, lambda3, lambda4, lambda5, lambdaWith, letIn, list, lt, lte, maybe, minus, moduleName_, multiply, notEqual, or, parse, pass, pipe, pipeLeft, plus, portIncoming, portOutgoing, power, question, record, skip, slash, string, toString, triple, tuple, typeField, typeVariant, unit, updateRecord, value, valueFrom, valueWith, variant, variantWith, withDocumentation, withType)
+module Elm.Gen.Elm exposing (alias, aliasDeclaration, aliasExpression, aliasFile, and, append, apply, bool, caseOf, char, comment, compose, composeLeft, cons, customType, declaration, declarationImports, declarationToString, divide, equal, expose, exposeAndGroup, exposeConstructor, exposeConstructorAndGroup, expressionImports, field, file, fileWith, float, fn, fn2, fn3, fn4, fn5, functionWith, get, gt, gte, hex, id_, ifThen, int, intDivide, keep, lambda, lambdaBetaReduced, lambda2, lambda3, lambda4, lambda5, lambdaWith, letIn, list, lt, lte, maybe, minus, moduleName_, multiply, notEqual, or, parse, pass, pipe, pipeLeft, plus, portIncoming, portOutgoing, power, question, record, skip, slash, string, toString, triple, tuple, typeField, typeVariant, unit, updateRecord, value, valueFrom, valueWith, variant, variantWith, withDocumentation, withType)
 
 {-| 
 -}
@@ -499,6 +499,29 @@ lambda arg1 arg2 arg3 =
         )
         [ arg1, arg2, arg3 Elm.pass ]
 
+
+{-| -}
+lambdaBetaReduced :
+    Elm.Expression
+    -> Elm.Expression
+    -> (Elm.Expression -> Elm.Expression)
+    -> Elm.Expression
+lambdaBetaReduced arg1 arg2 arg3 =
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "lambdaBetaReduced"
+            (Type.function
+                [ Type.string
+                , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                , Type.function
+                    [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                    (Type.namedWith [ "Elm" ] "Expression" [])
+                ]
+                (Type.namedWith [ "Elm" ] "Expression" [])
+            )
+        )
+        [ arg1, arg2, arg3 Elm.pass ]
 
 {-| -}
 lambda2 :

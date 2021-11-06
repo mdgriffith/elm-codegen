@@ -125,8 +125,8 @@ moduleToFile docs =
             ]
         }
         (modNameBlock
-            :: generateTypeRecord blocks []
-            :: generateTypeBuilderRecord blocks []
+            :: generateTypeRecord blocks
+            :: generateTypeBuilderRecord blocks
             :: List.concatMap generateBlocks blocks
             ++ [ ids ]
         )
@@ -251,21 +251,13 @@ blockToIdField block =
 This creates that record
 
 -}
-generateTypeBuilderRecord : List Elm.Docs.Block -> List Elm.Field -> Elm.Declaration
-generateTypeBuilderRecord blocks fields =
-    case blocks of
-        [] ->
-            Elm.declaration "make_"
-                (Elm.record fields)
-                |> Elm.expose
-
-        top :: remain ->
-            case generateTypeBuilderRecordHelper top of
-                Nothing ->
-                    generateTypeBuilderRecord remain fields
-
-                Just field ->
-                    generateTypeBuilderRecord remain (field :: fields)
+generateTypeBuilderRecord : List Elm.Docs.Block -> Elm.Declaration
+generateTypeBuilderRecord blocks =
+    blocks
+        |> List.filterMap generateTypeBuilderRecordHelper
+        |> Elm.record
+        |> Elm.declaration "make_"
+        |> Elm.expose
 
 
 generateTypeBuilderRecordHelper : Elm.Docs.Block -> Maybe Elm.Field
@@ -328,8 +320,29 @@ generateTypeBuilderRecordHelper block =
                         )
                         |> Just
 
-        Elm.Docs.AliasBlock alias ->
-            Nothing
+        Elm.Docs.AliasBlock { name, tipe } ->
+            case tipe of
+                Elm.Type.Record fields Nothing ->
+                    let
+                        lambdaArgType =
+                            fields
+                                |> List.map (\( fieldName, _ ) -> ( fieldName, expressionType ))
+                                |> Annotation.record
+
+                        lambdaValue arg =
+                            fields
+                                |> List.map
+                                    (\( fieldName, _ ) ->
+                                        ElmGen.field (Elm.string fieldName) (Elm.get fieldName arg)
+                                    )
+                                |> Elm.list
+                                |> ElmGen.record
+                    in
+                    Elm.field name (Elm.lambda "arg" lambdaArgType lambdaValue)
+                        |> Just
+
+                _ ->
+                    Nothing
 
         Elm.Docs.ValueBlock value ->
             Nothing
@@ -355,21 +368,13 @@ generateTypeBuilderRecordHelper block =
 This creates that record
 
 -}
-generateTypeRecord : List Elm.Docs.Block -> List Elm.Field -> Elm.Declaration
-generateTypeRecord blocks fields =
-    case blocks of
-        [] ->
-            Elm.declaration "types_"
-                (Elm.record fields)
-                |> Elm.expose
-
-        top :: remain ->
-            case generateTypeRecordHelper top of
-                Nothing ->
-                    generateTypeRecord remain fields
-
-                Just field ->
-                    generateTypeRecord remain (field :: fields)
+generateTypeRecord : List Elm.Docs.Block -> Elm.Declaration
+generateTypeRecord blocks =
+    blocks
+        |> List.filterMap generateTypeRecordHelper
+        |> Elm.record
+        |> Elm.declaration "types_"
+        |> Elm.expose
 
 
 generateTypeRecordHelper : Elm.Docs.Block -> Maybe Elm.Field
@@ -555,26 +560,37 @@ asArgumentTypeHelper tipe =
 {-| -}
 asValue : Int -> Elm.Type.Type -> Elm.Expression
 asValue index tipe =
-    getArgumentUnpacker tipe <|
+    getArgumentUnpacker 0 tipe <|
         Elm.valueFrom
             local
             (argName index)
 
 
-getArgumentUnpacker : Elm.Type.Type -> Elm.Expression -> Elm.Expression
-getArgumentUnpacker tipe value =
+getArgumentUnpacker : Int -> Elm.Type.Type -> Elm.Expression -> Elm.Expression
+getArgumentUnpacker freshCount tipe value =
     case tipe of
-        Elm.Type.Lambda _ two ->
+        Elm.Type.Lambda one two ->
             let
                 f =
-                    getArgumentUnpacker two value
+                    getArgumentUnpacker (freshCount + 1)
+                        two
+                        (Elm.apply value [ Elm.value varName ])
+
+                varName =
+                    "lambdaArg" ++ String.fromInt freshCount
             in
-            Elm.apply f [ ElmGen.pass ]
+            ElmGen.lambdaBetaReduced (Elm.string varName)
+                (typeToExpression one)
+                (\_ ->
+                    Elm.lambdaBetaReduced varName
+                        (typeToAnnotation one)
+                        (\_ -> f)
+                )
 
         Elm.Type.Type "List.List" [ inner ] ->
             let
                 f =
-                    getArgumentUnpacker inner value
+                    getArgumentUnpacker freshCount inner value
             in
             ElmGen.list f
 
@@ -584,7 +600,9 @@ getArgumentUnpacker tipe value =
                     (\( fieldName, fieldType ) ->
                         ElmGen.field
                             (Elm.string fieldName)
-                            (getArgumentUnpacker fieldType <| Elm.get fieldName value)
+                            (getArgumentUnpacker freshCount fieldType <|
+                                Elm.get fieldName value
+                            )
                     )
                 |> Elm.list
                 |> ElmGen.record
