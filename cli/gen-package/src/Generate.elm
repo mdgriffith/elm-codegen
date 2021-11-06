@@ -125,8 +125,8 @@ moduleToFile docs =
             ]
         }
         (modNameBlock
-            :: generateTypeRecord blocks []
-            :: generateTypeBuilderRecord blocks []
+            :: generateTypeRecord blocks
+            :: generateTypeBuilderRecord blocks
             :: List.concatMap generateBlocks blocks
             ++ [ ids ]
         )
@@ -251,21 +251,13 @@ blockToIdField block =
 This creates that record
 
 -}
-generateTypeBuilderRecord : List Elm.Docs.Block -> List Elm.Field -> Elm.Declaration
-generateTypeBuilderRecord blocks fields =
-    case blocks of
-        [] ->
-            Elm.declaration "make_"
-                (Elm.record fields)
-                |> Elm.expose
-
-        top :: remain ->
-            case generateTypeBuilderRecordHelper top of
-                Nothing ->
-                    generateTypeBuilderRecord remain fields
-
-                Just field ->
-                    generateTypeBuilderRecord remain (field :: fields)
+generateTypeBuilderRecord : List Elm.Docs.Block -> Elm.Declaration
+generateTypeBuilderRecord blocks =
+    blocks
+        |> List.filterMap generateTypeBuilderRecordHelper
+        |> Elm.record
+        |> Elm.declaration "make_"
+        |> Elm.expose
 
 
 generateTypeBuilderRecordHelper : Elm.Docs.Block -> Maybe Elm.Field
@@ -355,21 +347,13 @@ generateTypeBuilderRecordHelper block =
 This creates that record
 
 -}
-generateTypeRecord : List Elm.Docs.Block -> List Elm.Field -> Elm.Declaration
-generateTypeRecord blocks fields =
-    case blocks of
-        [] ->
-            Elm.declaration "types_"
-                (Elm.record fields)
-                |> Elm.expose
-
-        top :: remain ->
-            case generateTypeRecordHelper top of
-                Nothing ->
-                    generateTypeRecord remain fields
-
-                Just field ->
-                    generateTypeRecord remain (field :: fields)
+generateTypeRecord : List Elm.Docs.Block -> Elm.Declaration
+generateTypeRecord blocks =
+    blocks
+        |> List.filterMap generateTypeRecordHelper
+        |> Elm.record
+        |> Elm.declaration "types_"
+        |> Elm.expose
 
 
 generateTypeRecordHelper : Elm.Docs.Block -> Maybe Elm.Field
