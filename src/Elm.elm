@@ -790,7 +790,7 @@ letIn : List Let.Declaration -> Expression -> Expression
 letIn decls (Compiler.Expression within) =
     let
         gathered =
-            List.foldl
+            List.foldr
                 (\(Compiler.LetDeclaration mods dec) accum ->
                     { declarations =
                         dec :: accum.declarations
