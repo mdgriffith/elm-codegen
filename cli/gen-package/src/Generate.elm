@@ -589,8 +589,16 @@ getArgumentUnpacker freshCount tipe value =
 
         Elm.Type.Type "List.List" [ inner ] ->
             let
+                varName =
+                    "lambdaArg" ++ String.fromInt freshCount
+
                 f =
-                    getArgumentUnpacker freshCount inner value
+                    Elm.apply (Elm.valueFrom [ "List" ] "map")
+                        [ Elm.lambdaBetaReduced varName
+                            (typeToAnnotation inner)
+                            (getArgumentUnpacker (freshCount + 1) inner)
+                        , value
+                        ]
             in
             ElmGen.list f
 
