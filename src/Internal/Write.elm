@@ -1101,8 +1101,13 @@ prettyIfBlock aliases indent exprBool exprTrue exprFalse =
 
 prettyLiteral : String -> Doc t
 prettyLiteral val =
-    Pretty.string (escape val)
-        |> quotes
+    if String.contains "\n" val then
+        Pretty.string val
+            |> tripleQuotes
+
+    else
+        Pretty.string (escape val)
+            |> quotes
 
 
 prettyTupledExpression : Aliases -> Int -> List (Node Expression) -> ( Doc t, Bool )
