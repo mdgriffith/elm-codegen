@@ -10808,7 +10808,23 @@ var $author$project$Generate$getArgumentUnpacker = F3(
 					if (((tipe.a === 'List.List') && tipe.b.b) && (!tipe.b.b.b)) {
 						var _v3 = tipe.b;
 						var inner = _v3.a;
-						var f = A3($author$project$Generate$getArgumentUnpacker, freshCount, inner, value);
+						var varName = 'lambdaArg' + $elm$core$String$fromInt(freshCount);
+						var f = A2(
+							$author$project$Elm$apply,
+							A2(
+								$author$project$Elm$valueFrom,
+								_List_fromArray(
+									['List']),
+								'map'),
+							_List_fromArray(
+								[
+									A3(
+									$author$project$Elm$lambdaBetaReduced,
+									varName,
+									$author$project$Generate$typeToAnnotation(inner),
+									A2($author$project$Generate$getArgumentUnpacker, freshCount + 1, inner)),
+									value
+								]));
 						return $author$project$Elm$Gen$Elm$list(f);
 					} else {
 						break _v0$3;
