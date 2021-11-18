@@ -12,7 +12,7 @@ module Elm exposing
     , Declaration
     , comment, declaration
     , withDocumentation
-    , fn, fn2, fn3, fn4, fn5, functionWith
+    , fn, fn2, fn3, fn4, fn5, fn6, functionWith
     , customType, Variant, variant, variantWith
     , alias
     , expose, exposeConstructor
@@ -72,7 +72,7 @@ module Elm exposing
 
 @docs withDocumentation
 
-@docs fn, fn2, fn3, fn4, fn5, functionWith
+@docs fn, fn2, fn3, fn4, fn5, fn6, functionWith
 
 
 ## Custom Types
@@ -1890,6 +1890,84 @@ fn5 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fo
                 ++ Compiler.getAnnotationImports fiveType
                 ++ body.imports
             )
+
+{-| -}
+fn6 :
+    String
+    -> ( String, Elm.Annotation.Annotation )
+    -> ( String, Elm.Annotation.Annotation )
+    -> ( String, Elm.Annotation.Annotation )
+    -> ( String, Elm.Annotation.Annotation )
+    -> ( String, Elm.Annotation.Annotation )
+    -> ( String, Elm.Annotation.Annotation )
+    -> (Expression -> Expression -> Expression -> Expression -> Expression ->  Expression -> Expression)
+    -> Declaration
+fn6 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fourName, fourType ) ( fiveName, fiveType ) (sixName,sixType) toBody =
+    let
+        arg1 =
+            valueWith [] oneName oneType
+
+        arg2 =
+            valueWith [] twoName twoType
+
+        arg3 =
+            valueWith [] threeName threeType
+
+        arg4 =
+            valueWith [] fourName fourType
+
+        arg5 =
+            valueWith [] fiveName fiveType
+
+        arg6 =
+            valueWith [] sixName sixType
+
+        (Compiler.Expression body) =
+            toBody arg1 arg2 arg3 arg4 arg5 arg6
+    in
+    { documentation = Compiler.nodifyMaybe Nothing
+    , signature =
+        case body.annotation of
+            Ok return ->
+                Just
+                    (Compiler.nodify
+                        { name = Compiler.nodify (Compiler.formatValue name)
+                        , typeAnnotation =
+                            Compiler.nodify <|
+                                Compiler.getInnerAnnotation <|
+                                    Elm.Annotation.function
+                                        [ oneType, twoType, threeType, fourType, fiveType,sixType ]
+                                        (Compiler.noImports return)
+                        }
+                    )
+
+            Err _ ->
+                Nothing
+    , declaration =
+        Compiler.nodify
+            { name = Compiler.nodify (Compiler.formatValue name)
+            , arguments =
+                [ Compiler.nodify (Pattern.VarPattern oneName)
+                , Compiler.nodify (Pattern.VarPattern twoName)
+                , Compiler.nodify (Pattern.VarPattern threeName)
+                , Compiler.nodify (Pattern.VarPattern fourName)
+                , Compiler.nodify (Pattern.VarPattern fiveName)
+                , Compiler.nodify (Pattern.VarPattern sixName)
+                ]
+            , expression = Compiler.nodify body.expression
+            }
+    }
+        |> Declaration.FunctionDeclaration
+        |> Compiler.Declaration Compiler.NotExposed
+            (Compiler.getAnnotationImports oneType
+                ++ Compiler.getAnnotationImports twoType
+                ++ Compiler.getAnnotationImports threeType
+                ++ Compiler.getAnnotationImports fourType
+                ++ Compiler.getAnnotationImports fiveType
+                ++ Compiler.getAnnotationImports sixType
+                ++ body.imports
+            )
+
 
 
 {-| Add documentation to a declaration!
