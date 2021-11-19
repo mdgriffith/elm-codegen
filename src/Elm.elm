@@ -1102,13 +1102,13 @@ apply ((Compiler.Expression exp) as top) allArgs =
     let
         args =
             List.filter (\(Compiler.Expression arg) -> not arg.skip) allArgs
-
-        argExps =
-            List.map getExpression args
     in
     Compiler.Expression
         { expression =
-            autopipe False exp.expression argExps
+            -- Disabling autopipe for now.
+            -- There seems to be some edge cases where it generates invalid code.
+            -- autopipe False exp.expression (List.map getExpression args)
+            Exp.Application (Compiler.nodifyAll (exp.expression :: List.map (parens << getExpression) args))
         , annotation =
             Compiler.applyType top args
         , imports = exp.imports ++ List.concatMap getImports args
