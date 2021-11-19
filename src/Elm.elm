@@ -141,7 +141,6 @@ For precise control over what is rendered for the module comment, use [fileWith]
 
 @docs declarationToString, declarationImports
 
-@docs pass
 
 -}
 
@@ -1056,7 +1055,35 @@ alias name innerAnnotation =
 -}
 parens : Exp.Expression -> Exp.Expression
 parens expr =
-    Exp.ParenthesizedExpression (Compiler.nodify expr)
+    case expr of
+        Exp.UnitExpr ->
+            expr
+
+        Exp.Integer i ->
+            expr
+
+        Exp.Literal _ ->
+            expr
+
+        Exp.Hex _ ->
+            expr
+
+        Exp.Floatable _ ->
+            expr
+
+        Exp.TupledExpression _ ->
+            expr
+
+        Exp.ParenthesizedExpression _ ->
+            expr
+
+        Exp.CharLiteral _ ->
+            expr
+        Exp.ListExpr _ ->
+            expr
+
+        _ ->
+            Exp.ParenthesizedExpression (Compiler.nodify expr)
 
 
 getExpression : Expression -> Exp.Expression
@@ -1075,15 +1102,102 @@ apply ((Compiler.Expression exp) as top) allArgs =
     let
         args =
             List.filter (\(Compiler.Expression arg) -> not arg.skip) allArgs
+
+        argExps =
+            List.map getExpression args
     in
     Compiler.Expression
         { expression =
-            Exp.Application (Compiler.nodifyAll (exp.expression :: List.map (parens << getExpression) args))
+            autopipe False exp.expression argExps
         , annotation =
             Compiler.applyType top args
         , imports = exp.imports ++ List.concatMap getImports args
         , skip = False
         }
+
+
+
+popLast : List a -> Maybe (List a, a)
+popLast lst =
+    case List.reverse lst of
+        [] ->
+            Nothing
+
+        last :: initReverse ->
+            Just ( List.reverse initReverse,  last )
+
+{-|
+    String.append "world2" (String.append "world" "Hello")
+
+    Apply [ String.append, "world2", (Apply [ String.append, "world", "hello" ])]
+
+
+
+
+    Elm.string "Hello"
+        |> Elm.Gen.String.append (Elm.string "world")
+        |> Elm.Gen.String.append (Elm.string "world2")
+
+
+    OpApply "|>"
+        (OpApply "|>"
+            ()
+            (Apply [ String.append, "world"])
+        )
+        (String.append)
+
+
+-}
+
+
+
+autopipe : Bool -> Exp.Expression -> List Exp.Expression -> Exp.Expression
+autopipe committed topFn expressions =
+    if committed then
+        case popLast expressions of
+            Nothing ->
+               topFn
+
+            Just (init, last) ->
+                Exp.OperatorApplication "|>" Infix.Left
+                    (Compiler.nodify last)
+                    (Compiler.nodify
+                        (Exp.Application
+                            (Compiler.nodify topFn :: List.map (Compiler.nodify << parens) init )
+                        )
+                    )
+
+
+    else
+        case popLast expressions of
+            Nothing ->
+               topFn
+
+            Just (init, last) ->
+                case last of
+                    Exp.Application lastArgs ->
+                        Exp.OperatorApplication "|>" Infix.Left
+                            (Compiler.nodify
+                                (case lastArgs of
+                                    [] ->
+                                        Exp.Application []
+
+                                    innerFn :: remain ->
+                                        autopipe True (Compiler.denode innerFn) (List.map Compiler.denode remain)
+                                )
+                            )
+                            (Compiler.nodify
+                                (Exp.Application
+                                    (Compiler.nodify topFn :: List.map (Compiler.nodify << parens) init)
+                                )
+                            )
+
+
+                    _ ->
+                        Exp.Application
+                            (List.map (Compiler.nodify << parens) (topFn :: expressions))
+
+
 
 
 {-| -}
@@ -1193,6 +1307,16 @@ lambdaBetaReduced argBaseName argType toExpression =
         }
 
 
+ -- -- If the list is nonempty, returns a tuple with the beginning of the list and the last element (denoded).
+popLastAndDenodeLast : List (Node.Node a) -> Maybe ( List (Node.Node a), a )
+popLastAndDenodeLast lst =
+    case List.reverse lst of
+        [] ->
+            Nothing
+
+        last :: initReverse ->
+            Just ( List.reverse initReverse, Compiler.denode last )
+
 betaReduce : Exp.Expression -> Exp.Expression
 betaReduce e =
     let
@@ -1207,19 +1331,11 @@ betaReduce e =
                 _ ->
                     Nothing
 
-        -- If the list is nonempty, returns a tuple with the beginning of the list and the last element (denoded).
-        popLast : List (Node.Node a) -> Maybe ( List (Node.Node a), a )
-        popLast lst =
-            case List.reverse lst of
-                [] ->
-                    Nothing
 
-                last :: initReverse ->
-                    Just ( List.reverse initReverse, Compiler.denode last )
     in
     case e of
         Exp.LambdaExpression { args, expression } ->
-            case popLast args of
+            case popLastAndDenodeLast args of
                 Just ( initLambdaArgs, Pattern.VarPattern lastLambdaArg ) ->
                     case Compiler.denode expression of
                         Exp.RecordAccess argNode fieldNode ->
@@ -1242,7 +1358,7 @@ betaReduce e =
                                     e
 
                         Exp.Application applicationArgs ->
-                            case popLast applicationArgs of
+                            case popLastAndDenodeLast applicationArgs of
                                 Just ( [], uniqueApplicationArg ) ->
                                     if extractLastArg uniqueApplicationArg == Just lastLambdaArg then
                                         Exp.FunctionOrValue [] "identity"
