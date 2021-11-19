@@ -22,7 +22,6 @@ module Elm exposing
     , append, cons
     , plus, minus, multiply, divide, intDivide, power
     , lt, gt, lte, gte, and, or
-    , pipe, pipeLeft, compose, composeLeft
     , keep, skip
     , slash, question
     , portIncoming, portOutgoing
@@ -111,8 +110,6 @@ For precise control over what is rendered for the module comment, use [fileWith]
 @docs plus, minus, multiply, divide, intDivide, power
 
 @docs lt, gt, lte, gte, and, or
-
-@docs pipe, pipeLeft, compose, composeLeft
 
 
 ## Parsing
