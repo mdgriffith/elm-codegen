@@ -173,7 +173,7 @@ annotationNamed name tags =
             Elm.lambdaWith
                 (List.indexedMap
                     (\i arg ->
-                        ( Pattern.var ("arg" ++ String.fromInt i)
+                        ( "arg" ++ String.fromInt i
                         , Annotation.named elmAnnotation "Annotation"
                         )
                     )
@@ -292,7 +292,7 @@ generateTypeBuilderRecordHelper block =
                                                 (Elm.lambdaWith
                                                     (List.indexedMap
                                                         (\i tag ->
-                                                            ( Pattern.var ("ar" ++ String.fromInt i)
+                                                            ( "ar" ++ String.fromInt i
                                                             , expressionType
                                                             )
                                                         )
@@ -494,12 +494,12 @@ captureFunction :
     Elm.Type.Type
     ->
         { index : Int
-        , arguments : List ( Annotation.Annotation, Pattern.Pattern )
+        , arguments : List ( String, Annotation.Annotation )
         , values : List Elm.Expression
         }
     ->
         { index : Int
-        , arguments : List ( Annotation.Annotation, Pattern.Pattern )
+        , arguments : List ( String, Annotation.Annotation )
         , values : List Elm.Expression
         }
 captureFunction tipe captured =
@@ -523,10 +523,10 @@ argName index =
     "arg" ++ String.fromInt index
 
 
-asArgument : Int -> Elm.Type.Type -> ( Annotation.Annotation, Pattern.Pattern )
+asArgument : Int -> Elm.Type.Type -> ( String, Annotation.Annotation )
 asArgument index tipe =
-    ( asArgumentTypeHelper tipe
-    , Pattern.var (argName index)
+    ( argName index
+    , asArgumentTypeHelper tipe
     )
 
 

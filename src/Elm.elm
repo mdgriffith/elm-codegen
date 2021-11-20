@@ -6,7 +6,7 @@ module Elm exposing
     , value, valueFrom, valueWith
     , withType
     , record, field, Field, get, updateRecord
-    , caseOf, letIn, ifThen
+    , letIn, ifThen
     , apply
     , lambda, lambda2, lambda3, lambda4, lambda5, lambdaWith, lambdaBetaReduced
     , Declaration
@@ -56,7 +56,7 @@ module Elm exposing
 
 ## Flow control
 
-@docs caseOf, letIn, ifThen
+@docs letIn, ifThen
 
 @docs apply
 
@@ -846,52 +846,6 @@ ifThen (Compiler.Expression condition) (Compiler.Expression thenBranch) (Compile
         }
 
 
-{-| -}
-caseOf : Expression -> List ( Pattern, Expression ) -> Expression
-caseOf (Compiler.Expression expr) cases =
-    let
-        gathered =
-            List.foldl
-                (\( pattern, Compiler.Expression exp ) accum ->
-                    { cases = ( Compiler.nodify pattern, Compiler.nodify exp.expression ) :: accum.cases
-                    , imports = accum.imports ++ exp.imports
-                    , annotation =
-                        case accum.annotation of
-                            Nothing ->
-                                Just exp.annotation
-
-                            Just exist ->
-                                if exist == exp.annotation then
-                                    accum.annotation
-
-                                else
-                                    Just (Err [ Compiler.CaseBranchesReturnDifferentTypes ])
-                    }
-                )
-                { cases = []
-                , imports = []
-                , annotation = Nothing
-                }
-                cases
-    in
-    Compiler.Expression
-        { expression =
-            Exp.CaseExpression
-                { expression = Compiler.nodify expr.expression
-                , cases = List.reverse gathered.cases
-                }
-        , annotation =
-            case gathered.annotation of
-                Nothing ->
-                    Err [ Compiler.EmptyCaseStatement ]
-
-                Just ann ->
-                    ann
-        , imports = expr.imports ++ gathered.imports
-        , skip = False
-        }
-
-
 {-|
 
     record
@@ -1197,17 +1151,12 @@ autopipe committed topFn expressions =
 
 
 {-| -}
-type alias Pattern =
-    Pattern.Pattern
-
-
-{-| -}
-lambdaWith : List ( Pattern, Elm.Annotation.Annotation ) -> Expression -> Expression
+lambdaWith : List ( String, Elm.Annotation.Annotation ) -> Expression -> Expression
 lambdaWith args (Compiler.Expression expr) =
     Compiler.Expression
         { expression =
             Exp.LambdaExpression
-                { args = Compiler.nodifyAll (List.map Tuple.first args)
+                { args = Compiler.nodifyAll (List.map (Pattern.VarPattern << Tuple.first) args)
                 , expression = Compiler.nodify expr.expression
                 }
         , annotation =
@@ -1672,7 +1621,7 @@ declaration name (Compiler.Expression body) =
 
 
 {-| -}
-functionWith : String -> List ( Elm.Annotation.Annotation, Pattern ) -> Expression -> Declaration
+functionWith : String -> List ( String, Elm.Annotation.Annotation ) -> Expression -> Declaration
 functionWith name args (Compiler.Expression body) =
     { documentation = Compiler.nodifyMaybe Nothing
     , signature =
@@ -1685,7 +1634,7 @@ functionWith name args (Compiler.Expression body) =
                             Compiler.nodify <|
                                 Compiler.getInnerAnnotation <|
                                     Elm.Annotation.function
-                                        (List.map Tuple.first args)
+                                        (List.map Tuple.second args)
                                         (Compiler.noImports return)
                         }
                     )
@@ -1695,14 +1644,14 @@ functionWith name args (Compiler.Expression body) =
     , declaration =
         Compiler.nodify
             { name = Compiler.nodify (Compiler.formatValue name)
-            , arguments = Compiler.nodifyAll (List.map Tuple.second args)
+            , arguments = Compiler.nodifyAll (List.map (Pattern.VarPattern << Tuple.first) args)
             , expression = Compiler.nodify body.expression
             }
     }
         |> Declaration.FunctionDeclaration
         |> Compiler.Declaration Compiler.NotExposed
             (List.concatMap
-                (Tuple.first
+                (Tuple.second
                     >> Compiler.getAnnotationImports
                 )
                 args
