@@ -9,7 +9,7 @@ module Elm exposing
     , caseOf, letIn, ifThen
     , apply
     , lambda, lambda2, lambda3, lambda4, lambda5, lambdaWith, lambdaBetaReduced
-    , Declaration, unsafe
+    , Declaration
     , comment, declaration
     , withDocumentation
     , fn, fn2, fn3, fn4, fn5, fn6, functionWith
@@ -28,7 +28,7 @@ module Elm exposing
     , parse
     , toString, expressionImports
     , declarationToString, declarationImports
-    , pass
+    , pass, unsafe
     )
 
 {-|
@@ -137,7 +137,6 @@ For precise control over what is rendered for the module comment, use [fileWith]
 @docs toString, expressionImports
 
 @docs declarationToString, declarationImports
-
 
 -}
 
@@ -1084,6 +1083,7 @@ parens expr =
 
         Exp.CharLiteral _ ->
             expr
+
         Exp.ListExpr _ ->
             expr
 
@@ -1121,67 +1121,61 @@ apply ((Compiler.Expression exp) as top) allArgs =
         }
 
 
-
-popLast : List a -> Maybe (List a, a)
+popLast : List a -> Maybe ( List a, a )
 popLast lst =
     case List.reverse lst of
         [] ->
             Nothing
 
         last :: initReverse ->
-            Just ( List.reverse initReverse,  last )
+            Just ( List.reverse initReverse, last )
+
 
 {-|
+
     String.append "world2" (String.append "world" "Hello")
 
-    Apply [ String.append, "world2", (Apply [ String.append, "world", "hello" ])]
-
-
-
+    Apply [ String.append, "world2", Apply [ String.append, "world", "hello" ] ]
 
     Elm.string "Hello"
         |> Elm.Gen.String.append (Elm.string "world")
         |> Elm.Gen.String.append (Elm.string "world2")
 
-
     OpApply "|>"
         (OpApply "|>"
             ()
-            (Apply [ String.append, "world"])
+            (Apply [ String.append, "world" ])
         )
-        (String.append)
-
+        String.append
 
 -}
-
-
-
 autopipe : Bool -> Exp.Expression -> List Exp.Expression -> Exp.Expression
 autopipe committed topFn expressions =
     if committed then
         case popLast expressions of
             Nothing ->
-               topFn
+                topFn
 
-            Just (init, last) ->
-                Exp.OperatorApplication "|>" Infix.Left
+            Just ( init, last ) ->
+                Exp.OperatorApplication "|>"
+                    Infix.Left
                     (Compiler.nodify last)
                     (Compiler.nodify
                         (Exp.Application
-                            (Compiler.nodify topFn :: List.map (Compiler.nodify << parens) init )
+                            (Compiler.nodify topFn :: List.map (Compiler.nodify << parens) init)
                         )
                     )
-
 
     else
         case popLast expressions of
             Nothing ->
-               topFn
+                topFn
 
-            Just (init, last) ->
+            Just ( init, last ) ->
                 case last of
                     Exp.Application lastArgs ->
-                        Exp.OperatorApplication "|>" Infix.Left
+                        Exp.OperatorApplication "|>"
+                            Infix.Left
                             (Compiler.nodify
                                 (case lastArgs of
                                     [] ->
@@ -1197,12 +1191,9 @@ autopipe committed topFn expressions =
                                 )
                             )
 
-
                     _ ->
                         Exp.Application
                             (List.map (Compiler.nodify << parens) (topFn :: expressions))
-
-
 
 
 {-| -}
@@ -1312,7 +1303,10 @@ lambdaBetaReduced argBaseName argType toExpression =
         }
 
 
- -- -- If the list is nonempty, returns a tuple with the beginning of the list and the last element (denoded).
+
+-- -- If the list is nonempty, returns a tuple with the beginning of the list and the last element (denoded).
+
+
 popLastAndDenodeLast : List (Node.Node a) -> Maybe ( List (Node.Node a), a )
 popLastAndDenodeLast lst =
     case List.reverse lst of
@@ -1321,6 +1315,7 @@ popLastAndDenodeLast lst =
 
         last :: initReverse ->
             Just ( List.reverse initReverse, Compiler.denode last )
+
 
 betaReduce : Exp.Expression -> Exp.Expression
 betaReduce e =
@@ -1335,8 +1330,6 @@ betaReduce e =
 
                 _ ->
                     Nothing
-
-
     in
     case e of
         Exp.LambdaExpression { args, expression } ->
@@ -2012,6 +2005,7 @@ fn5 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fo
                 ++ body.imports
             )
 
+
 {-| -}
 fn6 :
     String
@@ -2021,9 +2015,9 @@ fn6 :
     -> ( String, Elm.Annotation.Annotation )
     -> ( String, Elm.Annotation.Annotation )
     -> ( String, Elm.Annotation.Annotation )
-    -> (Expression -> Expression -> Expression -> Expression -> Expression ->  Expression -> Expression)
+    -> (Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
     -> Declaration
-fn6 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fourName, fourType ) ( fiveName, fiveType ) (sixName,sixType) toBody =
+fn6 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fourName, fourType ) ( fiveName, fiveType ) ( sixName, sixType ) toBody =
     let
         arg1 =
             valueWith [] oneName oneType
@@ -2057,7 +2051,7 @@ fn6 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fo
                             Compiler.nodify <|
                                 Compiler.getInnerAnnotation <|
                                     Elm.Annotation.function
-                                        [ oneType, twoType, threeType, fourType, fiveType,sixType ]
+                                        [ oneType, twoType, threeType, fourType, fiveType, sixType ]
                                         (Compiler.noImports return)
                         }
                     )
@@ -2088,7 +2082,6 @@ fn6 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fo
                 ++ Compiler.getAnnotationImports sixType
                 ++ body.imports
             )
-
 
 
 {-| Add documentation to a declaration!
@@ -2620,7 +2613,7 @@ pass =
     Compiler.skip
 
 
-{-|-}
+{-| -}
 unsafe : String -> Declaration
 unsafe source =
     Compiler.Block (String.trim source)
