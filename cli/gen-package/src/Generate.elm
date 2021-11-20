@@ -5,12 +5,10 @@ module Generate exposing (main)
 import DocsFromSource
 import Elm
 import Elm.Annotation as Annotation
-import Elm.Debug exposing (annotation)
 import Elm.Docs
 import Elm.Gen
 import Elm.Gen.Elm as ElmGen
 import Elm.Gen.Elm.Annotation as GenType
-import Elm.Pattern as Pattern
 import Elm.Type
 import Json.Decode as Json
 
@@ -118,8 +116,7 @@ moduleToFile docs =
     in
     Elm.fileWith modName
         { docs =
-            \docGroups ->
-                ""
+            List.map Elm.docs
         , aliases =
             [ ( [ "Elm", "Annotation" ], "Type" )
             ]
