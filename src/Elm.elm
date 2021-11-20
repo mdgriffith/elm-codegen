@@ -141,7 +141,6 @@ For precise control over what is rendered for the module comment, use [fileWith]
 -}
 
 import Elm.Annotation
-import Elm.Let as Let
 import Elm.Parser
 import Elm.Processing
 import Elm.Syntax.Declaration as Declaration exposing (Declaration(..))
@@ -783,21 +782,28 @@ Check out `Elm.Let` to add things to it.
     import Elm.Let as Let
 
     Elm.letIn
-        [ Let.value "one" (Elm.int 5)
-        , Let.value "two" (Elm.int 10)
+        [ ("one", (Elm.int 5))
+        , ("two", (Elm.int 10))
         ]
         (Elm.add (Elm.value "one") (Elm.value "two"))
 
 -}
-letIn : List Let.Declaration -> Expression -> Expression
+letIn : List ( String, Expression ) -> Expression -> Expression
 letIn decls (Compiler.Expression within) =
     let
         gathered =
             List.foldr
-                (\(Compiler.LetDeclaration mods dec) accum ->
+                (\( name, Compiler.Expression body ) accum ->
                     { declarations =
-                        dec :: accum.declarations
-                    , imports = accum.imports ++ mods
+                        Compiler.nodify
+                            (Exp.LetDestructuring
+                                (Compiler.nodify
+                                    (Pattern.VarPattern name)
+                                )
+                                (Compiler.nodify body.expression)
+                            )
+                            :: accum.declarations
+                    , imports = accum.imports ++ body.imports
                     }
                 )
                 { declarations = []
@@ -808,7 +814,7 @@ letIn decls (Compiler.Expression within) =
     Compiler.Expression
         { expression =
             Exp.LetExpression
-                { declarations = Compiler.nodifyAll gathered.declarations
+                { declarations = gathered.declarations
                 , expression = Compiler.nodify within.expression
                 }
         , imports = gathered.imports
