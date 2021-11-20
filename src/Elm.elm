@@ -9,7 +9,7 @@ module Elm exposing
     , caseOf, letIn, ifThen
     , apply
     , lambda, lambda2, lambda3, lambda4, lambda5, lambdaWith, lambdaBetaReduced
-    , Declaration
+    , Declaration, unsafe
     , comment, declaration
     , withDocumentation
     , fn, fn2, fn3, fn4, fn5, fn6, functionWith
@@ -189,6 +189,9 @@ declarationImports decl =
         Compiler.Comment _ ->
             ""
 
+        Compiler.Block _ ->
+            ""
+
 
 {-| -}
 declarationToString : Declaration -> String
@@ -342,6 +345,11 @@ reduceDeclarationImports self decs imports =
             imports
 
         (Compiler.Comment _) :: remain ->
+            reduceDeclarationImports self
+                remain
+                imports
+
+        (Compiler.Block _) :: remain ->
             reduceDeclarationImports self
                 remain
                 imports
@@ -2610,6 +2618,12 @@ applyInfix (BinOp symbol dir _) fnAnnotation (Compiler.Expression left) (Compile
 pass : Expression
 pass =
     Compiler.skip
+
+
+{-|-}
+unsafe : String -> Declaration
+unsafe source =
+    Compiler.Block (String.trim source)
 
 
 {-| -}

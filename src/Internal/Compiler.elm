@@ -141,12 +141,16 @@ type LetDeclaration
 type Declaration
     = Declaration Expose (List Module) Declaration.Declaration
     | Comment String
+    | Block String
 
 
 documentation : String -> Declaration -> Declaration
 documentation doc decl =
     case decl of
         Comment _ ->
+            decl
+
+        Block source ->
             decl
 
         Declaration exp imports body ->
@@ -193,6 +197,9 @@ expose decl =
         Comment _ ->
             decl
 
+        Block _ ->
+            decl
+
         Declaration _ imports body ->
             Declaration (Exposed { group = Nothing, exposeConstructor = False }) imports body
 
@@ -202,6 +209,9 @@ exposeAndGroup : String -> Declaration -> Declaration
 exposeAndGroup group decl =
     case decl of
         Comment _ ->
+            decl
+
+        Block _ ->
             decl
 
         Declaration _ imports body ->
@@ -215,6 +225,9 @@ exposeConstructor decl =
         Comment _ ->
             decl
 
+        Block _ ->
+            decl
+
         Declaration metadata imports body ->
             Declaration (Exposed { group = Nothing, exposeConstructor = True }) imports body
 
@@ -224,6 +237,9 @@ exposeConstructorAndGroup : String -> Declaration -> Declaration
 exposeConstructorAndGroup group decl =
     case decl of
         Comment _ ->
+            decl
+
+        Block _ ->
             decl
 
         Declaration _ imports body ->
@@ -317,6 +333,9 @@ hasPorts decls =
                 Comment _ ->
                     False
 
+                Block _ ->
+                    False
+
                 Declaration exp _ decBody ->
                     case exp of
                         NotExposed ->
@@ -339,6 +358,9 @@ getExposed decls =
         (\decl ->
             case decl of
                 Comment _ ->
+                    Nothing
+
+                Block source ->
                     Nothing
 
                 Declaration exp _ decBody ->
@@ -407,7 +429,10 @@ getExposedGroups decls =
                 Comment _ ->
                     Nothing
 
-                Declaration exp _ decBody ->
+                Block _ ->
+                    Nothing
+
+                Declaration exp _ _ ->
                     case exp of
                         NotExposed ->
                             Nothing
@@ -479,6 +504,9 @@ declName : Declaration -> Maybe String
 declName decl =
     case decl of
         Comment _ ->
+            Nothing
+
+        Block _ ->
             Nothing
 
         Declaration exp _ decBody ->

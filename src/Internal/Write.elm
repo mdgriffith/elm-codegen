@@ -323,6 +323,9 @@ prettyDeclaration width decl =
         Util.Comment content ->
             Pretty.string content
 
+        Util.Block source ->
+            Pretty.string source
+
 
 noAliases : Aliases
 noAliases =
@@ -360,7 +363,13 @@ prettyDeclarations aliases decls =
             case decl of
                 Util.Comment content ->
                     doc
-                        |> Pretty.a (Pretty.string (content ++ "\n\n"))
+                        |> Pretty.a (Pretty.string (content ++ "\n"))
+                        |> Pretty.a Pretty.line
+
+                Util.Block source ->
+                    doc
+                        |> Pretty.a (Pretty.string source)
+                        |> Pretty.a Pretty.line
                         |> Pretty.a Pretty.line
 
                 Util.Declaration _ _ innerDecl ->
@@ -369,6 +378,7 @@ prettyDeclarations aliases decls =
                         |> Pretty.a Pretty.line
                         |> Pretty.a Pretty.line
                         |> Pretty.a Pretty.line
+
         )
         Pretty.empty
         decls
