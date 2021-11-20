@@ -13,6 +13,9 @@
     elm-prefab install docs.json
         -> same as above, but from a local set of docs
 
+    elm-prefab install Module.elm
+        -> same as above, but from a local elm file itself
+
 */
 
 import * as commander from "commander" // include commander in git clone of commander repo
@@ -214,7 +217,7 @@ async function action(cmd: string, pkg: string | null, options: Options, com: an
 
   const cwd = options.cwd || "."
   const output = path.join(cwd, options.output || "output")
-  const install_dir = path.join(cwd, options.output || "generators")
+  const install_dir = path.join(cwd, options.output || "codegen")
   if (cmd == "init") {
     init(install_dir)
   } else if (cmd == "install" && !!pkg) {
