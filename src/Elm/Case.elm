@@ -8,6 +8,7 @@ module Elm.Case exposing
 @docs maybe, result, list, list2, list3
 
 @docs custom, Branch, branch, branch2, branch3, branch4
+@docs nonexhaustive
 
 -}
 
@@ -341,6 +342,63 @@ custom (Compiler.Expression expr) branches =
                 , annotation = Nothing
                 }
                 branches
+    in
+    Compiler.Expression
+        { expression =
+            Exp.CaseExpression
+                { expression = Compiler.nodify expr.expression
+                , cases = List.reverse gathered.cases
+                }
+        , annotation =
+            case gathered.annotation of
+                Nothing ->
+                    Err [ Compiler.EmptyCaseStatement ]
+
+                Just ann ->
+                    ann
+        , imports = expr.imports ++ gathered.imports
+        , skip = False
+        }
+
+
+{-| -}
+nonexhaustive :
+    Expression
+    ->
+        { branches : List Branch
+        , wildcard : Expression -> Expression
+        }
+    -> Expression
+nonexhaustive (Compiler.Expression expr) branches =
+    let
+        gathered =
+            List.foldl
+                (\(Branch pattern (Compiler.Expression exp)) accum ->
+                    { cases = ( Compiler.nodify pattern, Compiler.nodify exp.expression ) :: accum.cases
+                    , imports = accum.imports ++ exp.imports
+                    , annotation =
+                        case accum.annotation of
+                            Nothing ->
+                                Just exp.annotation
+
+                            Just exist ->
+                                if exist == exp.annotation then
+                                    accum.annotation
+
+                                else
+                                    Just (Err [ Compiler.CaseBranchesReturnDifferentTypes ])
+                    }
+                )
+                { cases = []
+                , imports = []
+                , annotation = Nothing
+                }
+                (branches.branches
+                    ++ [ Branch
+                            (Pattern.VarPattern "otherwise")
+                            (branches.wildcard (Elm.value "otherwise"))
+                       ]
+                )
     in
     Compiler.Expression
         { expression =
