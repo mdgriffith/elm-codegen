@@ -1,14 +1,16 @@
 module Elm.Case exposing
     ( maybe, result, list, list2, list3
-    , custom, Branch, branch, branch2, branch3, branch4
+    , custom
+    , Branch, otherwise, branch, branch2, branch3, branch4, branch5
     )
 
 {-|
 
 @docs maybe, result, list, list2, list3
 
-@docs custom, Branch, branch, branch2, branch3, branch4
-@docs nonexhaustive
+@docs custom
+
+@docs Branch, otherwise, branch, branch2, branch3, branch4, branch5
 
 -}
 
@@ -362,63 +364,6 @@ custom (Compiler.Expression expr) branches =
 
 
 {-| -}
-nonexhaustive :
-    Expression
-    ->
-        { branches : List Branch
-        , wildcard : Expression -> Expression
-        }
-    -> Expression
-nonexhaustive (Compiler.Expression expr) branches =
-    let
-        gathered =
-            List.foldl
-                (\(Branch pattern (Compiler.Expression exp)) accum ->
-                    { cases = ( Compiler.nodify pattern, Compiler.nodify exp.expression ) :: accum.cases
-                    , imports = accum.imports ++ exp.imports
-                    , annotation =
-                        case accum.annotation of
-                            Nothing ->
-                                Just exp.annotation
-
-                            Just exist ->
-                                if exist == exp.annotation then
-                                    accum.annotation
-
-                                else
-                                    Just (Err [ Compiler.CaseBranchesReturnDifferentTypes ])
-                    }
-                )
-                { cases = []
-                , imports = []
-                , annotation = Nothing
-                }
-                (branches.branches
-                    ++ [ Branch
-                            (Pattern.VarPattern "otherwise")
-                            (branches.wildcard (Elm.value "otherwise"))
-                       ]
-                )
-    in
-    Compiler.Expression
-        { expression =
-            Exp.CaseExpression
-                { expression = Compiler.nodify expr.expression
-                , cases = List.reverse gathered.cases
-                }
-        , annotation =
-            case gathered.annotation of
-                Nothing ->
-                    Err [ Compiler.EmptyCaseStatement ]
-
-                Just ann ->
-                    ann
-        , imports = expr.imports ++ gathered.imports
-        , skip = False
-        }
-
-
-{-| -}
 type Branch
     = Branch Pattern.Pattern Expression
 
@@ -429,6 +374,18 @@ branch name exp =
     Branch
         (Pattern.NamedPattern { moduleName = [], name = name } [])
         exp
+
+
+{-|
+
+    A catchall branch in case you want the case to be nonexhaustive.
+
+-}
+otherwise : (Expression -> Expression) -> Branch
+otherwise toExp =
+    Branch
+        (Pattern.VarPattern "otherwise")
+        (toExp (Elm.value "otherwise"))
 
 
 {-| -}
