@@ -15,9 +15,9 @@ module Elm exposing
     , fn, fn2, fn3, fn4, fn5, fn6, functionWith
     , customType, Variant, variant, variantWith
     , alias
-    , expose, exposeConstructor
-    , exposeAndGroup, exposeConstructorAndGroup
-    , fileWith
+    , expose
+    , exposeWith
+    , fileWith, docs
     , equal, notEqual
     , append, cons
     , plus, minus, multiply, divide, intDivide, power
@@ -25,10 +25,9 @@ module Elm exposing
     , keep, skip
     , slash, question
     , portIncoming, portOutgoing
-    , parse
+    , parse, unsafe
     , toString, expressionImports
     , declarationToString, declarationImports
-    , pass, unsafe
     )
 
 {-|
@@ -87,7 +86,7 @@ By default, everything is exposed for your module.
 
 However, you can tag specific declarations you want exposed, and then only those things will be exposed.
 
-@docs expose, exposeConstructor
+@docs expose
 
 
 ## Grouping exposed values in the module comment
@@ -96,9 +95,9 @@ You can also add a group tag to an exposed value. This will automatically group 
 
 For precise control over what is rendered for the module comment, use [fileWith](#fileWith)
 
-@docs exposeAndGroup, exposeConstructorAndGroup
+@docs exposeWith
 
-@docs fileWith
+@docs fileWith, docs
 
 
 # Operators
@@ -129,7 +128,7 @@ For precise control over what is rendered for the module comment, use [fileWith]
 
 # Parsing existing Elm
 
-@docs parse
+@docs parse, unsafe
 
 
 # Rendering to string
@@ -223,25 +222,34 @@ renderStandardComment :
         { group : Maybe String
         , members : List String
         }
-    -> String
+    -> List String
 renderStandardComment groups =
     if List.isEmpty groups then
-        ""
+        []
 
     else
-        List.foldl
-            (\grouped str ->
-                str ++ "@docs " ++ String.join ", " grouped.members ++ "\n\n"
-            )
-            "\n\n"
-            groups
+        List.map docs groups
+
+
+{-| Render a standard docstring.
+
+    @docs one, two, three
+
+-}
+docs :
+    { group : Maybe String
+    , members : List String
+    }
+    -> String
+docs group =
+    "@docs " ++ String.join ", " group.members
 
 
 {-| Same as [file](#file), but you have more control over how the module comment is generated!
 
 Pass in a function that determines how to render a `@doc` comment.
 
-Each exposed item is grouped based on the string used in [exposeAndGroup](#exposeAndGroup)
+Each exposed item is grouped based on the string used in [exposeWith](#exposeWith)
 
 -}
 fileWith :
@@ -252,7 +260,7 @@ fileWith :
                 { group : Maybe String
                 , members : List String
                 }
-            -> String
+            -> List String
         , aliases : List ( List String, String )
         }
     -> List Declaration
@@ -275,7 +283,7 @@ render :
         { group : Maybe String
         , members : List String
         }
-     -> String
+     -> List String
     )
     -> FileDetails
     -> File
@@ -321,7 +329,9 @@ render toDocComment fileDetails =
                         (Internal.Comments.addPart
                             Internal.Comments.emptyComment
                             (Internal.Comments.Markdown
-                                (toDocComment exposedGroups)
+                                (toDocComment exposedGroups
+                                    |> String.join "\n\n"
+                                )
                             )
                         )
                 }
@@ -384,11 +394,6 @@ type alias File =
     { path : String
     , contents : String
     }
-
-
-{-| -}
-type InternalFile
-    = InternalFile FileDetails
 
 
 type alias FileDetails =
@@ -2053,21 +2058,9 @@ expose =
 
 
 {-| -}
-exposeAndGroup : String -> Declaration -> Declaration
-exposeAndGroup =
-    Compiler.exposeAndGroup
-
-
-{-| -}
-exposeConstructor : Declaration -> Declaration
-exposeConstructor =
-    Compiler.exposeConstructor
-
-
-{-| -}
-exposeConstructorAndGroup : String -> Declaration -> Declaration
-exposeConstructorAndGroup =
-    Compiler.exposeConstructorAndGroup
+exposeWith : { exposeConstructor : Bool, group : Maybe String } -> Declaration -> Declaration
+exposeWith =
+    Compiler.exposeWith
 
 
 {-|

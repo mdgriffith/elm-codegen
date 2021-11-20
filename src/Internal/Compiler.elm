@@ -205,8 +205,8 @@ expose decl =
 
 
 {-| -}
-exposeAndGroup : String -> Declaration -> Declaration
-exposeAndGroup group decl =
+exposeWith : { exposeConstructor : Bool, group : Maybe String } -> Declaration -> Declaration
+exposeWith opts decl =
     case decl of
         Comment _ ->
             decl
@@ -215,35 +215,7 @@ exposeAndGroup group decl =
             decl
 
         Declaration _ imports body ->
-            Declaration (Exposed { group = Just group, exposeConstructor = False }) imports body
-
-
-{-| -}
-exposeConstructor : Declaration -> Declaration
-exposeConstructor decl =
-    case decl of
-        Comment _ ->
-            decl
-
-        Block _ ->
-            decl
-
-        Declaration metadata imports body ->
-            Declaration (Exposed { group = Nothing, exposeConstructor = True }) imports body
-
-
-{-| -}
-exposeConstructorAndGroup : String -> Declaration -> Declaration
-exposeConstructorAndGroup group decl =
-    case decl of
-        Comment _ ->
-            decl
-
-        Block _ ->
-            decl
-
-        Declaration _ imports body ->
-            Declaration (Exposed { group = Just group, exposeConstructor = True }) imports body
+            Declaration (Exposed opts) imports body
 
 
 type alias Module =
