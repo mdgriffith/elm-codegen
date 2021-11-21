@@ -1,5 +1,6 @@
 module Elm.Case exposing
     ( maybe, result, list, list2, list3
+    , tuple, triple
     , custom
     , Branch, otherwise, branch, branch2, branch3, branch4, branch5
     )
@@ -7,6 +8,8 @@ module Elm.Case exposing
 {-|
 
 @docs maybe, result, list, list2, list3
+
+@docs tuple, triple
 
 @docs custom
 
@@ -55,6 +58,117 @@ maybe (Compiler.Expression expr) branches =
                 [ ( Pattern.NamedPattern { moduleName = [], name = "Nothing" } [], branches.nothing )
                 , ( Pattern.NamedPattern { moduleName = [], name = "Just" } [ Compiler.nodify (Pattern.VarPattern "a") ]
                   , branches.just (Elm.value "a")
+                  )
+                ]
+    in
+    Compiler.Expression
+        { expression =
+            Exp.CaseExpression
+                { expression = Compiler.nodify expr.expression
+                , cases = List.reverse gathered.cases
+                }
+        , annotation =
+            case gathered.annotation of
+                Nothing ->
+                    Err [ Compiler.EmptyCaseStatement ]
+
+                Just ann ->
+                    ann
+        , imports = expr.imports ++ gathered.imports
+        , skip = False
+        }
+
+
+{-| -}
+tuple :
+    Expression
+    -> (Expression -> Expression -> Expression)
+    -> Expression
+tuple (Compiler.Expression expr) branches =
+    let
+        gathered =
+            List.foldl
+                (\( pattern, Compiler.Expression exp ) accum ->
+                    { cases = ( Compiler.nodify pattern, Compiler.nodify exp.expression ) :: accum.cases
+                    , imports = accum.imports ++ exp.imports
+                    , annotation =
+                        case accum.annotation of
+                            Nothing ->
+                                Just exp.annotation
+
+                            Just exist ->
+                                if exist == exp.annotation then
+                                    accum.annotation
+
+                                else
+                                    Just (Err [ Compiler.CaseBranchesReturnDifferentTypes ])
+                    }
+                )
+                { cases = []
+                , imports = []
+                , annotation = Nothing
+                }
+                [ ( Pattern.TuplePattern
+                        [ Compiler.nodify (Pattern.VarPattern "first")
+                        , Compiler.nodify (Pattern.VarPattern "second")
+                        ]
+                  , branches (Elm.value "first") (Elm.value "second")
+                  )
+                ]
+    in
+    Compiler.Expression
+        { expression =
+            Exp.CaseExpression
+                { expression = Compiler.nodify expr.expression
+                , cases = List.reverse gathered.cases
+                }
+        , annotation =
+            case gathered.annotation of
+                Nothing ->
+                    Err [ Compiler.EmptyCaseStatement ]
+
+                Just ann ->
+                    ann
+        , imports = expr.imports ++ gathered.imports
+        , skip = False
+        }
+
+
+{-| -}
+triple :
+    Expression
+    -> (Expression -> Expression -> Expression -> Expression)
+    -> Expression
+triple (Compiler.Expression expr) branches =
+    let
+        gathered =
+            List.foldl
+                (\( pattern, Compiler.Expression exp ) accum ->
+                    { cases = ( Compiler.nodify pattern, Compiler.nodify exp.expression ) :: accum.cases
+                    , imports = accum.imports ++ exp.imports
+                    , annotation =
+                        case accum.annotation of
+                            Nothing ->
+                                Just exp.annotation
+
+                            Just exist ->
+                                if exist == exp.annotation then
+                                    accum.annotation
+
+                                else
+                                    Just (Err [ Compiler.CaseBranchesReturnDifferentTypes ])
+                    }
+                )
+                { cases = []
+                , imports = []
+                , annotation = Nothing
+                }
+                [ ( Pattern.TuplePattern
+                        [ Compiler.nodify (Pattern.VarPattern "first")
+                        , Compiler.nodify (Pattern.VarPattern "second")
+                        , Compiler.nodify (Pattern.VarPattern "third")
+                        ]
+                  , branches (Elm.value "first") (Elm.value "second") (Elm.value "third")
                   )
                 ]
     in
