@@ -1052,6 +1052,21 @@ parens expr =
         Exp.ListExpr _ ->
             expr
 
+        Exp.FunctionOrValue _ _ ->
+            expr
+
+        Exp.RecordAccessFunction _ ->
+            expr
+
+        Exp.RecordUpdateExpression _ _ ->
+            expr
+
+        Exp.RecordExpr _ ->
+            expr
+
+        Exp.LambdaExpression _ ->
+            expr
+
         _ ->
             Exp.ParenthesizedExpression (Compiler.nodify expr)
 
