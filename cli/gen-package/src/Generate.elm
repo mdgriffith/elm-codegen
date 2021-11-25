@@ -185,8 +185,6 @@ annotationNamed : String -> List String -> Elm.Expression
 annotationNamed name tags =
     case tags of
         [] ->
-            --GenType.named localModule
-            --    (Elm.string name)
             localType name []
 
         nonEmpty ->
