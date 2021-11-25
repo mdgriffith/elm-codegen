@@ -1,19 +1,19 @@
 /*
 
-    elm-prefab Gen.elm --output=./dir
+    elm-codegen Gen.elm --output=./dir
         -> compile the elm file and run it via the index.js runner
 
-    elm-prefab Gen.elm --watch
+    elm-codegen Gen.elm --watch
         -> recompile and run when the file changes
 
-    elm-prefab install elm/json --output=./dir
+    elm-codegen install elm/json --output=./dir
         -> generate bindings for the elm/json package based on it's docs.json
         -> puts generated code in ./dir
 
-    elm-prefab install docs.json
+    elm-codegen install docs.json
         -> same as above, but from a local set of docs
 
-    elm-prefab install Module.elm
+    elm-codegen install Module.elm
         -> same as above, but from a local elm file itself
 
 */
@@ -116,16 +116,11 @@ async function run_package_generator(output: string, flags: any) {
     }
   })
     .then((files: any) => {
-      console.log("Generating →")
-      console.log("")
       for (const file of files) {
         const fullpath = path.join(output, file.path)
-        console.log("    " + chalk.cyan(fullpath))
         fs.mkdirSync(path.dirname(fullpath), { recursive: true })
         fs.writeFileSync(fullpath, file.contents)
       }
-      console.log("")
-      console.info("Success!")
     })
     .catch((reason) => {
       console.error(format_title(reason.title),  "\n\n" + reason.description  + "\n")
@@ -165,7 +160,7 @@ async function install_package(pkg: string, output: string, version: string | nu
 
 
 // INIT
-//    Start a new elm-prefab project
+//    Start a new elm-codegen project
 //    Generates some files and installs `core`
 async function init(install_dir : string) {
 
@@ -180,21 +175,23 @@ async function init(install_dir : string) {
   fs.writeFileSync(`./${install_dir}/elm.json`, templates.init.elmJson())
   fs.writeFileSync(`./${install_dir}/Generate.elm`, templates.init.starter())
   fs.writeFileSync(`./${install_dir}/Elm/Gen.elm`, templates.init.elmGen())
-  install_package("elm/core", install_dir, null)
+  await install_package("elm/core", install_dir, null)
 
   console.log(
     format_block([
-      "I've created the " + chalk.cyan(install_dir) + " folder and added some files.",
-      chalk.cyan(`${install_dir}/Generate.elm`) + " is a good place to get start to see how everything works!",
+      "Welcome to " + chalk.yellow("elm-codegen") + "!" ,
       "",
-      "Run your generator by running " + chalk.yellow("elm-prefab"),
+      "I've created the " + chalk.cyan(install_dir) + " folder and added some files.",
+      chalk.cyan(`${install_dir}/Generate.elm`) + " is a good place to start to see how everything works!",
+      "",
+      "Run your generator by running " + chalk.yellow("elm-codegen") + ".",
     ])
   )
 }
 
 
 // INIT
-//    Start a new elm-prefab project
+//    Start a new elm-codegen project
 //    Generates some files and installs `core`
 async function make(elm_file: string, moduleName: string, target_dir: string, base: string, flags: any) {
 
@@ -226,6 +223,7 @@ async function action(cmd: string, pkg: string | null, options: Options, com: an
       let docs = JSON.parse(fs.readFileSync(pkg).toString())
       run_package_generator(install_dir, docs)
     } else {
+      console.log("Installing " + chalk.cyan(pkg) + " in " + chalk.yellow(install_dir))
       install_package(pkg, install_dir, null)
     }
   } else {

@@ -1,20 +1,20 @@
 "use strict";
 /*
 
-    elm-prefab Gen.elm --output=./dir
+    elm-codegen Gen.elm --output=./dir
         -> compile the elm file and run it via the index.js runner
 
-    elm-prefab Gen.elm --watch
+    elm-codegen Gen.elm --watch
         -> recompile and run when the file changes
 
-    elm-prefab install elm/json --output=./dir
+    elm-codegen install elm/json --output=./dir
         -> generate bindings for the elm/json package based on it's docs.json
         -> puts generated code in ./dir
 
-    elm-prefab install docs.json
+    elm-codegen install docs.json
         -> same as above, but from a local set of docs
 
-    elm-prefab install Module.elm
+    elm-codegen install Module.elm
         -> same as above, but from a local elm file itself
 
 */
@@ -164,17 +164,12 @@ function run_package_generator(output, flags) {
                 }
             })
                 .then(function (files) {
-                console.log("Generating →");
-                console.log("");
                 for (var _i = 0, files_2 = files; _i < files_2.length; _i++) {
                     var file = files_2[_i];
                     var fullpath = path.join(output, file.path);
-                    console.log("    " + chalk_1.default.cyan(fullpath));
                     fs.mkdirSync(path.dirname(fullpath), { recursive: true });
                     fs.writeFileSync(fullpath, file.contents);
                 }
-                console.log("");
-                console.info("Success!");
             })
                 .catch(function (reason) {
                 console.error(format_title(reason.title), "\n\n" + reason.description + "\n");
@@ -230,34 +225,41 @@ function install_package(pkg, output, version) {
     });
 }
 // INIT
-//    Start a new elm-prefab project
+//    Start a new elm-codegen project
 //    Generates some files and installs `core`
 function init(install_dir) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            // create folder
-            if (fs.existsSync("./" + install_dir)) {
-                console.log(format_block(["Looks like there's already a " + chalk_1.default.cyan(install_dir) + " folder."]));
-                process.exit(1);
+            switch (_a.label) {
+                case 0:
+                    // create folder
+                    if (fs.existsSync("./" + install_dir)) {
+                        console.log(format_block(["Looks like there's already a " + chalk_1.default.cyan(install_dir) + " folder."]));
+                        process.exit(1);
+                    }
+                    fs.mkdirSync("./" + install_dir);
+                    fs.mkdirSync("./" + install_dir + "/Elm");
+                    fs.writeFileSync("./" + install_dir + "/elm.json", templates_1.default.init.elmJson());
+                    fs.writeFileSync("./" + install_dir + "/Generate.elm", templates_1.default.init.starter());
+                    fs.writeFileSync("./" + install_dir + "/Elm/Gen.elm", templates_1.default.init.elmGen());
+                    return [4 /*yield*/, install_package("elm/core", install_dir, null)];
+                case 1:
+                    _a.sent();
+                    console.log(format_block([
+                        "Welcome to " + chalk_1.default.yellow("elm-codegen") + "!",
+                        "",
+                        "I've created the " + chalk_1.default.cyan(install_dir) + " folder and added some files.",
+                        chalk_1.default.cyan(install_dir + "/Generate.elm") + " is a good place to get start to see how everything works!",
+                        "",
+                        "Run your generator by running " + chalk_1.default.yellow("elm-codegen"),
+                    ]));
+                    return [2 /*return*/];
             }
-            fs.mkdirSync("./" + install_dir);
-            fs.mkdirSync("./" + install_dir + "/Elm");
-            fs.writeFileSync("./" + install_dir + "/elm.json", templates_1.default.init.elmJson());
-            fs.writeFileSync("./" + install_dir + "/Generate.elm", templates_1.default.init.starter());
-            fs.writeFileSync("./" + install_dir + "/Elm/Gen.elm", templates_1.default.init.elmGen());
-            install_package("elm/core", install_dir, null);
-            console.log(format_block([
-                "I've created the " + chalk_1.default.cyan(install_dir) + " folder and added some files.",
-                chalk_1.default.cyan(install_dir + "/Generate.elm") + " is a good place to get start to see how everything works!",
-                "",
-                "Run your generator by running " + chalk_1.default.yellow("elm-prefab"),
-            ]));
-            return [2 /*return*/];
         });
     });
 }
 // INIT
-//    Start a new elm-prefab project
+//    Start a new elm-codegen project
 //    Generates some files and installs `core`
 function make(elm_file, moduleName, target_dir, base, flags) {
     return __awaiter(this, void 0, void 0, function () {
@@ -293,6 +295,7 @@ function action(cmd, pkg, options, com) {
                     run_package_generator(install_dir, docs);
                 }
                 else {
+                    console.log("Installing " + chalk_1.default.cyan(pkg) + " in " + chalk_1.default.yellow(install_dir));
                     install_package(pkg, install_dir, null);
                 }
             }
