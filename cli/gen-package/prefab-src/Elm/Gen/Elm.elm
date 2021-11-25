@@ -1,6 +1,6 @@
-module Elm.Gen.Elm exposing (alias, aliasDeclaration, aliasExpression, aliasFile, and, append, apply, bool, caseOf, char, comment, compose, composeLeft, cons, customType, declaration, declarationImports, declarationToString, divide, equal, expose, exposeAndGroup, exposeConstructor, exposeConstructorAndGroup, expressionImports, field, file, fileWith, float, fn, fn2, fn3, fn4, fn5, functionWith, get, gt, gte, hex, id_, ifThen, int, intDivide, keep, lambda, lambdaBetaReduced, lambda2, lambda3, lambda4, lambda5, lambdaWith, letIn, list, lt, lte, maybe, minus, moduleName_, multiply, notEqual, or, parse, pass, pipe, pipeLeft, plus, portIncoming, portOutgoing, power, question, record, skip, slash, string, toString, triple, tuple, typeField, typeVariant, unit, updateRecord, value, valueFrom, valueWith, variant, variantWith, withDocumentation, withType)
+module Elm.Gen.Elm exposing (alias, and, append, apply, bool, char, comment, cons, customType, declaration, declarationImports, declarationToString, divide, docs, equal, expose, exposeWith, expressionImports, field, file, fileWith, float, fn, fn2, fn3, fn4, fn5, fn6, functionWith, get, gt, gte, hex, id_, ifThen, int, intDivide, keep, lambda, lambda2, lambda3, lambda4, lambda5, lambdaBetaReduced, lambdaWith, letIn, list, lt, lte, make_, maybe, minus, moduleName_, multiply, notEqual, or, parse, pass, plus, portIncoming, portOutgoing, power, question, record, skip, slash, string, toString, triple, tuple, types_, unit, unsafe, updateRecord, value, valueFrom, valueWith, variant, variantWith, withDocumentation, withType)
 
-{-| 
+{-| @docs moduleName_, types_, make_, file, bool, int, float, char, string, hex, unit, maybe, list, tuple, triple, value, valueFrom, valueWith, withType, record, field, get, updateRecord, letIn, ifThen, apply, lambda, lambda2, lambda3, lambda4, lambda5, lambdaWith, lambdaBetaReduced, comment, declaration, withDocumentation, fn, fn2, fn3, fn4, fn5, fn6, functionWith, customType, variant, variantWith, alias, expose, exposeWith, fileWith, docs, equal, notEqual, append, cons, plus, minus, multiply, divide, intDivide, power, lt, gt, lte, gte, and, or, keep, skip, slash, question, portIncoming, portOutgoing, parse, unsafe, toString, expressionImports, declarationToString, declarationImports, pass, id_
 -}
 
 
@@ -14,10 +14,32 @@ moduleName_ =
     [ "Elm" ]
 
 
-{-| -}
-aliasFile : { annotation : Type.Annotation }
-aliasFile =
-    { annotation = Type.named moduleName_ "File" }
+types_ :
+    { file : Type.Annotation
+    , expression : Type.Annotation
+    , field : Type.Annotation
+    , declaration : Type.Annotation
+    , variant : Type.Annotation
+    }
+types_ =
+    { file = Type.namedWith moduleName_ "File" []
+    , expression = Type.namedWith moduleName_ "Expression" []
+    , field = Type.namedWith moduleName_ "Field" []
+    , declaration = Type.namedWith moduleName_ "Declaration" []
+    , variant = Type.namedWith moduleName_ "Variant" []
+    }
+
+
+make_ :
+    { file :
+        { path : Elm.Expression, contents : Elm.Expression } -> Elm.Expression
+    }
+make_ =
+    { file =
+        \arg ->
+            Elm.record
+                [ Elm.field "path" arg.path, Elm.field "contents" arg.contents ]
+    }
 
 
 {-| Build a file!
@@ -28,7 +50,7 @@ aliasFile =
         ]
 
 -}
-file : Elm.Expression -> Elm.Expression -> Elm.Expression
+file : List Elm.Expression -> List Elm.Expression -> Elm.Expression
 file arg1 arg2 =
     Elm.apply
         (Elm.valueWith
@@ -41,13 +63,7 @@ file arg1 arg2 =
                 (Type.namedWith [ "Elm" ] "File" [])
             )
         )
-        [ arg1, arg2 ]
-
-
-{-| -}
-aliasExpression : { annotation : Type.Annotation }
-aliasExpression =
-    { annotation = Type.named moduleName_ "Expression" }
+        [ Elm.list arg1, Elm.list arg2 ]
 
 
 {-| -}
@@ -162,7 +178,7 @@ maybe arg1 =
 
 
 {-| -}
-list : Elm.Expression -> Elm.Expression
+list : List Elm.Expression -> Elm.Expression
 list arg1 =
     Elm.apply
         (Elm.valueWith
@@ -173,7 +189,7 @@ list arg1 =
                 (Type.namedWith [ "Elm" ] "Expression" [])
             )
         )
-        [ arg1 ]
+        [ Elm.list arg1 ]
 
 
 {-| -}
@@ -227,7 +243,7 @@ value arg1 =
 
 
 {-| -}
-valueFrom : Elm.Expression -> Elm.Expression -> Elm.Expression
+valueFrom : List Elm.Expression -> Elm.Expression -> Elm.Expression
 valueFrom arg1 arg2 =
     Elm.apply
         (Elm.valueWith
@@ -238,7 +254,7 @@ valueFrom arg1 arg2 =
                 (Type.namedWith [ "Elm" ] "Expression" [])
             )
         )
-        [ arg1, arg2 ]
+        [ Elm.list arg1, arg2 ]
 
 
 {-| Add an annotation to a value.
@@ -255,7 +271,8 @@ So, for example, if we have.
 Then, when that list is generated, it will automatically have the type signature `List String`
 
 -}
-valueWith : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+valueWith :
+    List Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 valueWith arg1 arg2 arg3 =
     Elm.apply
         (Elm.valueWith
@@ -269,7 +286,7 @@ valueWith arg1 arg2 arg3 =
                 (Type.namedWith [ "Elm" ] "Expression" [])
             )
         )
-        [ arg1, arg2, arg3 ]
+        [ Elm.list arg1, arg2, arg3 ]
 
 
 {-| Sometimes you may need to add a manual type annotation.
@@ -299,7 +316,7 @@ withType arg1 arg2 =
 
 
 {-| -}
-record : Elm.Expression -> Elm.Expression
+record : List Elm.Expression -> Elm.Expression
 record arg1 =
     Elm.apply
         (Elm.valueWith
@@ -310,7 +327,7 @@ record arg1 =
                 (Type.namedWith [ "Elm" ] "Expression" [])
             )
         )
-        [ arg1 ]
+        [ Elm.list arg1 ]
 
 
 {-| -}
@@ -326,12 +343,6 @@ field arg1 arg2 =
             )
         )
         [ arg1, arg2 ]
-
-
-{-| -}
-typeField : { annotation : Type.Annotation }
-typeField =
-    { annotation = Type.named moduleName_ "Field" }
 
 
 {-|
@@ -359,7 +370,7 @@ get arg1 arg2 =
 
 
 {-| -}
-updateRecord : Elm.Expression -> Elm.Expression -> Elm.Expression
+updateRecord : Elm.Expression -> List Elm.Expression -> Elm.Expression
 updateRecord arg1 arg2 =
     Elm.apply
         (Elm.valueWith
@@ -376,28 +387,7 @@ updateRecord arg1 arg2 =
                 (Type.namedWith [ "Elm" ] "Expression" [])
             )
         )
-        [ arg1, arg2 ]
-
-
-{-| -}
-caseOf : Elm.Expression -> Elm.Expression -> Elm.Expression
-caseOf arg1 arg2 =
-    Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "caseOf"
-            (Type.function
-                [ Type.namedWith [ "Elm" ] "Expression" []
-                , Type.list
-                    (Type.tuple
-                        (Type.namedWith [ "Elm" ] "Pattern" [])
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-                ]
-                (Type.namedWith [ "Elm" ] "Expression" [])
-            )
-        )
-        [ arg1, arg2 ]
+        [ arg1, Elm.list arg2 ]
 
 
 {-| A let block.
@@ -407,26 +397,30 @@ Check out `Elm.Let` to add things to it.
     import Elm.Let as Let
 
     Elm.letIn
-        [ Let.value "one" (Elm.int 5)
-        , Let.value "two" (Elm.int 10)
+        [ ("one", (Elm.int 5))
+        , ("two", (Elm.int 10))
         ]
         (Elm.add (Elm.value "one") (Elm.value "two"))
 
 -}
-letIn : Elm.Expression -> Elm.Expression -> Elm.Expression
+letIn : List Elm.Expression -> Elm.Expression -> Elm.Expression
 letIn arg1 arg2 =
     Elm.apply
         (Elm.valueWith
             moduleName_
             "letIn"
             (Type.function
-                [ Type.list (Type.namedWith [ "Elm", "Let" ] "Declaration" [])
+                [ Type.list
+                    (Type.tuple
+                        Type.string
+                        (Type.namedWith [ "Elm" ] "Expression" [])
+                    )
                 , Type.namedWith [ "Elm" ] "Expression" []
                 ]
                 (Type.namedWith [ "Elm" ] "Expression" [])
             )
         )
-        [ arg1, arg2 ]
+        [ Elm.list arg1, arg2 ]
 
 
 {-|
@@ -460,7 +454,7 @@ ifThen arg1 arg2 arg3 =
 
 
 {-| -}
-apply : Elm.Expression -> Elm.Expression -> Elm.Expression
+apply : Elm.Expression -> List Elm.Expression -> Elm.Expression
 apply arg1 arg2 =
     Elm.apply
         (Elm.valueWith
@@ -473,7 +467,7 @@ apply arg1 arg2 =
                 (Type.namedWith [ "Elm" ] "Expression" [])
             )
         )
-        [ arg1, arg2 ]
+        [ arg1, Elm.list arg2 ]
 
 
 {-| -}
@@ -497,31 +491,13 @@ lambda arg1 arg2 arg3 =
                 (Type.namedWith [ "Elm" ] "Expression" [])
             )
         )
-        [ arg1, arg2, arg3 Elm.pass ]
+        [ arg1
+        , arg2
+        , Elm.lambdaWith
+            [ ( "ar1", Type.named [ "Elm" ] "Expression" ) ]
+            (arg3 (Elm.value "ar1"))
+        ]
 
-
-{-| -}
-lambdaBetaReduced :
-    Elm.Expression
-    -> Elm.Expression
-    -> (Elm.Expression -> Elm.Expression)
-    -> Elm.Expression
-lambdaBetaReduced arg1 arg2 arg3 =
-    Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "lambdaBetaReduced"
-            (Type.function
-                [ Type.string
-                , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                , Type.function
-                    [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                    (Type.namedWith [ "Elm" ] "Expression" [])
-                ]
-                (Type.namedWith [ "Elm" ] "Expression" [])
-            )
-        )
-        [ arg1, arg2, arg3 Elm.pass ]
 
 {-| -}
 lambda2 :
@@ -548,7 +524,15 @@ lambda2 arg1 arg2 arg3 arg4 =
                 (Type.namedWith [ "Elm" ] "Expression" [])
             )
         )
-        [ arg1, arg2, arg3, arg4 Elm.pass Elm.pass ]
+        [ arg1
+        , arg2
+        , arg3
+        , Elm.lambdaWith
+            [ ( "ar1", Type.named [ "Elm" ] "Expression" )
+            , ( "ar2", Type.named [ "Elm" ] "Expression" )
+            ]
+            (arg4 (Elm.value "ar1") (Elm.value "ar2"))
+        ]
 
 
 {-| -}
@@ -579,7 +563,17 @@ lambda3 arg1 arg2 arg3 arg4 arg5 =
                 (Type.namedWith [ "Elm" ] "Expression" [])
             )
         )
-        [ arg1, arg2, arg3, arg4, arg5 Elm.pass Elm.pass Elm.pass ]
+        [ arg1
+        , arg2
+        , arg3
+        , arg4
+        , Elm.lambdaWith
+            [ ( "ar1", Type.named [ "Elm" ] "Expression" )
+            , ( "ar2", Type.named [ "Elm" ] "Expression" )
+            , ( "ar3", Type.named [ "Elm" ] "Expression" )
+            ]
+            (arg5 (Elm.value "ar1") (Elm.value "ar2") (Elm.value "ar3"))
+        ]
 
 
 {-| -}
@@ -622,7 +616,18 @@ lambda4 arg1 arg2 arg3 arg4 arg5 arg6 =
         , arg3
         , arg4
         , arg5
-        , arg6 Elm.pass Elm.pass Elm.pass Elm.pass
+        , Elm.lambdaWith
+            [ ( "ar1", Type.named [ "Elm" ] "Expression" )
+            , ( "ar2", Type.named [ "Elm" ] "Expression" )
+            , ( "ar3", Type.named [ "Elm" ] "Expression" )
+            , ( "ar4", Type.named [ "Elm" ] "Expression" )
+            ]
+            (arg6
+                (Elm.value "ar1")
+                (Elm.value "ar2")
+                (Elm.value "ar3")
+                (Elm.value "ar4")
+            )
         ]
 
 
@@ -671,12 +676,25 @@ lambda5 arg1 arg2 arg3 arg4 arg5 arg6 arg7 =
         , arg4
         , arg5
         , arg6
-        , arg7 Elm.pass Elm.pass Elm.pass Elm.pass Elm.pass
+        , Elm.lambdaWith
+            [ ( "ar1", Type.named [ "Elm" ] "Expression" )
+            , ( "ar2", Type.named [ "Elm" ] "Expression" )
+            , ( "ar3", Type.named [ "Elm" ] "Expression" )
+            , ( "ar4", Type.named [ "Elm" ] "Expression" )
+            , ( "ar5", Type.named [ "Elm" ] "Expression" )
+            ]
+            (arg7
+                (Elm.value "ar1")
+                (Elm.value "ar2")
+                (Elm.value "ar3")
+                (Elm.value "ar4")
+                (Elm.value "ar5")
+            )
         ]
 
 
 {-| -}
-lambdaWith : Elm.Expression -> Elm.Expression -> Elm.Expression
+lambdaWith : List Elm.Expression -> Elm.Expression -> Elm.Expression
 lambdaWith arg1 arg2 =
     Elm.apply
         (Elm.valueWith
@@ -685,7 +703,7 @@ lambdaWith arg1 arg2 =
             (Type.function
                 [ Type.list
                     (Type.tuple
-                        (Type.namedWith [ "Elm" ] "Pattern" [])
+                        Type.string
                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
                     )
                 , Type.namedWith [ "Elm" ] "Expression" []
@@ -693,13 +711,36 @@ lambdaWith arg1 arg2 =
                 (Type.namedWith [ "Elm" ] "Expression" [])
             )
         )
-        [ arg1, arg2 ]
+        [ Elm.list arg1, arg2 ]
 
 
 {-| -}
-aliasDeclaration : { annotation : Type.Annotation }
-aliasDeclaration =
-    { annotation = Type.named moduleName_ "Declaration" }
+lambdaBetaReduced :
+    Elm.Expression
+    -> Elm.Expression
+    -> (Elm.Expression -> Elm.Expression)
+    -> Elm.Expression
+lambdaBetaReduced arg1 arg2 arg3 =
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "lambdaBetaReduced"
+            (Type.function
+                [ Type.string
+                , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                , Type.function
+                    [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                    (Type.namedWith [ "Elm" ] "Expression" [])
+                ]
+                (Type.namedWith [ "Elm" ] "Expression" [])
+            )
+        )
+        [ arg1
+        , arg2
+        , Elm.lambdaWith
+            [ ( "ar1", Type.named [ "Elm" ] "Expression" ) ]
+            (arg3 (Elm.value "ar1"))
+        ]
 
 
 {-| -}
@@ -771,7 +812,12 @@ fn arg1 arg2 arg3 =
                 (Type.namedWith [ "Elm" ] "Declaration" [])
             )
         )
-        [ arg1, arg2, arg3 Elm.pass ]
+        [ arg1
+        , arg2
+        , Elm.lambdaWith
+            [ ( "ar1", Type.named [ "Elm" ] "Expression" ) ]
+            (arg3 (Elm.value "ar1"))
+        ]
 
 
 {-| -}
@@ -803,7 +849,15 @@ fn2 arg1 arg2 arg3 arg4 =
                 (Type.namedWith [ "Elm" ] "Declaration" [])
             )
         )
-        [ arg1, arg2, arg3, arg4 Elm.pass Elm.pass ]
+        [ arg1
+        , arg2
+        , arg3
+        , Elm.lambdaWith
+            [ ( "ar1", Type.named [ "Elm" ] "Expression" )
+            , ( "ar2", Type.named [ "Elm" ] "Expression" )
+            ]
+            (arg4 (Elm.value "ar1") (Elm.value "ar2"))
+        ]
 
 
 {-| -}
@@ -840,7 +894,17 @@ fn3 arg1 arg2 arg3 arg4 arg5 =
                 (Type.namedWith [ "Elm" ] "Declaration" [])
             )
         )
-        [ arg1, arg2, arg3, arg4, arg5 Elm.pass Elm.pass Elm.pass ]
+        [ arg1
+        , arg2
+        , arg3
+        , arg4
+        , Elm.lambdaWith
+            [ ( "ar1", Type.named [ "Elm" ] "Expression" )
+            , ( "ar2", Type.named [ "Elm" ] "Expression" )
+            , ( "ar3", Type.named [ "Elm" ] "Expression" )
+            ]
+            (arg5 (Elm.value "ar1") (Elm.value "ar2") (Elm.value "ar3"))
+        ]
 
 
 {-| -}
@@ -891,7 +955,18 @@ fn4 arg1 arg2 arg3 arg4 arg5 arg6 =
         , arg3
         , arg4
         , arg5
-        , arg6 Elm.pass Elm.pass Elm.pass Elm.pass
+        , Elm.lambdaWith
+            [ ( "ar1", Type.named [ "Elm" ] "Expression" )
+            , ( "ar2", Type.named [ "Elm" ] "Expression" )
+            , ( "ar3", Type.named [ "Elm" ] "Expression" )
+            , ( "ar4", Type.named [ "Elm" ] "Expression" )
+            ]
+            (arg6
+                (Elm.value "ar1")
+                (Elm.value "ar2")
+                (Elm.value "ar3")
+                (Elm.value "ar4")
+            )
         ]
 
 
@@ -950,13 +1025,107 @@ fn5 arg1 arg2 arg3 arg4 arg5 arg6 arg7 =
         , arg4
         , arg5
         , arg6
-        , arg7 Elm.pass Elm.pass Elm.pass Elm.pass Elm.pass
+        , Elm.lambdaWith
+            [ ( "ar1", Type.named [ "Elm" ] "Expression" )
+            , ( "ar2", Type.named [ "Elm" ] "Expression" )
+            , ( "ar3", Type.named [ "Elm" ] "Expression" )
+            , ( "ar4", Type.named [ "Elm" ] "Expression" )
+            , ( "ar5", Type.named [ "Elm" ] "Expression" )
+            ]
+            (arg7
+                (Elm.value "ar1")
+                (Elm.value "ar2")
+                (Elm.value "ar3")
+                (Elm.value "ar4")
+                (Elm.value "ar5")
+            )
+        ]
+
+
+{-| -}
+fn6 :
+    Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> (Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression)
+    -> Elm.Expression
+fn6 arg1 arg2 arg3 arg4 arg5 arg6 arg7 arg8 =
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "fn6"
+            (Type.function
+                [ Type.string
+                , Type.tuple
+                    Type.string
+                    (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                , Type.tuple
+                    Type.string
+                    (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                , Type.tuple
+                    Type.string
+                    (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                , Type.tuple
+                    Type.string
+                    (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                , Type.tuple
+                    Type.string
+                    (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                , Type.tuple
+                    Type.string
+                    (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                , Type.function
+                    [ Type.namedWith [ "Elm" ] "Expression" []
+                    , Type.namedWith [ "Elm" ] "Expression" []
+                    , Type.namedWith [ "Elm" ] "Expression" []
+                    , Type.namedWith [ "Elm" ] "Expression" []
+                    , Type.namedWith [ "Elm" ] "Expression" []
+                    , Type.namedWith [ "Elm" ] "Expression" []
+                    ]
+                    (Type.namedWith [ "Elm" ] "Expression" [])
+                ]
+                (Type.namedWith [ "Elm" ] "Declaration" [])
+            )
+        )
+        [ arg1
+        , arg2
+        , arg3
+        , arg4
+        , arg5
+        , arg6
+        , arg7
+        , Elm.lambdaWith
+            [ ( "ar1", Type.named [ "Elm" ] "Expression" )
+            , ( "ar2", Type.named [ "Elm" ] "Expression" )
+            , ( "ar3", Type.named [ "Elm" ] "Expression" )
+            , ( "ar4", Type.named [ "Elm" ] "Expression" )
+            , ( "ar5", Type.named [ "Elm" ] "Expression" )
+            , ( "ar6", Type.named [ "Elm" ] "Expression" )
+            ]
+            (arg8
+                (Elm.value "ar1")
+                (Elm.value "ar2")
+                (Elm.value "ar3")
+                (Elm.value "ar4")
+                (Elm.value "ar5")
+                (Elm.value "ar6")
+            )
         ]
 
 
 {-| -}
 functionWith :
-    Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+    Elm.Expression -> List Elm.Expression -> Elm.Expression -> Elm.Expression
 functionWith arg1 arg2 arg3 =
     Elm.apply
         (Elm.valueWith
@@ -966,15 +1135,15 @@ functionWith arg1 arg2 arg3 =
                 [ Type.string
                 , Type.list
                     (Type.tuple
+                        Type.string
                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                        (Type.namedWith [ "Elm" ] "Pattern" [])
                     )
                 , Type.namedWith [ "Elm" ] "Expression" []
                 ]
                 (Type.namedWith [ "Elm" ] "Declaration" [])
             )
         )
-        [ arg1, arg2, arg3 ]
+        [ arg1, Elm.list arg2, arg3 ]
 
 
 {-| A custom type declaration.
@@ -991,7 +1160,7 @@ Will result in
         | Two (List String)
 
 -}
-customType : Elm.Expression -> Elm.Expression -> Elm.Expression
+customType : Elm.Expression -> List Elm.Expression -> Elm.Expression
 customType arg1 arg2 =
     Elm.apply
         (Elm.valueWith
@@ -1004,13 +1173,7 @@ customType arg1 arg2 =
                 (Type.namedWith [ "Elm" ] "Declaration" [])
             )
         )
-        [ arg1, arg2 ]
-
-
-{-| -}
-typeVariant : { annotation : Type.Annotation }
-typeVariant =
-    { annotation = Type.named moduleName_ "Variant" }
+        [ arg1, Elm.list arg2 ]
 
 
 {-| -}
@@ -1029,7 +1192,7 @@ variant arg1 =
 
 
 {-| -}
-variantWith : Elm.Expression -> Elm.Expression -> Elm.Expression
+variantWith : Elm.Expression -> List Elm.Expression -> Elm.Expression
 variantWith arg1 arg2 =
     Elm.apply
         (Elm.valueWith
@@ -1043,7 +1206,7 @@ variantWith arg1 arg2 =
                 (Type.namedWith [ "Elm" ] "Variant" [])
             )
         )
-        [ arg1, arg2 ]
+        [ arg1, Elm.list arg2 ]
 
 
 {-| A custom type declaration.
@@ -1099,58 +1262,47 @@ expose arg1 =
 
 
 {-| -}
-exposeConstructor : Elm.Expression -> Elm.Expression
-exposeConstructor arg1 =
+exposeWith :
+    { exposeConstructor : Elm.Expression, group : Elm.Expression }
+    -> Elm.Expression
+    -> Elm.Expression
+exposeWith arg1 arg2 =
     Elm.apply
         (Elm.valueWith
             moduleName_
-            "exposeConstructor"
+            "exposeWith"
             (Type.function
-                [ Type.namedWith [ "Elm" ] "Declaration" [] ]
+                [ Type.record
+                    [ ( "exposeConstructor", Type.bool )
+                    , ( "group", Type.maybe Type.string )
+                    ]
+                , Type.namedWith [ "Elm" ] "Declaration" []
+                ]
                 (Type.namedWith [ "Elm" ] "Declaration" [])
             )
         )
-        [ arg1 ]
-
-
-{-| -}
-exposeAndGroup : Elm.Expression -> Elm.Expression -> Elm.Expression
-exposeAndGroup arg1 arg2 =
-    Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "exposeAndGroup"
-            (Type.function
-                [ Type.string, Type.namedWith [ "Elm" ] "Declaration" [] ]
-                (Type.namedWith [ "Elm" ] "Declaration" [])
-            )
-        )
-        [ arg1, arg2 ]
-
-
-{-| -}
-exposeConstructorAndGroup : Elm.Expression -> Elm.Expression -> Elm.Expression
-exposeConstructorAndGroup arg1 arg2 =
-    Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "exposeConstructorAndGroup"
-            (Type.function
-                [ Type.string, Type.namedWith [ "Elm" ] "Declaration" [] ]
-                (Type.namedWith [ "Elm" ] "Declaration" [])
-            )
-        )
-        [ arg1, arg2 ]
+        [ Elm.record
+            [ Elm.field "exposeConstructor" arg1.exposeConstructor
+            , Elm.field "group" arg1.group
+            ]
+        , arg2
+        ]
 
 
 {-| Same as [file](#file), but you have more control over how the module comment is generated!
 
 Pass in a function that determines how to render a `@doc` comment.
 
-Each exposed item is grouped based on the string used in [exposeAndGroup](#exposeAndGroup)
+Each exposed item is grouped based on the string used in [exposeWith](#exposeWith)
 
 -}
-fileWith : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+fileWith :
+    List Elm.Expression
+    -> { docs : Elm.Expression -> Elm.Expression
+    , aliases : List Elm.Expression
+    }
+    -> List Elm.Expression
+    -> Elm.Expression
 fileWith arg1 arg2 arg3 =
     Elm.apply
         (Elm.valueWith
@@ -1168,7 +1320,7 @@ fileWith arg1 arg2 arg3 =
                                     ]
                                 )
                             ]
-                            Type.string
+                            (Type.list Type.string)
                       )
                     , ( "aliases"
                       , Type.list
@@ -1180,7 +1332,46 @@ fileWith arg1 arg2 arg3 =
                 (Type.namedWith [ "Elm" ] "File" [])
             )
         )
-        [ arg1, arg2, arg3 ]
+        [ Elm.list arg1
+        , Elm.record
+            [ Elm.field
+                "docs"
+                (Elm.lambdaWith
+                    [ ( "ar1", Type.named [ "Elm" ] "Expression" ) ]
+                    (arg2.docs (Elm.value "ar1"))
+                )
+            , Elm.field "aliases" (Elm.list arg2.aliases)
+            ]
+        , Elm.list arg3
+        ]
+
+
+{-| Render a standard docstring.
+
+    @docs one, two, three
+
+-}
+docs :
+    { group : Elm.Expression, members : List Elm.Expression } -> Elm.Expression
+docs arg1 =
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "docs"
+            (Type.function
+                [ Type.record
+                    [ ( "group", Type.maybe Type.string )
+                    , ( "members", Type.list Type.string )
+                    ]
+                ]
+                Type.string
+            )
+        )
+        [ Elm.record
+            [ Elm.field "group" arg1.group
+            , Elm.field "members" (Elm.list arg1.members)
+            ]
+        ]
 
 
 {-| `==`
@@ -1471,89 +1662,6 @@ or arg1 arg2 =
         [ arg1, arg2 ]
 
 
-{-| `|>`
-
-    Elm.value "thang"
-        |> Elm.pipe (Elm.value "thang2")
-        |> Elm.pipe (Elm.value "thang3")
-
-Results in
-
-    thang
-        |> thang2
-        |> thang3
-
--}
-pipe : Elm.Expression -> Elm.Expression -> Elm.Expression
-pipe arg1 arg2 =
-    Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "pipe"
-            (Type.function
-                [ Type.namedWith [ "Elm" ] "Expression" []
-                , Type.namedWith [ "Elm" ] "Expression" []
-                ]
-                (Type.namedWith [ "Elm" ] "Expression" [])
-            )
-        )
-        [ arg1, arg2 ]
-
-
-{-| `<|`
--}
-pipeLeft : Elm.Expression -> Elm.Expression -> Elm.Expression
-pipeLeft arg1 arg2 =
-    Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "pipeLeft"
-            (Type.function
-                [ Type.namedWith [ "Elm" ] "Expression" []
-                , Type.namedWith [ "Elm" ] "Expression" []
-                ]
-                (Type.namedWith [ "Elm" ] "Expression" [])
-            )
-        )
-        [ arg1, arg2 ]
-
-
-{-| `>>`
--}
-compose : Elm.Expression -> Elm.Expression -> Elm.Expression
-compose arg1 arg2 =
-    Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "compose"
-            (Type.function
-                [ Type.namedWith [ "Elm" ] "Expression" []
-                , Type.namedWith [ "Elm" ] "Expression" []
-                ]
-                (Type.namedWith [ "Elm" ] "Expression" [])
-            )
-        )
-        [ arg1, arg2 ]
-
-
-{-| `<<`
--}
-composeLeft : Elm.Expression -> Elm.Expression -> Elm.Expression
-composeLeft arg1 arg2 =
-    Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "composeLeft"
-            (Type.function
-                [ Type.namedWith [ "Elm" ] "Expression" []
-                , Type.namedWith [ "Elm" ] "Expression" []
-                ]
-                (Type.namedWith [ "Elm" ] "Expression" [])
-            )
-        )
-        [ arg1, arg2 ]
-
-
 {-| used in the `elm/parser` library
 
 `|=`
@@ -1641,8 +1749,8 @@ question arg1 arg2 =
 Results in
 
     port receiveMessageFromTheWorld :
-            (String -> Int -> msg)
-                -> Sub msg
+        (String -> Int -> msg)
+        -> Sub msg
 
 **Note** You generally only need one incoming and one outgoing port!
 
@@ -1653,7 +1761,7 @@ This will give you more flexibility in the future and save you having to wire up
 **Another note** - You may need to expose your port explicitly using `Elm.expose`
 
 -}
-portIncoming : Elm.Expression -> Elm.Expression -> Elm.Expression
+portIncoming : Elm.Expression -> List Elm.Expression -> Elm.Expression
 portIncoming arg1 arg2 =
     Elm.apply
         (Elm.valueWith
@@ -1667,7 +1775,7 @@ portIncoming arg1 arg2 =
                 (Type.namedWith [ "Elm" ] "Declaration" [])
             )
         )
-        [ arg1, arg2 ]
+        [ arg1, Elm.list arg2 ]
 
 
 {-| Create a port that can send messages to the outside world!
@@ -1718,6 +1826,21 @@ parse arg1 =
                         ]
                     ]
                 )
+            )
+        )
+        [ arg1 ]
+
+
+{-| -}
+unsafe : Elm.Expression -> Elm.Expression
+unsafe arg1 =
+    Elm.apply
+        (Elm.valueWith
+            moduleName_
+            "unsafe"
+            (Type.function
+                [ Type.string ]
+                (Type.namedWith [ "Elm" ] "Declaration" [])
             )
         )
         [ arg1 ]
@@ -1811,7 +1934,6 @@ id_ :
     , field : Elm.Expression
     , get : Elm.Expression
     , updateRecord : Elm.Expression
-    , caseOf : Elm.Expression
     , letIn : Elm.Expression
     , ifThen : Elm.Expression
     , apply : Elm.Expression
@@ -1821,6 +1943,7 @@ id_ :
     , lambda4 : Elm.Expression
     , lambda5 : Elm.Expression
     , lambdaWith : Elm.Expression
+    , lambdaBetaReduced : Elm.Expression
     , comment : Elm.Expression
     , declaration : Elm.Expression
     , withDocumentation : Elm.Expression
@@ -1829,16 +1952,16 @@ id_ :
     , fn3 : Elm.Expression
     , fn4 : Elm.Expression
     , fn5 : Elm.Expression
+    , fn6 : Elm.Expression
     , functionWith : Elm.Expression
     , customType : Elm.Expression
     , variant : Elm.Expression
     , variantWith : Elm.Expression
     , alias : Elm.Expression
     , expose : Elm.Expression
-    , exposeConstructor : Elm.Expression
-    , exposeAndGroup : Elm.Expression
-    , exposeConstructorAndGroup : Elm.Expression
+    , exposeWith : Elm.Expression
     , fileWith : Elm.Expression
+    , docs : Elm.Expression
     , equal : Elm.Expression
     , notEqual : Elm.Expression
     , append : Elm.Expression
@@ -1855,10 +1978,6 @@ id_ :
     , gte : Elm.Expression
     , and : Elm.Expression
     , or : Elm.Expression
-    , pipe : Elm.Expression
-    , pipeLeft : Elm.Expression
-    , compose : Elm.Expression
-    , composeLeft : Elm.Expression
     , keep : Elm.Expression
     , skip : Elm.Expression
     , slash : Elm.Expression
@@ -1866,6 +1985,7 @@ id_ :
     , portIncoming : Elm.Expression
     , portOutgoing : Elm.Expression
     , parse : Elm.Expression
+    , unsafe : Elm.Expression
     , toString : Elm.Expression
     , expressionImports : Elm.Expression
     , declarationToString : Elm.Expression
@@ -2048,26 +2168,16 @@ id_ =
                 ]
                 (Type.namedWith [ "Elm" ] "Expression" [])
             )
-    , caseOf =
-        Elm.valueWith
-            moduleName_
-            "caseOf"
-            (Type.function
-                [ Type.namedWith [ "Elm" ] "Expression" []
-                , Type.list
-                    (Type.tuple
-                        (Type.namedWith [ "Elm" ] "Pattern" [])
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-                ]
-                (Type.namedWith [ "Elm" ] "Expression" [])
-            )
     , letIn =
         Elm.valueWith
             moduleName_
             "letIn"
             (Type.function
-                [ Type.list (Type.namedWith [ "Elm", "Let" ] "Declaration" [])
+                [ Type.list
+                    (Type.tuple
+                        Type.string
+                        (Type.namedWith [ "Elm" ] "Expression" [])
+                    )
                 , Type.namedWith [ "Elm" ] "Expression" []
                 ]
                 (Type.namedWith [ "Elm" ] "Expression" [])
@@ -2189,10 +2299,23 @@ id_ =
             (Type.function
                 [ Type.list
                     (Type.tuple
-                        (Type.namedWith [ "Elm" ] "Pattern" [])
+                        Type.string
                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
                     )
                 , Type.namedWith [ "Elm" ] "Expression" []
+                ]
+                (Type.namedWith [ "Elm" ] "Expression" [])
+            )
+    , lambdaBetaReduced =
+        Elm.valueWith
+            moduleName_
+            "lambdaBetaReduced"
+            (Type.function
+                [ Type.string
+                , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                , Type.function
+                    [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                    (Type.namedWith [ "Elm" ] "Expression" [])
                 ]
                 (Type.namedWith [ "Elm" ] "Expression" [])
             )
@@ -2339,6 +2462,42 @@ id_ =
                 ]
                 (Type.namedWith [ "Elm" ] "Declaration" [])
             )
+    , fn6 =
+        Elm.valueWith
+            moduleName_
+            "fn6"
+            (Type.function
+                [ Type.string
+                , Type.tuple
+                    Type.string
+                    (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                , Type.tuple
+                    Type.string
+                    (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                , Type.tuple
+                    Type.string
+                    (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                , Type.tuple
+                    Type.string
+                    (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                , Type.tuple
+                    Type.string
+                    (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                , Type.tuple
+                    Type.string
+                    (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                , Type.function
+                    [ Type.namedWith [ "Elm" ] "Expression" []
+                    , Type.namedWith [ "Elm" ] "Expression" []
+                    , Type.namedWith [ "Elm" ] "Expression" []
+                    , Type.namedWith [ "Elm" ] "Expression" []
+                    , Type.namedWith [ "Elm" ] "Expression" []
+                    , Type.namedWith [ "Elm" ] "Expression" []
+                    ]
+                    (Type.namedWith [ "Elm" ] "Expression" [])
+                ]
+                (Type.namedWith [ "Elm" ] "Declaration" [])
+            )
     , functionWith =
         Elm.valueWith
             moduleName_
@@ -2347,8 +2506,8 @@ id_ =
                 [ Type.string
                 , Type.list
                     (Type.tuple
+                        Type.string
                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                        (Type.namedWith [ "Elm" ] "Pattern" [])
                     )
                 , Type.namedWith [ "Elm" ] "Expression" []
                 ]
@@ -2401,28 +2560,17 @@ id_ =
                 [ Type.namedWith [ "Elm" ] "Declaration" [] ]
                 (Type.namedWith [ "Elm" ] "Declaration" [])
             )
-    , exposeConstructor =
+    , exposeWith =
         Elm.valueWith
             moduleName_
-            "exposeConstructor"
+            "exposeWith"
             (Type.function
-                [ Type.namedWith [ "Elm" ] "Declaration" [] ]
-                (Type.namedWith [ "Elm" ] "Declaration" [])
-            )
-    , exposeAndGroup =
-        Elm.valueWith
-            moduleName_
-            "exposeAndGroup"
-            (Type.function
-                [ Type.string, Type.namedWith [ "Elm" ] "Declaration" [] ]
-                (Type.namedWith [ "Elm" ] "Declaration" [])
-            )
-    , exposeConstructorAndGroup =
-        Elm.valueWith
-            moduleName_
-            "exposeConstructorAndGroup"
-            (Type.function
-                [ Type.string, Type.namedWith [ "Elm" ] "Declaration" [] ]
+                [ Type.record
+                    [ ( "exposeConstructor", Type.bool )
+                    , ( "group", Type.maybe Type.string )
+                    ]
+                , Type.namedWith [ "Elm" ] "Declaration" []
+                ]
                 (Type.namedWith [ "Elm" ] "Declaration" [])
             )
     , fileWith =
@@ -2441,7 +2589,7 @@ id_ =
                                     ]
                                 )
                             ]
-                            Type.string
+                            (Type.list Type.string)
                       )
                     , ( "aliases"
                       , Type.list
@@ -2451,6 +2599,18 @@ id_ =
                 , Type.list (Type.namedWith [ "Elm" ] "Declaration" [])
                 ]
                 (Type.namedWith [ "Elm" ] "File" [])
+            )
+    , docs =
+        Elm.valueWith
+            moduleName_
+            "docs"
+            (Type.function
+                [ Type.record
+                    [ ( "group", Type.maybe Type.string )
+                    , ( "members", Type.list Type.string )
+                    ]
+                ]
+                Type.string
             )
     , equal =
         Elm.valueWith
@@ -2612,46 +2772,6 @@ id_ =
                 ]
                 (Type.namedWith [ "Elm" ] "Expression" [])
             )
-    , pipe =
-        Elm.valueWith
-            moduleName_
-            "pipe"
-            (Type.function
-                [ Type.namedWith [ "Elm" ] "Expression" []
-                , Type.namedWith [ "Elm" ] "Expression" []
-                ]
-                (Type.namedWith [ "Elm" ] "Expression" [])
-            )
-    , pipeLeft =
-        Elm.valueWith
-            moduleName_
-            "pipeLeft"
-            (Type.function
-                [ Type.namedWith [ "Elm" ] "Expression" []
-                , Type.namedWith [ "Elm" ] "Expression" []
-                ]
-                (Type.namedWith [ "Elm" ] "Expression" [])
-            )
-    , compose =
-        Elm.valueWith
-            moduleName_
-            "compose"
-            (Type.function
-                [ Type.namedWith [ "Elm" ] "Expression" []
-                , Type.namedWith [ "Elm" ] "Expression" []
-                ]
-                (Type.namedWith [ "Elm" ] "Expression" [])
-            )
-    , composeLeft =
-        Elm.valueWith
-            moduleName_
-            "composeLeft"
-            (Type.function
-                [ Type.namedWith [ "Elm" ] "Expression" []
-                , Type.namedWith [ "Elm" ] "Expression" []
-                ]
-                (Type.namedWith [ "Elm" ] "Expression" [])
-            )
     , keep =
         Elm.valueWith
             moduleName_
@@ -2731,6 +2851,14 @@ id_ =
                         ]
                     ]
                 )
+            )
+    , unsafe =
+        Elm.valueWith
+            moduleName_
+            "unsafe"
+            (Type.function
+                [ Type.string ]
+                (Type.namedWith [ "Elm" ] "Declaration" [])
             )
     , toString =
         Elm.valueWith

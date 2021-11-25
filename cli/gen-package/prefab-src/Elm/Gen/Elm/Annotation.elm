@@ -1,6 +1,6 @@
-module Elm.Gen.Elm.Annotation exposing (aliasAnnotation, bool, char, dict, extensible, float, function, id_, int, list, maybe, moduleName_, named, namedWith, record, result, set, string, toString, triple, tuple, unit, var)
+module Elm.Gen.Elm.Annotation exposing (bool, char, dict, extensible, float, function, id_, int, list, make_, maybe, moduleName_, named, namedWith, record, result, set, string, toString, triple, tuple, types_, unit, var)
 
-{-| 
+{-| @docs moduleName_, types_, make_, var, bool, int, float, string, char, unit, named, namedWith, maybe, list, tuple, triple, set, dict, result, record, extensible, function, toString, id_
 -}
 
 
@@ -14,10 +14,14 @@ moduleName_ =
     [ "Elm", "Annotation" ]
 
 
-{-| -}
-aliasAnnotation : { annotation : Type.Annotation }
-aliasAnnotation =
-    { annotation = Type.named moduleName_ "Annotation" }
+types_ : { annotation : Type.Annotation }
+types_ =
+    { annotation = Type.namedWith moduleName_ "Annotation" [] }
+
+
+make_ : {}
+make_ =
+    {}
 
 
 {-| A type variable
@@ -91,7 +95,7 @@ unit =
 
 
 {-| -}
-named : Elm.Expression -> Elm.Expression -> Elm.Expression
+named : List Elm.Expression -> Elm.Expression -> Elm.Expression
 named arg1 arg2 =
     Elm.apply
         (Elm.valueWith
@@ -102,11 +106,15 @@ named arg1 arg2 =
                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
             )
         )
-        [ arg1, arg2 ]
+        [ Elm.list arg1, arg2 ]
 
 
 {-| -}
-namedWith : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+namedWith :
+    List Elm.Expression
+    -> Elm.Expression
+    -> List Elm.Expression
+    -> Elm.Expression
 namedWith arg1 arg2 arg3 =
     Elm.apply
         (Elm.valueWith
@@ -121,7 +129,7 @@ namedWith arg1 arg2 arg3 =
                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
             )
         )
-        [ arg1, arg2, arg3 ]
+        [ Elm.list arg1, arg2, Elm.list arg3 ]
 
 
 {-| -}
@@ -239,7 +247,7 @@ result arg1 arg2 =
 
 
 {-| -}
-record : Elm.Expression -> Elm.Expression
+record : List Elm.Expression -> Elm.Expression
 record arg1 =
     Elm.apply
         (Elm.valueWith
@@ -255,11 +263,11 @@ record arg1 =
                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
             )
         )
-        [ arg1 ]
+        [ Elm.list arg1 ]
 
 
 {-| -}
-extensible : Elm.Expression -> Elm.Expression -> Elm.Expression
+extensible : Elm.Expression -> List Elm.Expression -> Elm.Expression
 extensible arg1 arg2 =
     Elm.apply
         (Elm.valueWith
@@ -276,11 +284,11 @@ extensible arg1 arg2 =
                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
             )
         )
-        [ arg1, arg2 ]
+        [ arg1, Elm.list arg2 ]
 
 
 {-| -}
-function : Elm.Expression -> Elm.Expression -> Elm.Expression
+function : List Elm.Expression -> Elm.Expression -> Elm.Expression
 function arg1 arg2 =
     Elm.apply
         (Elm.valueWith
@@ -294,7 +302,7 @@ function arg1 arg2 =
                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
             )
         )
-        [ arg1, arg2 ]
+        [ Elm.list arg1, arg2 ]
 
 
 {-| -}

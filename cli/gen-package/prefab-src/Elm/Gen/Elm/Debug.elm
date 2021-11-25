@@ -1,6 +1,6 @@
-module Elm.Gen.Elm.Debug exposing (annotation, id_, moduleName_)
+module Elm.Gen.Elm.Debug exposing (annotation, id_, make_, moduleName_, types_)
 
-{-| 
+{-| @docs moduleName_, types_, make_, annotation, id_
 -}
 
 
@@ -12,6 +12,16 @@ import Elm.Annotation as Type
 moduleName_ : List String
 moduleName_ =
     [ "Elm", "Debug" ]
+
+
+types_ : {}
+types_ =
+    {}
+
+
+make_ : {}
+make_ =
+    {}
 
 
 {-| Print out what elm-prefab thinks the type signature is at any given point.
@@ -65,7 +75,14 @@ annotation arg1 arg2 arg3 =
                 (Type.namedWith [ "Elm", "Debug" ] "Expression" [])
             )
         )
-        [ arg1 Elm.pass Elm.pass, arg2, arg3 ]
+        [ Elm.lambdaWith
+            [ ( "ar1", Type.named [ "Elm" ] "Expression" )
+            , ( "ar2", Type.named [ "Elm" ] "Expression" )
+            ]
+            (arg1 (Elm.value "ar1") (Elm.value "ar2"))
+        , arg2
+        , arg3
+        ]
 
 
 {-| Every value/function in this module in case you need to refer to it directly. -}

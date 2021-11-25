@@ -154,6 +154,28 @@ thisModuleName =
     Elm.valueWith local "moduleName_" (Annotation.list Annotation.string)
 
 
+valueWith : Elm.Expression -> Elm.Type.Type -> Elm.Expression
+valueWith name annotation =
+    Elm.apply
+        (Elm.valueWith
+            [ "Elm" ]
+            "valueWith"
+            (Annotation.function
+                [ Annotation.list Annotation.string
+                , Annotation.string
+                , Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                ]
+                (Annotation.namedWith [ "Elm" ] "Expression" [])
+            )
+        )
+        [ thisModuleName, name, typeToExpression annotation ]
+
+
+apply : Elm.Expression -> List Elm.Expression -> Elm.Expression
+apply fn args =
+    ElmGen.apply fn args
+
+
 expressionType : Annotation.Annotation
 expressionType =
     Annotation.named elm "Expression"
@@ -163,8 +185,9 @@ annotationNamed : String -> List String -> Elm.Expression
 annotationNamed name tags =
     case tags of
         [] ->
-            GenType.named thisModuleName
-                (Elm.string name)
+            --GenType.named localModule
+            --    (Elm.string name)
+            localType name []
 
         nonEmpty ->
             Elm.lambdaWith
@@ -176,33 +199,37 @@ annotationNamed name tags =
                     )
                     nonEmpty
                 )
-                (GenType.namedWith
-                    thisModuleName
-                    (Elm.string name)
-                    (Elm.list
-                        (List.indexedMap
-                            (\i arg ->
-                                Elm.value ("arg" ++ String.fromInt i)
-                                    |> Elm.withType
-                                        (Annotation.named elmAnnotation "Annotation")
-                            )
-                            nonEmpty
+                (localType name
+                    (List.indexedMap
+                        (\i arg ->
+                            Elm.value ("arg" ++ String.fromInt i)
+                                |> Elm.withType
+                                    (Annotation.named elmAnnotation "Annotation")
                         )
+                        nonEmpty
                     )
                 )
 
 
-valueWith : Elm.Expression -> Elm.Expression -> Elm.Type.Type -> Elm.Expression
-valueWith mod name annotation =
-    ElmGen.valueWith
-        mod
-        name
-        (typeToExpression annotation)
-
-
-apply : Elm.Expression -> List Elm.Expression -> Elm.Expression
-apply fn args =
-    ElmGen.apply fn (Elm.list args)
+localType : String -> List Elm.Expression -> Elm.Expression
+localType name args =
+    Elm.apply
+        (Elm.valueWith
+            [ "Elm", "Annotation" ]
+            "namedWith"
+            (Annotation.function
+                [ Annotation.list Annotation.string
+                , Annotation.string
+                , Annotation.list
+                    (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                ]
+                (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+            )
+        )
+        [ thisModuleName
+        , Elm.string name
+        , Elm.list args
+        ]
 
 
 blockToIdField : Elm.Docs.Block -> Maybe Elm.Field
@@ -221,7 +248,7 @@ blockToIdField block =
             Just
                 (Elm.field
                     value.name
-                    (valueWith thisModuleName
+                    (valueWith
                         (Elm.string value.name)
                         value.tipe
                     )
@@ -277,7 +304,7 @@ generateTypeBuilderRecordHelper block =
                                     case tags of
                                         [] ->
                                             Elm.field name
-                                                (valueWith thisModuleName
+                                                (valueWith
                                                     (Elm.string name)
                                                     (Elm.Type.Type union.name
                                                         (List.map Elm.Type.Var union.args)
@@ -296,7 +323,7 @@ generateTypeBuilderRecordHelper block =
                                                         tags
                                                     )
                                                     (apply
-                                                        (valueWith thisModuleName
+                                                        (valueWith
                                                             (Elm.string name)
                                                             (Elm.Type.Type union.name
                                                                 (List.map Elm.Type.Var union.args)
@@ -332,7 +359,6 @@ generateTypeBuilderRecordHelper block =
                                     (\( fieldName, _ ) ->
                                         ElmGen.field (Elm.string fieldName) (Elm.get fieldName arg)
                                     )
-                                |> Elm.list
                                 |> ElmGen.record
                     in
                     Elm.field name (Elm.lambda "arg" lambdaArgType lambdaValue)
@@ -433,7 +459,6 @@ generateBlocks block =
                         (List.reverse (List.drop 1 captured.arguments))
                         (apply
                             (valueWith
-                                thisModuleName
                                 (Elm.string value.name)
                                 value.tipe
                             )
@@ -447,7 +472,6 @@ generateBlocks block =
                 _ ->
                     [ Elm.declaration value.name
                         (valueWith
-                            thisModuleName
                             (Elm.string value.name)
                             value.tipe
                             |> Elm.withType expressionType
@@ -532,8 +556,9 @@ asArgumentTypeHelper tipe =
     case tipe of
         Elm.Type.Lambda one two ->
             Annotation.function
-                [ asArgumentTypeHelper one ]
-                (asArgumentTypeHelper two)
+                [ expressionType
+                ]
+                (asArgumentTypeHelperForLambdas two)
 
         Elm.Type.Type "List.List" [ inner ] ->
             Annotation.list <| asArgumentTypeHelper inner
@@ -554,6 +579,19 @@ asArgumentTypeHelper tipe =
             expressionType
 
 
+asArgumentTypeHelperForLambdas : Elm.Type.Type -> Annotation.Annotation
+asArgumentTypeHelperForLambdas tipe =
+    case tipe of
+        Elm.Type.Lambda one two ->
+            Annotation.function
+                [ expressionType
+                ]
+                (asArgumentTypeHelperForLambdas two)
+
+        _ ->
+            expressionType
+
+
 {-| -}
 asValue : Int -> Elm.Type.Type -> Elm.Expression
 asValue index tipe =
@@ -563,25 +601,61 @@ asValue index tipe =
             (argName index)
 
 
+needsUnpacking : Elm.Type.Type -> Bool
+needsUnpacking tipe =
+    case tipe of
+        Elm.Type.Type "List.List" [ _ ] ->
+            True
+
+        Elm.Type.Record _ _ ->
+            True
+
+        _ ->
+            False
+
+
+getArity : Int -> Elm.Type.Type -> Int
+getArity i tipe =
+    case tipe of
+        Elm.Type.Lambda one two ->
+            getArity (i + 1) two
+
+        _ ->
+            i
+
+
 getArgumentUnpacker : Int -> Elm.Type.Type -> Elm.Expression -> Elm.Expression
 getArgumentUnpacker freshCount tipe value =
     case tipe of
         Elm.Type.Lambda one two ->
             let
-                f =
-                    getArgumentUnpacker (freshCount + 1)
-                        two
-                        (Elm.apply value [ Elm.value varName ])
-
                 varName =
                     "lambdaArg" ++ String.fromInt freshCount
             in
-            ElmGen.lambdaBetaReduced (Elm.string varName)
-                (typeToExpression one)
-                (\_ ->
-                    Elm.lambdaBetaReduced varName
-                        (typeToAnnotation one)
-                        (\_ -> f)
+            let
+                argCount =
+                    getArity 1 two
+            in
+            ElmGen.lambdaWith
+                (List.map
+                    (\i ->
+                        Elm.tuple
+                            (Elm.string ("ar" ++ String.fromInt i))
+                            (GenType.named
+                                [ Elm.string "Elm" ]
+                                (Elm.string "Expression")
+                            )
+                    )
+                    (List.range 1 argCount)
+                )
+                (Elm.apply value
+                    (List.map
+                        (\i ->
+                            Elm.string ("ar" ++ String.fromInt i)
+                                |> ElmGen.value
+                        )
+                        (List.range 1 argCount)
+                    )
                 )
 
         Elm.Type.Type "List.List" [ inner ] ->
@@ -589,15 +663,21 @@ getArgumentUnpacker freshCount tipe value =
                 varName =
                     "lambdaArg" ++ String.fromInt freshCount
 
-                f =
-                    Elm.apply (Elm.valueFrom [ "List" ] "map")
-                        [ Elm.lambdaBetaReduced varName
-                            (typeToAnnotation inner)
-                            (getArgumentUnpacker (freshCount + 1) inner)
-                        , value
-                        ]
+                unpackedInner =
+                    if needsUnpacking inner then
+                        Elm.apply (Elm.valueFrom [ "List" ] "map")
+                            [ Elm.lambdaBetaReduced varName
+                                (typeToAnnotation inner)
+                                (getArgumentUnpacker (freshCount + 1) inner)
+                            , value
+                            ]
+
+                    else
+                        value
             in
-            ElmGen.list f
+            Elm.apply (Elm.valueFrom [ "Elm" ] "list")
+                [ unpackedInner
+                ]
 
         Elm.Type.Record fields Nothing ->
             fields
@@ -609,11 +689,51 @@ getArgumentUnpacker freshCount tipe value =
                                 Elm.get fieldName value
                             )
                     )
-                |> Elm.list
                 |> ElmGen.record
 
         _ ->
             value
+
+
+getArgumentUnpackerForLambdas : Int -> Elm.Type.Type -> Elm.Expression -> List Elm.Expression -> Elm.Expression
+getArgumentUnpackerForLambdas freshCount tipe functionToCall args =
+    case tipe of
+        Elm.Type.Lambda one two ->
+            let
+                varName =
+                    "lambdaArg" ++ String.fromInt freshCount
+            in
+            case two of
+                Elm.Type.Lambda _ _ ->
+                    -- This is a multiple argument lambda!
+                    -- keep recursing!
+                    ElmGen.lambdaBetaReduced (Elm.string varName)
+                        (typeToExpression one)
+                        (\_ ->
+                            Elm.lambdaBetaReduced varName
+                                (typeToAnnotation one)
+                                (\_ ->
+                                    getArgumentUnpackerForLambdas (freshCount + 1)
+                                        two
+                                        functionToCall
+                                        (Elm.value varName :: args)
+                                )
+                        )
+
+                _ ->
+                    ElmGen.lambdaBetaReduced (Elm.string varName)
+                        (typeToExpression one)
+                        (\_ ->
+                            Elm.lambdaBetaReduced varName
+                                (typeToAnnotation one)
+                                (\_ ->
+                                    Elm.apply functionToCall
+                                        (List.reverse (Elm.value varName :: args))
+                                )
+                        )
+
+        _ ->
+            Elm.apply functionToCall (List.reverse args)
 
 
 {-|
@@ -674,7 +794,7 @@ chompLambdas exps tipe =
 
         _ ->
             GenType.function
-                (Elm.list (List.reverse exps))
+                (List.reverse exps)
                 (typeToExpression tipe)
 
 
@@ -717,29 +837,25 @@ typeToExpression elmType =
             case maybeExtensible of
                 Nothing ->
                     GenType.record
-                        (Elm.list
-                            (List.map
-                                (\( fieldName, fieldType ) ->
-                                    Elm.tuple
-                                        (Elm.string fieldName)
-                                        (typeToExpression fieldType)
-                                )
-                                fields
+                        (List.map
+                            (\( fieldName, fieldType ) ->
+                                Elm.tuple
+                                    (Elm.string fieldName)
+                                    (typeToExpression fieldType)
                             )
+                            fields
                         )
 
                 Just base ->
                     GenType.extensible
                         (Elm.string base)
-                        (Elm.list
-                            (List.map
-                                (\( fieldName, fieldType ) ->
-                                    Elm.tuple
-                                        (Elm.string fieldName)
-                                        (typeToExpression fieldType)
-                                )
-                                fields
+                        (List.map
+                            (\( fieldName, fieldType ) ->
+                                Elm.tuple
+                                    (Elm.string fieldName)
+                                    (typeToExpression fieldType)
                             )
+                            fields
                         )
 
 
@@ -789,6 +905,6 @@ namedWithType name types =
                         |> Maybe.withDefault name
             in
             GenType.namedWith
-                (Elm.list (List.map Elm.string (List.take (fragsLength - 1) frags)))
+                (List.map Elm.string (List.take (fragsLength - 1) frags))
                 (Elm.string typeName)
-                (Elm.list (List.map typeToExpression types))
+                (List.map typeToExpression types)
