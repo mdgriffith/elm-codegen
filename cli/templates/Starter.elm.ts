@@ -4,8 +4,7 @@ module Generator exposing (main)
 {-| -}
 
 import Elm
-import Elm.Pattern as Pattern
-import Elm.Type as Type
+import Elm.Annotation as Type
 import Elm.Gen
 
 
