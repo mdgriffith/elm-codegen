@@ -14,6 +14,9 @@
     elm-prefab install docs.json
         -> same as above, but from a local set of docs
 
+    elm-prefab install Module.elm
+        -> same as above, but from a local elm file itself
+
 */
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -161,13 +164,16 @@ function run_package_generator(output, flags) {
                 }
             })
                 .then(function (files) {
+                console.log("Generating →");
+                console.log("");
                 for (var _i = 0, files_2 = files; _i < files_2.length; _i++) {
                     var file = files_2[_i];
                     var fullpath = path.join(output, file.path);
-                    console.log("Generating: " + chalk_1.default.cyan(fullpath));
+                    console.log("    " + chalk_1.default.cyan(fullpath));
                     fs.mkdirSync(path.dirname(fullpath), { recursive: true });
                     fs.writeFileSync(fullpath, file.contents);
                 }
+                console.log("");
                 console.info("Success!");
             })
                 .catch(function (reason) {
@@ -186,7 +192,7 @@ function install_package(pkg, output, version) {
             switch (_a.label) {
                 case 0:
                     if (!(version == null)) return [3 /*break*/, 3];
-                    return [4 /*yield*/, (0, node_fetch_1.default)("https://elm-package-cache-psi.vercel.app/search.json")];
+                    return [4 /*yield*/, node_fetch_1.default("https://elm-package-cache-psi.vercel.app/search.json")];
                 case 1:
                     searchResp = _a.sent();
                     return [4 /*yield*/, searchResp.json()];
@@ -204,7 +210,7 @@ function install_package(pkg, output, version) {
                         process.exit();
                     }
                     _a.label = 3;
-                case 3: return [4 /*yield*/, (0, node_fetch_1.default)("https://elm-package-cache-psi.vercel.app/packages/" + pkg + "/" + version + "/docs.json")];
+                case 3: return [4 /*yield*/, node_fetch_1.default("https://elm-package-cache-psi.vercel.app/packages/" + pkg + "/" + version + "/docs.json")];
                 case 4:
                     docsResp = _a.sent();
                     return [4 /*yield*/, docsResp.json()];
@@ -276,7 +282,7 @@ function action(cmd, pkg, options, com) {
         return __generator(this, function (_a) {
             cwd = options.cwd || ".";
             output = path.join(cwd, options.output || "output");
-            install_dir = path.join(cwd, options.output || "generators");
+            install_dir = path.join(cwd, options.output || "codegen");
             if (cmd == "init") {
                 init(install_dir);
             }
