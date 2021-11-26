@@ -33,47 +33,46 @@ annotation :
     -> Elm.Expression
 annotation arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "annotation"
-            (Type.function
-                [ Type.function
-                    [ Type.string
-                    , Type.namedWith
-                        [ "Result" ]
-                        "Result"
-                        [ Type.list
-                            (Type.namedWith
-                                [ "Internal", "Compiler" ]
-                                "InferenceError"
-                                []
-                            )
-                        , Type.namedWith
-                            [ "Elm", "Syntax", "TypeAnnotation" ]
-                            "TypeAnnotation"
-                            []
-                        ]
-                    ]
-                    (Type.namedWith
-                        [ "Result" ]
-                        "Result"
-                        [ Type.list
-                            (Type.namedWith
-                                [ "Internal", "Compiler" ]
-                                "InferenceError"
-                                []
-                            )
-                        , Type.namedWith
-                            [ "Elm", "Syntax", "TypeAnnotation" ]
-                            "TypeAnnotation"
-                            []
-                        ]
-                    )
-                , Type.string
-                , Type.namedWith [ "Elm", "Debug" ] "Expression" []
-                ]
-                (Type.namedWith [ "Elm", "Debug" ] "Expression" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.function
+                     [ Type.string
+                     , Type.namedWith
+                         [ "Result" ]
+                         "Result"
+                         [ Type.list
+                             (Type.namedWith
+                                 [ "Internal", "Compiler" ]
+                                 "InferenceError"
+                                 []
+                             )
+                         , Type.namedWith
+                             [ "Elm", "Syntax", "TypeAnnotation" ]
+                             "TypeAnnotation"
+                             []
+                         ]
+                     ]
+                     (Type.namedWith
+                         [ "Result" ]
+                         "Result"
+                         [ Type.list
+                             (Type.namedWith
+                                 [ "Internal", "Compiler" ]
+                                 "InferenceError"
+                                 []
+                             )
+                         , Type.namedWith
+                             [ "Elm", "Syntax", "TypeAnnotation" ]
+                             "TypeAnnotation"
+                             []
+                         ]
+                     )
+                 , Type.string
+                 , Type.namedWith [ "Elm", "Debug" ] "Expression" []
+                 ]
+                 (Type.namedWith [ "Elm", "Debug" ] "Expression" [])
+             )
+            (Elm.valueFrom moduleName_ "annotation")
         )
         [ Elm.lambdaWith
             [ ( "ar1", Type.named [ "Elm" ] "Expression" )
@@ -86,12 +85,9 @@ annotation arg1 arg2 arg3 =
 
 
 {-| Every value/function in this module in case you need to refer to it directly. -}
-id_ : { annotation : Elm.Expression }
 id_ =
     { annotation =
-        Elm.valueWith
-            moduleName_
-            "annotation"
+        Elm.withType
             (Type.function
                 [ Type.function
                     [ Type.string
@@ -130,6 +126,7 @@ id_ =
                 ]
                 (Type.namedWith [ "Elm", "Debug" ] "Expression" [])
             )
+            (Elm.valueFrom moduleName_ "annotation")
     }
 
 

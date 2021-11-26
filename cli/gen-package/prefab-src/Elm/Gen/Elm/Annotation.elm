@@ -29,13 +29,12 @@ make_ =
 var : Elm.Expression -> Elm.Expression
 var arg1 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "var"
-            (Type.function
-                [ Type.string ]
-                (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.string ]
+                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+             )
+            (Elm.valueFrom moduleName_ "var")
         )
         [ arg1 ]
 
@@ -43,68 +42,55 @@ var arg1 =
 {-| -}
 bool : Elm.Expression
 bool =
-    Elm.valueWith
-        moduleName_
-        "bool"
-        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+    Elm.withType (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+        (Elm.valueFrom moduleName_ "bool")
 
 
 {-| -}
 int : Elm.Expression
 int =
-    Elm.valueWith
-        moduleName_
-        "int"
-        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+    Elm.withType (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+        (Elm.valueFrom moduleName_ "int")
 
 
 {-| -}
 float : Elm.Expression
 float =
-    Elm.valueWith
-        moduleName_
-        "float"
-        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+    Elm.withType (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+        (Elm.valueFrom moduleName_ "float")
 
 
 {-| -}
 string : Elm.Expression
 string =
-    Elm.valueWith
-        moduleName_
-        "string"
-        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+    Elm.withType (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+        (Elm.valueFrom moduleName_ "string")
 
 
 {-| -}
 char : Elm.Expression
 char =
-    Elm.valueWith
-        moduleName_
-        "char"
-        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+    Elm.withType (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+        (Elm.valueFrom moduleName_ "char")
 
 
 {-| -}
 unit : Elm.Expression
 unit =
-    Elm.valueWith
-        moduleName_
-        "unit"
-        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+    Elm.withType (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+        (Elm.valueFrom moduleName_ "unit")
 
 
 {-| -}
 named : List Elm.Expression -> Elm.Expression -> Elm.Expression
 named arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "named"
-            (Type.function
-                [ Type.list Type.string, Type.string ]
-                (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.list Type.string, Type.string ]
+                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+             )
+            (Elm.valueFrom moduleName_ "named")
         )
         [ Elm.list arg1, arg2 ]
 
@@ -117,17 +103,16 @@ namedWith :
     -> Elm.Expression
 namedWith arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "namedWith"
-            (Type.function
-                [ Type.list Type.string
-                , Type.string
-                , Type.list
-                    (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                ]
-                (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.list Type.string
+                 , Type.string
+                 , Type.list
+                     (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                 ]
+                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+             )
+            (Elm.valueFrom moduleName_ "namedWith")
         )
         [ Elm.list arg1, arg2, Elm.list arg3 ]
 
@@ -136,13 +121,12 @@ namedWith arg1 arg2 arg3 =
 maybe : Elm.Expression -> Elm.Expression
 maybe arg1 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "maybe"
-            (Type.function
-                [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" [] ]
-                (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" [] ]
+                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+             )
+            (Elm.valueFrom moduleName_ "maybe")
         )
         [ arg1 ]
 
@@ -151,13 +135,12 @@ maybe arg1 =
 list : Elm.Expression -> Elm.Expression
 list arg1 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "list"
-            (Type.function
-                [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" [] ]
-                (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" [] ]
+                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+             )
+            (Elm.valueFrom moduleName_ "list")
         )
         [ arg1 ]
 
@@ -166,15 +149,14 @@ list arg1 =
 tuple : Elm.Expression -> Elm.Expression -> Elm.Expression
 tuple arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "tuple"
-            (Type.function
-                [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                ]
-                (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                 , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                 ]
+                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+             )
+            (Elm.valueFrom moduleName_ "tuple")
         )
         [ arg1, arg2 ]
 
@@ -183,16 +165,15 @@ tuple arg1 arg2 =
 triple : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 triple arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "triple"
-            (Type.function
-                [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                ]
-                (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                 , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                 , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                 ]
+                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+             )
+            (Elm.valueFrom moduleName_ "triple")
         )
         [ arg1, arg2, arg3 ]
 
@@ -201,13 +182,12 @@ triple arg1 arg2 arg3 =
 set : Elm.Expression -> Elm.Expression
 set arg1 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "set"
-            (Type.function
-                [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" [] ]
-                (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" [] ]
+                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+             )
+            (Elm.valueFrom moduleName_ "set")
         )
         [ arg1 ]
 
@@ -216,15 +196,14 @@ set arg1 =
 dict : Elm.Expression -> Elm.Expression -> Elm.Expression
 dict arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "dict"
-            (Type.function
-                [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                ]
-                (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                 , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                 ]
+                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+             )
+            (Elm.valueFrom moduleName_ "dict")
         )
         [ arg1, arg2 ]
 
@@ -233,15 +212,14 @@ dict arg1 arg2 =
 result : Elm.Expression -> Elm.Expression -> Elm.Expression
 result arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "result"
-            (Type.function
-                [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                ]
-                (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                 , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                 ]
+                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+             )
+            (Elm.valueFrom moduleName_ "result")
         )
         [ arg1, arg2 ]
 
@@ -250,18 +228,18 @@ result arg1 arg2 =
 record : List Elm.Expression -> Elm.Expression
 record arg1 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "record"
-            (Type.function
-                [ Type.list
-                    (Type.tuple
-                        Type.string
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                    )
-                ]
-                (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.list
+                     (Type.tuple
+                         Type.string
+                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                         )
+                     )
+                 ]
+                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+             )
+            (Elm.valueFrom moduleName_ "record")
         )
         [ Elm.list arg1 ]
 
@@ -270,19 +248,19 @@ record arg1 =
 extensible : Elm.Expression -> List Elm.Expression -> Elm.Expression
 extensible arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "extensible"
-            (Type.function
-                [ Type.string
-                , Type.list
-                    (Type.tuple
-                        Type.string
-                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                    )
-                ]
-                (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.string
+                 , Type.list
+                     (Type.tuple
+                         Type.string
+                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                         )
+                     )
+                 ]
+                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+             )
+            (Elm.valueFrom moduleName_ "extensible")
         )
         [ arg1, Elm.list arg2 ]
 
@@ -291,16 +269,15 @@ extensible arg1 arg2 =
 function : List Elm.Expression -> Elm.Expression -> Elm.Expression
 function arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "function"
-            (Type.function
-                [ Type.list
-                    (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                ]
-                (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.list
+                     (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                 , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                 ]
+                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+             )
+            (Elm.valueFrom moduleName_ "function")
         )
         [ Elm.list arg1, arg2 ]
 
@@ -309,91 +286,52 @@ function arg1 arg2 =
 toString : Elm.Expression -> Elm.Expression
 toString arg1 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "toString"
-            (Type.function
-                [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" [] ]
-                Type.string
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" [] ]
+                 Type.string
+             )
+            (Elm.valueFrom moduleName_ "toString")
         )
         [ arg1 ]
 
 
 {-| Every value/function in this module in case you need to refer to it directly. -}
-id_ :
-    { var : Elm.Expression
-    , bool : Elm.Expression
-    , int : Elm.Expression
-    , float : Elm.Expression
-    , string : Elm.Expression
-    , char : Elm.Expression
-    , unit : Elm.Expression
-    , named : Elm.Expression
-    , namedWith : Elm.Expression
-    , maybe : Elm.Expression
-    , list : Elm.Expression
-    , tuple : Elm.Expression
-    , triple : Elm.Expression
-    , set : Elm.Expression
-    , dict : Elm.Expression
-    , result : Elm.Expression
-    , record : Elm.Expression
-    , extensible : Elm.Expression
-    , function : Elm.Expression
-    , toString : Elm.Expression
-    }
 id_ =
     { var =
-        Elm.valueWith
-            moduleName_
-            "var"
+        Elm.withType
             (Type.function
                 [ Type.string ]
                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
             )
+            (Elm.valueFrom moduleName_ "var")
     , bool =
-        Elm.valueWith
-            moduleName_
-            "bool"
-            (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+        Elm.withType (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+            (Elm.valueFrom moduleName_ "bool")
     , int =
-        Elm.valueWith
-            moduleName_
-            "int"
-            (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+        Elm.withType (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+            (Elm.valueFrom moduleName_ "int")
     , float =
-        Elm.valueWith
-            moduleName_
-            "float"
-            (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+        Elm.withType (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+            (Elm.valueFrom moduleName_ "float")
     , string =
-        Elm.valueWith
-            moduleName_
-            "string"
-            (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+        Elm.withType (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+            (Elm.valueFrom moduleName_ "string")
     , char =
-        Elm.valueWith
-            moduleName_
-            "char"
-            (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+        Elm.withType (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+            (Elm.valueFrom moduleName_ "char")
     , unit =
-        Elm.valueWith
-            moduleName_
-            "unit"
-            (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+        Elm.withType (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+            (Elm.valueFrom moduleName_ "unit")
     , named =
-        Elm.valueWith
-            moduleName_
-            "named"
+        Elm.withType
             (Type.function
                 [ Type.list Type.string, Type.string ]
                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
             )
+            (Elm.valueFrom moduleName_ "named")
     , namedWith =
-        Elm.valueWith
-            moduleName_
-            "namedWith"
+        Elm.withType
             (Type.function
                 [ Type.list Type.string
                 , Type.string
@@ -402,36 +340,32 @@ id_ =
                 ]
                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
             )
+            (Elm.valueFrom moduleName_ "namedWith")
     , maybe =
-        Elm.valueWith
-            moduleName_
-            "maybe"
+        Elm.withType
             (Type.function
                 [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" [] ]
                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
             )
+            (Elm.valueFrom moduleName_ "maybe")
     , list =
-        Elm.valueWith
-            moduleName_
-            "list"
+        Elm.withType
             (Type.function
                 [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" [] ]
                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
             )
+            (Elm.valueFrom moduleName_ "list")
     , tuple =
-        Elm.valueWith
-            moduleName_
-            "tuple"
+        Elm.withType
             (Type.function
                 [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
                 , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
                 ]
                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
             )
+            (Elm.valueFrom moduleName_ "tuple")
     , triple =
-        Elm.valueWith
-            moduleName_
-            "triple"
+        Elm.withType
             (Type.function
                 [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
                 , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
@@ -439,38 +373,34 @@ id_ =
                 ]
                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
             )
+            (Elm.valueFrom moduleName_ "triple")
     , set =
-        Elm.valueWith
-            moduleName_
-            "set"
+        Elm.withType
             (Type.function
                 [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" [] ]
                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
             )
+            (Elm.valueFrom moduleName_ "set")
     , dict =
-        Elm.valueWith
-            moduleName_
-            "dict"
+        Elm.withType
             (Type.function
                 [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
                 , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
                 ]
                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
             )
+            (Elm.valueFrom moduleName_ "dict")
     , result =
-        Elm.valueWith
-            moduleName_
-            "result"
+        Elm.withType
             (Type.function
                 [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
                 , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
                 ]
                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
             )
+            (Elm.valueFrom moduleName_ "result")
     , record =
-        Elm.valueWith
-            moduleName_
-            "record"
+        Elm.withType
             (Type.function
                 [ Type.list
                     (Type.tuple
@@ -480,10 +410,9 @@ id_ =
                 ]
                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
             )
+            (Elm.valueFrom moduleName_ "record")
     , extensible =
-        Elm.valueWith
-            moduleName_
-            "extensible"
+        Elm.withType
             (Type.function
                 [ Type.string
                 , Type.list
@@ -494,10 +423,9 @@ id_ =
                 ]
                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
             )
+            (Elm.valueFrom moduleName_ "extensible")
     , function =
-        Elm.valueWith
-            moduleName_
-            "function"
+        Elm.withType
             (Type.function
                 [ Type.list
                     (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
@@ -505,14 +433,14 @@ id_ =
                 ]
                 (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
             )
+            (Elm.valueFrom moduleName_ "function")
     , toString =
-        Elm.valueWith
-            moduleName_
-            "toString"
+        Elm.withType
             (Type.function
                 [ Type.namedWith [ "Elm", "Annotation" ] "Annotation" [] ]
                 Type.string
             )
+            (Elm.valueFrom moduleName_ "toString")
     }
 
 

@@ -5303,27 +5303,36 @@ var $author$project$Internal$Compiler$sanitize = function (str) {
 			return str;
 	}
 };
-var $author$project$Elm$valueWith = F3(
-	function (mod, name, ann) {
+var $author$project$Elm$valueFrom = F2(
+	function (mod, name) {
 		return {
-			c: $elm$core$Result$Ok(
-				$author$project$Internal$Compiler$getInnerAnnotation(ann)),
+			c: $elm$core$Result$Err(_List_Nil),
 			a: A2(
 				$stil4m$elm_syntax$Elm$Syntax$Expression$FunctionOrValue,
 				mod,
 				$author$project$Internal$Compiler$sanitize(name)),
-			b: A2(
-				$elm$core$List$cons,
-				mod,
-				$author$project$Internal$Compiler$getAnnotationImports(ann)),
+			b: _List_fromArray(
+				[mod]),
 			g: false
 		};
 	});
-var $author$project$Generate$thisModuleName = A3(
-	$author$project$Elm$valueWith,
-	$author$project$Generate$local,
-	'moduleName_',
-	$author$project$Elm$Annotation$list($author$project$Elm$Annotation$string));
+var $author$project$Elm$withType = F2(
+	function (ann, _v0) {
+		var exp = _v0;
+		return _Utils_update(
+			exp,
+			{
+				c: $elm$core$Result$Ok(
+					$author$project$Internal$Compiler$getInnerAnnotation(ann)),
+				b: _Utils_ap(
+					exp.b,
+					$author$project$Internal$Compiler$getAnnotationImports(ann))
+			});
+	});
+var $author$project$Generate$thisModuleName = A2(
+	$author$project$Elm$withType,
+	$author$project$Elm$Annotation$list($author$project$Elm$Annotation$string),
+	A2($author$project$Elm$valueFrom, $author$project$Generate$local, 'moduleName_'));
 var $author$project$Generate$elmAnnotation = _List_fromArray(
 	['Elm', 'Annotation']);
 var $author$project$Elm$Annotation$named = F2(
@@ -5343,16 +5352,15 @@ var $author$project$Elm$Annotation$named = F2(
 var $author$project$Generate$annotationType = A2($author$project$Elm$Annotation$named, $author$project$Generate$elmAnnotation, 'Annotation');
 var $author$project$Elm$Gen$Elm$Annotation$moduleName_ = _List_fromArray(
 	['Elm', 'Annotation']);
-var $author$project$Elm$Gen$Elm$Annotation$bool = A3(
-	$author$project$Elm$valueWith,
-	$author$project$Elm$Gen$Elm$Annotation$moduleName_,
-	'bool',
+var $author$project$Elm$Gen$Elm$Annotation$bool = A2(
+	$author$project$Elm$withType,
 	A3(
 		$author$project$Elm$Annotation$namedWith,
 		_List_fromArray(
 			['Elm', 'Annotation']),
 		'Annotation',
-		_List_Nil));
+		_List_Nil),
+	A2($author$project$Elm$valueFrom, $author$project$Elm$Gen$Elm$Annotation$moduleName_, 'bool'));
 var $elm$core$List$drop = F2(
 	function (n, list) {
 		drop:
@@ -5490,10 +5498,8 @@ var $author$project$Elm$Gen$Elm$Annotation$extensible = F2(
 	function (arg1, arg2) {
 		return A2(
 			$author$project$Elm$apply,
-			A3(
-				$author$project$Elm$valueWith,
-				$author$project$Elm$Gen$Elm$Annotation$moduleName_,
-				'extensible',
+			A2(
+				$author$project$Elm$withType,
 				A2(
 					$author$project$Elm$Annotation$function,
 					_List_fromArray(
@@ -5515,31 +5521,29 @@ var $author$project$Elm$Gen$Elm$Annotation$extensible = F2(
 						_List_fromArray(
 							['Elm', 'Annotation']),
 						'Annotation',
-						_List_Nil))),
+						_List_Nil)),
+				A2($author$project$Elm$valueFrom, $author$project$Elm$Gen$Elm$Annotation$moduleName_, 'extensible')),
 			_List_fromArray(
 				[
 					arg1,
 					$author$project$Elm$list(arg2)
 				]));
 	});
-var $author$project$Elm$Gen$Elm$Annotation$float = A3(
-	$author$project$Elm$valueWith,
-	$author$project$Elm$Gen$Elm$Annotation$moduleName_,
-	'float',
+var $author$project$Elm$Gen$Elm$Annotation$float = A2(
+	$author$project$Elm$withType,
 	A3(
 		$author$project$Elm$Annotation$namedWith,
 		_List_fromArray(
 			['Elm', 'Annotation']),
 		'Annotation',
-		_List_Nil));
+		_List_Nil),
+	A2($author$project$Elm$valueFrom, $author$project$Elm$Gen$Elm$Annotation$moduleName_, 'float'));
 var $author$project$Elm$Gen$Elm$Annotation$function = F2(
 	function (arg1, arg2) {
 		return A2(
 			$author$project$Elm$apply,
-			A3(
-				$author$project$Elm$valueWith,
-				$author$project$Elm$Gen$Elm$Annotation$moduleName_,
-				'function',
+			A2(
+				$author$project$Elm$withType,
 				A2(
 					$author$project$Elm$Annotation$function,
 					_List_fromArray(
@@ -5563,7 +5567,8 @@ var $author$project$Elm$Gen$Elm$Annotation$function = F2(
 						_List_fromArray(
 							['Elm', 'Annotation']),
 						'Annotation',
-						_List_Nil))),
+						_List_Nil)),
+				A2($author$project$Elm$valueFrom, $author$project$Elm$Gen$Elm$Annotation$moduleName_, 'function')),
 			_List_fromArray(
 				[
 					$author$project$Elm$list(arg1),
@@ -5579,23 +5584,20 @@ var $elm$core$List$head = function (list) {
 		return $elm$core$Maybe$Nothing;
 	}
 };
-var $author$project$Elm$Gen$Elm$Annotation$int = A3(
-	$author$project$Elm$valueWith,
-	$author$project$Elm$Gen$Elm$Annotation$moduleName_,
-	'int',
+var $author$project$Elm$Gen$Elm$Annotation$int = A2(
+	$author$project$Elm$withType,
 	A3(
 		$author$project$Elm$Annotation$namedWith,
 		_List_fromArray(
 			['Elm', 'Annotation']),
 		'Annotation',
-		_List_Nil));
+		_List_Nil),
+	A2($author$project$Elm$valueFrom, $author$project$Elm$Gen$Elm$Annotation$moduleName_, 'int'));
 var $author$project$Elm$Gen$Elm$Annotation$list = function (arg1) {
 	return A2(
 		$author$project$Elm$apply,
-		A3(
-			$author$project$Elm$valueWith,
-			$author$project$Elm$Gen$Elm$Annotation$moduleName_,
-			'list',
+		A2(
+			$author$project$Elm$withType,
 			A2(
 				$author$project$Elm$Annotation$function,
 				_List_fromArray(
@@ -5612,17 +5614,16 @@ var $author$project$Elm$Gen$Elm$Annotation$list = function (arg1) {
 					_List_fromArray(
 						['Elm', 'Annotation']),
 					'Annotation',
-					_List_Nil))),
+					_List_Nil)),
+			A2($author$project$Elm$valueFrom, $author$project$Elm$Gen$Elm$Annotation$moduleName_, 'list')),
 		_List_fromArray(
 			[arg1]));
 };
 var $author$project$Elm$Gen$Elm$Annotation$maybe = function (arg1) {
 	return A2(
 		$author$project$Elm$apply,
-		A3(
-			$author$project$Elm$valueWith,
-			$author$project$Elm$Gen$Elm$Annotation$moduleName_,
-			'maybe',
+		A2(
+			$author$project$Elm$withType,
 			A2(
 				$author$project$Elm$Annotation$function,
 				_List_fromArray(
@@ -5639,7 +5640,8 @@ var $author$project$Elm$Gen$Elm$Annotation$maybe = function (arg1) {
 					_List_fromArray(
 						['Elm', 'Annotation']),
 					'Annotation',
-					_List_Nil))),
+					_List_Nil)),
+			A2($author$project$Elm$valueFrom, $author$project$Elm$Gen$Elm$Annotation$moduleName_, 'maybe')),
 		_List_fromArray(
 			[arg1]));
 };
@@ -5647,10 +5649,8 @@ var $author$project$Elm$Gen$Elm$Annotation$namedWith = F3(
 	function (arg1, arg2, arg3) {
 		return A2(
 			$author$project$Elm$apply,
-			A3(
-				$author$project$Elm$valueWith,
-				$author$project$Elm$Gen$Elm$Annotation$moduleName_,
-				'namedWith',
+			A2(
+				$author$project$Elm$withType,
 				A2(
 					$author$project$Elm$Annotation$function,
 					_List_fromArray(
@@ -5670,7 +5670,8 @@ var $author$project$Elm$Gen$Elm$Annotation$namedWith = F3(
 						_List_fromArray(
 							['Elm', 'Annotation']),
 						'Annotation',
-						_List_Nil))),
+						_List_Nil)),
+				A2($author$project$Elm$valueFrom, $author$project$Elm$Gen$Elm$Annotation$moduleName_, 'namedWith')),
 			_List_fromArray(
 				[
 					$author$project$Elm$list(arg1),
@@ -5681,10 +5682,8 @@ var $author$project$Elm$Gen$Elm$Annotation$namedWith = F3(
 var $author$project$Elm$Gen$Elm$Annotation$record = function (arg1) {
 	return A2(
 		$author$project$Elm$apply,
-		A3(
-			$author$project$Elm$valueWith,
-			$author$project$Elm$Gen$Elm$Annotation$moduleName_,
-			'record',
+		A2(
+			$author$project$Elm$withType,
 			A2(
 				$author$project$Elm$Annotation$function,
 				_List_fromArray(
@@ -5705,22 +5704,22 @@ var $author$project$Elm$Gen$Elm$Annotation$record = function (arg1) {
 					_List_fromArray(
 						['Elm', 'Annotation']),
 					'Annotation',
-					_List_Nil))),
+					_List_Nil)),
+			A2($author$project$Elm$valueFrom, $author$project$Elm$Gen$Elm$Annotation$moduleName_, 'record')),
 		_List_fromArray(
 			[
 				$author$project$Elm$list(arg1)
 			]));
 };
-var $author$project$Elm$Gen$Elm$Annotation$string = A3(
-	$author$project$Elm$valueWith,
-	$author$project$Elm$Gen$Elm$Annotation$moduleName_,
-	'string',
+var $author$project$Elm$Gen$Elm$Annotation$string = A2(
+	$author$project$Elm$withType,
 	A3(
 		$author$project$Elm$Annotation$namedWith,
 		_List_fromArray(
 			['Elm', 'Annotation']),
 		'Annotation',
-		_List_Nil));
+		_List_Nil),
+	A2($author$project$Elm$valueFrom, $author$project$Elm$Gen$Elm$Annotation$moduleName_, 'string'));
 var $elm$core$List$takeReverse = F3(
 	function (n, list, kept) {
 		takeReverse:
@@ -5851,10 +5850,8 @@ var $author$project$Elm$Gen$Elm$Annotation$triple = F3(
 	function (arg1, arg2, arg3) {
 		return A2(
 			$author$project$Elm$apply,
-			A3(
-				$author$project$Elm$valueWith,
-				$author$project$Elm$Gen$Elm$Annotation$moduleName_,
-				'triple',
+			A2(
+				$author$project$Elm$withType,
 				A2(
 					$author$project$Elm$Annotation$function,
 					_List_fromArray(
@@ -5883,7 +5880,8 @@ var $author$project$Elm$Gen$Elm$Annotation$triple = F3(
 						_List_fromArray(
 							['Elm', 'Annotation']),
 						'Annotation',
-						_List_Nil))),
+						_List_Nil)),
+				A2($author$project$Elm$valueFrom, $author$project$Elm$Gen$Elm$Annotation$moduleName_, 'triple')),
 			_List_fromArray(
 				[arg1, arg2, arg3]));
 	});
@@ -5939,10 +5937,8 @@ var $author$project$Elm$Gen$Elm$Annotation$tuple = F2(
 	function (arg1, arg2) {
 		return A2(
 			$author$project$Elm$apply,
-			A3(
-				$author$project$Elm$valueWith,
-				$author$project$Elm$Gen$Elm$Annotation$moduleName_,
-				'tuple',
+			A2(
+				$author$project$Elm$withType,
 				A2(
 					$author$project$Elm$Annotation$function,
 					_List_fromArray(
@@ -5965,27 +5961,25 @@ var $author$project$Elm$Gen$Elm$Annotation$tuple = F2(
 						_List_fromArray(
 							['Elm', 'Annotation']),
 						'Annotation',
-						_List_Nil))),
+						_List_Nil)),
+				A2($author$project$Elm$valueFrom, $author$project$Elm$Gen$Elm$Annotation$moduleName_, 'tuple')),
 			_List_fromArray(
 				[arg1, arg2]));
 	});
-var $author$project$Elm$Gen$Elm$Annotation$unit = A3(
-	$author$project$Elm$valueWith,
-	$author$project$Elm$Gen$Elm$Annotation$moduleName_,
-	'unit',
+var $author$project$Elm$Gen$Elm$Annotation$unit = A2(
+	$author$project$Elm$withType,
 	A3(
 		$author$project$Elm$Annotation$namedWith,
 		_List_fromArray(
 			['Elm', 'Annotation']),
 		'Annotation',
-		_List_Nil));
+		_List_Nil),
+	A2($author$project$Elm$valueFrom, $author$project$Elm$Gen$Elm$Annotation$moduleName_, 'unit'));
 var $author$project$Elm$Gen$Elm$Annotation$var = function (arg1) {
 	return A2(
 		$author$project$Elm$apply,
-		A3(
-			$author$project$Elm$valueWith,
-			$author$project$Elm$Gen$Elm$Annotation$moduleName_,
-			'var',
+		A2(
+			$author$project$Elm$withType,
 			A2(
 				$author$project$Elm$Annotation$function,
 				_List_fromArray(
@@ -5995,7 +5989,8 @@ var $author$project$Elm$Gen$Elm$Annotation$var = function (arg1) {
 					_List_fromArray(
 						['Elm', 'Annotation']),
 					'Annotation',
-					_List_Nil))),
+					_List_Nil)),
+			A2($author$project$Elm$valueFrom, $author$project$Elm$Gen$Elm$Annotation$moduleName_, 'var')),
 		_List_fromArray(
 			[arg1]));
 };
@@ -6160,7 +6155,10 @@ var $author$project$Generate$typeToExpression = function (elmType) {
 					}
 				}
 			}
-			return A3($author$project$Elm$valueWith, $author$project$Generate$elmAnnotation, 'unit', $author$project$Generate$annotationType);
+			return A2(
+				$author$project$Elm$withType,
+				$author$project$Generate$annotationType,
+				A2($author$project$Elm$valueFrom, $author$project$Generate$elmAnnotation, 'unit'));
 		case 3:
 			var name = elmType.a;
 			var types = elmType.b;
@@ -6204,35 +6202,49 @@ var $author$project$Generate$valueWith = F2(
 	function (name, annotation) {
 		return A2(
 			$author$project$Elm$apply,
-			A3(
-				$author$project$Elm$valueWith,
-				_List_fromArray(
-					['Elm']),
-				'valueWith',
+			A2(
+				$author$project$Elm$apply,
 				A2(
-					$author$project$Elm$Annotation$function,
+					$author$project$Elm$valueFrom,
 					_List_fromArray(
-						[
-							$author$project$Elm$Annotation$list($author$project$Elm$Annotation$string),
-							$author$project$Elm$Annotation$string,
-							A3(
-							$author$project$Elm$Annotation$namedWith,
-							_List_fromArray(
-								['Elm', 'Annotation']),
-							'Annotation',
-							_List_Nil)
-						]),
-					A3(
-						$author$project$Elm$Annotation$namedWith,
-						_List_fromArray(
-							['Elm']),
-						'Expression',
-						_List_Nil))),
+						['Elm']),
+					'withType'),
+				_List_fromArray(
+					[
+						$author$project$Generate$typeToExpression(annotation)
+					])),
 			_List_fromArray(
 				[
-					$author$project$Generate$thisModuleName,
-					name,
-					$author$project$Generate$typeToExpression(annotation)
+					A2(
+					$author$project$Elm$apply,
+					A2(
+						$author$project$Elm$withType,
+						A2(
+							$author$project$Elm$Annotation$function,
+							_List_fromArray(
+								[
+									$author$project$Elm$Annotation$list($author$project$Elm$Annotation$string),
+									$author$project$Elm$Annotation$string,
+									A3(
+									$author$project$Elm$Annotation$namedWith,
+									_List_fromArray(
+										['Elm', 'Annotation']),
+									'Annotation',
+									_List_Nil)
+								]),
+							A3(
+								$author$project$Elm$Annotation$namedWith,
+								_List_fromArray(
+									['Elm']),
+								'Expression',
+								_List_Nil)),
+						A2(
+							$author$project$Elm$valueFrom,
+							_List_fromArray(
+								['Elm']),
+							'valueFrom')),
+					_List_fromArray(
+						[$author$project$Generate$thisModuleName, name]))
 				]));
 	});
 var $author$project$Generate$blockToIdField = function (block) {
@@ -10178,10 +10190,8 @@ var $author$project$Elm$Gen$Elm$apply = F2(
 	function (arg1, arg2) {
 		return A2(
 			$author$project$Elm$apply,
-			A3(
-				$author$project$Elm$valueWith,
-				$author$project$Elm$Gen$Elm$moduleName_,
-				'apply',
+			A2(
+				$author$project$Elm$withType,
 				A2(
 					$author$project$Elm$Annotation$function,
 					_List_fromArray(
@@ -10205,7 +10215,8 @@ var $author$project$Elm$Gen$Elm$apply = F2(
 						_List_fromArray(
 							['Elm']),
 						'Expression',
-						_List_Nil))),
+						_List_Nil)),
+				A2($author$project$Elm$valueFrom, $author$project$Elm$Gen$Elm$moduleName_, 'apply')),
 			_List_fromArray(
 				[
 					arg1,
@@ -10311,10 +10322,8 @@ var $author$project$Elm$Gen$Elm$field = F2(
 	function (arg1, arg2) {
 		return A2(
 			$author$project$Elm$apply,
-			A3(
-				$author$project$Elm$valueWith,
-				$author$project$Elm$Gen$Elm$moduleName_,
-				'field',
+			A2(
+				$author$project$Elm$withType,
 				A2(
 					$author$project$Elm$Annotation$function,
 					_List_fromArray(
@@ -10332,7 +10341,8 @@ var $author$project$Elm$Gen$Elm$field = F2(
 						_List_fromArray(
 							['Elm']),
 						'Field',
-						_List_Nil))),
+						_List_Nil)),
+				A2($author$project$Elm$valueFrom, $author$project$Elm$Gen$Elm$moduleName_, 'field')),
 			_List_fromArray(
 				[arg1, arg2]));
 	});
@@ -10573,6 +10583,22 @@ var $author$project$Elm$betaReduce = function (e) {
 		return e;
 	}
 };
+var $author$project$Elm$valueWith = F3(
+	function (mod, name, ann) {
+		return {
+			c: $elm$core$Result$Ok(
+				$author$project$Internal$Compiler$getInnerAnnotation(ann)),
+			a: A2(
+				$stil4m$elm_syntax$Elm$Syntax$Expression$FunctionOrValue,
+				mod,
+				$author$project$Internal$Compiler$sanitize(name)),
+			b: A2(
+				$elm$core$List$cons,
+				mod,
+				$author$project$Internal$Compiler$getAnnotationImports(ann)),
+			g: false
+		};
+	});
 var $author$project$Elm$lambdaBetaReduced = F3(
 	function (argBaseName, argType, toExpression) {
 		var arg1 = A3($author$project$Elm$valueWith, _List_Nil, argBaseName, argType);
@@ -10621,10 +10647,8 @@ var $author$project$Elm$Gen$Elm$lambdaWith = F2(
 	function (arg1, arg2) {
 		return A2(
 			$author$project$Elm$apply,
-			A3(
-				$author$project$Elm$valueWith,
-				$author$project$Elm$Gen$Elm$moduleName_,
-				'lambdaWith',
+			A2(
+				$author$project$Elm$withType,
 				A2(
 					$author$project$Elm$Annotation$function,
 					_List_fromArray(
@@ -10651,7 +10675,8 @@ var $author$project$Elm$Gen$Elm$lambdaWith = F2(
 						_List_fromArray(
 							['Elm']),
 						'Expression',
-						_List_Nil))),
+						_List_Nil)),
+				A2($author$project$Elm$valueFrom, $author$project$Elm$Gen$Elm$moduleName_, 'lambdaWith')),
 			_List_fromArray(
 				[
 					$author$project$Elm$list(arg1),
@@ -10662,10 +10687,8 @@ var $author$project$Elm$Gen$Elm$Annotation$named = F2(
 	function (arg1, arg2) {
 		return A2(
 			$author$project$Elm$apply,
-			A3(
-				$author$project$Elm$valueWith,
-				$author$project$Elm$Gen$Elm$Annotation$moduleName_,
-				'named',
+			A2(
+				$author$project$Elm$withType,
 				A2(
 					$author$project$Elm$Annotation$function,
 					_List_fromArray(
@@ -10678,7 +10701,8 @@ var $author$project$Elm$Gen$Elm$Annotation$named = F2(
 						_List_fromArray(
 							['Elm', 'Annotation']),
 						'Annotation',
-						_List_Nil))),
+						_List_Nil)),
+				A2($author$project$Elm$valueFrom, $author$project$Elm$Gen$Elm$Annotation$moduleName_, 'named')),
 			_List_fromArray(
 				[
 					$author$project$Elm$list(arg1),
@@ -10707,10 +10731,8 @@ var $author$project$Generate$needsUnpacking = function (tipe) {
 var $author$project$Elm$Gen$Elm$record = function (arg1) {
 	return A2(
 		$author$project$Elm$apply,
-		A3(
-			$author$project$Elm$valueWith,
-			$author$project$Elm$Gen$Elm$moduleName_,
-			'record',
+		A2(
+			$author$project$Elm$withType,
 			A2(
 				$author$project$Elm$Annotation$function,
 				_List_fromArray(
@@ -10728,7 +10750,8 @@ var $author$project$Elm$Gen$Elm$record = function (arg1) {
 					_List_fromArray(
 						['Elm']),
 					'Expression',
-					_List_Nil))),
+					_List_Nil)),
+			A2($author$project$Elm$valueFrom, $author$project$Elm$Gen$Elm$moduleName_, 'record')),
 		_List_fromArray(
 			[
 				$author$project$Elm$list(arg1)
@@ -10875,10 +10898,8 @@ var $author$project$Generate$typeToAnnotation = function (elmType) {
 var $author$project$Elm$Gen$Elm$value = function (arg1) {
 	return A2(
 		$author$project$Elm$apply,
-		A3(
-			$author$project$Elm$valueWith,
-			$author$project$Elm$Gen$Elm$moduleName_,
-			'value',
+		A2(
+			$author$project$Elm$withType,
 			A2(
 				$author$project$Elm$Annotation$function,
 				_List_fromArray(
@@ -10888,23 +10909,11 @@ var $author$project$Elm$Gen$Elm$value = function (arg1) {
 					_List_fromArray(
 						['Elm']),
 					'Expression',
-					_List_Nil))),
+					_List_Nil)),
+			A2($author$project$Elm$valueFrom, $author$project$Elm$Gen$Elm$moduleName_, 'value')),
 		_List_fromArray(
 			[arg1]));
 };
-var $author$project$Elm$valueFrom = F2(
-	function (mod, name) {
-		return {
-			c: $elm$core$Result$Err(_List_Nil),
-			a: A2(
-				$stil4m$elm_syntax$Elm$Syntax$Expression$FunctionOrValue,
-				mod,
-				$author$project$Internal$Compiler$sanitize(name)),
-			b: _List_fromArray(
-				[mod]),
-			g: false
-		};
-	});
 var $author$project$Generate$getArgumentUnpacker = F3(
 	function (freshCount, tipe, value) {
 		_v0$3:
@@ -11172,19 +11181,6 @@ var $author$project$Internal$Compiler$documentation = F2(
 		}
 	});
 var $author$project$Elm$withDocumentation = $author$project$Internal$Compiler$documentation;
-var $author$project$Elm$withType = F2(
-	function (ann, _v0) {
-		var exp = _v0;
-		return _Utils_update(
-			exp,
-			{
-				c: $elm$core$Result$Ok(
-					$author$project$Internal$Compiler$getInnerAnnotation(ann)),
-				b: _Utils_ap(
-					exp.b,
-					$author$project$Internal$Compiler$getAnnotationImports(ann))
-			});
-	});
 var $author$project$Generate$generateBlocks = function (block) {
 	switch (block.$) {
 		case 0:
@@ -11573,11 +11569,8 @@ var $author$project$Generate$localType = F2(
 	function (name, args) {
 		return A2(
 			$author$project$Elm$apply,
-			A3(
-				$author$project$Elm$valueWith,
-				_List_fromArray(
-					['Elm', 'Annotation']),
-				'namedWith',
+			A2(
+				$author$project$Elm$withType,
 				A2(
 					$author$project$Elm$Annotation$function,
 					_List_fromArray(
@@ -11597,7 +11590,12 @@ var $author$project$Generate$localType = F2(
 						_List_fromArray(
 							['Elm', 'Annotation']),
 						'Annotation',
-						_List_Nil))),
+						_List_Nil)),
+				A2(
+					$author$project$Elm$valueFrom,
+					_List_fromArray(
+						['Elm', 'Annotation']),
+					'namedWith')),
 			_List_fromArray(
 				[
 					$author$project$Generate$thisModuleName,

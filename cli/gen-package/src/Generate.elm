@@ -151,24 +151,35 @@ local =
 
 thisModuleName : Elm.Expression
 thisModuleName =
-    Elm.valueWith local "moduleName_" (Annotation.list Annotation.string)
+    Elm.valueFrom local "moduleName_"
+        |> Elm.withType (Annotation.list Annotation.string)
 
 
 valueWith : Elm.Expression -> Elm.Type.Type -> Elm.Expression
 valueWith name annotation =
     Elm.apply
-        (Elm.valueWith
-            [ "Elm" ]
-            "valueWith"
-            (Annotation.function
-                [ Annotation.list Annotation.string
-                , Annotation.string
-                , Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" []
-                ]
-                (Annotation.namedWith [ "Elm" ] "Expression" [])
+        (Elm.apply
+            (Elm.valueFrom
+                [ "Elm" ]
+                "withType"
             )
+            [ typeToExpression annotation ]
         )
-        [ thisModuleName, name, typeToExpression annotation ]
+        [ Elm.apply
+            (Elm.valueFrom
+                [ "Elm" ]
+                "valueFrom"
+                |> Elm.withType
+                    (Annotation.function
+                        [ Annotation.list Annotation.string
+                        , Annotation.string
+                        , Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                        ]
+                        (Annotation.namedWith [ "Elm" ] "Expression" [])
+                    )
+            )
+            [ thisModuleName, name ]
+        ]
 
 
 apply : Elm.Expression -> List Elm.Expression -> Elm.Expression
@@ -212,17 +223,18 @@ annotationNamed name tags =
 localType : String -> List Elm.Expression -> Elm.Expression
 localType name args =
     Elm.apply
-        (Elm.valueWith
+        (Elm.valueFrom
             [ "Elm", "Annotation" ]
             "namedWith"
-            (Annotation.function
-                [ Annotation.list Annotation.string
-                , Annotation.string
-                , Annotation.list
+            |> Elm.withType
+                (Annotation.function
+                    [ Annotation.list Annotation.string
+                    , Annotation.string
+                    , Annotation.list
+                        (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                    ]
                     (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                ]
-                (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-            )
+                )
         )
         [ thisModuleName
         , Elm.string name
@@ -496,7 +508,7 @@ generateBlocks block =
     , body =
         Elm.apply
             (valueWith
-                (Elm.apply (Elm.valueWith elm "moduleName")
+                (Elm.apply (Elm.valueFrom elm "moduleName")
                     [ Elm.list (List.map Elm.string mod)
                     ]
                 )
@@ -826,7 +838,8 @@ typeToExpression elmType =
 
                 _ ->
                     -- this should never happen :/
-                    Elm.valueWith elmAnnotation "unit" annotationType
+                    Elm.valueFrom elmAnnotation "unit"
+                        |> Elm.withType annotationType
 
         Elm.Type.Type name types ->
             namedWithType name types

@@ -249,9 +249,9 @@ function init(install_dir) {
                         "Welcome to " + chalk_1.default.yellow("elm-codegen") + "!",
                         "",
                         "I've created the " + chalk_1.default.cyan(install_dir) + " folder and added some files.",
-                        chalk_1.default.cyan(install_dir + "/Generate.elm") + " is a good place to get start to see how everything works!",
+                        chalk_1.default.cyan(install_dir + "/Generate.elm") + " is a good place to start to see how everything works!",
                         "",
-                        "Run your generator by running " + chalk_1.default.yellow("elm-codegen"),
+                        "Run your generator by running " + chalk_1.default.yellow("elm-codegen") + ".",
                     ]));
                     return [2 /*return*/];
             }

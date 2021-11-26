@@ -31,22 +31,21 @@ maybe :
     -> Elm.Expression
 maybe arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "maybe"
-            (Type.function
-                [ Type.namedWith [ "Elm" ] "Expression" []
-                , Type.record
-                    [ ( "nothing", Type.namedWith [ "Elm" ] "Expression" [] )
-                    , ( "just"
-                      , Type.function
-                            [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                            (Type.namedWith [ "Elm" ] "Expression" [])
-                      )
-                    ]
-                ]
-                (Type.namedWith [ "Elm" ] "Expression" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.namedWith [ "Elm" ] "Expression" []
+                 , Type.record
+                     [ ( "nothing", Type.namedWith [ "Elm" ] "Expression" [] )
+                     , ( "just"
+                       , Type.function
+                             [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                             (Type.namedWith [ "Elm" ] "Expression" [])
+                       )
+                     ]
+                 ]
+                 (Type.namedWith [ "Elm" ] "Expression" [])
+             )
+            (Elm.valueFrom moduleName_ "maybe")
         )
         [ arg1
         , Elm.record
@@ -70,26 +69,25 @@ result :
     -> Elm.Expression
 result arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "result"
-            (Type.function
-                [ Type.namedWith [ "Elm" ] "Expression" []
-                , Type.record
-                    [ ( "err"
-                      , Type.function
-                            [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                            (Type.namedWith [ "Elm" ] "Expression" [])
-                      )
-                    , ( "ok"
-                      , Type.function
-                            [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                            (Type.namedWith [ "Elm" ] "Expression" [])
-                      )
-                    ]
-                ]
-                (Type.namedWith [ "Elm" ] "Expression" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.namedWith [ "Elm" ] "Expression" []
+                 , Type.record
+                     [ ( "err"
+                       , Type.function
+                             [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                             (Type.namedWith [ "Elm" ] "Expression" [])
+                       )
+                     , ( "ok"
+                       , Type.function
+                             [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                             (Type.namedWith [ "Elm" ] "Expression" [])
+                       )
+                     ]
+                 ]
+                 (Type.namedWith [ "Elm" ] "Expression" [])
+             )
+            (Elm.valueFrom moduleName_ "result")
         )
         [ arg1
         , Elm.record
@@ -116,22 +114,21 @@ list :
     -> Elm.Expression
 list arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "list"
-            (Type.function
-                [ Type.namedWith [ "Elm" ] "Expression" []
-                , Type.record
-                    [ ( "empty", Type.namedWith [ "Elm" ] "Expression" [] )
-                    , ( "remaining"
-                      , Type.function
-                            [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                            (Type.namedWith [ "Elm" ] "Expression" [])
-                      )
-                    ]
-                ]
-                (Type.namedWith [ "Elm" ] "Expression" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.namedWith [ "Elm" ] "Expression" []
+                 , Type.record
+                     [ ( "empty", Type.namedWith [ "Elm" ] "Expression" [] )
+                     , ( "remaining"
+                       , Type.function
+                             [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                             (Type.namedWith [ "Elm" ] "Expression" [])
+                       )
+                     ]
+                 ]
+                 (Type.namedWith [ "Elm" ] "Expression" [])
+             )
+            (Elm.valueFrom moduleName_ "list")
         )
         [ arg1
         , Elm.record
@@ -156,27 +153,26 @@ list2 :
     -> Elm.Expression
 list2 arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "list2"
-            (Type.function
-                [ Type.namedWith [ "Elm" ] "Expression" []
-                , Type.record
-                    [ ( "empty", Type.namedWith [ "Elm" ] "Expression" [] )
-                    , ( "one"
-                      , Type.function
-                            [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                            (Type.namedWith [ "Elm" ] "Expression" [])
-                      )
-                    , ( "remaining"
-                      , Type.function
-                            [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                            (Type.namedWith [ "Elm" ] "Expression" [])
-                      )
-                    ]
-                ]
-                (Type.namedWith [ "Elm" ] "Expression" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.namedWith [ "Elm" ] "Expression" []
+                 , Type.record
+                     [ ( "empty", Type.namedWith [ "Elm" ] "Expression" [] )
+                     , ( "one"
+                       , Type.function
+                             [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                             (Type.namedWith [ "Elm" ] "Expression" [])
+                       )
+                     , ( "remaining"
+                       , Type.function
+                             [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                             (Type.namedWith [ "Elm" ] "Expression" [])
+                       )
+                     ]
+                 ]
+                 (Type.namedWith [ "Elm" ] "Expression" [])
+             )
+            (Elm.valueFrom moduleName_ "list2")
         )
         [ arg1
         , Elm.record
@@ -208,34 +204,33 @@ list3 :
     -> Elm.Expression
 list3 arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "list3"
-            (Type.function
-                [ Type.namedWith [ "Elm" ] "Expression" []
-                , Type.record
-                    [ ( "empty", Type.namedWith [ "Elm" ] "Expression" [] )
-                    , ( "one"
-                      , Type.function
-                            [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                            (Type.namedWith [ "Elm" ] "Expression" [])
-                      )
-                    , ( "two"
-                      , Type.function
-                            [ Type.namedWith [ "Elm" ] "Expression" []
-                            , Type.namedWith [ "Elm" ] "Expression" []
-                            ]
-                            (Type.namedWith [ "Elm" ] "Expression" [])
-                      )
-                    , ( "remaining"
-                      , Type.function
-                            [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                            (Type.namedWith [ "Elm" ] "Expression" [])
-                      )
-                    ]
-                ]
-                (Type.namedWith [ "Elm" ] "Expression" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.namedWith [ "Elm" ] "Expression" []
+                 , Type.record
+                     [ ( "empty", Type.namedWith [ "Elm" ] "Expression" [] )
+                     , ( "one"
+                       , Type.function
+                             [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                             (Type.namedWith [ "Elm" ] "Expression" [])
+                       )
+                     , ( "two"
+                       , Type.function
+                             [ Type.namedWith [ "Elm" ] "Expression" []
+                             , Type.namedWith [ "Elm" ] "Expression" []
+                             ]
+                             (Type.namedWith [ "Elm" ] "Expression" [])
+                       )
+                     , ( "remaining"
+                       , Type.function
+                             [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                             (Type.namedWith [ "Elm" ] "Expression" [])
+                       )
+                     ]
+                 ]
+                 (Type.namedWith [ "Elm" ] "Expression" [])
+             )
+            (Elm.valueFrom moduleName_ "list3")
         )
         [ arg1
         , Elm.record
@@ -268,15 +263,14 @@ list3 arg1 arg2 =
 custom : Elm.Expression -> List Elm.Expression -> Elm.Expression
 custom arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "custom"
-            (Type.function
-                [ Type.namedWith [ "Elm" ] "Expression" []
-                , Type.list (Type.namedWith [ "Elm", "Case" ] "Branch" [])
-                ]
-                (Type.namedWith [ "Elm" ] "Expression" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.namedWith [ "Elm" ] "Expression" []
+                 , Type.list (Type.namedWith [ "Elm", "Case" ] "Branch" [])
+                 ]
+                 (Type.namedWith [ "Elm" ] "Expression" [])
+             )
+            (Elm.valueFrom moduleName_ "custom")
         )
         [ arg1, Elm.list arg2 ]
 
@@ -289,16 +283,15 @@ custom arg1 arg2 =
 otherwise : (Elm.Expression -> Elm.Expression) -> Elm.Expression
 otherwise arg1 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "otherwise"
-            (Type.function
-                [ Type.function
-                    [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                    (Type.namedWith [ "Elm" ] "Expression" [])
-                ]
-                (Type.namedWith [ "Elm", "Case" ] "Branch" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.function
+                     [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                     (Type.namedWith [ "Elm" ] "Expression" [])
+                 ]
+                 (Type.namedWith [ "Elm", "Case" ] "Branch" [])
+             )
+            (Elm.valueFrom moduleName_ "otherwise")
         )
         [ Elm.lambdaWith
             [ ( "ar1", Type.named [ "Elm" ] "Expression" ) ]
@@ -310,13 +303,12 @@ otherwise arg1 =
 branch : Elm.Expression -> Elm.Expression -> Elm.Expression
 branch arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "branch"
-            (Type.function
-                [ Type.string, Type.namedWith [ "Elm" ] "Expression" [] ]
-                (Type.namedWith [ "Elm", "Case" ] "Branch" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.string, Type.namedWith [ "Elm" ] "Expression" [] ]
+                 (Type.namedWith [ "Elm", "Case" ] "Branch" [])
+             )
+            (Elm.valueFrom moduleName_ "branch")
         )
         [ arg1, arg2 ]
 
@@ -325,17 +317,16 @@ branch arg1 arg2 =
 branch2 : Elm.Expression -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
 branch2 arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "branch2"
-            (Type.function
-                [ Type.string
-                , Type.function
-                    [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                    (Type.namedWith [ "Elm" ] "Expression" [])
-                ]
-                (Type.namedWith [ "Elm", "Case" ] "Branch" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.string
+                 , Type.function
+                     [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                     (Type.namedWith [ "Elm" ] "Expression" [])
+                 ]
+                 (Type.namedWith [ "Elm", "Case" ] "Branch" [])
+             )
+            (Elm.valueFrom moduleName_ "branch2")
         )
         [ arg1
         , Elm.lambdaWith
@@ -351,19 +342,18 @@ branch3 :
     -> Elm.Expression
 branch3 arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "branch3"
-            (Type.function
-                [ Type.string
-                , Type.function
-                    [ Type.namedWith [ "Elm" ] "Expression" []
-                    , Type.namedWith [ "Elm" ] "Expression" []
-                    ]
-                    (Type.namedWith [ "Elm" ] "Expression" [])
-                ]
-                (Type.namedWith [ "Elm", "Case" ] "Branch" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.string
+                 , Type.function
+                     [ Type.namedWith [ "Elm" ] "Expression" []
+                     , Type.namedWith [ "Elm" ] "Expression" []
+                     ]
+                     (Type.namedWith [ "Elm" ] "Expression" [])
+                 ]
+                 (Type.namedWith [ "Elm", "Case" ] "Branch" [])
+             )
+            (Elm.valueFrom moduleName_ "branch3")
         )
         [ arg1
         , Elm.lambdaWith
@@ -381,20 +371,19 @@ branch4 :
     -> Elm.Expression
 branch4 arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "branch4"
-            (Type.function
-                [ Type.string
-                , Type.function
-                    [ Type.namedWith [ "Elm" ] "Expression" []
-                    , Type.namedWith [ "Elm" ] "Expression" []
-                    , Type.namedWith [ "Elm" ] "Expression" []
-                    ]
-                    (Type.namedWith [ "Elm" ] "Expression" [])
-                ]
-                (Type.namedWith [ "Elm", "Case" ] "Branch" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.string
+                 , Type.function
+                     [ Type.namedWith [ "Elm" ] "Expression" []
+                     , Type.namedWith [ "Elm" ] "Expression" []
+                     , Type.namedWith [ "Elm" ] "Expression" []
+                     ]
+                     (Type.namedWith [ "Elm" ] "Expression" [])
+                 ]
+                 (Type.namedWith [ "Elm", "Case" ] "Branch" [])
+             )
+            (Elm.valueFrom moduleName_ "branch4")
         )
         [ arg1
         , Elm.lambdaWith
@@ -417,21 +406,20 @@ branch5 :
     -> Elm.Expression
 branch5 arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
-            moduleName_
-            "branch5"
-            (Type.function
-                [ Type.string
-                , Type.function
-                    [ Type.namedWith [ "Elm" ] "Expression" []
-                    , Type.namedWith [ "Elm" ] "Expression" []
-                    , Type.namedWith [ "Elm" ] "Expression" []
-                    , Type.namedWith [ "Elm" ] "Expression" []
-                    ]
-                    (Type.namedWith [ "Elm" ] "Expression" [])
-                ]
-                (Type.namedWith [ "Elm", "Case" ] "Branch" [])
-            )
+        (Elm.withType
+             (Type.function
+                 [ Type.string
+                 , Type.function
+                     [ Type.namedWith [ "Elm" ] "Expression" []
+                     , Type.namedWith [ "Elm" ] "Expression" []
+                     , Type.namedWith [ "Elm" ] "Expression" []
+                     , Type.namedWith [ "Elm" ] "Expression" []
+                     ]
+                     (Type.namedWith [ "Elm" ] "Expression" [])
+                 ]
+                 (Type.namedWith [ "Elm", "Case" ] "Branch" [])
+             )
+            (Elm.valueFrom moduleName_ "branch5")
         )
         [ arg1
         , Elm.lambdaWith
@@ -450,25 +438,9 @@ branch5 arg1 arg2 =
 
 
 {-| Every value/function in this module in case you need to refer to it directly. -}
-id_ :
-    { maybe : Elm.Expression
-    , result : Elm.Expression
-    , list : Elm.Expression
-    , list2 : Elm.Expression
-    , list3 : Elm.Expression
-    , custom : Elm.Expression
-    , otherwise : Elm.Expression
-    , branch : Elm.Expression
-    , branch2 : Elm.Expression
-    , branch3 : Elm.Expression
-    , branch4 : Elm.Expression
-    , branch5 : Elm.Expression
-    }
 id_ =
     { maybe =
-        Elm.valueWith
-            moduleName_
-            "maybe"
+        Elm.withType
             (Type.function
                 [ Type.namedWith [ "Elm" ] "Expression" []
                 , Type.record
@@ -482,10 +454,9 @@ id_ =
                 ]
                 (Type.namedWith [ "Elm" ] "Expression" [])
             )
+            (Elm.valueFrom moduleName_ "maybe")
     , result =
-        Elm.valueWith
-            moduleName_
-            "result"
+        Elm.withType
             (Type.function
                 [ Type.namedWith [ "Elm" ] "Expression" []
                 , Type.record
@@ -503,10 +474,9 @@ id_ =
                 ]
                 (Type.namedWith [ "Elm" ] "Expression" [])
             )
+            (Elm.valueFrom moduleName_ "result")
     , list =
-        Elm.valueWith
-            moduleName_
-            "list"
+        Elm.withType
             (Type.function
                 [ Type.namedWith [ "Elm" ] "Expression" []
                 , Type.record
@@ -520,10 +490,9 @@ id_ =
                 ]
                 (Type.namedWith [ "Elm" ] "Expression" [])
             )
+            (Elm.valueFrom moduleName_ "list")
     , list2 =
-        Elm.valueWith
-            moduleName_
-            "list2"
+        Elm.withType
             (Type.function
                 [ Type.namedWith [ "Elm" ] "Expression" []
                 , Type.record
@@ -542,10 +511,9 @@ id_ =
                 ]
                 (Type.namedWith [ "Elm" ] "Expression" [])
             )
+            (Elm.valueFrom moduleName_ "list2")
     , list3 =
-        Elm.valueWith
-            moduleName_
-            "list3"
+        Elm.withType
             (Type.function
                 [ Type.namedWith [ "Elm" ] "Expression" []
                 , Type.record
@@ -571,20 +539,18 @@ id_ =
                 ]
                 (Type.namedWith [ "Elm" ] "Expression" [])
             )
+            (Elm.valueFrom moduleName_ "list3")
     , custom =
-        Elm.valueWith
-            moduleName_
-            "custom"
+        Elm.withType
             (Type.function
                 [ Type.namedWith [ "Elm" ] "Expression" []
                 , Type.list (Type.namedWith [ "Elm", "Case" ] "Branch" [])
                 ]
                 (Type.namedWith [ "Elm" ] "Expression" [])
             )
+            (Elm.valueFrom moduleName_ "custom")
     , otherwise =
-        Elm.valueWith
-            moduleName_
-            "otherwise"
+        Elm.withType
             (Type.function
                 [ Type.function
                     [ Type.namedWith [ "Elm" ] "Expression" [] ]
@@ -592,18 +558,16 @@ id_ =
                 ]
                 (Type.namedWith [ "Elm", "Case" ] "Branch" [])
             )
+            (Elm.valueFrom moduleName_ "otherwise")
     , branch =
-        Elm.valueWith
-            moduleName_
-            "branch"
+        Elm.withType
             (Type.function
                 [ Type.string, Type.namedWith [ "Elm" ] "Expression" [] ]
                 (Type.namedWith [ "Elm", "Case" ] "Branch" [])
             )
+            (Elm.valueFrom moduleName_ "branch")
     , branch2 =
-        Elm.valueWith
-            moduleName_
-            "branch2"
+        Elm.withType
             (Type.function
                 [ Type.string
                 , Type.function
@@ -612,10 +576,9 @@ id_ =
                 ]
                 (Type.namedWith [ "Elm", "Case" ] "Branch" [])
             )
+            (Elm.valueFrom moduleName_ "branch2")
     , branch3 =
-        Elm.valueWith
-            moduleName_
-            "branch3"
+        Elm.withType
             (Type.function
                 [ Type.string
                 , Type.function
@@ -626,10 +589,9 @@ id_ =
                 ]
                 (Type.namedWith [ "Elm", "Case" ] "Branch" [])
             )
+            (Elm.valueFrom moduleName_ "branch3")
     , branch4 =
-        Elm.valueWith
-            moduleName_
-            "branch4"
+        Elm.withType
             (Type.function
                 [ Type.string
                 , Type.function
@@ -641,10 +603,9 @@ id_ =
                 ]
                 (Type.namedWith [ "Elm", "Case" ] "Branch" [])
             )
+            (Elm.valueFrom moduleName_ "branch4")
     , branch5 =
-        Elm.valueWith
-            moduleName_
-            "branch5"
+        Elm.withType
             (Type.function
                 [ Type.string
                 , Type.function
@@ -657,6 +618,7 @@ id_ =
                 ]
                 (Type.namedWith [ "Elm", "Case" ] "Branch" [])
             )
+            (Elm.valueFrom moduleName_ "branch5")
     }
 
 

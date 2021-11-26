@@ -3,7 +3,7 @@ module Elm exposing
     , Expression
     , bool, int, float, char, string, hex, unit
     , maybe, list, tuple, triple
-    , value, valueFrom, valueWith
+    , value, valueFrom
     , withType
     , record, field, Field, get, updateRecord
     , letIn, ifThen
@@ -43,7 +43,7 @@ module Elm exposing
 
 @docs maybe, list, tuple, triple
 
-@docs value, valueFrom, valueWith
+@docs value, valueFrom
 
 @docs withType
 
@@ -424,20 +424,23 @@ valueFrom mod name =
         }
 
 
-{-| Add an annotation to a value.
 
-**Note** this may not _literally_ add an annotation to the code, but will inform `elm-prefab`s type inference so that top level values can be auto-annotated.
+--{-| Add an annotation to a value.
+--
+--**Note** this may not _literally_ add an annotation to the code, but will inform `elm-prefab`s type inference so that top level values can be auto-annotated.
+--
+--So, for example, if we have.
+--
+--    Elm.list
+--        [ Elm.valueWith myModule "myString" Elm.Annotation.string
+--        , Elm.valueWith myModule "myOtherString" Elm.Annotation.string
+--        ]
+--
+--Then, when that list is generated, it will automatically have the type signature `List String`
+--
+---}
 
-So, for example, if we have.
 
-    Elm.list
-        [ Elm.valueWith myModule "myString" Elm.Annotation.string
-        , Elm.valueWith myModule "myOtherString" Elm.Annotation.string
-        ]
-
-Then, when that list is generated, it will automatically have the type signature `List String`
-
--}
 valueWith : List String -> String -> Elm.Annotation.Annotation -> Expression
 valueWith mod name ann =
     Compiler.Expression
@@ -2568,12 +2571,6 @@ applyInfix (BinOp symbol dir _) fnAnnotation (Compiler.Expression left) (Compile
         , imports = left.imports ++ right.imports
         , skip = False
         }
-
-
-{-| -}
-pass : Expression
-pass =
-    Compiler.skip
 
 
 {-| -}
