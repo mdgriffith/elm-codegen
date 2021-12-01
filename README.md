@@ -19,7 +19,7 @@ main =
 
 ```
 
-You can run `elm-prefab Generator.elm` and it will generate
+You can run `elm-codegen Generator.elm` and it will generate
 
 ```elm
 module My.Module exposing (..)
@@ -37,7 +37,7 @@ Some cool stuff that's handled under the hood.
 
 ## Automatic Imports
 
-There's no way to manually generate an `import` statement in `elm-prefab`.
+There's no way to manually generate an `import` statement in `elm-codegen`.
 
 Instead, all imports are automatically calculated by the values that you use in your generator.
 
@@ -63,7 +63,7 @@ Elm.declaration "myRecord"
     )
 ```
 
-`elm-prefab` will just figure out what type signature this has and inlcude it in the generated file!
+`elm-codegen` will just figure out what type signature this has and inlcude it in the generated file!
 
 ```
 myRecord :
@@ -89,10 +89,10 @@ myRecord =
 
 Let's say you want to generate code that uses a specific library like `mdgriffith/elm-ui`.
 
-Elm prefab can help you out!
+Elm codegen can help you out!
 
 ```bash
-elm-prefab install mdgriffith/elm-ui
+elm-codegen install mdgriffith/elm-ui
 ```
 
 Will generate a module `Elm.Gen.Element` which contains a bunch of helpers for you to generate code from the `Element` module in `elm-ui`!

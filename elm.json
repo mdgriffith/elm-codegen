@@ -1,7 +1,7 @@
 {
   "type": "package",
-  "name": "mdgriffith/elm-prefabber",
-  "summary": "Generate elm code",
+  "name": "mdgriffith/elm-codegen",
+  "summary": "Simple code generation for Elm",
   "license": "BSD-3-Clause",
   "version": "1.0.0",
   "exposed-modules": ["Elm", "Elm.Annotation", "Elm.Debug", "Elm.Case"],

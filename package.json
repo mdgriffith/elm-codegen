@@ -1,5 +1,5 @@
 {
-  "name": "elm-prefab",
+  "name": "elm-codegen",
   "version": "1.0.0",
   "description": "Codegen for Elm",
   "main": "./dist/index.js",
@@ -11,7 +11,7 @@
     "build:docs": "elm make --docs=docs.json",
     "pkg:build": "cd cli/gen-package; elm make src/Generate.elm --optimize --output=../../dist/gen-package.js",
     "pkg:build-debug": "cd cli/gen-package; elm make src/Generate.elm --output=../../dist/gen-package.js",
-    "pkg:generate-prefab-bindings": "node dist/index.js install docs.json --output prefab-src --cwd cli/gen-package",
+    "pkg:generate-codegen-bindings": "node dist/index.js install docs.json --output prefab-src --cwd cli/gen-package",
     "pkg:test-install": "node dist/index.js src/Generate.elm --output engine --cwd cli/gen-package --debug --flags-from playground/docs/gql-docs.json",
     "pkg:install-elm-json": "(npm run build; node dist/index.js install elm/json)",
     "pkg:install-elm-core": "(npm run build; node dist/index.js install elm/core)",
@@ -20,14 +20,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mdgriffith/elm-prefab.git"
+    "url": "git+https://github.com/mdgriffith/elm-codegen.git"
   },
   "author": "Matthew Griffith",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/mdgriffith/elm-prefab/issues"
+    "url": "https://github.com/mdgriffith/elm-codegen/issues"
   },
-  "homepage": "https://github.com/mdgriffith/elm-prefab#readme",
+  "homepage": "https://github.com/mdgriffith/elm-codegen#readme",
   "devDependencies": {
     "@types/node-fetch": "^2.5.10",
     "typescript": "^4.2.4"
