@@ -1,6 +1,6 @@
 module Internal.Compiler exposing (..)
 
-import Dict
+import Dict exposing (Dict)
 import Elm.Syntax.Declaration as Declaration
 import Elm.Syntax.Exposing as Expose
 import Elm.Syntax.Expression as Exp
@@ -12,6 +12,50 @@ import Elm.Syntax.TypeAnnotation as Annotation
 
 type Annotation
     = Annotation AnnotationDetails
+
+
+type alias AnnotationDetails =
+    { imports : List Module
+    , annotation : Annotation.TypeAnnotation
+    }
+
+
+{-| -}
+type Expression
+    = Expression ExpressionDetails
+
+
+type alias ExpressionDetails =
+    { expression : Exp.Expression
+    , annotation :
+        Result
+            (List InferenceError)
+            Inference
+    , imports : List Module
+    }
+
+
+type alias Inference =
+    --{ type_ : Annotation.TypeAnnotation
+    --, inferences : List ( String, Annotation.TypeAnnotation )
+    --}
+    Annotation.TypeAnnotation
+
+
+type InferenceError
+    = MismatchedList Annotation.TypeAnnotation Annotation.TypeAnnotation
+    | SomeOtherIssue
+    | EmptyCaseStatement
+    | FunctionAppliedToTooManyArgs
+    | DuplicateFieldInRecord String
+    | CaseBranchesReturnDifferentTypes
+    | CouldNotFindField String
+
+
+type Declaration
+    = Declaration Expose (List Module) Declaration.Declaration
+    | Comment String
+    | Block String
 
 
 getGenerics : Annotation -> List (Node String)
@@ -77,25 +121,6 @@ getAnnotationImports (Annotation details) =
     details.imports
 
 
-type alias AnnotationDetails =
-    { imports : List Module
-    , annotation : Annotation.TypeAnnotation
-    }
-
-
-{-| -}
-type Expression
-    = Expression ExpressionDetails
-
-
-type alias ExpressionDetails =
-    { skip : Bool
-    , expression : Exp.Expression
-    , annotation : Result (List InferenceError) Annotation.TypeAnnotation
-    , imports : List Module
-    }
-
-
 getImports : Expression -> List Module
 getImports (Expression exp) =
     exp.imports
@@ -109,39 +134,6 @@ getInnerExpression (Expression exp) =
 getAnnotation : Expression -> Result (List InferenceError) Annotation.TypeAnnotation
 getAnnotation (Expression exp) =
     exp.annotation
-
-
-{-| -}
-skip : Expression
-skip =
-    Expression
-        { skip = True
-        , expression = Exp.UnitExpr
-        , annotation = Err []
-        , imports = []
-        }
-
-
-type InferenceError
-    = MismatchedList Annotation.TypeAnnotation Annotation.TypeAnnotation
-    | SomeOtherIssue
-    | EmptyCaseStatement
-    | ThisIsntARecord String
-    | FunctionAppliedToTooManyArgs
-    | DuplicateFieldInRecord String
-    | CaseBranchesReturnDifferentTypes
-    | CouldNotFindField String
-
-
-{-| -}
-type LetDeclaration
-    = LetDeclaration (List Module) Exp.LetDeclaration
-
-
-type Declaration
-    = Declaration Expose (List Module) Declaration.Declaration
-    | Comment String
-    | Block String
 
 
 documentation : String -> Declaration -> Declaration
@@ -629,26 +621,6 @@ extractListAnnotation expressions annotations =
                     Err err
 
 
-{-| -}
-applyType : Expression -> List Expression -> Result (List InferenceError) Annotation.TypeAnnotation
-applyType (Expression exp) args =
-    case exp.annotation of
-        Err err ->
-            Err err
-
-        Ok topAnnotation ->
-            case extractListAnnotation args [] of
-                Ok types ->
-                    applyTypeHelper topAnnotation types
-
-                Err err ->
-                    --let
-                    --    _ =
-                    --        Debug.log "LIST FAILED TO EXTRACT" err
-                    --in
-                    Err err
-
-
 autoReduce : Int -> Expression -> Expression
 autoReduce count ((Expression fn) as unchanged) =
     if count <= 0 then
@@ -665,9 +637,25 @@ autoReduce count ((Expression fn) as unchanged) =
 
 
 {-| -}
-applyTypeHelper : Annotation.TypeAnnotation -> List Annotation.TypeAnnotation -> Result (List InferenceError) Annotation.TypeAnnotation
+applyType : Expression -> List Expression -> Result (List InferenceError) Inference
+applyType (Expression exp) args =
+    case exp.annotation of
+        Err err ->
+            Err err
+
+        Ok topAnnotation ->
+            case extractListAnnotation args [] of
+                Ok types ->
+                    applyTypeHelper topAnnotation types
+
+                Err err ->
+                    Err err
+
+
+{-| -}
+applyTypeHelper : Inference -> List Annotation.TypeAnnotation -> Result (List InferenceError) Inference
 applyTypeHelper fn args =
-    case fn of
+    case fn.type_ of
         Annotation.FunctionTypeAnnotation one two ->
             case args of
                 [] ->
@@ -675,23 +663,19 @@ applyTypeHelper fn args =
 
                 top :: rest ->
                     -- if one and top match ->
-                    case unifiable (denode one) top of
+                    case Debug.log "USE UNIFIABLE OK SIGNAL" <| unifiable (denode one) top of
                         Ok _ ->
                             case rest of
                                 [] ->
-                                    Ok (denode two)
+                                    Ok
+                                        { type_ = denode two
+                                        , inferences = []
+                                        }
 
                                 _ ->
-                                    applyTypeHelper (denode two) rest
+                                    applyTypeHelper { type_ = denode two, inferences = fn.inferences } rest
 
                         Err err ->
-                            --let
-                            --    _ =
-                            --        Debug.log "APPLAIL"
-                            --            { fn = fn
-                            --            , top = top
-                            --            }
-                            --in
                             Err []
 
         final ->
@@ -703,11 +687,14 @@ applyTypeHelper fn args =
                     Err [ FunctionAppliedToTooManyArgs ]
 
 
-unify : List Expression -> Result (List InferenceError) Annotation.TypeAnnotation
+unify : List Expression -> Result (List InferenceError) Inference
 unify exps =
     case exps of
         [] ->
-            Ok (Annotation.GenericType "a")
+            Ok
+                { type_ = Annotation.GenericType "a"
+                , inferences = []
+                }
 
         (Expression top) :: remain ->
             case top.annotation of
@@ -720,8 +707,8 @@ unify exps =
 
 unifyHelper :
     List Expression
-    -> Annotation.TypeAnnotation
-    -> Result (List InferenceError) Annotation.TypeAnnotation
+    -> Inference
+    -> Result (List InferenceError) Inference
 unifyHelper exps existing =
     case exps of
         [] ->
@@ -754,9 +741,9 @@ unifyHelper exps existing =
 
 -}
 unifiable :
-    Annotation.TypeAnnotation
-    -> Annotation.TypeAnnotation
-    -> Result String Annotation.TypeAnnotation
+    Inference
+    -> Inference
+    -> Result String Inference
 unifiable one two =
     let
         ( _, result ) =
