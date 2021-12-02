@@ -377,8 +377,6 @@ prettyDeclarations aliases decls =
                         |> Pretty.a (prettyElmSyntaxDeclaration aliases innerDecl)
                         |> Pretty.a Pretty.line
                         |> Pretty.a Pretty.line
-                        |> Pretty.a Pretty.line
-
         )
         Pretty.empty
         decls
