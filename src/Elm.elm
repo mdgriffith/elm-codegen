@@ -28,6 +28,7 @@ module Elm exposing
     , parse, unsafe
     , toString, expressionImports
     , declarationToString, declarationImports
+    -- , function
     )
 
 {-|
@@ -139,6 +140,7 @@ For precise control over what is rendered for the module comment, use [fileWith]
 
 -}
 
+import Dict
 import Elm.Annotation
 import Elm.Parser
 import Elm.Processing
@@ -420,7 +422,6 @@ valueFrom mod name =
                 (Compiler.sanitize name)
         , annotation = Err []
         , imports = [ mod ]
-        , skip = False
         }
 
 
@@ -447,7 +448,6 @@ valueWith mod name ann =
         { expression = Exp.FunctionOrValue mod (Compiler.sanitize name)
         , annotation = Ok (Compiler.getInnerAnnotation ann)
         , imports = mod :: Compiler.getAnnotationImports ann
-        , skip = False
         }
 
 
@@ -463,6 +463,54 @@ Though be sure elm-prefab isn't already doing this automatically for you!
 -}
 withType : Elm.Annotation.Annotation -> Expression -> Expression
 withType ann (Compiler.Expression exp) =
+    --let
+    --    _ =
+    --        Debug.log "Ann" ann
+    --in
+    --case Debug.log "GENERICS" <| Compiler.getGenerics ann of
+    --    [] ->
+    --        Compiler.Expression
+    --            { expression = exp.expression
+    --            , annotation = Ok (Compiler.getInnerAnnotation ann)
+    --            , imports = exp.imports ++ Compiler.getAnnotationImports ann
+    --            , typeVars = exp.typeVars
+    --            }
+    --
+    --    vars ->
+    --        Compiler.Expression
+    --            { expression = exp.expression
+    --            , annotation = Ok (Compiler.getInnerAnnotation ann)
+    --            , imports = exp.imports ++ Compiler.getAnnotationImports ann
+    --            , typeVars =
+    --                if Dict.isEmpty exp.typeVars then
+    --                    Dict.fromList
+    --                        (List.map
+    --                            (\nodedVar ->
+    --                                let
+    --                                    name =
+    --                                        Compiler.denode nodedVar
+    --                                in
+    --                                ( name, Annotation.GenericType (Compiler.formatValue name) )
+    --                            )
+    --                            vars
+    --                        )
+    --
+    --                else
+    --                    Dict.union
+    --                        exp.typeVars
+    --                        (Dict.fromList
+    --                            (List.map
+    --                                (\nodedVar ->
+    --                                    let
+    --                                        name =
+    --                                            Compiler.denode nodedVar
+    --                                    in
+    --                                    ( name, Annotation.GenericType (Compiler.formatValue name) )
+    --                                )
+    --                                vars
+    --                            )
+    --                        )
+    --            }
     Compiler.Expression
         { exp
             | annotation = Ok (Compiler.getInnerAnnotation ann)
@@ -477,7 +525,6 @@ unit =
         { expression = Exp.UnitExpr
         , annotation = Ok Annotation.Unit
         , imports = []
-        , skip = False
         }
 
 
@@ -501,7 +548,6 @@ int intVal =
         { expression = Exp.Integer intVal
         , annotation = Ok (Compiler.getInnerAnnotation Elm.Annotation.int)
         , imports = []
-        , skip = False
         }
 
 
@@ -512,7 +558,6 @@ hex hexVal =
         { expression = Exp.Hex hexVal
         , annotation = Ok (Compiler.getInnerAnnotation Elm.Annotation.int)
         , imports = []
-        , skip = False
         }
 
 
@@ -523,7 +568,6 @@ float floatVal =
         { expression = Exp.Floatable floatVal
         , annotation = Ok (Compiler.getInnerAnnotation Elm.Annotation.float)
         , imports = []
-        , skip = False
         }
 
 
@@ -534,7 +578,6 @@ string literal =
         { expression = Exp.Literal literal
         , annotation = Ok (Compiler.getInnerAnnotation Elm.Annotation.string)
         , imports = []
-        , skip = False
         }
 
 
@@ -545,7 +588,6 @@ char charVal =
         { expression = Exp.CharLiteral charVal
         , annotation = Ok (Compiler.getInnerAnnotation Elm.Annotation.char)
         , imports = []
-        , skip = False
         }
 
 
@@ -573,7 +615,6 @@ tuple (Compiler.Expression one) (Compiler.Expression two) =
                 one.annotation
                 two.annotation
         , imports = one.imports ++ two.imports
-        , skip = False
         }
 
 
@@ -599,7 +640,6 @@ triple (Compiler.Expression one) (Compiler.Expression two) (Compiler.Expression 
                 two.annotation
                 three.annotation
         , imports = one.imports ++ two.imports ++ three.imports
-        , skip = False
         }
 
 
@@ -641,7 +681,6 @@ maybe content =
         , imports =
             Maybe.map getImports content
                 |> Maybe.withDefault []
-        , skip = False
         }
 
 
@@ -659,7 +698,6 @@ list exprs =
                             [ Compiler.nodify inner ]
                     )
         , imports = List.concatMap getImports exprs
-        , skip = False
         }
 
 
@@ -688,7 +726,6 @@ updateRecord name fields =
             List.concatMap
                 (Tuple.second >> Compiler.getImports)
                 fields
-        , skip = False
         }
 
 
@@ -768,7 +805,6 @@ record fields =
                     Err errs
         , imports =
             unified.imports
-        , skip = False
         }
 
 
@@ -828,7 +864,6 @@ letIn decls (Compiler.Expression within) =
         , imports = gathered.imports
         , annotation =
             within.annotation
-        , skip = False
         }
 
 
@@ -856,7 +891,6 @@ ifThen (Compiler.Expression condition) (Compiler.Expression thenBranch) (Compile
         , annotation =
             thenBranch.annotation
         , imports = condition.imports ++ thenBranch.imports ++ elseBranch.imports
-        , skip = False
         }
 
 
@@ -896,7 +930,6 @@ get selector (Compiler.Expression expr) =
                 otherwise ->
                     otherwise
         , imports = expr.imports
-        , skip = False
         }
 
 
@@ -1086,11 +1119,7 @@ getImports (Compiler.Expression exp) =
 
 {-| -}
 apply : Expression -> List Expression -> Expression
-apply ((Compiler.Expression exp) as top) allArgs =
-    let
-        args =
-            List.filter (\(Compiler.Expression arg) -> not arg.skip) allArgs
-    in
+apply ((Compiler.Expression exp) as top) args =
     Compiler.Expression
         { expression =
             -- Disabling autopipe for now.
@@ -1100,7 +1129,6 @@ apply ((Compiler.Expression exp) as top) allArgs =
         , annotation =
             Compiler.applyType top args
         , imports = exp.imports ++ List.concatMap getImports args
-        , skip = False
         }
 
 
@@ -1204,7 +1232,6 @@ lambdaWith args (Compiler.Expression expr) =
                         (List.map (Compiler.getInnerAnnotation << Tuple.second) args)
                         |> Ok
         , imports = expr.imports
-        , skip = False
         }
 
 
@@ -1240,7 +1267,6 @@ lambda argBaseName argType toExpression =
                         [ Compiler.getInnerAnnotation argType ]
                         |> Ok
         , imports = expr.imports
-        , skip = False
         }
 
 
@@ -1277,7 +1303,6 @@ lambdaBetaReduced argBaseName argType toExpression =
                         [ Compiler.getInnerAnnotation argType ]
                         |> Ok
         , imports = expr.imports
-        , skip = False
         }
 
 
@@ -1422,7 +1447,6 @@ lambda2 argBaseName oneType twoType toExpression =
                         ]
                         |> Ok
         , imports = expr.imports
-        , skip = False
         }
 
 
@@ -1477,7 +1501,6 @@ lambda3 argBaseName oneType twoType threeType toExpression =
                         ]
                         |> Ok
         , imports = expr.imports
-        , skip = False
         }
 
 
@@ -1538,7 +1561,6 @@ lambda4 argBaseName oneType twoType threeType fourType toExpression =
                         ]
                         |> Ok
         , imports = expr.imports
-        , skip = False
         }
 
 
@@ -1605,7 +1627,6 @@ lambda5 argBaseName oneType twoType threeType fourType fiveType toExpression =
                         ]
                         |> Ok
         , imports = expr.imports
-        , skip = False
         }
 
 
@@ -1686,6 +1707,58 @@ functionWith name args (Compiler.Expression body) =
                 args
                 ++ body.imports
             )
+
+
+{-| -}
+function : String -> String -> (Expression -> Expression) -> Declaration
+function name oneName toBody =
+    let
+        arg1 =
+            value oneName
+                |> withType (Elm.Annotation.var "a")
+
+        (Compiler.Expression body) =
+            toBody arg1
+    in
+    { documentation = Compiler.nodifyMaybe Nothing
+    , signature =
+        case body.annotation of
+            Ok return ->
+                Just
+                    (Compiler.nodify
+                        { name = Compiler.nodify (Compiler.formatValue name)
+                        , typeAnnotation =
+                            Compiler.nodify <|
+                                Compiler.getInnerAnnotation <|
+                                    Elm.Annotation.function
+                                        [ --case Dict.get "a" body.typeVars of
+                                          --    Nothing ->
+                                          Elm.Annotation.var "a"
+
+                                        --Just arg1Type ->
+                                        --    Compiler.Annotation
+                                        --        { annotation = arg1Type
+                                        --, imports = []
+                                        --}
+                                        ]
+                                        (Compiler.noImports return)
+                        }
+                    )
+
+            Err _ ->
+                Nothing
+    , declaration =
+        Compiler.nodify
+            { name = Compiler.nodify (Compiler.formatValue name)
+            , arguments =
+                [ Compiler.nodify (Pattern.VarPattern oneName)
+                ]
+            , expression = Compiler.nodify body.expression
+            }
+    }
+        |> Declaration.FunctionDeclaration
+        |> Compiler.Declaration Compiler.NotExposed
+            body.imports
 
 
 {-| -}
@@ -2238,30 +2311,14 @@ composeLeft =
 -}
 power : Expression -> Expression -> Expression
 power =
-    applyInfix (BinOp "^" Infix.Right 8)
-        (valueWith
-            []
-            "^"
-            (Elm.Annotation.function
-                [ Elm.Annotation.var "number", Elm.Annotation.var "number" ]
-                (Elm.Annotation.var "number")
-            )
-        )
+    applyNumber "^" Infix.Left
 
 
 {-| `*`
 -}
 multiply : Expression -> Expression -> Expression
 multiply =
-    applyInfix (BinOp "*" Infix.Left 7)
-        (valueWith
-            []
-            "*"
-            (Elm.Annotation.function
-                [ Elm.Annotation.var "number", Elm.Annotation.var "number" ]
-                (Elm.Annotation.var "number")
-            )
-        )
+    applyNumber "*" Infix.Left
 
 
 {-| `/`
@@ -2298,30 +2355,25 @@ intDivide =
 -}
 plus : Expression -> Expression -> Expression
 plus =
-    applyInfix (BinOp "+" Infix.Left 6)
-        (valueWith
-            []
-            "max"
-            (Elm.Annotation.function
-                [ Elm.Annotation.var "number", Elm.Annotation.var "number" ]
-                (Elm.Annotation.var "number")
-            )
-        )
+    applyNumber "+" Infix.Left
+
+
+
+--(valueWith
+--    []
+--    "max"
+--    (Elm.Annotation.function
+--        [ Elm.Annotation.var "number", Elm.Annotation.var "number" ]
+--        (Elm.Annotation.var "number")
+--    )
+--)
 
 
 {-| `-`
 -}
 minus : Expression -> Expression -> Expression
 minus =
-    applyInfix (BinOp "-" Infix.Left 6)
-        (valueWith
-            []
-            "max"
-            (Elm.Annotation.function
-                [ Elm.Annotation.var "number", Elm.Annotation.var "number" ]
-                (Elm.Annotation.var "number")
-            )
-        )
+    applyNumber "-" Infix.Left
 
 
 {-| `++`
@@ -2554,7 +2606,6 @@ applyBinOp (BinOp symbol dir _) (Compiler.Expression exprl) (Compiler.Expression
             Exp.OperatorApplication symbol dir (Compiler.nodify exprl.expression) (Compiler.nodify exprr.expression)
         , annotation = Err [ Compiler.SomeOtherIssue ]
         , imports = exprl.imports ++ exprr.imports
-        , skip = False
         }
 
 
@@ -2569,7 +2620,32 @@ applyInfix (BinOp symbol dir _) fnAnnotation (Compiler.Expression left) (Compile
                 , Compiler.Expression right
                 ]
         , imports = left.imports ++ right.imports
-        , skip = False
+        }
+
+
+applyNumber : String -> Infix.InfixDirection -> Expression -> Expression -> Expression
+applyNumber symbol dir (Compiler.Expression left) (Compiler.Expression right) =
+    Compiler.Expression
+        { expression =
+            Exp.OperatorApplication symbol
+                dir
+                (Compiler.nodify left.expression)
+                (Compiler.nodify right.expression)
+        , annotation =
+            Compiler.applyType
+                (valueWith
+                    []
+                    "max"
+                    (Elm.Annotation.function
+                        [ Elm.Annotation.var "number", Elm.Annotation.var "number" ]
+                        (Elm.Annotation.var "number")
+                    )
+                )
+                [ Compiler.Expression left
+                , Compiler.Expression right
+                ]
+                |> Debug.log "APPLIED ANNOTATION"
+        , imports = left.imports ++ right.imports
         }
 
 

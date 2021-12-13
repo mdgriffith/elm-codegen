@@ -655,7 +655,7 @@ applyType (Expression exp) args =
 {-| -}
 applyTypeHelper : Inference -> List Annotation.TypeAnnotation -> Result (List InferenceError) Inference
 applyTypeHelper fn args =
-    case fn.type_ of
+    case fn of
         Annotation.FunctionTypeAnnotation one two ->
             case args of
                 [] ->
@@ -663,17 +663,22 @@ applyTypeHelper fn args =
 
                 top :: rest ->
                     -- if one and top match ->
-                    case Debug.log "USE UNIFIABLE OK SIGNAL" <| unifiable (denode one) top of
+                    case unifiable (denode one) top of
                         Ok _ ->
                             case rest of
                                 [] ->
                                     Ok
-                                        { type_ = denode two
-                                        , inferences = []
-                                        }
+                                        --{ type_ =
+                                        (denode
+                                            two
+                                        )
 
+                                --, inferences = []
+                                --}
                                 _ ->
-                                    applyTypeHelper { type_ = denode two, inferences = fn.inferences } rest
+                                    applyTypeHelper
+                                        (denode two)
+                                        rest
 
                         Err err ->
                             Err []
@@ -692,10 +697,13 @@ unify exps =
     case exps of
         [] ->
             Ok
-                { type_ = Annotation.GenericType "a"
-                , inferences = []
-                }
+                --{ type_ =
+                (Annotation.GenericType
+                    "a"
+                )
 
+        --, inferences = []
+        --}
         (Expression top) :: remain ->
             case top.annotation of
                 Ok ann ->

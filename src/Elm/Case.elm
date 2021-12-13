@@ -75,7 +75,6 @@ maybe (Compiler.Expression expr) branches =
                 Just ann ->
                     ann
         , imports = expr.imports ++ gathered.imports
-        , skip = False
         }
 
 
@@ -130,7 +129,6 @@ tuple (Compiler.Expression expr) branches =
                 Just ann ->
                     ann
         , imports = expr.imports ++ gathered.imports
-        , skip = False
         }
 
 
@@ -186,7 +184,7 @@ triple (Compiler.Expression expr) branches =
                 Just ann ->
                     ann
         , imports = expr.imports ++ gathered.imports
-        , skip = False
+
         }
 
 
@@ -244,7 +242,7 @@ result (Compiler.Expression expr) branches =
                 Just ann ->
                     ann
         , imports = expr.imports ++ gathered.imports
-        , skip = False
+
         }
 
 
@@ -300,7 +298,7 @@ list (Compiler.Expression expr) branches =
                 Just ann ->
                     ann
         , imports = expr.imports ++ gathered.imports
-        , skip = False
+
         }
 
 
@@ -360,7 +358,6 @@ list2 (Compiler.Expression expr) branches =
                 Just ann ->
                     ann
         , imports = expr.imports ++ gathered.imports
-        , skip = False
         }
 
 
@@ -424,7 +421,6 @@ list3 (Compiler.Expression expr) branches =
                 Just ann ->
                     ann
         , imports = expr.imports ++ gathered.imports
-        , skip = False
         }
 
 
@@ -473,7 +469,6 @@ custom (Compiler.Expression expr) branches =
                 Just ann ->
                     ann
         , imports = expr.imports ++ gathered.imports
-        , skip = False
         }
 
 
