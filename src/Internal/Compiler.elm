@@ -36,9 +36,9 @@ type alias ExpressionDetails =
 
 
 type alias Inference =
-    --{ type_ : Annotation.TypeAnnotation
-    --, inferences : List ( String, Annotation.TypeAnnotation )
-    --}
+    -- { type_ : Annotation.TypeAnnotation
+    -- , inferences : Dict String Annotation.TypeAnnotation
+    -- }
     Annotation.TypeAnnotation
 
 
@@ -506,6 +506,11 @@ type Expose
         }
 
 
+mapNode : (a -> b) -> Node a -> Node b
+mapNode fn (Node range n) =
+    Node range (fn n)
+
+
 denode : Node a -> a
 denode =
     Node.value
@@ -589,16 +594,6 @@ formatType str =
     String.toUpper (String.left 1 str) ++ String.dropLeft 1 str
 
 
-getTypeAnnotation : Expression -> Maybe Annotation.TypeAnnotation
-getTypeAnnotation (Expression exp) =
-    case exp.annotation of
-        Err _ ->
-            Nothing
-
-        Ok ann ->
-            Just ann
-
-
 extractListAnnotation :
     List Expression
     -> List Annotation.TypeAnnotation
@@ -614,10 +609,6 @@ extractListAnnotation expressions annotations =
                     extractListAnnotation remain (ann :: annotations)
 
                 Err err ->
-                    --let
-                    --    _ =
-                    --        Debug.log "LIST FAILED TO EXTRACT" { passed = annotations, top = top }
-                    --in
                     Err err
 
 
@@ -628,9 +619,14 @@ autoReduce count ((Expression fn) as unchanged) =
 
     else
         case fn.annotation of
-            Ok (Annotation.FunctionTypeAnnotation one two) ->
-                autoReduce (count - 1)
-                    (Expression { fn | annotation = Ok (denode two) })
+            Ok ann ->
+                case ann of
+                    Annotation.FunctionTypeAnnotation one two ->
+                        autoReduce (count - 1)
+                            (Expression { fn | annotation = Ok (denode two) })
+
+                    _ ->
+                        unchanged
 
             final ->
                 unchanged
@@ -646,47 +642,118 @@ applyType (Expression exp) args =
         Ok topAnnotation ->
             case extractListAnnotation args [] of
                 Ok types ->
-                    applyTypeHelper topAnnotation types
+                    case applyTypeHelper Dict.empty topAnnotation types of
+                        Err err ->
+                            Err err
+
+                        Ok inference ->
+                            Ok (resolveVariables inference.inferences inference.type_)
 
                 Err err ->
                     Err err
 
 
+type alias VariableCache =
+    Dict.Dict String Annotation.TypeAnnotation
+
+
+resolveName : String -> Dict String Annotation.TypeAnnotation -> Annotation.TypeAnnotation
+resolveName name cache =
+    case Dict.get name cache of
+        Just (Annotation.GenericType newName) ->
+            resolveName newName cache
+
+        Just newType ->
+            newType
+
+        Nothing ->
+            Annotation.GenericType name
+
+
+resolveVariables : VariableCache -> Annotation.TypeAnnotation -> Annotation.TypeAnnotation
+resolveVariables cache annotation =
+    case annotation of
+        Annotation.FunctionTypeAnnotation one two ->
+            Annotation.FunctionTypeAnnotation
+                (mapNode (resolveVariables cache) one)
+                (mapNode (resolveVariables cache) two)
+
+        Annotation.GenericType name ->
+            resolveName name cache
+
+        Annotation.Typed nodedModuleName vars ->
+            Annotation.Typed nodedModuleName
+                (List.map
+                    (\node -> mapNode (resolveVariables cache) node)
+                    vars
+                )
+
+        Annotation.Unit ->
+            Annotation.Unit
+
+        Annotation.Tupled nodes ->
+            Annotation.Tupled
+                (List.map
+                    (\node -> mapNode (resolveVariables cache) node)
+                    nodes
+                )
+
+        Annotation.Record fields ->
+            Annotation.Record
+                (List.map
+                    (\(Node fieldRange ( name, Node fieldTypeRange fieldType )) ->
+                        Node fieldRange
+                            ( name, Node fieldTypeRange (resolveVariables cache fieldType) )
+                    )
+                    fields
+                )
+
+        Annotation.GenericRecord baseName (Node recordNode fields) ->
+            Annotation.GenericRecord baseName
+                (Node recordNode
+                    (List.map
+                        (\(Node fieldRange ( name, Node fieldTypeRange fieldType )) ->
+                            Node fieldRange
+                                ( name, Node fieldTypeRange (resolveVariables cache fieldType) )
+                        )
+                        fields
+                    )
+                )
+
+
 {-| -}
-applyTypeHelper : Inference -> List Annotation.TypeAnnotation -> Result (List InferenceError) Inference
-applyTypeHelper fn args =
+applyTypeHelper :
+    VariableCache
+    -> Annotation.TypeAnnotation
+    -> List Annotation.TypeAnnotation
+    -> Result (List InferenceError) { inferences : Dict String Annotation.TypeAnnotation, type_ : Inference }
+applyTypeHelper cache fn args =
     case fn of
         Annotation.FunctionTypeAnnotation one two ->
             case args of
                 [] ->
-                    Ok fn
+                    Ok
+                        { type_ = fn
+                        , inferences = cache
+                        }
 
                 top :: rest ->
-                    -- if one and top match ->
-                    case unifiable (denode one) top of
-                        Ok _ ->
-                            case rest of
-                                [] ->
-                                    Ok
-                                        --{ type_ =
-                                        (denode
-                                            two
-                                        )
+                    case unifiable cache (denode one) top of
+                        ( variableCache, Ok _ ) ->
+                            applyTypeHelper variableCache
+                                (denode two)
+                                rest
 
-                                --, inferences = []
-                                --}
-                                _ ->
-                                    applyTypeHelper
-                                        (denode two)
-                                        rest
-
-                        Err err ->
+                        ( varCache, Err err ) ->
                             Err []
 
         final ->
             case args of
                 [] ->
-                    Ok fn
+                    Ok
+                        { type_ = fn
+                        , inferences = cache
+                        }
 
                 _ ->
                     Err [ FunctionAppliedToTooManyArgs ]
@@ -696,14 +763,8 @@ unify : List Expression -> Result (List InferenceError) Inference
 unify exps =
     case exps of
         [] ->
-            Ok
-                --{ type_ =
-                (Annotation.GenericType
-                    "a"
-                )
+            Ok (Annotation.GenericType "a")
 
-        --, inferences = []
-        --}
         (Expression top) :: remain ->
             case top.annotation of
                 Ok ann ->
@@ -725,11 +786,11 @@ unifyHelper exps existing =
         (Expression top) :: remain ->
             case top.annotation of
                 Ok ann ->
-                    case unifiable ann existing of
-                        Err _ ->
+                    case unifiable Dict.empty ann existing of
+                        ( _, Err _ ) ->
                             Err [ MismatchedList ann existing ]
 
-                        Ok new ->
+                        ( cache, Ok new ) ->
                             unifyHelper remain new
 
                 Err err ->
@@ -749,24 +810,12 @@ unifyHelper exps existing =
 
 -}
 unifiable :
-    Inference
-    -> Inference
-    -> Result String Inference
-unifiable one two =
-    let
-        ( _, result ) =
-            unifiableHelper Dict.empty one two
-
-        _ =
-            case result of
-                Ok _ ->
-                    ( one, two )
-
-                Err _ ->
-                    --Debug.log "       Failed to unify"
-                    ( one, two )
-    in
-    result
+    VariableCache
+    -> Annotation.TypeAnnotation
+    -> Annotation.TypeAnnotation
+    -> ( VariableCache, Result String Annotation.TypeAnnotation )
+unifiable cache one two =
+    unifiableHelper cache one two
 
 
 

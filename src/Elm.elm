@@ -28,7 +28,7 @@ module Elm exposing
     , parse, unsafe
     , toString, expressionImports
     , declarationToString, declarationImports
-    -- , function
+
     )
 
 {-|
@@ -463,54 +463,6 @@ Though be sure elm-prefab isn't already doing this automatically for you!
 -}
 withType : Elm.Annotation.Annotation -> Expression -> Expression
 withType ann (Compiler.Expression exp) =
-    --let
-    --    _ =
-    --        Debug.log "Ann" ann
-    --in
-    --case Debug.log "GENERICS" <| Compiler.getGenerics ann of
-    --    [] ->
-    --        Compiler.Expression
-    --            { expression = exp.expression
-    --            , annotation = Ok (Compiler.getInnerAnnotation ann)
-    --            , imports = exp.imports ++ Compiler.getAnnotationImports ann
-    --            , typeVars = exp.typeVars
-    --            }
-    --
-    --    vars ->
-    --        Compiler.Expression
-    --            { expression = exp.expression
-    --            , annotation = Ok (Compiler.getInnerAnnotation ann)
-    --            , imports = exp.imports ++ Compiler.getAnnotationImports ann
-    --            , typeVars =
-    --                if Dict.isEmpty exp.typeVars then
-    --                    Dict.fromList
-    --                        (List.map
-    --                            (\nodedVar ->
-    --                                let
-    --                                    name =
-    --                                        Compiler.denode nodedVar
-    --                                in
-    --                                ( name, Annotation.GenericType (Compiler.formatValue name) )
-    --                            )
-    --                            vars
-    --                        )
-    --
-    --                else
-    --                    Dict.union
-    --                        exp.typeVars
-    --                        (Dict.fromList
-    --                            (List.map
-    --                                (\nodedVar ->
-    --                                    let
-    --                                        name =
-    --                                            Compiler.denode nodedVar
-    --                                    in
-    --                                    ( name, Annotation.GenericType (Compiler.formatValue name) )
-    --                                )
-    --                                vars
-    --                            )
-    --                        )
-    --            }
     Compiler.Expression
         { exp
             | annotation = Ok (Compiler.getInnerAnnotation ann)
@@ -1709,56 +1661,48 @@ functionWith name args (Compiler.Expression body) =
             )
 
 
-{-| -}
-function : String -> String -> (Expression -> Expression) -> Declaration
-function name oneName toBody =
-    let
-        arg1 =
-            value oneName
-                |> withType (Elm.Annotation.var "a")
+-- {-| -}
+-- function : String -> String -> (Expression -> Expression) -> Declaration
+-- function name oneName toBody =
+--     let
+--         arg1 =
+--             value oneName
+--                 |> withType (Elm.Annotation.var "a")
 
-        (Compiler.Expression body) =
-            toBody arg1
-    in
-    { documentation = Compiler.nodifyMaybe Nothing
-    , signature =
-        case body.annotation of
-            Ok return ->
-                Just
-                    (Compiler.nodify
-                        { name = Compiler.nodify (Compiler.formatValue name)
-                        , typeAnnotation =
-                            Compiler.nodify <|
-                                Compiler.getInnerAnnotation <|
-                                    Elm.Annotation.function
-                                        [ --case Dict.get "a" body.typeVars of
-                                          --    Nothing ->
-                                          Elm.Annotation.var "a"
+--         (Compiler.Expression body) =
+--             toBody arg1
+--     in
+--     { documentation = Compiler.nodifyMaybe Nothing
+--     , signature =
+--         case body.annotation of
+--             Ok return ->
+--                 Just
+--                     (Compiler.nodify
+--                         { name = Compiler.nodify (Compiler.formatValue name)
+--                         , typeAnnotation =
+--                             Compiler.nodify <|
+--                                 Compiler.getInnerAnnotation <|
+--                                     Elm.Annotation.function
+--                                         [ Elm.Annotation.var "a"
+--                                         ]
+--                                         (Compiler.noImports return)
+--                         }
+--                     )
 
-                                        --Just arg1Type ->
-                                        --    Compiler.Annotation
-                                        --        { annotation = arg1Type
-                                        --, imports = []
-                                        --}
-                                        ]
-                                        (Compiler.noImports return)
-                        }
-                    )
-
-            Err _ ->
-                Nothing
-    , declaration =
-        Compiler.nodify
-            { name = Compiler.nodify (Compiler.formatValue name)
-            , arguments =
-                [ Compiler.nodify (Pattern.VarPattern oneName)
-                ]
-            , expression = Compiler.nodify body.expression
-            }
-    }
-        |> Declaration.FunctionDeclaration
-        |> Compiler.Declaration Compiler.NotExposed
-            body.imports
+--             Err _ ->
+--                 Nothing
+--     , declaration =
+--         Compiler.nodify
+--             { name = Compiler.nodify (Compiler.formatValue name)
+--             , arguments =
+--                 [ Compiler.nodify (Pattern.VarPattern oneName)
+--                 ]
+--             , expression = Compiler.nodify body.expression
+--             }
+--     }
+--         |> Declaration.FunctionDeclaration
+--         |> Compiler.Declaration Compiler.NotExposed
+--             body.imports
 
 
 {-| -}
@@ -2644,7 +2588,6 @@ applyNumber symbol dir (Compiler.Expression left) (Compiler.Expression right) =
                 [ Compiler.Expression left
                 , Compiler.Expression right
                 ]
-                |> Debug.log "APPLIED ANNOTATION"
         , imports = left.imports ++ right.imports
         }
 
