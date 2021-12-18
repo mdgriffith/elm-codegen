@@ -28,7 +28,7 @@ module Elm exposing
     , parse, unsafe
     , toString, expressionImports
     , declarationToString, declarationImports
-
+    , function
     )
 
 {-|
@@ -446,7 +446,7 @@ valueWith : List String -> String -> Elm.Annotation.Annotation -> Expression
 valueWith mod name ann =
     Compiler.Expression
         { expression = Exp.FunctionOrValue mod (Compiler.sanitize name)
-        , annotation = Ok (Compiler.getInnerAnnotation ann)
+        , annotation = Ok (Compiler.getInnerInference ann)
         , imports = mod :: Compiler.getAnnotationImports ann
         }
 
@@ -465,7 +465,7 @@ withType : Elm.Annotation.Annotation -> Expression -> Expression
 withType ann (Compiler.Expression exp) =
     Compiler.Expression
         { exp
-            | annotation = Ok (Compiler.getInnerAnnotation ann)
+            | annotation = Ok (Compiler.getInnerInference ann)
             , imports = exp.imports ++ Compiler.getAnnotationImports ann
         }
 
@@ -475,7 +475,7 @@ unit : Expression
 unit =
     Compiler.Expression
         { expression = Exp.UnitExpr
-        , annotation = Ok Annotation.Unit
+        , annotation = Ok (Compiler.inference Annotation.Unit)
         , imports = []
         }
 
@@ -498,7 +498,7 @@ int : Int -> Expression
 int intVal =
     Compiler.Expression
         { expression = Exp.Integer intVal
-        , annotation = Ok (Compiler.getInnerAnnotation Elm.Annotation.int)
+        , annotation = Ok (Compiler.getInnerInference Elm.Annotation.int)
         , imports = []
         }
 
@@ -508,7 +508,7 @@ hex : Int -> Expression
 hex hexVal =
     Compiler.Expression
         { expression = Exp.Hex hexVal
-        , annotation = Ok (Compiler.getInnerAnnotation Elm.Annotation.int)
+        , annotation = Ok (Compiler.getInnerInference Elm.Annotation.int)
         , imports = []
         }
 
@@ -518,7 +518,7 @@ float : Float -> Expression
 float floatVal =
     Compiler.Expression
         { expression = Exp.Floatable floatVal
-        , annotation = Ok (Compiler.getInnerAnnotation Elm.Annotation.float)
+        , annotation = Ok (Compiler.getInnerInference Elm.Annotation.float)
         , imports = []
         }
 
@@ -528,7 +528,7 @@ string : String -> Expression
 string literal =
     Compiler.Expression
         { expression = Exp.Literal literal
-        , annotation = Ok (Compiler.getInnerAnnotation Elm.Annotation.string)
+        , annotation = Ok (Compiler.getInnerInference Elm.Annotation.string)
         , imports = []
         }
 
@@ -538,7 +538,7 @@ char : Char -> Expression
 char charVal =
     Compiler.Expression
         { expression = Exp.CharLiteral charVal
-        , annotation = Ok (Compiler.getInnerAnnotation Elm.Annotation.char)
+        , annotation = Ok (Compiler.getInnerInference Elm.Annotation.char)
         , imports = []
         }
 
@@ -559,10 +559,15 @@ tuple (Compiler.Expression one) (Compiler.Expression two) =
         , annotation =
             Result.map2
                 (\oneA twoA ->
-                    Elm.Annotation.tuple
-                        (Compiler.noImports oneA)
-                        (Compiler.noImports twoA)
-                        |> Compiler.getInnerAnnotation
+                    { type_ =
+                        Elm.Annotation.tuple
+                            (Compiler.noImports oneA.type_)
+                            (Compiler.noImports twoA.type_)
+                            |> Compiler.getInnerAnnotation
+                    , inferences =
+                        oneA.inferences
+                            |> Compiler.mergeInferences twoA.inferences
+                    }
                 )
                 one.annotation
                 two.annotation
@@ -582,11 +587,17 @@ triple (Compiler.Expression one) (Compiler.Expression two) (Compiler.Expression 
         , annotation =
             Result.map3
                 (\oneA twoA threeA ->
-                    Elm.Annotation.triple
-                        (Compiler.noImports oneA)
-                        (Compiler.noImports twoA)
-                        (Compiler.noImports threeA)
-                        |> Compiler.getInnerAnnotation
+                    { type_ =
+                        Elm.Annotation.triple
+                            (Compiler.noImports oneA.type_)
+                            (Compiler.noImports twoA.type_)
+                            (Compiler.noImports threeA.type_)
+                            |> Compiler.getInnerAnnotation
+                    , inferences =
+                        oneA.inferences
+                            |> Compiler.mergeInferences twoA.inferences
+                            |> Compiler.mergeInferences threeA.inferences
+                    }
                 )
                 one.annotation
                 two.annotation
@@ -618,16 +629,20 @@ maybe content =
             case content of
                 Nothing ->
                     Ok
-                        (Compiler.getInnerAnnotation
+                        (Compiler.getInnerInference
                             (Elm.Annotation.maybe (Elm.Annotation.var "a"))
                         )
 
                 Just inner ->
                     Result.map
                         (\ann ->
-                            Annotation.Typed
-                                (Compiler.nodify ( [], "Maybe" ))
-                                [ Compiler.nodify ann ]
+                            { type_ =
+                                Annotation.Typed
+                                    (Compiler.nodify ( [], "Maybe" ))
+                                    [ Compiler.nodify ann.type_ ]
+                            , inferences =
+                                ann.inferences
+                            }
                         )
                         (Compiler.getAnnotation inner)
         , imports =
@@ -645,9 +660,13 @@ list exprs =
             Compiler.unify exprs
                 |> Result.map
                     (\inner ->
-                        Annotation.Typed
-                            (Compiler.nodify ( [], "List" ))
-                            [ Compiler.nodify inner ]
+                        { type_ =
+                            Annotation.Typed
+                                (Compiler.nodify ( [], "List" ))
+                                [ Compiler.nodify inner.type_ ]
+                        , inferences =
+                            inner.inferences
+                        }
                     )
         , imports = List.concatMap getImports exprs
         }
@@ -742,16 +761,25 @@ record fields =
         , annotation =
             case unified.errors of
                 [] ->
-                    List.reverse unified.fieldAnnotations
-                        |> List.map
-                            (\( name, ann ) ->
-                                ( Compiler.nodify name
-                                , Compiler.nodify ann
+                    Ok
+                        { type_ =
+                            List.reverse unified.fieldAnnotations
+                                |> List.map
+                                    (\( name, ann ) ->
+                                        ( Compiler.nodify name
+                                        , Compiler.nodify ann.type_
+                                        )
+                                    )
+                                |> Compiler.nodifyAll
+                                |> Annotation.Record
+                        , inferences =
+                            List.foldl
+                                (\( name, ann ) gathered ->
+                                    Compiler.mergeInferences ann.inferences gathered
                                 )
-                            )
-                        |> Compiler.nodifyAll
-                        |> Annotation.Record
-                        |> Ok
+                                Dict.empty
+                                unified.fieldAnnotations
+                        }
 
                 errs ->
                     Err errs
@@ -863,21 +891,26 @@ get selector (Compiler.Expression expr) =
             Exp.RecordAccess (Compiler.nodify expr.expression) (Compiler.nodify (Compiler.formatValue selector))
         , annotation =
             case expr.annotation of
-                Ok (Annotation.Record fields) ->
-                    case getField (Compiler.formatValue selector) fields of
-                        Just ann ->
-                            Ok ann
+                Ok recordAnn ->
+                    case recordAnn.type_ of
+                        Annotation.Record fields ->
+                            case getField (Compiler.formatValue selector) fields of
+                                Just ann ->
+                                    Ok { type_ = ann, inferences = recordAnn.inferences }
 
-                        Nothing ->
-                            Err [ Compiler.CouldNotFindField selector ]
+                                Nothing ->
+                                    Err [ Compiler.CouldNotFindField selector ]
 
-                Ok (Annotation.GenericRecord name fields) ->
-                    case getField (Compiler.formatValue selector) (Compiler.denode fields) of
-                        Just ann ->
-                            Ok ann
+                        Annotation.GenericRecord name fields ->
+                            case getField (Compiler.formatValue selector) (Compiler.denode fields) of
+                                Just ann ->
+                                    Ok { type_ = ann, inferences = recordAnn.inferences }
 
-                        Nothing ->
-                            Err [ Compiler.CouldNotFindField selector ]
+                                Nothing ->
+                                    Err [ Compiler.CouldNotFindField selector ]
+
+                        otherwise ->
+                            expr.annotation
 
                 otherwise ->
                     otherwise
@@ -1176,12 +1209,18 @@ lambdaWith args (Compiler.Expression expr) =
                 Ok return ->
                     List.foldr
                         (\ann fnbody ->
-                            Annotation.FunctionTypeAnnotation
-                                (Compiler.nodify ann)
-                                (Compiler.nodify fnbody)
+                            { type_ =
+                                Annotation.FunctionTypeAnnotation
+                                    (Compiler.nodify ann.type_)
+                                    (Compiler.nodify fnbody.type_)
+                            , inferences =
+                                Compiler.mergeInferences
+                                    ann.inferences
+                                    fnbody.inferences
+                            }
                         )
                         return
-                        (List.map (Compiler.getInnerAnnotation << Tuple.second) args)
+                        (List.map (Compiler.getInnerInference << Tuple.second) args)
                         |> Ok
         , imports = expr.imports
         }
@@ -1204,20 +1243,9 @@ lambda argBaseName argType toExpression =
                 , expression = Compiler.nodify expr.expression
                 }
         , annotation =
-            case expr.annotation of
-                Err err ->
-                    Err err
-
-                Ok return ->
-                    List.foldr
-                        (\ann fnbody ->
-                            Annotation.FunctionTypeAnnotation
-                                (Compiler.nodify ann)
-                                (Compiler.nodify fnbody)
-                        )
-                        return
-                        [ Compiler.getInnerAnnotation argType ]
-                        |> Ok
+            fnTypeApply expr.annotation
+                [ argType
+                ]
         , imports = expr.imports
         }
 
@@ -1240,20 +1268,9 @@ lambdaBetaReduced argBaseName argType toExpression =
                     , expression = Compiler.nodify expr.expression
                     }
         , annotation =
-            case expr.annotation of
-                Err err ->
-                    Err err
-
-                Ok return ->
-                    List.foldr
-                        (\ann fnbody ->
-                            Annotation.FunctionTypeAnnotation
-                                (Compiler.nodify ann)
-                                (Compiler.nodify fnbody)
-                        )
-                        return
-                        [ Compiler.getInnerAnnotation argType ]
-                        |> Ok
+            fnTypeApply expr.annotation
+                [ argType
+                ]
         , imports = expr.imports
         }
 
@@ -1382,24 +1399,39 @@ lambda2 argBaseName oneType twoType toExpression =
                 , expression = Compiler.nodify expr.expression
                 }
         , annotation =
-            case expr.annotation of
-                Err err ->
-                    Err err
+            fnTypeApply expr.annotation
+                [ oneType
+                , twoType
+                ]
+        , imports = expr.imports
+        }
 
-                Ok return ->
+
+fnTypeApply :
+    Result
+        error
+        Compiler.Inference
+    -> List Compiler.Annotation
+    -> Result error Compiler.Inference
+fnTypeApply annotation args =
+    case annotation of
+        Err err ->
+            Err err
+
+        Ok return ->
+            Ok
+                { type_ =
                     List.foldr
                         (\ann fnbody ->
                             Annotation.FunctionTypeAnnotation
-                                (Compiler.nodify ann)
+                                (Compiler.nodify (Compiler.getInnerAnnotation ann))
                                 (Compiler.nodify fnbody)
                         )
-                        return
-                        [ Compiler.getInnerAnnotation oneType
-                        , Compiler.getInnerAnnotation twoType
-                        ]
-                        |> Ok
-        , imports = expr.imports
-        }
+                        return.type_
+                        args
+                , inferences =
+                    return.inferences
+                }
 
 
 {-| -}
@@ -1435,23 +1467,11 @@ lambda3 argBaseName oneType twoType threeType toExpression =
                 , expression = Compiler.nodify expr.expression
                 }
         , annotation =
-            case expr.annotation of
-                Err err ->
-                    Err err
-
-                Ok return ->
-                    List.foldr
-                        (\ann fnbody ->
-                            Annotation.FunctionTypeAnnotation
-                                (Compiler.nodify ann)
-                                (Compiler.nodify fnbody)
-                        )
-                        return
-                        [ Compiler.getInnerAnnotation oneType
-                        , Compiler.getInnerAnnotation twoType
-                        , Compiler.getInnerAnnotation threeType
-                        ]
-                        |> Ok
+            fnTypeApply expr.annotation
+                [ oneType
+                , twoType
+                , threeType
+                ]
         , imports = expr.imports
         }
 
@@ -1494,24 +1514,12 @@ lambda4 argBaseName oneType twoType threeType fourType toExpression =
                 , expression = Compiler.nodify expr.expression
                 }
         , annotation =
-            case expr.annotation of
-                Err err ->
-                    Err err
-
-                Ok return ->
-                    List.foldr
-                        (\ann fnbody ->
-                            Annotation.FunctionTypeAnnotation
-                                (Compiler.nodify ann)
-                                (Compiler.nodify fnbody)
-                        )
-                        return
-                        [ Compiler.getInnerAnnotation oneType
-                        , Compiler.getInnerAnnotation twoType
-                        , Compiler.getInnerAnnotation threeType
-                        , Compiler.getInnerAnnotation fourType
-                        ]
-                        |> Ok
+            fnTypeApply expr.annotation
+                [ oneType
+                , twoType
+                , threeType
+                , fourType
+                ]
         , imports = expr.imports
         }
 
@@ -1559,25 +1567,12 @@ lambda5 argBaseName oneType twoType threeType fourType fiveType toExpression =
                 , expression = Compiler.nodify expr.expression
                 }
         , annotation =
-            case expr.annotation of
-                Err err ->
-                    Err err
-
-                Ok return ->
-                    List.foldr
-                        (\ann fnbody ->
-                            Annotation.FunctionTypeAnnotation
-                                (Compiler.nodify ann)
-                                (Compiler.nodify fnbody)
-                        )
-                        return
-                        [ Compiler.getInnerAnnotation oneType
-                        , Compiler.getInnerAnnotation twoType
-                        , Compiler.getInnerAnnotation threeType
-                        , Compiler.getInnerAnnotation fourType
-                        , Compiler.getInnerAnnotation fiveType
-                        ]
-                        |> Ok
+            fnTypeApply expr.annotation
+                [ oneType
+                , twoType
+                , threeType
+                , fiveType
+                ]
         , imports = expr.imports
         }
 
@@ -1605,7 +1600,7 @@ declaration name (Compiler.Expression body) =
                     (Compiler.nodify
                         { name = Compiler.nodify (Compiler.formatValue name)
                         , typeAnnotation =
-                            Compiler.nodify sig
+                            Compiler.nodify sig.type_
                         }
                     )
 
@@ -1637,7 +1632,7 @@ functionWith name args (Compiler.Expression body) =
                                 Compiler.getInnerAnnotation <|
                                     Elm.Annotation.function
                                         (List.map Tuple.second args)
-                                        (Compiler.noImports return)
+                                        (Compiler.noImports return.type_)
                         }
                     )
 
@@ -1661,48 +1656,58 @@ functionWith name args (Compiler.Expression body) =
             )
 
 
--- {-| -}
--- function : String -> String -> (Expression -> Expression) -> Declaration
--- function name oneName toBody =
---     let
---         arg1 =
---             value oneName
---                 |> withType (Elm.Annotation.var "a")
+function : String -> (Expression -> Expression) -> Declaration
+function name toBody =
+    let
+        oneName =
+            "arg"
 
---         (Compiler.Expression body) =
---             toBody arg1
---     in
---     { documentation = Compiler.nodifyMaybe Nothing
---     , signature =
---         case body.annotation of
---             Ok return ->
---                 Just
---                     (Compiler.nodify
---                         { name = Compiler.nodify (Compiler.formatValue name)
---                         , typeAnnotation =
---                             Compiler.nodify <|
---                                 Compiler.getInnerAnnotation <|
---                                     Elm.Annotation.function
---                                         [ Elm.Annotation.var "a"
---                                         ]
---                                         (Compiler.noImports return)
---                         }
---                     )
+        arg1 =
+            value oneName
+                |> withType (Elm.Annotation.var "a")
 
---             Err _ ->
---                 Nothing
---     , declaration =
---         Compiler.nodify
---             { name = Compiler.nodify (Compiler.formatValue name)
---             , arguments =
---                 [ Compiler.nodify (Pattern.VarPattern oneName)
---                 ]
---             , expression = Compiler.nodify body.expression
---             }
---     }
---         |> Declaration.FunctionDeclaration
---         |> Compiler.Declaration Compiler.NotExposed
---             body.imports
+        (Compiler.Expression body) =
+            toBody arg1
+    in
+    { documentation = Compiler.nodifyMaybe Nothing
+    , signature =
+        case body.annotation of
+            Ok return ->
+                let
+                    returnType =
+                        Compiler.resolveVariables return.inferences return.type_
+
+                    argOneType =
+                        Compiler.resolveVariables return.inferences
+                            (Elm.Annotation.var "a"
+                                |> Compiler.getInnerAnnotation
+                            )
+                in
+                Just
+                    (Compiler.nodify
+                        { name = Compiler.nodify (Compiler.formatValue name)
+                        , typeAnnotation =
+                            Compiler.nodify <|
+                                Annotation.FunctionTypeAnnotation
+                                    (Compiler.nodify argOneType)
+                                    (Compiler.nodify returnType)
+                        }
+                    )
+
+            Err _ ->
+                Nothing
+    , declaration =
+        Compiler.nodify
+            { name = Compiler.nodify (Compiler.formatValue name)
+            , arguments =
+                [ Compiler.nodify (Pattern.VarPattern oneName)
+                ]
+            , expression = Compiler.nodify body.expression
+            }
+    }
+        |> Declaration.FunctionDeclaration
+        |> Compiler.Declaration Compiler.NotExposed
+            body.imports
 
 
 {-| -}
@@ -1727,7 +1732,7 @@ fn name ( oneName, oneType ) toBody =
                                 Compiler.getInnerAnnotation <|
                                     Elm.Annotation.function
                                         [ oneType ]
-                                        (Compiler.noImports return)
+                                        (Compiler.noImports return.type_)
                         }
                     )
 
@@ -1779,7 +1784,7 @@ fn2 name ( oneName, oneType ) ( twoName, twoType ) toBody =
                                 Compiler.getInnerAnnotation <|
                                     Elm.Annotation.function
                                         [ oneType, twoType ]
-                                        (Compiler.noImports return)
+                                        (Compiler.noImports return.type_)
                         }
                     )
 
@@ -1837,7 +1842,7 @@ fn3 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) toBo
                                 Compiler.getInnerAnnotation <|
                                     Elm.Annotation.function
                                         [ oneType, twoType, threeType ]
-                                        (Compiler.noImports return)
+                                        (Compiler.noImports return.type_)
                         }
                     )
 
@@ -1901,7 +1906,7 @@ fn4 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fo
                                 Compiler.getInnerAnnotation <|
                                     Elm.Annotation.function
                                         [ oneType, twoType, threeType, fourType ]
-                                        (Compiler.noImports return)
+                                        (Compiler.noImports return.type_)
                         }
                     )
 
@@ -1971,7 +1976,7 @@ fn5 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fo
                                 Compiler.getInnerAnnotation <|
                                     Elm.Annotation.function
                                         [ oneType, twoType, threeType, fourType, fiveType ]
-                                        (Compiler.noImports return)
+                                        (Compiler.noImports return.type_)
                         }
                     )
 
@@ -2047,7 +2052,7 @@ fn6 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fo
                                 Compiler.getInnerAnnotation <|
                                     Elm.Annotation.function
                                         [ oneType, twoType, threeType, fourType, fiveType, sixType ]
-                                        (Compiler.noImports return)
+                                        (Compiler.noImports return.type_)
                         }
                     )
 
@@ -2579,7 +2584,7 @@ applyNumber symbol dir (Compiler.Expression left) (Compiler.Expression right) =
             Compiler.applyType
                 (valueWith
                     []
-                    "max"
+                    symbol
                     (Elm.Annotation.function
                         [ Elm.Annotation.var "number", Elm.Annotation.var "number" ]
                         (Elm.Annotation.var "number")

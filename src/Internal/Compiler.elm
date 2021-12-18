@@ -36,10 +36,24 @@ type alias ExpressionDetails =
 
 
 type alias Inference =
-    -- { type_ : Annotation.TypeAnnotation
-    -- , inferences : Dict String Annotation.TypeAnnotation
-    -- }
-    Annotation.TypeAnnotation
+    { type_ : Annotation.TypeAnnotation
+    , inferences : Dict String Annotation.TypeAnnotation
+    }
+
+
+mergeInferences :
+    Dict String Annotation.TypeAnnotation
+    -> Dict String Annotation.TypeAnnotation
+    -> Dict String Annotation.TypeAnnotation
+mergeInferences one two =
+    Dict.union one two
+
+
+inference : Annotation.TypeAnnotation -> Inference
+inference type_ =
+    { type_ = type_
+    , inferences = Dict.empty
+    }
 
 
 type InferenceError
@@ -116,6 +130,13 @@ getInnerAnnotation (Annotation details) =
     details.annotation
 
 
+getInnerInference : Annotation -> Inference
+getInnerInference (Annotation details) =
+    { type_ = details.annotation
+    , inferences = Dict.empty
+    }
+
+
 getAnnotationImports : Annotation -> List Module
 getAnnotationImports (Annotation details) =
     details.imports
@@ -131,7 +152,7 @@ getInnerExpression (Expression exp) =
     exp.expression
 
 
-getAnnotation : Expression -> Result (List InferenceError) Annotation.TypeAnnotation
+getAnnotation : Expression -> Result (List InferenceError) Inference
 getAnnotation (Expression exp) =
     exp.annotation
 
@@ -606,30 +627,32 @@ extractListAnnotation expressions annotations =
         (Expression top) :: remain ->
             case top.annotation of
                 Ok ann ->
-                    extractListAnnotation remain (ann :: annotations)
+                    extractListAnnotation remain (ann.type_ :: annotations)
 
                 Err err ->
                     Err err
 
 
-autoReduce : Int -> Expression -> Expression
-autoReduce count ((Expression fn) as unchanged) =
-    if count <= 0 then
-        unchanged
 
-    else
-        case fn.annotation of
-            Ok ann ->
-                case ann of
-                    Annotation.FunctionTypeAnnotation one two ->
-                        autoReduce (count - 1)
-                            (Expression { fn | annotation = Ok (denode two) })
-
-                    _ ->
-                        unchanged
-
-            final ->
-                unchanged
+--
+--autoReduce : Int -> Expression -> Expression
+--autoReduce count ((Expression fn) as unchanged) =
+--    if count <= 0 then
+--        unchanged
+--
+--    else
+--        case fn.annotation of
+--            Ok ann ->
+--                case ann of
+--                    Annotation.FunctionTypeAnnotation one two ->
+--                        autoReduce (count - 1)
+--                            (Expression { fn | annotation = Ok (denode two) })
+--
+--                    _ ->
+--                        unchanged
+--
+--            final ->
+--                unchanged
 
 
 {-| -}
@@ -642,13 +665,9 @@ applyType (Expression exp) args =
         Ok topAnnotation ->
             case extractListAnnotation args [] of
                 Ok types ->
-                    case applyTypeHelper Dict.empty topAnnotation types of
-                        Err err ->
-                            Err err
+                    applyTypeHelper topAnnotation.inferences topAnnotation.type_ types
 
-                        Ok inference ->
-                            Ok (resolveVariables inference.inferences inference.type_)
-
+                --(resolveVariables inference.inferences inference.type_)
                 Err err ->
                     Err err
 
@@ -726,7 +745,7 @@ applyTypeHelper :
     VariableCache
     -> Annotation.TypeAnnotation
     -> List Annotation.TypeAnnotation
-    -> Result (List InferenceError) { inferences : Dict String Annotation.TypeAnnotation, type_ : Inference }
+    -> Result (List InferenceError) Inference
 applyTypeHelper cache fn args =
     case fn of
         Annotation.FunctionTypeAnnotation one two ->
@@ -763,7 +782,10 @@ unify : List Expression -> Result (List InferenceError) Inference
 unify exps =
     case exps of
         [] ->
-            Ok (Annotation.GenericType "a")
+            Ok
+                { type_ = Annotation.GenericType "a"
+                , inferences = Dict.empty
+                }
 
         (Expression top) :: remain ->
             case top.annotation of
@@ -786,12 +808,15 @@ unifyHelper exps existing =
         (Expression top) :: remain ->
             case top.annotation of
                 Ok ann ->
-                    case unifiable Dict.empty ann existing of
+                    case unifiable ann.inferences ann.type_ existing.type_ of
                         ( _, Err _ ) ->
-                            Err [ MismatchedList ann existing ]
+                            Err [ MismatchedList ann.type_ existing.type_ ]
 
                         ( cache, Ok new ) ->
-                            unifyHelper remain new
+                            unifyHelper remain
+                                { type_ = new
+                                , inferences = cache
+                                }
 
                 Err err ->
                     Err err
