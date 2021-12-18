@@ -519,11 +519,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.bk.V === region.aQ.V)
+	if (region.bl.U === region.aR.U)
 	{
-		return 'on line ' + region.bk.V;
+		return 'on line ' + region.bl.U;
 	}
-	return 'on lines ' + region.bk.V + ' through ' + region.aQ.V;
+	return 'on lines ' + region.bl.U + ' through ' + region.aR.U;
 }
 
 
@@ -2024,9 +2024,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.cs,
-		impl.dm,
-		impl.dd,
+		impl.ct,
+		impl.$7,
+		impl.df,
 		function() { return function() {} }
 	);
 });
@@ -2929,25 +2929,25 @@ var $elm$core$Array$treeFromBuilder = F2(
 	});
 var $elm$core$Array$builderToArray = F2(
 	function (reverseNodeList, builder) {
-		if (!builder.j) {
+		if (!builder.i) {
 			return A4(
 				$elm$core$Array$Array_elm_builtin,
-				$elm$core$Elm$JsArray$length(builder.l),
+				$elm$core$Elm$JsArray$length(builder.k),
 				$elm$core$Array$shiftStep,
 				$elm$core$Elm$JsArray$empty,
-				builder.l);
+				builder.k);
 		} else {
-			var treeLen = builder.j * $elm$core$Array$branchFactor;
+			var treeLen = builder.i * $elm$core$Array$branchFactor;
 			var depth = $elm$core$Basics$floor(
 				A2($elm$core$Basics$logBase, $elm$core$Array$branchFactor, treeLen - 1));
-			var correctNodeList = reverseNodeList ? $elm$core$List$reverse(builder.m) : builder.m;
-			var tree = A2($elm$core$Array$treeFromBuilder, correctNodeList, builder.j);
+			var correctNodeList = reverseNodeList ? $elm$core$List$reverse(builder.l) : builder.l;
+			var tree = A2($elm$core$Array$treeFromBuilder, correctNodeList, builder.i);
 			return A4(
 				$elm$core$Array$Array_elm_builtin,
-				$elm$core$Elm$JsArray$length(builder.l) + treeLen,
+				$elm$core$Elm$JsArray$length(builder.k) + treeLen,
 				A2($elm$core$Basics$max, 5, depth * $elm$core$Array$shiftStep),
 				tree,
-				builder.l);
+				builder.k);
 		}
 	});
 var $elm$core$Basics$idiv = _Basics_idiv;
@@ -2960,7 +2960,7 @@ var $elm$core$Array$initializeHelp = F5(
 				return A2(
 					$elm$core$Array$builderToArray,
 					false,
-					{m: nodeList, j: (len / $elm$core$Array$branchFactor) | 0, l: tail});
+					{l: nodeList, i: (len / $elm$core$Array$branchFactor) | 0, k: tail});
 			} else {
 				var leaf = $elm$core$Array$Leaf(
 					A3($elm$core$Elm$JsArray$initialize, $elm$core$Array$branchFactor, fromIndex, fn));
@@ -3021,10 +3021,10 @@ var $author$project$Elm$Gen$onFailureSend = _Platform_outgoingPort(
 				[
 					_Utils_Tuple2(
 					'description',
-					$elm$json$Json$Encode$string($.bZ)),
+					$elm$json$Json$Encode$string($.b_)),
 					_Utils_Tuple2(
 					'title',
-					$elm$json$Json$Encode$string($.df))
+					$elm$json$Json$Encode$string($.dh))
 				]));
 	});
 var $author$project$Elm$Gen$error = function (err) {
@@ -3036,10 +3036,10 @@ var $author$project$Elm$Gen$encodeFile = function (file) {
 			[
 				_Utils_Tuple2(
 				'path',
-				$elm$json$Json$Encode$string(file.a5)),
+				$elm$json$Json$Encode$string(file.a6)),
 				_Utils_Tuple2(
 				'contents',
-				$elm$json$Json$Encode$string(file.aK))
+				$elm$json$Json$Encode$string(file.aL))
 			]));
 };
 var $elm$core$List$foldrHelper = F4(
@@ -3138,20 +3138,20 @@ var $author$project$Generate$ElmSource = function (a) {
 };
 var $elm$project_metadata_utils$Elm$Docs$Module = F6(
 	function (name, comment, unions, aliases, values, binops) {
-		return {Q: aliases, bI: binops, R: comment, t: name, X: unions, L: values};
+		return {P: aliases, bJ: binops, Q: comment, s: name, W: unions, K: values};
 	});
 var $elm$project_metadata_utils$Elm$Docs$Alias = F4(
 	function (name, comment, args, tipe) {
-		return {aF: args, R: comment, t: name, aC: tipe};
+		return {aG: args, Q: comment, s: name, aC: tipe};
 	});
 var $elm$json$Json$Decode$andThen = _Json_andThen;
 var $elm$json$Json$Decode$fail = _Json_fail;
 var $elm$parser$Parser$DeadEnd = F3(
 	function (row, col, problem) {
-		return {aI: col, a8: problem, bg: row};
+		return {aJ: col, a9: problem, bh: row};
 	});
 var $elm$parser$Parser$problemToDeadEnd = function (p) {
-	return A3($elm$parser$Parser$DeadEnd, p.bg, p.aI, p.a8);
+	return A3($elm$parser$Parser$DeadEnd, p.bh, p.aJ, p.a9);
 };
 var $elm$parser$Parser$Advanced$bagToList = F2(
 	function (bag, list) {
@@ -3183,7 +3183,7 @@ var $elm$parser$Parser$Advanced$run = F2(
 	function (_v0, src) {
 		var parse = _v0;
 		var _v1 = parse(
-			{aI: 1, f: _List_Nil, h: 1, e: 0, bg: 1, d: src});
+			{aJ: 1, f: _List_Nil, g: 1, e: 0, bh: 1, d: src});
 		if (!_v1.$) {
 			var value = _v1.b;
 			return $elm$core$Result$Ok(value);
@@ -3279,7 +3279,7 @@ var $elm$parser$Parser$Advanced$AddRight = F2(
 	});
 var $elm$parser$Parser$Advanced$DeadEnd = F4(
 	function (row, col, problem, contextStack) {
-		return {aI: col, bT: contextStack, a8: problem, bg: row};
+		return {aJ: col, bU: contextStack, a9: problem, bh: row};
 	});
 var $elm$parser$Parser$Advanced$Empty = {$: 0};
 var $elm$parser$Parser$Advanced$fromState = F2(
@@ -3287,7 +3287,7 @@ var $elm$parser$Parser$Advanced$fromState = F2(
 		return A2(
 			$elm$parser$Parser$Advanced$AddRight,
 			$elm$parser$Parser$Advanced$Empty,
-			A4($elm$parser$Parser$Advanced$DeadEnd, s.bg, s.aI, x, s.f));
+			A4($elm$parser$Parser$Advanced$DeadEnd, s.bh, s.aJ, x, s.f));
 	});
 var $elm$core$String$isEmpty = function (string) {
 	return string === '';
@@ -3302,7 +3302,7 @@ var $elm$parser$Parser$Advanced$token = function (_v0) {
 	var expecting = _v0.b;
 	var progress = !$elm$core$String$isEmpty(str);
 	return function (s) {
-		var _v1 = A5($elm$parser$Parser$Advanced$isSubString, str, s.e, s.bg, s.aI, s.d);
+		var _v1 = A5($elm$parser$Parser$Advanced$isSubString, str, s.e, s.bh, s.aJ, s.d);
 		var newOffset = _v1.a;
 		var newRow = _v1.b;
 		var newCol = _v1.c;
@@ -3313,7 +3313,7 @@ var $elm$parser$Parser$Advanced$token = function (_v0) {
 			$elm$parser$Parser$Advanced$Good,
 			progress,
 			0,
-			{aI: newCol, f: s.f, h: s.h, e: newOffset, bg: newRow, d: s.d});
+			{aJ: newCol, f: s.f, g: s.g, e: newOffset, bh: newRow, d: s.d});
 	};
 };
 var $elm$parser$Parser$Advanced$symbol = $elm$parser$Parser$Advanced$token;
@@ -3449,7 +3449,7 @@ var $elm$parser$Parser$Advanced$varHelp = F7(
 		while (true) {
 			var newOffset = A3($elm$parser$Parser$Advanced$isSubChar, isGood, offset, src);
 			if (_Utils_eq(newOffset, -1)) {
-				return {aI: col, f: context, h: indent, e: offset, bg: row, d: src};
+				return {aJ: col, f: context, g: indent, e: offset, bh: row, d: src};
 			} else {
 				if (_Utils_eq(newOffset, -2)) {
 					var $temp$isGood = isGood,
@@ -3489,29 +3489,29 @@ var $elm$parser$Parser$Advanced$varHelp = F7(
 	});
 var $elm$parser$Parser$Advanced$variable = function (i) {
 	return function (s) {
-		var firstOffset = A3($elm$parser$Parser$Advanced$isSubChar, i.bk, s.e, s.d);
+		var firstOffset = A3($elm$parser$Parser$Advanced$isSubChar, i.bl, s.e, s.d);
 		if (_Utils_eq(firstOffset, -1)) {
 			return A2(
 				$elm$parser$Parser$Advanced$Bad,
 				false,
-				A2($elm$parser$Parser$Advanced$fromState, s, i.aS));
+				A2($elm$parser$Parser$Advanced$fromState, s, i.aT));
 		} else {
-			var s1 = _Utils_eq(firstOffset, -2) ? A7($elm$parser$Parser$Advanced$varHelp, i.aZ, s.e + 1, s.bg + 1, 1, s.d, s.h, s.f) : A7($elm$parser$Parser$Advanced$varHelp, i.aZ, firstOffset, s.bg, s.aI + 1, s.d, s.h, s.f);
+			var s1 = _Utils_eq(firstOffset, -2) ? A7($elm$parser$Parser$Advanced$varHelp, i.a_, s.e + 1, s.bh + 1, 1, s.d, s.g, s.f) : A7($elm$parser$Parser$Advanced$varHelp, i.a_, firstOffset, s.bh, s.aJ + 1, s.d, s.g, s.f);
 			var name = A3($elm$core$String$slice, s.e, s1.e, s.d);
-			return A2($elm$core$Set$member, name, i.bf) ? A2(
+			return A2($elm$core$Set$member, name, i.bg) ? A2(
 				$elm$parser$Parser$Advanced$Bad,
 				false,
-				A2($elm$parser$Parser$Advanced$fromState, s, i.aS)) : A3($elm$parser$Parser$Advanced$Good, true, name, s1);
+				A2($elm$parser$Parser$Advanced$fromState, s, i.aT)) : A3($elm$parser$Parser$Advanced$Good, true, name, s1);
 		}
 	};
 };
 var $elm$parser$Parser$variable = function (i) {
 	return $elm$parser$Parser$Advanced$variable(
-		{aS: $elm$parser$Parser$ExpectingVariable, aZ: i.aZ, bf: i.bf, bk: i.bk});
+		{aT: $elm$parser$Parser$ExpectingVariable, a_: i.a_, bg: i.bg, bl: i.bl});
 };
 var $elm$project_metadata_utils$Elm$Type$var = function (isFirst) {
 	return $elm$parser$Parser$variable(
-		{aZ: $elm$project_metadata_utils$Elm$Type$isInnerVarChar, bf: $elm$core$Set$empty, bk: isFirst});
+		{a_: $elm$project_metadata_utils$Elm$Type$isInnerVarChar, bg: $elm$core$Set$empty, bl: isFirst});
 };
 var $elm$project_metadata_utils$Elm$Type$lowVar = $elm$project_metadata_utils$Elm$Type$var($elm$core$Char$isLower);
 var $elm$parser$Parser$Advanced$Append = F2(
@@ -3566,7 +3566,7 @@ var $elm$parser$Parser$Advanced$chompWhileHelp = F5(
 					$elm$parser$Parser$Advanced$Good,
 					_Utils_cmp(s0.e, offset) < 0,
 					0,
-					{aI: col, f: s0.f, h: s0.h, e: offset, bg: row, d: s0.d});
+					{aJ: col, f: s0.f, g: s0.g, e: offset, bh: row, d: s0.d});
 			} else {
 				if (_Utils_eq(newOffset, -2)) {
 					var $temp$isGood = isGood,
@@ -3598,7 +3598,7 @@ var $elm$parser$Parser$Advanced$chompWhileHelp = F5(
 	});
 var $elm$parser$Parser$Advanced$chompWhile = function (isGood) {
 	return function (s) {
-		return A5($elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.e, s.bg, s.aI, s);
+		return A5($elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.e, s.bh, s.aJ, s);
 	};
 };
 var $elm$parser$Parser$chompWhile = $elm$parser$Parser$Advanced$chompWhile;
@@ -3941,17 +3941,17 @@ var $elm$parser$Parser$Advanced$sequenceEnd = F5(
 var $elm$parser$Parser$Advanced$sequence = function (i) {
 	return A2(
 		$elm$parser$Parser$Advanced$skip,
-		$elm$parser$Parser$Advanced$token(i.bk),
+		$elm$parser$Parser$Advanced$token(i.bl),
 		A2(
 			$elm$parser$Parser$Advanced$skip,
-			i.bj,
+			i.bk,
 			A5(
 				$elm$parser$Parser$Advanced$sequenceEnd,
-				$elm$parser$Parser$Advanced$token(i.aQ),
-				i.bj,
-				i.a_,
-				$elm$parser$Parser$Advanced$token(i.bi),
-				i.bs)));
+				$elm$parser$Parser$Advanced$token(i.aR),
+				i.bk,
+				i.a$,
+				$elm$parser$Parser$Advanced$token(i.bj),
+				i.bt)));
 };
 var $elm$parser$Parser$Advanced$Forbidden = 0;
 var $elm$parser$Parser$Advanced$Mandatory = 2;
@@ -3978,12 +3978,12 @@ var $elm$parser$Parser$toToken = function (str) {
 var $elm$parser$Parser$sequence = function (i) {
 	return $elm$parser$Parser$Advanced$sequence(
 		{
-			aQ: $elm$parser$Parser$toToken(i.aQ),
-			a_: i.a_,
-			bi: $elm$parser$Parser$toToken(i.bi),
-			bj: i.bj,
-			bk: $elm$parser$Parser$toToken(i.bk),
-			bs: $elm$parser$Parser$toAdvancedTrailing(i.bs)
+			aR: $elm$parser$Parser$toToken(i.aR),
+			a$: i.a$,
+			bj: $elm$parser$Parser$toToken(i.bj),
+			bk: i.bk,
+			bl: $elm$parser$Parser$toToken(i.bl),
+			bt: $elm$parser$Parser$toAdvancedTrailing(i.bt)
 		});
 };
 var $elm$project_metadata_utils$Elm$Type$Tuple = function (a) {
@@ -4174,12 +4174,12 @@ function $elm$project_metadata_utils$Elm$Type$cyclic$tuple() {
 		$elm$project_metadata_utils$Elm$Type$tuplize,
 		$elm$parser$Parser$sequence(
 			{
-				aQ: ')',
-				a_: $elm$project_metadata_utils$Elm$Type$cyclic$tipe(),
-				bi: ',',
-				bj: $elm$project_metadata_utils$Elm$Type$spaces,
-				bk: '(',
-				bs: 0
+				aR: ')',
+				a$: $elm$project_metadata_utils$Elm$Type$cyclic$tipe(),
+				bj: ',',
+				bk: $elm$project_metadata_utils$Elm$Type$spaces,
+				bl: '(',
+				bt: 0
 			}));
 }
 function $elm$project_metadata_utils$Elm$Type$cyclic$tipe() {
@@ -4254,7 +4254,7 @@ var $elm$project_metadata_utils$Elm$Docs$aliasDecoder = A5(
 	A2($elm$json$Json$Decode$field, 'type', $elm$project_metadata_utils$Elm$Type$decoder));
 var $elm$project_metadata_utils$Elm$Docs$Binop = F5(
 	function (name, comment, tipe, associativity, precedence) {
-		return {bH: associativity, R: comment, t: name, J: precedence, aC: tipe};
+		return {bI: associativity, Q: comment, s: name, I: precedence, aC: tipe};
 	});
 var $elm$project_metadata_utils$Elm$Docs$Left = 0;
 var $elm$project_metadata_utils$Elm$Docs$None = 1;
@@ -4285,7 +4285,7 @@ var $elm$project_metadata_utils$Elm$Docs$binopDecoder = A6(
 var $elm$json$Json$Decode$map6 = _Json_map6;
 var $elm$project_metadata_utils$Elm$Docs$Union = F4(
 	function (name, comment, args, tags) {
-		return {aF: args, R: comment, t: name, de: tags};
+		return {aG: args, Q: comment, s: name, dg: tags};
 	});
 var $elm$json$Json$Decode$index = _Json_decodeIndex;
 var $elm$json$Json$Decode$map2 = _Json_map2;
@@ -4315,7 +4315,7 @@ var $elm$project_metadata_utils$Elm$Docs$unionDecoder = A5(
 		$elm$json$Json$Decode$list($elm$project_metadata_utils$Elm$Docs$tagDecoder)));
 var $elm$project_metadata_utils$Elm$Docs$Value = F3(
 	function (name, comment, tipe) {
-		return {R: comment, t: name, aC: tipe};
+		return {Q: comment, s: name, aC: tipe};
 	});
 var $elm$json$Json$Decode$map3 = _Json_map3;
 var $elm$project_metadata_utils$Elm$Docs$valueDecoder = A4(
@@ -4408,8 +4408,8 @@ var $stil4m$elm_syntax$Elm$Syntax$Node$Node = F2(
 		return {$: 0, a: a, b: b};
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Range$emptyRange = {
-	aQ: {bP: 0, bg: 0},
-	bk: {bP: 0, bg: 0}
+	aR: {bQ: 0, bh: 0},
+	bl: {bQ: 0, bh: 0}
 };
 var $author$project$Internal$Compiler$nodify = function (exp) {
 	return A2($stil4m$elm_syntax$Elm$Syntax$Node$Node, $stil4m$elm_syntax$Elm$Syntax$Range$emptyRange, exp);
@@ -4433,14 +4433,13 @@ var $author$project$Elm$string = function (literal) {
 		c: $elm$core$Result$Ok(
 			$author$project$Internal$Compiler$getInnerAnnotation($author$project$Elm$Annotation$string)),
 		a: $stil4m$elm_syntax$Elm$Syntax$Expression$Literal(literal),
-		b: _List_Nil,
-		g: false
+		b: _List_Nil
 	};
 };
 var $stil4m$elm_syntax$Elm$Syntax$Expression$Application = function (a) {
 	return {$: 1, a: a};
 };
-var $author$project$Internal$Compiler$FunctionAppliedToTooManyArgs = {$: 4};
+var $author$project$Internal$Compiler$FunctionAppliedToTooManyArgs = {$: 3};
 var $stil4m$elm_syntax$Elm$Syntax$Node$value = function (_v0) {
 	var v = _v0.b;
 	return v;
@@ -5025,55 +5024,48 @@ var $author$project$Internal$Compiler$unifiableLists = F4(
 				$elm$core$Result$Err('Mismatched numbers of type variables'));
 		}
 	});
-var $author$project$Internal$Compiler$unifiable = F2(
-	function (one, two) {
-		var _v0 = A3($author$project$Internal$Compiler$unifiableHelper, $elm$core$Dict$empty, one, two);
-		var result = _v0.b;
-		var _v1 = function () {
-			if (!result.$) {
-				return _Utils_Tuple2(one, two);
-			} else {
-				return _Utils_Tuple2(one, two);
-			}
-		}();
-		return result;
+var $author$project$Internal$Compiler$unifiable = F3(
+	function (cache, one, two) {
+		return A3($author$project$Internal$Compiler$unifiableHelper, cache, one, two);
 	});
-var $author$project$Internal$Compiler$applyTypeHelper = F2(
-	function (fn, args) {
+var $author$project$Internal$Compiler$applyTypeHelper = F3(
+	function (cache, fn, args) {
 		applyTypeHelper:
 		while (true) {
 			if (fn.$ === 6) {
 				var one = fn.a;
 				var two = fn.b;
 				if (!args.b) {
-					return $elm$core$Result$Ok(fn);
+					return $elm$core$Result$Ok(
+						{ac: cache, aE: fn});
 				} else {
 					var top = args.a;
 					var rest = args.b;
-					var _v2 = A2(
+					var _v2 = A3(
 						$author$project$Internal$Compiler$unifiable,
+						cache,
 						$author$project$Internal$Compiler$denode(one),
 						top);
-					if (!_v2.$) {
-						if (!rest.b) {
-							return $elm$core$Result$Ok(
-								$author$project$Internal$Compiler$denode(two));
-						} else {
-							var $temp$fn = $author$project$Internal$Compiler$denode(two),
-								$temp$args = rest;
-							fn = $temp$fn;
-							args = $temp$args;
-							continue applyTypeHelper;
-						}
+					if (!_v2.b.$) {
+						var variableCache = _v2.a;
+						var $temp$cache = variableCache,
+							$temp$fn = $author$project$Internal$Compiler$denode(two),
+							$temp$args = rest;
+						cache = $temp$cache;
+						fn = $temp$fn;
+						args = $temp$args;
+						continue applyTypeHelper;
 					} else {
-						var err = _v2.a;
+						var varCache = _v2.a;
+						var err = _v2.b.a;
 						return $elm$core$Result$Err(_List_Nil);
 					}
 				}
 			} else {
 				var _final = fn;
 				if (!args.b) {
-					return $elm$core$Result$Ok(fn);
+					return $elm$core$Result$Ok(
+						{ac: cache, aE: fn});
 				} else {
 					return $elm$core$Result$Err(
 						_List_fromArray(
@@ -5107,6 +5099,148 @@ var $author$project$Internal$Compiler$extractListAnnotation = F2(
 			}
 		}
 	});
+var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$GenericRecord = F2(
+	function (a, b) {
+		return {$: 5, a: a, b: b};
+	});
+var $author$project$Internal$Compiler$mapNode = F2(
+	function (fn, _v0) {
+		var range = _v0.a;
+		var n = _v0.b;
+		return A2(
+			$stil4m$elm_syntax$Elm$Syntax$Node$Node,
+			range,
+			fn(n));
+	});
+var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$GenericType = function (a) {
+	return {$: 0, a: a};
+};
+var $author$project$Internal$Compiler$resolveName = F2(
+	function (name, cache) {
+		resolveName:
+		while (true) {
+			var _v0 = A2($elm$core$Dict$get, name, cache);
+			if (!_v0.$) {
+				if (!_v0.a.$) {
+					var newName = _v0.a.a;
+					var $temp$name = newName,
+						$temp$cache = cache;
+					name = $temp$name;
+					cache = $temp$cache;
+					continue resolveName;
+				} else {
+					var newType = _v0.a;
+					return newType;
+				}
+			} else {
+				return $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$GenericType(name);
+			}
+		}
+	});
+var $author$project$Internal$Compiler$resolveVariables = F2(
+	function (cache, annotation) {
+		switch (annotation.$) {
+			case 6:
+				var one = annotation.a;
+				var two = annotation.b;
+				return A2(
+					$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$FunctionTypeAnnotation,
+					A2(
+						$author$project$Internal$Compiler$mapNode,
+						$author$project$Internal$Compiler$resolveVariables(cache),
+						one),
+					A2(
+						$author$project$Internal$Compiler$mapNode,
+						$author$project$Internal$Compiler$resolveVariables(cache),
+						two));
+			case 0:
+				var name = annotation.a;
+				return A2($author$project$Internal$Compiler$resolveName, name, cache);
+			case 1:
+				var nodedModuleName = annotation.a;
+				var vars = annotation.b;
+				return A2(
+					$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Typed,
+					nodedModuleName,
+					A2(
+						$elm$core$List$map,
+						function (node) {
+							return A2(
+								$author$project$Internal$Compiler$mapNode,
+								$author$project$Internal$Compiler$resolveVariables(cache),
+								node);
+						},
+						vars));
+			case 2:
+				return $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Unit;
+			case 3:
+				var nodes = annotation.a;
+				return $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Tupled(
+					A2(
+						$elm$core$List$map,
+						function (node) {
+							return A2(
+								$author$project$Internal$Compiler$mapNode,
+								$author$project$Internal$Compiler$resolveVariables(cache),
+								node);
+						},
+						nodes));
+			case 4:
+				var fields = annotation.a;
+				return $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Record(
+					A2(
+						$elm$core$List$map,
+						function (_v1) {
+							var fieldRange = _v1.a;
+							var _v2 = _v1.b;
+							var name = _v2.a;
+							var _v3 = _v2.b;
+							var fieldTypeRange = _v3.a;
+							var fieldType = _v3.b;
+							return A2(
+								$stil4m$elm_syntax$Elm$Syntax$Node$Node,
+								fieldRange,
+								_Utils_Tuple2(
+									name,
+									A2(
+										$stil4m$elm_syntax$Elm$Syntax$Node$Node,
+										fieldTypeRange,
+										A2($author$project$Internal$Compiler$resolveVariables, cache, fieldType))));
+						},
+						fields));
+			default:
+				var baseName = annotation.a;
+				var _v4 = annotation.b;
+				var recordNode = _v4.a;
+				var fields = _v4.b;
+				return A2(
+					$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$GenericRecord,
+					baseName,
+					A2(
+						$stil4m$elm_syntax$Elm$Syntax$Node$Node,
+						recordNode,
+						A2(
+							$elm$core$List$map,
+							function (_v5) {
+								var fieldRange = _v5.a;
+								var _v6 = _v5.b;
+								var name = _v6.a;
+								var _v7 = _v6.b;
+								var fieldTypeRange = _v7.a;
+								var fieldType = _v7.b;
+								return A2(
+									$stil4m$elm_syntax$Elm$Syntax$Node$Node,
+									fieldRange,
+									_Utils_Tuple2(
+										name,
+										A2(
+											$stil4m$elm_syntax$Elm$Syntax$Node$Node,
+											fieldTypeRange,
+											A2($author$project$Internal$Compiler$resolveVariables, cache, fieldType))));
+							},
+							fields)));
+		}
+	});
 var $author$project$Internal$Compiler$applyType = F2(
 	function (_v0, args) {
 		var exp = _v0;
@@ -5119,7 +5253,15 @@ var $author$project$Internal$Compiler$applyType = F2(
 			var _v2 = A2($author$project$Internal$Compiler$extractListAnnotation, args, _List_Nil);
 			if (!_v2.$) {
 				var types = _v2.a;
-				return A2($author$project$Internal$Compiler$applyTypeHelper, topAnnotation, types);
+				var _v3 = A3($author$project$Internal$Compiler$applyTypeHelper, $elm$core$Dict$empty, topAnnotation, types);
+				if (_v3.$ === 1) {
+					var err = _v3.a;
+					return $elm$core$Result$Err(err);
+				} else {
+					var inference = _v3.a;
+					return $elm$core$Result$Ok(
+						A2($author$project$Internal$Compiler$resolveVariables, inference.ac, inference.aE));
+				}
 			} else {
 				var err = _v2.a;
 				return $elm$core$Result$Err(err);
@@ -5130,17 +5272,6 @@ var $elm$core$Basics$composeL = F3(
 	function (g, f, x) {
 		return g(
 			f(x));
-	});
-var $elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			$elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
 	});
 var $author$project$Elm$getExpression = function (_v0) {
 	var exp = _v0;
@@ -5190,15 +5321,8 @@ var $author$project$Elm$parens = function (expr) {
 	}
 };
 var $author$project$Elm$apply = F2(
-	function (top, allArgs) {
+	function (top, args) {
 		var exp = top;
-		var args = A2(
-			$elm$core$List$filter,
-			function (_v0) {
-				var arg = _v0;
-				return !arg.g;
-			},
-			allArgs);
 		return {
 			c: A2($author$project$Internal$Compiler$applyType, top, args),
 			a: $stil4m$elm_syntax$Elm$Syntax$Expression$Application(
@@ -5212,8 +5336,7 @@ var $author$project$Elm$apply = F2(
 							args)))),
 			b: _Utils_ap(
 				exp.b,
-				A2($elm$core$List$concatMap, $author$project$Elm$getImports, args)),
-			g: false
+				A2($elm$core$List$concatMap, $author$project$Elm$getImports, args))
 		};
 	});
 var $author$project$Elm$Annotation$function = F2(
@@ -5312,8 +5435,7 @@ var $author$project$Elm$valueFrom = F2(
 				mod,
 				$author$project$Internal$Compiler$sanitize(name)),
 			b: _List_fromArray(
-				[mod]),
-			g: false
+				[mod])
 		};
 	});
 var $author$project$Elm$withType = F2(
@@ -5400,9 +5522,6 @@ var $author$project$Elm$toList = function (_v0) {
 	var exp = _v0;
 	return $author$project$Internal$Compiler$nodify(exp.a);
 };
-var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$GenericType = function (a) {
-	return {$: 0, a: a};
-};
 var $author$project$Internal$Compiler$MismatchedList = F2(
 	function (a, b) {
 		return {$: 0, a: a, b: b};
@@ -5419,15 +5538,16 @@ var $author$project$Internal$Compiler$unifyHelper = F2(
 				var _v1 = top.c;
 				if (!_v1.$) {
 					var ann = _v1.a;
-					var _v2 = A2($author$project$Internal$Compiler$unifiable, ann, existing);
-					if (_v2.$ === 1) {
+					var _v2 = A3($author$project$Internal$Compiler$unifiable, $elm$core$Dict$empty, ann, existing);
+					if (_v2.b.$ === 1) {
 						return $elm$core$Result$Err(
 							_List_fromArray(
 								[
 									A2($author$project$Internal$Compiler$MismatchedList, ann, existing)
 								]));
 					} else {
-						var _new = _v2.a;
+						var cache = _v2.a;
+						var _new = _v2.b.a;
 						var $temp$exps = remain,
 							$temp$existing = _new;
 						exps = $temp$exps;
@@ -5475,8 +5595,7 @@ var $author$project$Elm$list = function (exprs) {
 			$author$project$Internal$Compiler$unify(exprs)),
 		a: $stil4m$elm_syntax$Elm$Syntax$Expression$ListExpr(
 			A2($elm$core$List$map, $author$project$Elm$toList, exprs)),
-		b: A2($elm$core$List$concatMap, $author$project$Elm$getImports, exprs),
-		g: false
+		b: A2($elm$core$List$concatMap, $author$project$Elm$getImports, exprs)
 	};
 };
 var $author$project$Elm$Annotation$tuple = F2(
@@ -5929,8 +6048,7 @@ var $author$project$Elm$tuple = F2(
 				$author$project$Internal$Compiler$nodifyAll(
 					_List_fromArray(
 						[one.a, two.a]))),
-			b: _Utils_ap(one.b, two.b),
-			g: false
+			b: _Utils_ap(one.b, two.b)
 		};
 	});
 var $author$project$Elm$Gen$Elm$Annotation$tuple = F2(
@@ -6263,10 +6381,10 @@ var $author$project$Generate$blockToIdField = function (block) {
 			return $elm$core$Maybe$Just(
 				A2(
 					$author$project$Elm$field,
-					value.t,
+					value.s,
 					A2(
 						$author$project$Generate$valueWith,
-						$author$project$Elm$string(value.t),
+						$author$project$Elm$string(value.s),
 						value.aC)));
 		case 4:
 			var binop = block.a;
@@ -6314,22 +6432,22 @@ var $author$project$Elm$declaration = F2(
 			body.b,
 			$stil4m$elm_syntax$Elm$Syntax$Declaration$FunctionDeclaration(
 				{
-					bV: $author$project$Internal$Compiler$nodify(
+					bW: $author$project$Internal$Compiler$nodify(
 						{
-							bG: _List_Nil,
+							bH: _List_Nil,
 							a: $author$project$Internal$Compiler$nodify(body.a),
-							t: $author$project$Internal$Compiler$nodify(
+							s: $author$project$Internal$Compiler$nodify(
 								$author$project$Internal$Compiler$formatValue(name))
 						}),
-					ab: $author$project$Internal$Compiler$nodifyMaybe($elm$core$Maybe$Nothing),
-					c8: function () {
+					aa: $author$project$Internal$Compiler$nodifyMaybe($elm$core$Maybe$Nothing),
+					c9: function () {
 						var _v1 = body.c;
 						if (!_v1.$) {
 							var sig = _v1.a;
 							return $elm$core$Maybe$Just(
 								$author$project$Internal$Compiler$nodify(
 									{
-										t: $author$project$Internal$Compiler$nodify(
+										s: $author$project$Internal$Compiler$nodify(
 											$author$project$Internal$Compiler$formatValue(name)),
 										aD: $author$project$Internal$Compiler$nodify(sig)
 									}));
@@ -6340,7 +6458,7 @@ var $author$project$Elm$declaration = F2(
 				}));
 	});
 var $author$project$Elm$docs = function (group) {
-	return '@docs ' + A2($elm$core$String$join, ', ', group.cL);
+	return '@docs ' + A2($elm$core$String$join, ', ', group.cM);
 };
 var $author$project$Internal$Compiler$Exposed = function (a) {
 	return {$: 1, a: a};
@@ -6357,7 +6475,7 @@ var $author$project$Internal$Compiler$expose = function (decl) {
 			return A3(
 				$author$project$Internal$Compiler$Declaration,
 				$author$project$Internal$Compiler$Exposed(
-					{S: false, U: $elm$core$Maybe$Nothing}),
+					{R: false, T: $elm$core$Maybe$Nothing}),
 				imports,
 				body);
 	}
@@ -6520,29 +6638,29 @@ var $author$project$Internal$Compiler$getExposed = function (decls) {
 								var fn = decBody.a;
 								var fnName = $author$project$Internal$Compiler$denode(
 									function ($) {
-										return $.t;
+										return $.s;
 									}(
-										$author$project$Internal$Compiler$denode(fn.bV)));
+										$author$project$Internal$Compiler$denode(fn.bW)));
 								return $elm$core$Maybe$Just(
 									$stil4m$elm_syntax$Elm$Syntax$Exposing$FunctionExpose(fnName));
 							case 1:
 								var synonym = decBody.a;
-								var aliasName = $author$project$Internal$Compiler$denode(synonym.t);
+								var aliasName = $author$project$Internal$Compiler$denode(synonym.s);
 								return $elm$core$Maybe$Just(
 									$stil4m$elm_syntax$Elm$Syntax$Exposing$TypeOrAliasExpose(aliasName));
 							case 2:
 								var myType = decBody.a;
-								var typeName = $author$project$Internal$Compiler$denode(myType.t);
-								return details.S ? $elm$core$Maybe$Just(
+								var typeName = $author$project$Internal$Compiler$denode(myType.s);
+								return details.R ? $elm$core$Maybe$Just(
 									$stil4m$elm_syntax$Elm$Syntax$Exposing$TypeExpose(
 										{
-											t: typeName,
-											cU: $elm$core$Maybe$Just($stil4m$elm_syntax$Elm$Syntax$Range$emptyRange)
+											s: typeName,
+											cV: $elm$core$Maybe$Just($stil4m$elm_syntax$Elm$Syntax$Range$emptyRange)
 										})) : $elm$core$Maybe$Just(
 									$stil4m$elm_syntax$Elm$Syntax$Exposing$TypeOrAliasExpose(typeName));
 							case 3:
 								var myPort = decBody.a;
-								var typeName = $author$project$Internal$Compiler$denode(myPort.t);
+								var typeName = $author$project$Internal$Compiler$denode(myPort.s);
 								return $elm$core$Maybe$Just(
 									$stil4m$elm_syntax$Elm$Syntax$Exposing$FunctionExpose(typeName));
 							case 4:
@@ -6571,21 +6689,21 @@ var $author$project$Internal$Compiler$declName = function (decl) {
 					return $elm$core$Maybe$Just(
 						$author$project$Internal$Compiler$denode(
 							function ($) {
-								return $.t;
+								return $.s;
 							}(
-								$author$project$Internal$Compiler$denode(fn.bV))));
+								$author$project$Internal$Compiler$denode(fn.bW))));
 				case 1:
 					var synonym = decBody.a;
 					return $elm$core$Maybe$Just(
-						$author$project$Internal$Compiler$denode(synonym.t));
+						$author$project$Internal$Compiler$denode(synonym.s));
 				case 2:
 					var myType = decBody.a;
 					return $elm$core$Maybe$Just(
-						$author$project$Internal$Compiler$denode(myType.t));
+						$author$project$Internal$Compiler$denode(myType.s));
 				case 3:
 					var myPort = decBody.a;
 					return $elm$core$Maybe$Just(
-						$author$project$Internal$Compiler$denode(myPort.t));
+						$author$project$Internal$Compiler$denode(myPort.s));
 				case 4:
 					var infix = decBody.a;
 					return $elm$core$Maybe$Nothing;
@@ -6623,25 +6741,25 @@ var $author$project$Internal$Compiler$groupExposing = function (items) {
 					return _List_fromArray(
 						[
 							{
-							U: maybeGroup,
-							cL: _List_fromArray(
+							T: maybeGroup,
+							cM: _List_fromArray(
 								[name])
 						}
 						]);
 				} else {
 					var top = acc.a;
 					var groups = acc.b;
-					return A2($author$project$Internal$Compiler$matchName, maybeGroup, top.U) ? A2(
+					return A2($author$project$Internal$Compiler$matchName, maybeGroup, top.T) ? A2(
 						$elm$core$List$cons,
 						{
-							U: top.U,
-							cL: A2($elm$core$List$cons, name, top.cL)
+							T: top.T,
+							cM: A2($elm$core$List$cons, name, top.cM)
 						},
 						groups) : A2(
 						$elm$core$List$cons,
 						{
-							U: maybeGroup,
-							cL: _List_fromArray(
+							T: maybeGroup,
+							cM: _List_fromArray(
 								[name])
 						},
 						acc);
@@ -6684,7 +6802,7 @@ var $author$project$Internal$Compiler$getExposedGroups = function (decls) {
 								} else {
 									var name = _v2.a;
 									return $elm$core$Maybe$Just(
-										_Utils_Tuple2(details.U, name));
+										_Utils_Tuple2(details.T, name));
 								}
 							}
 					}
@@ -6792,16 +6910,16 @@ var $author$project$Internal$Compiler$makeImport = F2(
 			if (_v1.$ === 1) {
 				return $author$project$Internal$Compiler$builtIn(name) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(
 					{
-						b8: $elm$core$Maybe$Nothing,
-						a1: $elm$core$Maybe$Nothing,
+						b9: $elm$core$Maybe$Nothing,
+						a2: $elm$core$Maybe$Nothing,
 						af: $author$project$Internal$Compiler$nodify(name)
 					});
 			} else {
 				var alias = _v1.a;
 				return $elm$core$Maybe$Just(
 					{
-						b8: $elm$core$Maybe$Nothing,
-						a1: $elm$core$Maybe$Just(
+						b9: $elm$core$Maybe$Nothing,
+						a2: $elm$core$Maybe$Just(
 							$author$project$Internal$Compiler$nodify(
 								_List_fromArray(
 									[alias]))),
@@ -6921,14 +7039,14 @@ var $author$project$Internal$Write$prettyTopLevelExpose = function (tlExpose) {
 			return $the_sett$elm_pretty_printer$Pretty$string(val);
 		default:
 			var exposedType = tlExpose.a;
-			var _v1 = exposedType.cU;
+			var _v1 = exposedType.cV;
 			if (_v1.$ === 1) {
-				return $the_sett$elm_pretty_printer$Pretty$string(exposedType.t);
+				return $the_sett$elm_pretty_printer$Pretty$string(exposedType.s);
 			} else {
 				return A2(
 					$the_sett$elm_pretty_printer$Pretty$a,
 					$the_sett$elm_pretty_printer$Pretty$string('(..)'),
-					$the_sett$elm_pretty_printer$Pretty$string(exposedType.t));
+					$the_sett$elm_pretty_printer$Pretty$string(exposedType.s));
 			}
 	}
 };
@@ -6954,7 +7072,7 @@ var $author$project$Internal$ImportsAndExposing$combineTopLevelExposes = functio
 					var _v1 = _Utils_Tuple2(exp, result);
 					if (_v1.a.$ === 3) {
 						var typeExpose = _v1.a.a;
-						var _v2 = typeExpose.cU;
+						var _v2 = typeExpose.cV;
 						if (!_v2.$) {
 							return exp;
 						} else {
@@ -6963,7 +7081,7 @@ var $author$project$Internal$ImportsAndExposing$combineTopLevelExposes = functio
 					} else {
 						if (_v1.b.$ === 3) {
 							var typeExpose = _v1.b.a;
-							var _v3 = typeExpose.cU;
+							var _v3 = typeExpose.cV;
 							if (!_v3.$) {
 								return result;
 							} else {
@@ -6991,7 +7109,7 @@ var $author$project$Internal$ImportsAndExposing$topLevelExposeName = function (t
 			return val;
 		default:
 			var exposedType = tle.a;
-			return exposedType.t;
+			return exposedType.s;
 	}
 };
 var $author$project$Internal$ImportsAndExposing$groupByExposingName = function (innerImports) {
@@ -7125,11 +7243,11 @@ var $author$project$Internal$Write$prettyImport = function (import_) {
 				A2(
 				$author$project$Internal$Write$prettyMaybe,
 				$author$project$Internal$Write$prettyModuleNameAlias,
-				$author$project$Internal$Compiler$denodeMaybe(import_.a1)),
+				$author$project$Internal$Compiler$denodeMaybe(import_.a2)),
 				A2(
 				$author$project$Internal$Write$prettyMaybe,
 				$author$project$Internal$Write$prettyExposing,
-				$author$project$Internal$Compiler$denodeMaybe(import_.b8))
+				$author$project$Internal$Compiler$denodeMaybe(import_.b9))
 			]));
 };
 var $elm$core$Basics$composeR = F3(
@@ -7216,8 +7334,8 @@ var $author$project$Internal$ImportsAndExposing$sortAndDedupExposing = function 
 var $author$project$Internal$ImportsAndExposing$combineImports = function (innerImports) {
 	if (!innerImports.b) {
 		return {
-			b8: $elm$core$Maybe$Nothing,
-			a1: $elm$core$Maybe$Nothing,
+			b9: $elm$core$Maybe$Nothing,
+			a2: $elm$core$Maybe$Nothing,
 			af: $author$project$Internal$ImportsAndExposing$nodify(_List_Nil)
 		};
 	} else {
@@ -7228,12 +7346,12 @@ var $author$project$Internal$ImportsAndExposing$combineImports = function (inner
 			F2(
 				function (imp, result) {
 					return {
-						b8: $author$project$Internal$ImportsAndExposing$nodifyMaybe(
+						b9: $author$project$Internal$ImportsAndExposing$nodifyMaybe(
 							A2(
 								$author$project$Internal$ImportsAndExposing$joinMaybeExposings,
-								$author$project$Internal$ImportsAndExposing$denodeMaybe(imp.b8),
-								$author$project$Internal$ImportsAndExposing$denodeMaybe(result.b8))),
-						a1: A2($elm_community$maybe_extra$Maybe$Extra$or, imp.a1, result.a1),
+								$author$project$Internal$ImportsAndExposing$denodeMaybe(imp.b9),
+								$author$project$Internal$ImportsAndExposing$denodeMaybe(result.b9))),
+						a2: A2($elm_community$maybe_extra$Maybe$Extra$or, imp.a2, result.a2),
 						af: imp.af
 					};
 				}),
@@ -7242,13 +7360,13 @@ var $author$project$Internal$ImportsAndExposing$combineImports = function (inner
 		return _Utils_update(
 			combinedImports,
 			{
-				b8: A2(
+				b9: A2(
 					$elm$core$Maybe$map,
 					A2(
 						$elm$core$Basics$composeR,
 						$author$project$Internal$ImportsAndExposing$denode,
 						A2($elm$core$Basics$composeR, $author$project$Internal$ImportsAndExposing$sortAndDedupExposing, $author$project$Internal$ImportsAndExposing$nodify)),
-					combinedImports.b8)
+					combinedImports.b9)
 			});
 	}
 };
@@ -7709,12 +7827,12 @@ var $author$project$Internal$Write$prettyValueConstructor = F2(
 					_List_fromArray(
 						[
 							$the_sett$elm_pretty_printer$Pretty$string(
-							$author$project$Internal$Compiler$denode(cons.t)),
+							$author$project$Internal$Compiler$denode(cons.s)),
 							$the_sett$elm_pretty_printer$Pretty$lines(
 							A2(
 								$elm$core$List$map,
 								$author$project$Internal$Write$prettyTypeAnnotationParens(aliases),
-								$author$project$Internal$Compiler$denodeAll(cons.bG)))
+								$author$project$Internal$Compiler$denodeAll(cons.bH)))
 						]))));
 	});
 var $author$project$Internal$Write$prettyValueConstructors = F2(
@@ -7740,7 +7858,7 @@ var $author$project$Internal$Write$prettyCustomType = F2(
 				A2(
 					$author$project$Internal$Write$prettyValueConstructors,
 					aliases,
-					$author$project$Internal$Compiler$denodeAll(type_.bS)),
+					$author$project$Internal$Compiler$denodeAll(type_.bT)),
 				A2(
 					$the_sett$elm_pretty_printer$Pretty$a,
 					$the_sett$elm_pretty_printer$Pretty$string('= '),
@@ -7752,12 +7870,12 @@ var $author$project$Internal$Write$prettyCustomType = F2(
 								[
 									$the_sett$elm_pretty_printer$Pretty$string('type'),
 									$the_sett$elm_pretty_printer$Pretty$string(
-									$author$project$Internal$Compiler$denode(type_.t)),
+									$author$project$Internal$Compiler$denode(type_.s)),
 									$the_sett$elm_pretty_printer$Pretty$words(
 									A2(
 										$elm$core$List$map,
 										$the_sett$elm_pretty_printer$Pretty$string,
-										$author$project$Internal$Compiler$denodeAll(type_.aW)))
+										$author$project$Internal$Compiler$denodeAll(type_.aX)))
 								]))))));
 		return $the_sett$elm_pretty_printer$Pretty$lines(
 			_List_fromArray(
@@ -7765,14 +7883,14 @@ var $author$project$Internal$Write$prettyCustomType = F2(
 					A2(
 					$author$project$Internal$Write$prettyMaybe,
 					$author$project$Internal$Write$prettyDocumentation,
-					$author$project$Internal$Compiler$denodeMaybe(type_.ab)),
+					$author$project$Internal$Compiler$denodeMaybe(type_.aa)),
 					customTypePretty
 				]));
 	});
 var $author$project$Internal$Write$adjustExpressionParentheses = F2(
 	function (context, expression) {
 		var shouldRemove = function (expr) {
-			var _v3 = _Utils_Tuple3(context.H, context.G, expr);
+			var _v3 = _Utils_Tuple3(context.G, context.F, expr);
 			_v3$1:
 			while (true) {
 				if (_v3.a) {
@@ -7783,7 +7901,7 @@ var $author$project$Internal$Write$adjustExpressionParentheses = F2(
 							if (_v3.b) {
 								break _v3$1;
 							} else {
-								return (context.J < 11) ? true : false;
+								return (context.I < 11) ? true : false;
 							}
 						case 3:
 							if (_v3.b) {
@@ -7888,7 +8006,7 @@ var $author$project$Internal$Write$adjustExpressionParentheses = F2(
 			}
 		};
 		var addParens = function (expr) {
-			var _v1 = _Utils_Tuple3(context.H, context.G, expr);
+			var _v1 = _Utils_Tuple3(context.G, context.F, expr);
 			_v1$4:
 			while (true) {
 				if ((!_v1.a) && (!_v1.b)) {
@@ -8318,7 +8436,7 @@ var $author$project$Internal$Write$prettyPatternInner = F3(
 						$elm$core$List$cons,
 						A2(
 							$the_sett$elm_pretty_printer$Pretty$a,
-							$the_sett$elm_pretty_printer$Pretty$string(qnRef.t),
+							$the_sett$elm_pretty_printer$Pretty$string(qnRef.s),
 							A2($author$project$Internal$Write$prettyModuleNameDot, aliases, qnRef.af)),
 						A2(
 							$elm$core$List$map,
@@ -8410,7 +8528,7 @@ var $author$project$Internal$Write$prettySignature = F2(
 							_List_fromArray(
 								[
 									$the_sett$elm_pretty_printer$Pretty$string(
-									$author$project$Internal$Compiler$denode(sig.t)),
+									$author$project$Internal$Compiler$denode(sig.s)),
 									$the_sett$elm_pretty_printer$Pretty$string(':')
 								])),
 							A2(
@@ -8452,7 +8570,7 @@ var $author$project$Internal$Write$toHexString = function (val) {
 		$elm$core$String$toUpper(
 			$rtfeldman$elm_hex$Hex$toString(val)));
 };
-var $author$project$Internal$Write$topContext = {G: false, H: true, J: 11};
+var $author$project$Internal$Write$topContext = {F: false, G: true, I: 11};
 var $elm$core$List$unzip = function (pairs) {
 	var step = F2(
 		function (_v0, _v1) {
@@ -8481,7 +8599,7 @@ var $author$project$Internal$Write$prettyApplication = F3(
 					A3(
 						$author$project$Internal$Write$prettyExpressionInner,
 						aliases,
-						{G: false, H: false, J: 11},
+						{F: false, G: false, I: 11},
 						4),
 					$author$project$Internal$Compiler$denodeAll(exprs))));
 		var prettyExpressions = _v30.a;
@@ -8528,7 +8646,7 @@ var $author$project$Internal$Write$prettyCaseBlock = F3(
 								$author$project$Internal$Compiler$denode(pattern))))));
 		};
 		var patternsPart = $author$project$Internal$Write$doubleLines(
-			A2($elm$core$List$map, prettyCase, caseBlock.bL));
+			A2($elm$core$List$map, prettyCase, caseBlock.bM));
 		var casePart = function () {
 			var _v28 = A4(
 				$author$project$Internal$Write$prettyExpressionInner,
@@ -8707,15 +8825,15 @@ var $author$project$Internal$Write$prettyFun = F2(
 					A2(
 					$author$project$Internal$Write$prettyMaybe,
 					$author$project$Internal$Write$prettyDocumentation,
-					$author$project$Internal$Compiler$denodeMaybe(fn.ab)),
+					$author$project$Internal$Compiler$denodeMaybe(fn.aa)),
 					A2(
 					$author$project$Internal$Write$prettyMaybe,
 					$author$project$Internal$Write$prettySignature(aliases),
-					$author$project$Internal$Compiler$denodeMaybe(fn.c8)),
+					$author$project$Internal$Compiler$denodeMaybe(fn.c9)),
 					A2(
 					$author$project$Internal$Write$prettyFunctionImplementation,
 					aliases,
-					$author$project$Internal$Compiler$denode(fn.bV))
+					$author$project$Internal$Compiler$denode(fn.bW))
 				]));
 	});
 var $author$project$Internal$Write$prettyFunctionImplementation = F2(
@@ -8736,11 +8854,11 @@ var $author$project$Internal$Write$prettyFunctionImplementation = F2(
 						_List_fromArray(
 							[
 								$the_sett$elm_pretty_printer$Pretty$string(
-								$author$project$Internal$Compiler$denode(impl.t)),
+								$author$project$Internal$Compiler$denode(impl.s)),
 								A2(
 								$author$project$Internal$Write$prettyArgs,
 								aliases,
-								$author$project$Internal$Compiler$denodeAll(impl.bG)),
+								$author$project$Internal$Compiler$denodeAll(impl.bH)),
 								$the_sett$elm_pretty_printer$Pretty$string('=')
 							])))));
 	});
@@ -8879,7 +8997,7 @@ var $author$project$Internal$Write$prettyLambdaExpression = F3(
 											A2(
 												$elm$core$List$map,
 												A2($author$project$Internal$Write$prettyPatternInner, aliases, false),
-												$author$project$Internal$Compiler$denodeAll(lambda.aF))),
+												$author$project$Internal$Compiler$denodeAll(lambda.aG))),
 										$the_sett$elm_pretty_printer$Pretty$string('\\'))),
 									prettyExpr
 								]))))),
@@ -8900,7 +9018,7 @@ var $author$project$Internal$Write$prettyLetBlock = F3(
 								A2(
 									$elm$core$List$map,
 									A2($author$project$Internal$Write$prettyLetDeclaration, aliases, indent),
-									$author$project$Internal$Compiler$denodeAll(letBlock.bY)))),
+									$author$project$Internal$Compiler$denodeAll(letBlock.bZ)))),
 							$the_sett$elm_pretty_printer$Pretty$string('in'),
 							A4(
 							$author$project$Internal$Write$prettyExpressionInner,
@@ -8994,9 +9112,9 @@ var $author$project$Internal$Write$prettyOperatorApplication = F6(
 var $author$project$Internal$Write$prettyOperatorApplicationLeft = F6(
 	function (aliases, indent, symbol, _v16, exprl, exprr) {
 		var context = {
-			G: true,
-			H: false,
-			J: $author$project$Internal$Write$precedence(symbol)
+			F: true,
+			G: false,
+			I: $author$project$Internal$Write$precedence(symbol)
 		};
 		var _v17 = A4(
 			$author$project$Internal$Write$prettyExpressionInner,
@@ -9059,9 +9177,9 @@ var $author$project$Internal$Write$prettyOperatorApplicationRight = F6(
 					$elm$core$String$length(symbol) + 1);
 				var leftIndent = isTop ? indent : innerIndent;
 				var context = {
-					G: '<|' === sym,
-					H: false,
-					J: $author$project$Internal$Write$precedence(sym)
+					F: '<|' === sym,
+					G: false,
+					I: $author$project$Internal$Write$precedence(sym)
 				};
 				var rightSide = A3(
 					expandExpr,
@@ -9374,16 +9492,16 @@ var $author$project$Internal$Write$prettyInfix = function (infix_) {
 				$the_sett$elm_pretty_printer$Pretty$string('infix'),
 				$the_sett$elm_pretty_printer$Pretty$string(
 				dirToString(
-					$author$project$Internal$Compiler$denode(infix_.b$))),
+					$author$project$Internal$Compiler$denode(infix_.b0))),
 				$the_sett$elm_pretty_printer$Pretty$string(
 				$elm$core$String$fromInt(
-					$author$project$Internal$Compiler$denode(infix_.J))),
+					$author$project$Internal$Compiler$denode(infix_.I))),
 				$the_sett$elm_pretty_printer$Pretty$parens(
 				$the_sett$elm_pretty_printer$Pretty$string(
-					$author$project$Internal$Compiler$denode(infix_.cV))),
+					$author$project$Internal$Compiler$denode(infix_.cW))),
 				$the_sett$elm_pretty_printer$Pretty$string('='),
 				$the_sett$elm_pretty_printer$Pretty$string(
-				$author$project$Internal$Compiler$denode(infix_.cj))
+				$author$project$Internal$Compiler$denode(infix_.ck))
 			]));
 };
 var $author$project$Internal$Write$prettyPortDeclaration = F2(
@@ -9414,12 +9532,12 @@ var $author$project$Internal$Write$prettyTypeAlias = F2(
 							[
 								$the_sett$elm_pretty_printer$Pretty$string('type alias'),
 								$the_sett$elm_pretty_printer$Pretty$string(
-								$author$project$Internal$Compiler$denode(tAlias.t)),
+								$author$project$Internal$Compiler$denode(tAlias.s)),
 								$the_sett$elm_pretty_printer$Pretty$words(
 								A2(
 									$elm$core$List$map,
 									$the_sett$elm_pretty_printer$Pretty$string,
-									$author$project$Internal$Compiler$denodeAll(tAlias.aW))),
+									$author$project$Internal$Compiler$denodeAll(tAlias.aX))),
 								$the_sett$elm_pretty_printer$Pretty$string('=')
 							])))));
 		return $the_sett$elm_pretty_printer$Pretty$lines(
@@ -9428,7 +9546,7 @@ var $author$project$Internal$Write$prettyTypeAlias = F2(
 					A2(
 					$author$project$Internal$Write$prettyMaybe,
 					$author$project$Internal$Write$prettyDocumentation,
-					$author$project$Internal$Compiler$denodeMaybe(tAlias.ab)),
+					$author$project$Internal$Compiler$denodeMaybe(tAlias.aa)),
 					typeAliasPretty
 				]));
 	});
@@ -9498,11 +9616,8 @@ var $author$project$Internal$Write$prettyDeclarations = F2(
 									$the_sett$elm_pretty_printer$Pretty$line,
 									A2(
 										$the_sett$elm_pretty_printer$Pretty$a,
-										$the_sett$elm_pretty_printer$Pretty$line,
-										A2(
-											$the_sett$elm_pretty_printer$Pretty$a,
-											A2($author$project$Internal$Write$prettyElmSyntaxDeclaration, aliases, innerDecl),
-											doc))));
+										A2($author$project$Internal$Write$prettyElmSyntaxDeclaration, aliases, innerDecl),
+										doc)));
 					}
 				}),
 			$the_sett$elm_pretty_printer$Pretty$empty,
@@ -9983,7 +10098,7 @@ var $author$project$Internal$Write$prettyDefaultModuleData = function (moduleDat
 				$author$project$Internal$Write$prettyModuleName(
 				$author$project$Internal$Compiler$denode(moduleData.af)),
 				$author$project$Internal$Write$prettyExposing(
-				$author$project$Internal$Compiler$denode(moduleData.b8))
+				$author$project$Internal$Compiler$denode(moduleData.b9))
 			]));
 };
 var $author$project$Internal$Write$prettyEffectModuleData = function (moduleData) {
@@ -10047,10 +10162,10 @@ var $author$project$Internal$Write$prettyEffectModuleData = function (moduleData
 				$elm$core$Basics$identity,
 				A2(
 					prettyCmdAndSub,
-					$author$project$Internal$Compiler$denodeMaybe(moduleData.bQ),
-					$author$project$Internal$Compiler$denodeMaybe(moduleData.dc))),
+					$author$project$Internal$Compiler$denodeMaybe(moduleData.bR),
+					$author$project$Internal$Compiler$denodeMaybe(moduleData.de))),
 				$author$project$Internal$Write$prettyExposing(
-				$author$project$Internal$Compiler$denode(moduleData.b8))
+				$author$project$Internal$Compiler$denode(moduleData.b9))
 			]));
 };
 var $author$project$Internal$Write$prettyPortModuleData = function (moduleData) {
@@ -10061,7 +10176,7 @@ var $author$project$Internal$Write$prettyPortModuleData = function (moduleData) 
 				$author$project$Internal$Write$prettyModuleName(
 				$author$project$Internal$Compiler$denode(moduleData.af)),
 				$author$project$Internal$Write$prettyExposing(
-				$author$project$Internal$Compiler$denode(moduleData.b8))
+				$author$project$Internal$Compiler$denode(moduleData.b9))
 			]));
 };
 var $author$project$Internal$Write$prettyModule = function (mod) {
@@ -10081,12 +10196,12 @@ var $author$project$Internal$Write$prepareLayout = F2(
 	function (width, file) {
 		return A2(
 			$the_sett$elm_pretty_printer$Pretty$a,
-			A2($author$project$Internal$Write$prettyDeclarations, file.Q, file.bY),
+			A2($author$project$Internal$Write$prettyDeclarations, file.P, file.bZ),
 			A2(
 				$the_sett$elm_pretty_printer$Pretty$a,
 				$author$project$Internal$Write$importsPretty(file.b),
 				function (doc) {
-					var _v0 = file.aJ;
+					var _v0 = file.aK;
 					if (_v0.$ === 1) {
 						return doc;
 					} else {
@@ -10111,7 +10226,7 @@ var $author$project$Internal$Write$prepareLayout = F2(
 						A2(
 							$the_sett$elm_pretty_printer$Pretty$a,
 							$the_sett$elm_pretty_printer$Pretty$line,
-							$author$project$Internal$Write$prettyModule(file.cN))))));
+							$author$project$Internal$Write$prettyModule(file.cO))))));
 	});
 var $author$project$Internal$Write$pretty = F2(
 	function (width, file) {
@@ -10123,13 +10238,13 @@ var $author$project$Internal$Write$pretty = F2(
 var $author$project$Internal$Write$write = $author$project$Internal$Write$pretty(80);
 var $author$project$Elm$render = F2(
 	function (toDocComment, fileDetails) {
-		var mod = fileDetails.cN;
-		var exposedGroups = $author$project$Internal$Compiler$getExposedGroups(fileDetails.C);
-		var exposed = $author$project$Internal$Compiler$getExposed(fileDetails.C);
+		var mod = fileDetails.cO;
+		var exposedGroups = $author$project$Internal$Compiler$getExposedGroups(fileDetails.B);
+		var exposed = $author$project$Internal$Compiler$getExposed(fileDetails.B);
 		var body = $author$project$Internal$Write$write(
 			{
-				Q: fileDetails.Q,
-				aJ: $elm$core$Maybe$Just(
+				P: fileDetails.P,
+				aK: $elm$core$Maybe$Just(
 					A2(
 						$author$project$Internal$Comments$addPart,
 						$author$project$Internal$Comments$emptyComment,
@@ -10138,14 +10253,14 @@ var $author$project$Elm$render = F2(
 								$elm$core$String$join,
 								'\n\n',
 								toDocComment(exposedGroups))))),
-				bY: fileDetails.C,
+				bZ: fileDetails.B,
 				b: A2(
 					$elm$core$List$filterMap,
-					$author$project$Internal$Compiler$makeImport(fileDetails.Q),
+					$author$project$Internal$Compiler$makeImport(fileDetails.P),
 					fileDetails.b),
-				cN: ($author$project$Internal$Compiler$hasPorts(fileDetails.C) ? $stil4m$elm_syntax$Elm$Syntax$Module$PortModule : $stil4m$elm_syntax$Elm$Syntax$Module$NormalModule)(
+				cO: ($author$project$Internal$Compiler$hasPorts(fileDetails.B) ? $stil4m$elm_syntax$Elm$Syntax$Module$PortModule : $stil4m$elm_syntax$Elm$Syntax$Module$NormalModule)(
 					{
-						b8: function () {
+						b9: function () {
 							if (!exposed.b) {
 								return $author$project$Internal$Compiler$nodify(
 									$stil4m$elm_syntax$Elm$Syntax$Exposing$All($stil4m$elm_syntax$Elm$Syntax$Range$emptyRange));
@@ -10159,8 +10274,8 @@ var $author$project$Elm$render = F2(
 					})
 			});
 		return {
-			aK: body,
-			a5: A2($elm$core$String$join, '/', mod) + '.elm'
+			aL: body,
+			a6: A2($elm$core$String$join, '/', mod) + '.elm'
 		};
 	});
 var $elm$core$Tuple$second = function (_v0) {
@@ -10171,17 +10286,17 @@ var $author$project$Elm$fileWith = F3(
 	function (mod, options, decs) {
 		return A2(
 			$author$project$Elm$render,
-			options.b1,
+			options.b2,
 			{
-				Q: options.Q,
-				C: decs,
+				P: options.P,
+				B: decs,
 				b: A3(
 					$author$project$Elm$reduceDeclarationImports,
 					mod,
 					decs,
 					_Utils_Tuple2($elm$core$Set$empty, _List_Nil)).b,
 				ae: '',
-				cN: mod
+				cO: mod
 			});
 	});
 var $author$project$Elm$Gen$Elm$moduleName_ = _List_fromArray(
@@ -10347,7 +10462,7 @@ var $author$project$Elm$Gen$Elm$field = F2(
 				[arg1, arg2]));
 	});
 var $author$project$Internal$Compiler$CouldNotFindField = function (a) {
-	return {$: 7, a: a};
+	return {$: 6, a: a};
 };
 var $stil4m$elm_syntax$Elm$Syntax$Expression$RecordAccess = F2(
 	function (a, b) {
@@ -10439,8 +10554,7 @@ var $author$project$Elm$get = F2(
 				$author$project$Internal$Compiler$nodify(expr.a),
 				$author$project$Internal$Compiler$nodify(
 					$author$project$Internal$Compiler$formatValue(selector))),
-			b: expr.b,
-			g: false
+			b: expr.b
 		};
 	});
 var $author$project$Generate$getArity = F2(
@@ -10512,7 +10626,7 @@ var $author$project$Elm$betaReduce = function (e) {
 		return $elm$core$Maybe$Nothing;
 	};
 	if (e.$ === 17) {
-		var args = e.a.aF;
+		var args = e.a.aG;
 		var expression = e.a.a;
 		var _v2 = $author$project$Elm$popLastAndDenodeLast(args);
 		if ((!_v2.$) && (_v2.a.b.$ === 11)) {
@@ -10561,7 +10675,7 @@ var $author$project$Elm$betaReduce = function (e) {
 									return $author$project$Elm$betaReduce(
 										$stil4m$elm_syntax$Elm$Syntax$Expression$LambdaExpression(
 											{
-												aF: initLambdaArgs,
+												aG: initLambdaArgs,
 												a: $author$project$Internal$Compiler$nodify(
 													$stil4m$elm_syntax$Elm$Syntax$Expression$Application(initApplicationArgs))
 											}));
@@ -10595,8 +10709,7 @@ var $author$project$Elm$valueWith = F3(
 			b: A2(
 				$elm$core$List$cons,
 				mod,
-				$author$project$Internal$Compiler$getAnnotationImports(ann)),
-			g: false
+				$author$project$Internal$Compiler$getAnnotationImports(ann))
 		};
 	});
 var $author$project$Elm$lambdaBetaReduced = F3(
@@ -10632,15 +10745,14 @@ var $author$project$Elm$lambdaBetaReduced = F3(
 			a: $author$project$Elm$betaReduce(
 				$stil4m$elm_syntax$Elm$Syntax$Expression$LambdaExpression(
 					{
-						aF: _List_fromArray(
+						aG: _List_fromArray(
 							[
 								$author$project$Internal$Compiler$nodify(
 								$stil4m$elm_syntax$Elm$Syntax$Pattern$VarPattern(argBaseName))
 							]),
 						a: $author$project$Internal$Compiler$nodify(expr.a)
 					})),
-			b: expr.b,
-			g: false
+			b: expr.b
 		};
 	});
 var $author$project$Elm$Gen$Elm$lambdaWith = F2(
@@ -10757,10 +10869,6 @@ var $author$project$Elm$Gen$Elm$record = function (arg1) {
 				$author$project$Elm$list(arg1)
 			]));
 };
-var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$GenericRecord = F2(
-	function (a, b) {
-		return {$: 5, a: a, b: b};
-	});
 var $author$project$Elm$Annotation$extensible = F2(
 	function (base, fields) {
 		return {
@@ -11035,30 +11143,30 @@ var $author$project$Generate$captureFunction = F2(
 				var two = tipe.b;
 				var $temp$tipe = two,
 					$temp$captured = {
-					bG: A2(
+					bH: A2(
 						$elm$core$List$cons,
-						A2($author$project$Generate$asArgument, captured.w, one),
-						captured.bG),
-					w: captured.w + 1,
-					L: A2(
+						A2($author$project$Generate$asArgument, captured.v, one),
+						captured.bH),
+					v: captured.v + 1,
+					K: A2(
 						$elm$core$List$cons,
-						A2($author$project$Generate$asValue, captured.w, one),
-						captured.L)
+						A2($author$project$Generate$asValue, captured.v, one),
+						captured.K)
 				};
 				tipe = $temp$tipe;
 				captured = $temp$captured;
 				continue captureFunction;
 			} else {
 				return {
-					bG: A2(
+					bH: A2(
 						$elm$core$List$cons,
-						A2($author$project$Generate$asArgument, captured.w, tipe),
-						captured.bG),
-					w: captured.w + 1,
-					L: A2(
+						A2($author$project$Generate$asArgument, captured.v, tipe),
+						captured.bH),
+					v: captured.v + 1,
+					K: A2(
 						$elm$core$List$cons,
-						A2($author$project$Generate$asValue, captured.w, tipe),
-						captured.L)
+						A2($author$project$Generate$asValue, captured.v, tipe),
+						captured.K)
 				};
 			}
 		}
@@ -11077,26 +11185,26 @@ var $author$project$Elm$functionWith = F3(
 				body.b),
 			$stil4m$elm_syntax$Elm$Syntax$Declaration$FunctionDeclaration(
 				{
-					bV: $author$project$Internal$Compiler$nodify(
+					bW: $author$project$Internal$Compiler$nodify(
 						{
-							bG: $author$project$Internal$Compiler$nodifyAll(
+							bH: $author$project$Internal$Compiler$nodifyAll(
 								A2(
 									$elm$core$List$map,
 									A2($elm$core$Basics$composeL, $stil4m$elm_syntax$Elm$Syntax$Pattern$VarPattern, $elm$core$Tuple$first),
 									args)),
 							a: $author$project$Internal$Compiler$nodify(body.a),
-							t: $author$project$Internal$Compiler$nodify(
+							s: $author$project$Internal$Compiler$nodify(
 								$author$project$Internal$Compiler$formatValue(name))
 						}),
-					ab: $author$project$Internal$Compiler$nodifyMaybe($elm$core$Maybe$Nothing),
-					c8: function () {
+					aa: $author$project$Internal$Compiler$nodifyMaybe($elm$core$Maybe$Nothing),
+					c9: function () {
 						var _v1 = body.c;
 						if (!_v1.$) {
 							var _return = _v1.a;
 							return $elm$core$Maybe$Just(
 								$author$project$Internal$Compiler$nodify(
 									{
-										t: $author$project$Internal$Compiler$nodify(
+										s: $author$project$Internal$Compiler$nodify(
 											$author$project$Internal$Compiler$formatValue(name)),
 										aD: $author$project$Internal$Compiler$nodify(
 											$author$project$Internal$Compiler$getInnerAnnotation(
@@ -11141,7 +11249,7 @@ var $author$project$Internal$Compiler$documentation = F2(
 								_Utils_update(
 									func,
 									{
-										ab: $elm$core$Maybe$Just(
+										aa: $elm$core$Maybe$Just(
 											$author$project$Internal$Compiler$nodify(str))
 									})));
 					case 1:
@@ -11154,7 +11262,7 @@ var $author$project$Internal$Compiler$documentation = F2(
 								_Utils_update(
 									typealias,
 									{
-										ab: $elm$core$Maybe$Just(
+										aa: $elm$core$Maybe$Just(
 											$author$project$Internal$Compiler$nodify(str))
 									})));
 					case 2:
@@ -11167,7 +11275,7 @@ var $author$project$Internal$Compiler$documentation = F2(
 								_Utils_update(
 									typeDecl,
 									{
-										ab: $elm$core$Maybe$Just(
+										aa: $elm$core$Maybe$Just(
 											$author$project$Internal$Compiler$nodify(str))
 									})));
 					case 3:
@@ -11202,12 +11310,12 @@ var $author$project$Generate$generateBlocks = function (block) {
 					$author$project$Generate$captureFunction,
 					two,
 					{
-						bG: _List_fromArray(
+						bH: _List_fromArray(
 							[
 								A2($author$project$Generate$asArgument, 1, one)
 							]),
-						w: 2,
-						L: _List_fromArray(
+						v: 2,
+						K: _List_fromArray(
 							[
 								A2($author$project$Generate$asValue, 1, one)
 							])
@@ -11217,12 +11325,12 @@ var $author$project$Generate$generateBlocks = function (block) {
 						$author$project$Elm$expose(
 						A2(
 							$author$project$Elm$withDocumentation,
-							value.R,
+							value.Q,
 							A3(
 								$author$project$Elm$functionWith,
-								value.t,
+								value.s,
 								$elm$core$List$reverse(
-									A2($elm$core$List$drop, 1, captured.bG)),
+									A2($elm$core$List$drop, 1, captured.bH)),
 								A2(
 									$author$project$Elm$withType,
 									$author$project$Generate$expressionType,
@@ -11230,10 +11338,10 @@ var $author$project$Generate$generateBlocks = function (block) {
 										$author$project$Generate$apply,
 										A2(
 											$author$project$Generate$valueWith,
-											$author$project$Elm$string(value.t),
+											$author$project$Elm$string(value.s),
 											value.aC),
 										$elm$core$List$reverse(
-											A2($elm$core$List$drop, 1, captured.L)))))))
+											A2($elm$core$List$drop, 1, captured.K)))))))
 					]);
 			} else {
 				return _List_fromArray(
@@ -11241,16 +11349,16 @@ var $author$project$Generate$generateBlocks = function (block) {
 						$author$project$Elm$expose(
 						A2(
 							$author$project$Elm$withDocumentation,
-							value.R,
+							value.Q,
 							A2(
 								$author$project$Elm$declaration,
-								value.t,
+								value.s,
 								A2(
 									$author$project$Elm$withType,
 									$author$project$Generate$expressionType,
 									A2(
 										$author$project$Generate$valueWith,
-										$author$project$Elm$string(value.t),
+										$author$project$Elm$string(value.s),
 										value.aC)))))
 					]);
 			}
@@ -11294,15 +11402,14 @@ var $author$project$Elm$lambda = F3(
 			}(),
 			a: $stil4m$elm_syntax$Elm$Syntax$Expression$LambdaExpression(
 				{
-					aF: _List_fromArray(
+					aG: _List_fromArray(
 						[
 							$author$project$Internal$Compiler$nodify(
 							$stil4m$elm_syntax$Elm$Syntax$Pattern$VarPattern(argBaseName))
 						]),
 					a: $author$project$Internal$Compiler$nodify(expr.a)
 				}),
-			b: expr.b,
-			g: false
+			b: expr.b
 		};
 	});
 var $author$project$Elm$lambdaWith = F2(
@@ -11335,19 +11442,18 @@ var $author$project$Elm$lambdaWith = F2(
 			}(),
 			a: $stil4m$elm_syntax$Elm$Syntax$Expression$LambdaExpression(
 				{
-					aF: $author$project$Internal$Compiler$nodifyAll(
+					aG: $author$project$Internal$Compiler$nodifyAll(
 						A2(
 							$elm$core$List$map,
 							A2($elm$core$Basics$composeL, $stil4m$elm_syntax$Elm$Syntax$Pattern$VarPattern, $elm$core$Tuple$first),
 							args)),
 					a: $author$project$Internal$Compiler$nodify(expr.a)
 				}),
-			b: expr.b,
-			g: false
+			b: expr.b
 		};
 	});
 var $author$project$Internal$Compiler$DuplicateFieldInRecord = function (a) {
-	return {$: 5, a: a};
+	return {$: 4, a: a};
 };
 var $stil4m$elm_syntax$Elm$Syntax$Expression$RecordExpr = function (a) {
 	return {$: 18, a: a};
@@ -11362,32 +11468,32 @@ var $author$project$Elm$record = function (fields) {
 				var exp = _v2.b;
 				var fieldName = $author$project$Internal$Compiler$formatValue(unformattedFieldName);
 				return {
-					D: function () {
-						if (A2($elm$core$Set$member, fieldName, found._)) {
+					C: function () {
+						if (A2($elm$core$Set$member, fieldName, found.Z)) {
 							return A2(
 								$elm$core$List$cons,
 								$author$project$Internal$Compiler$DuplicateFieldInRecord(fieldName),
-								found.D);
+								found.C);
 						} else {
 							var _v3 = exp.c;
 							if (_v3.$ === 1) {
 								if (!_v3.a.b) {
-									return A2($elm$core$List$cons, $author$project$Internal$Compiler$SomeOtherIssue, found.D);
+									return A2($elm$core$List$cons, $author$project$Internal$Compiler$SomeOtherIssue, found.C);
 								} else {
 									var errs = _v3.a;
-									return _Utils_ap(errs, found.D);
+									return _Utils_ap(errs, found.C);
 								}
 							} else {
 								var ann = _v3.a;
-								return found.D;
+								return found.C;
 							}
 						}
 					}(),
-					T: function () {
+					S: function () {
 						var _v4 = exp.c;
 						if (_v4.$ === 1) {
 							var err = _v4.a;
-							return found.T;
+							return found.S;
 						} else {
 							var ann = _v4.a;
 							return A2(
@@ -11395,24 +11501,24 @@ var $author$project$Elm$record = function (fields) {
 								_Utils_Tuple2(
 									$author$project$Internal$Compiler$formatValue(fieldName),
 									ann),
-								found.T);
+								found.S);
 						}
 					}(),
-					Y: A2(
+					X: A2(
 						$elm$core$List$cons,
 						_Utils_Tuple2(
 							$author$project$Internal$Compiler$nodify(fieldName),
 							$author$project$Internal$Compiler$nodify(exp.a)),
-						found.Y),
+						found.X),
 					b: _Utils_ap(exp.b, found.b),
-					_: A2($elm$core$Set$insert, fieldName, found._)
+					Z: A2($elm$core$Set$insert, fieldName, found.Z)
 				};
 			}),
-		{D: _List_Nil, T: _List_Nil, Y: _List_Nil, b: _List_Nil, _: $elm$core$Set$empty},
+		{C: _List_Nil, S: _List_Nil, X: _List_Nil, b: _List_Nil, Z: $elm$core$Set$empty},
 		fields);
 	return {
 		c: function () {
-			var _v0 = unified.D;
+			var _v0 = unified.C;
 			if (!_v0.b) {
 				return $elm$core$Result$Ok(
 					$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Record(
@@ -11426,7 +11532,7 @@ var $author$project$Elm$record = function (fields) {
 										$author$project$Internal$Compiler$nodify(name),
 										$author$project$Internal$Compiler$nodify(ann));
 								},
-								$elm$core$List$reverse(unified.T)))));
+								$elm$core$List$reverse(unified.S)))));
 			} else {
 				var errs = _v0;
 				return $elm$core$Result$Err(errs);
@@ -11434,9 +11540,8 @@ var $author$project$Elm$record = function (fields) {
 		}(),
 		a: $stil4m$elm_syntax$Elm$Syntax$Expression$RecordExpr(
 			$author$project$Internal$Compiler$nodifyAll(
-				$elm$core$List$reverse(unified.Y))),
-		b: unified.b,
-		g: false
+				$elm$core$List$reverse(unified.X))),
+		b: unified.b
 	};
 };
 var $author$project$Elm$value = $author$project$Elm$valueFrom(_List_Nil);
@@ -11447,14 +11552,14 @@ var $author$project$Generate$generateTypeBuilderRecordHelper = function (block) 
 			return $elm$core$Maybe$Nothing;
 		case 1:
 			var union = block.a;
-			var _v1 = union.de;
+			var _v1 = union.dg;
 			if (!_v1.b) {
 				return $elm$core$Maybe$Nothing;
 			} else {
 				return $elm$core$Maybe$Just(
 					A2(
 						$author$project$Elm$field,
-						union.t,
+						union.s,
 						$author$project$Elm$record(
 							A2(
 								$elm$core$List$map,
@@ -11470,8 +11575,8 @@ var $author$project$Generate$generateTypeBuilderRecordHelper = function (block) 
 												$author$project$Elm$string(name),
 												A2(
 													$elm$project_metadata_utils$Elm$Type$Type,
-													union.t,
-													A2($elm$core$List$map, $elm$project_metadata_utils$Elm$Type$Var, union.aF))));
+													union.s,
+													A2($elm$core$List$map, $elm$project_metadata_utils$Elm$Type$Var, union.aG))));
 									} else {
 										return A2(
 											$author$project$Elm$field,
@@ -11494,8 +11599,8 @@ var $author$project$Generate$generateTypeBuilderRecordHelper = function (block) 
 														$author$project$Elm$string(name),
 														A2(
 															$elm$project_metadata_utils$Elm$Type$Type,
-															union.t,
-															A2($elm$core$List$map, $elm$project_metadata_utils$Elm$Type$Var, union.aF))),
+															union.s,
+															A2($elm$core$List$map, $elm$project_metadata_utils$Elm$Type$Var, union.aG))),
 													A2(
 														$elm$core$List$indexedMap,
 														F2(
@@ -11509,10 +11614,10 @@ var $author$project$Generate$generateTypeBuilderRecordHelper = function (block) 
 														tags))));
 									}
 								},
-								union.de))));
+								union.dg))));
 			}
 		case 2:
-			var name = block.a.t;
+			var name = block.a.s;
 			var tipe = block.a.aC;
 			if ((tipe.$ === 4) && (tipe.b.$ === 1)) {
 				var fields = tipe.a;
@@ -11646,15 +11751,15 @@ var $author$project$Generate$generateTypeRecordHelper = function (block) {
 			return $elm$core$Maybe$Just(
 				A2(
 					$author$project$Elm$field,
-					union.t,
-					A2($author$project$Generate$annotationNamed, union.t, union.aF)));
+					union.s,
+					A2($author$project$Generate$annotationNamed, union.s, union.aG)));
 		case 2:
 			var alias = block.a;
 			return $elm$core$Maybe$Just(
 				A2(
 					$author$project$Elm$field,
-					alias.t,
-					A2($author$project$Generate$annotationNamed, alias.t, alias.aF)));
+					alias.s,
+					A2($author$project$Generate$annotationNamed, alias.s, alias.aG)));
 		case 3:
 			var value = block.a;
 			return $elm$core$Maybe$Nothing;
@@ -11705,7 +11810,7 @@ var $elm$project_metadata_utils$Elm$Docs$find = F4(
 			} else {
 				var entry = entries.a;
 				var rest = entries.b;
-				if (_Utils_eq(entry.t, name)) {
+				if (_Utils_eq(entry.s, name)) {
 					return toBlock(entry);
 				} else {
 					var $temp$toBlock = toBlock,
@@ -11732,22 +11837,22 @@ var $elm$project_metadata_utils$Elm$Docs$nameToBlock = F2(
 			$elm$project_metadata_utils$Elm$Docs$find,
 			$elm$project_metadata_utils$Elm$Docs$ValueBlock,
 			name,
-			docs.L,
+			docs.K,
 			A4(
 				$elm$project_metadata_utils$Elm$Docs$find,
 				$elm$project_metadata_utils$Elm$Docs$BinopBlock,
 				name,
-				docs.bI,
+				docs.bJ,
 				A4(
 					$elm$project_metadata_utils$Elm$Docs$find,
 					$elm$project_metadata_utils$Elm$Docs$UnionBlock,
 					name,
-					docs.X,
+					docs.W,
 					A4(
 						$elm$project_metadata_utils$Elm$Docs$find,
 						$elm$project_metadata_utils$Elm$Docs$AliasBlock,
 						name,
-						docs.Q,
+						docs.P,
 						$elm$project_metadata_utils$Elm$Docs$UnknownBlock(name)))));
 	});
 var $elm$core$String$trim = _String_trim;
@@ -11804,7 +11909,7 @@ var $elm$project_metadata_utils$Elm$Docs$chunkToBlocks = F2(
 			A2($elm$core$String$split, ',', chunk));
 	});
 var $elm$project_metadata_utils$Elm$Docs$toBlocks = function (docs) {
-	var _v0 = A2($elm$core$String$split, '\n@docs ', docs.R);
+	var _v0 = A2($elm$core$String$split, '\n@docs ', docs.Q);
 	if (!_v0.b) {
 		return _List_Nil;
 	} else {
@@ -11820,7 +11925,7 @@ var $elm$project_metadata_utils$Elm$Docs$toBlocks = function (docs) {
 	}
 };
 var $author$project$Generate$moduleToFile = function (docs) {
-	var sourceModName = A2($elm$core$String$split, '.', docs.t);
+	var sourceModName = A2($elm$core$String$split, '.', docs.s);
 	var modNameBlock = $author$project$Elm$expose(
 		A2(
 			$author$project$Elm$withDocumentation,
@@ -11848,14 +11953,14 @@ var $author$project$Generate$moduleToFile = function (docs) {
 		$author$project$Elm$fileWith,
 		modName,
 		{
-			Q: _List_fromArray(
+			P: _List_fromArray(
 				[
 					_Utils_Tuple2(
 					_List_fromArray(
 						['Elm', 'Annotation']),
 					'Type')
 				]),
-			b1: $elm$core$List$map($author$project$Elm$docs)
+			b2: $elm$core$List$map($author$project$Elm$docs)
 		},
 		A2(
 			$elm$core$List$cons,
@@ -11878,10 +11983,10 @@ var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $stil4m$elm_syntax$Elm$Processing$ProcessContext = $elm$core$Basics$identity;
 var $stil4m$elm_syntax$Elm$Processing$init = $elm$core$Dict$empty;
 var $stil4m$elm_syntax$Elm$Parser$State$State = $elm$core$Basics$identity;
-var $stil4m$elm_syntax$Elm$Parser$State$emptyState = {aJ: _List_Nil, F: _List_Nil};
+var $stil4m$elm_syntax$Elm$Parser$State$emptyState = {aK: _List_Nil, E: _List_Nil};
 var $stil4m$elm_syntax$Elm$Syntax$File$File = F4(
 	function (moduleDefinition, imports, declarations, comments) {
-		return {aJ: comments, bY: declarations, b: imports, cN: moduleDefinition};
+		return {aK: comments, bZ: declarations, b: imports, cO: moduleDefinition};
 	});
 var $stil4m$elm_syntax$Combine$Parser = $elm$core$Basics$identity;
 var $stil4m$elm_syntax$Combine$andMap = F2(
@@ -11904,7 +12009,7 @@ var $stil4m$elm_syntax$Combine$andMap = F2(
 	});
 var $stil4m$elm_syntax$Elm$Parser$State$getComments = function (_v0) {
 	var s = _v0;
-	return $elm$core$List$reverse(s.aJ);
+	return $elm$core$List$reverse(s.aK);
 };
 var $stil4m$elm_syntax$Combine$succeed = function (res) {
 	return function (state) {
@@ -11941,7 +12046,7 @@ var $stil4m$elm_syntax$Elm$Syntax$Declaration$Destructuring = F2(
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Range$Range = F2(
 	function (start, end) {
-		return {aQ: end, bk: start};
+		return {aR: end, bl: start};
 	});
 var $elm$core$Maybe$map2 = F3(
 	function (func, ma, mb) {
@@ -11960,7 +12065,7 @@ var $elm$core$Maybe$map2 = F3(
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Range$compareLocations = F2(
 	function (left, right) {
-		return (_Utils_cmp(left.bg, right.bg) < 0) ? 0 : ((_Utils_cmp(left.bg, right.bg) > 0) ? 2 : A2($elm$core$Basics$compare, left.bP, right.bP));
+		return (_Utils_cmp(left.bh, right.bh) < 0) ? 0 : ((_Utils_cmp(left.bh, right.bh) > 0) ? 2 : A2($elm$core$Basics$compare, left.bQ, right.bQ));
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Range$sortLocations = $elm$core$List$sortWith($stil4m$elm_syntax$Elm$Syntax$Range$compareLocations);
 var $stil4m$elm_syntax$Elm$Syntax$Range$combine = function (ranges) {
@@ -11968,7 +12073,7 @@ var $stil4m$elm_syntax$Elm$Syntax$Range$combine = function (ranges) {
 		A2(
 			$elm$core$List$map,
 			function ($) {
-				return $.bk;
+				return $.bl;
 			},
 			ranges));
 	var ends = $elm$core$List$reverse(
@@ -11976,7 +12081,7 @@ var $stil4m$elm_syntax$Elm$Syntax$Range$combine = function (ranges) {
 			A2(
 				$elm$core$List$map,
 				function ($) {
-					return $.aQ;
+					return $.aR;
 				},
 				ranges)));
 	return A2(
@@ -12001,7 +12106,7 @@ var $stil4m$elm_syntax$Elm$Syntax$Node$combine = F3(
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Expression$CaseBlock = F2(
 	function (expression, cases) {
-		return {bL: cases, a: expression};
+		return {bM: cases, a: expression};
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Expression$CaseExpression = function (a) {
 	return {$: 16, a: a};
@@ -12011,11 +12116,11 @@ var $stil4m$elm_syntax$Combine$Done = function (a) {
 };
 var $stil4m$elm_syntax$Elm$Syntax$Expression$Function = F3(
 	function (documentation, signature, declaration) {
-		return {bV: declaration, ab: documentation, c8: signature};
+		return {bW: declaration, aa: documentation, c9: signature};
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Expression$FunctionImplementation = F3(
 	function (name, _arguments, expression) {
-		return {bG: _arguments, a: expression, t: name};
+		return {bH: _arguments, a: expression, s: name};
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Expression$IfBlock = F3(
 	function (a, b, c) {
@@ -12023,11 +12128,11 @@ var $stil4m$elm_syntax$Elm$Syntax$Expression$IfBlock = F3(
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Expression$Lambda = F2(
 	function (args, expression) {
-		return {aF: args, a: expression};
+		return {aG: args, a: expression};
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Expression$LetBlock = F2(
 	function (declarations, expression) {
-		return {bY: declarations, a: expression};
+		return {bZ: declarations, a: expression};
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Expression$LetDestructuring = F2(
 	function (a, b) {
@@ -12137,11 +12242,11 @@ var $elm$parser$Parser$Advanced$chompIf = F2(
 				$elm$parser$Parser$Advanced$Good,
 				true,
 				0,
-				{aI: 1, f: s.f, h: s.h, e: s.e + 1, bg: s.bg + 1, d: s.d}) : A3(
+				{aJ: 1, f: s.f, g: s.g, e: s.e + 1, bh: s.bh + 1, d: s.d}) : A3(
 				$elm$parser$Parser$Advanced$Good,
 				true,
 				0,
-				{aI: s.aI + 1, f: s.f, h: s.h, e: newOffset, bg: s.bg, d: s.d}));
+				{aJ: s.aJ + 1, f: s.f, g: s.g, e: newOffset, bh: s.bh, d: s.d}));
 		};
 	});
 var $elm$parser$Parser$chompIf = function (isGood) {
@@ -12571,9 +12676,9 @@ var $stil4m$elm_syntax$Elm$Parser$Tokens$characterLiteral = A2(
 			$stil4m$elm_syntax$Combine$Char$anyChar,
 			$stil4m$elm_syntax$Combine$Char$char('\''))));
 var $stil4m$elm_syntax$Elm$Parser$Node$asPointerLocation = function (_v0) {
-	var line = _v0.V;
-	var column = _v0.bP;
-	return {bP: column, bg: line};
+	var line = _v0.U;
+	var column = _v0.bQ;
+	return {bQ: column, bh: line};
 };
 var $stil4m$elm_syntax$Combine$app = function (_v0) {
 	var inner = _v0;
@@ -12583,7 +12688,7 @@ var $elm$parser$Parser$Advanced$getPosition = function (s) {
 	return A3(
 		$elm$parser$Parser$Advanced$Good,
 		false,
-		_Utils_Tuple2(s.bg, s.aI),
+		_Utils_Tuple2(s.bh, s.aJ),
 		s);
 };
 var $elm$parser$Parser$getPosition = $elm$parser$Parser$Advanced$getPosition;
@@ -12602,7 +12707,7 @@ var $stil4m$elm_syntax$Combine$withLocation = function (f) {
 				function (_v0) {
 					var row = _v0.a;
 					var col = _v0.b;
-					return {bP: col, V: row};
+					return {bQ: col, U: row};
 				},
 				$elm$parser$Parser$getPosition));
 	};
@@ -12616,8 +12721,8 @@ var $stil4m$elm_syntax$Elm$Parser$Node$parser = function (p) {
 					function (end) {
 						return $stil4m$elm_syntax$Combine$succeed(
 							{
-								aQ: $stil4m$elm_syntax$Elm$Parser$Node$asPointerLocation(end),
-								bk: $stil4m$elm_syntax$Elm$Parser$Node$asPointerLocation(start)
+								aR: $stil4m$elm_syntax$Elm$Parser$Node$asPointerLocation(end),
+								bl: $stil4m$elm_syntax$Elm$Parser$Node$asPointerLocation(start)
 							});
 					}),
 				A2(
@@ -12634,7 +12739,7 @@ var $stil4m$elm_syntax$Elm$Parser$Declarations$charLiteralExpression = $stil4m$e
 	A2($stil4m$elm_syntax$Combine$map, $stil4m$elm_syntax$Elm$Syntax$Expression$CharLiteral, $stil4m$elm_syntax$Elm$Parser$Tokens$characterLiteral));
 var $stil4m$elm_syntax$Elm$Parser$Tokens$elseToken = $stil4m$elm_syntax$Combine$string('else');
 var $stil4m$elm_syntax$Elm$Parser$State$currentIndent = function (_v0) {
-	var indents = _v0.F;
+	var indents = _v0.E;
 	return A2(
 		$elm$core$Maybe$withDefault,
 		0,
@@ -12661,7 +12766,7 @@ var $stil4m$elm_syntax$Elm$Syntax$Pattern$NamedPattern = F2(
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Pattern$QualifiedNameRef = F2(
 	function (moduleName, name) {
-		return {af: moduleName, t: name};
+		return {af: moduleName, s: name};
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Pattern$StringPattern = function (a) {
 	return {$: 3, a: a};
@@ -12698,11 +12803,11 @@ var $stil4m$elm_syntax$Elm$Parser$Tokens$reservedList = _List_fromArray(
 var $stil4m$elm_syntax$Elm$Parser$Tokens$functionName = $stil4m$elm_syntax$Combine$fromCore(
 	$elm$parser$Parser$variable(
 		{
-			aZ: function (c) {
+			a_: function (c) {
 				return $miniBill$elm_unicode$Unicode$isAlphaNum(c) || (c === '_');
 			},
-			bf: $elm$core$Set$fromList($stil4m$elm_syntax$Elm$Parser$Tokens$reservedList),
-			bk: $miniBill$elm_unicode$Unicode$isLower
+			bg: $elm$core$Set$fromList($stil4m$elm_syntax$Elm$Parser$Tokens$reservedList),
+			bl: $miniBill$elm_unicode$Unicode$isLower
 		}));
 var $elm$parser$Parser$ExpectingKeyword = function (a) {
 	return {$: 9, a: a};
@@ -12712,7 +12817,7 @@ var $elm$parser$Parser$Advanced$keyword = function (_v0) {
 	var expecting = _v0.b;
 	var progress = !$elm$core$String$isEmpty(kwd);
 	return function (s) {
-		var _v1 = A5($elm$parser$Parser$Advanced$isSubString, kwd, s.e, s.bg, s.aI, s.d);
+		var _v1 = A5($elm$parser$Parser$Advanced$isSubString, kwd, s.e, s.bh, s.aJ, s.d);
 		var newOffset = _v1.a;
 		var newRow = _v1.b;
 		var newCol = _v1.c;
@@ -12729,7 +12834,7 @@ var $elm$parser$Parser$Advanced$keyword = function (_v0) {
 			$elm$parser$Parser$Advanced$Good,
 			progress,
 			0,
-			{aI: newCol, f: s.f, h: s.h, e: newOffset, bg: newRow, d: s.d});
+			{aJ: newCol, f: s.f, g: s.g, e: newOffset, bh: newRow, d: s.d});
 	};
 };
 var $elm$parser$Parser$keyword = function (kwd) {
@@ -12764,7 +12869,7 @@ var $elm$parser$Parser$Advanced$chompUntil = function (_v0) {
 	var str = _v0.a;
 	var expecting = _v0.b;
 	return function (s) {
-		var _v1 = A5($elm$parser$Parser$Advanced$findSubString, str, s.e, s.bg, s.aI, s.d);
+		var _v1 = A5($elm$parser$Parser$Advanced$findSubString, str, s.e, s.bh, s.aJ, s.d);
 		var newOffset = _v1.a;
 		var newRow = _v1.b;
 		var newCol = _v1.c;
@@ -12775,7 +12880,7 @@ var $elm$parser$Parser$Advanced$chompUntil = function (_v0) {
 			$elm$parser$Parser$Advanced$Good,
 			_Utils_cmp(s.e, newOffset) < 0,
 			0,
-			{aI: newCol, f: s.f, h: s.h, e: newOffset, bg: newRow, d: s.d});
+			{aJ: newCol, f: s.f, g: s.g, e: newOffset, bh: newRow, d: s.d});
 	};
 };
 var $elm$core$Basics$neq = _Utils_notEqual;
@@ -12882,7 +12987,7 @@ var $stil4m$elm_syntax$Elm$Parser$State$addComment = F2(
 		return _Utils_update(
 			s,
 			{
-				aJ: A2($elm$core$List$cons, pair, s.aJ)
+				aK: A2($elm$core$List$cons, pair, s.aK)
 			});
 	});
 var $stil4m$elm_syntax$Combine$modifyState = function (f) {
@@ -13005,8 +13110,8 @@ var $stil4m$elm_syntax$Elm$Parser$Layout$verifyIndent = function (f) {
 					return A2(
 						f,
 						$stil4m$elm_syntax$Elm$Parser$State$expectedColumn(s),
-						l.bP) ? $stil4m$elm_syntax$Combine$succeed(0) : $stil4m$elm_syntax$Combine$fail(
-						'Expected higher indent than ' + $elm$core$String$fromInt(l.bP));
+						l.bQ) ? $stil4m$elm_syntax$Combine$succeed(0) : $stil4m$elm_syntax$Combine$fail(
+						'Expected higher indent than ' + $elm$core$String$fromInt(l.bQ));
 				});
 		});
 };
@@ -13088,7 +13193,7 @@ var $elm$parser$Parser$Advanced$consumeBase = _Parser_consumeBase;
 var $elm$parser$Parser$Advanced$consumeBase16 = _Parser_consumeBase16;
 var $elm$parser$Parser$Advanced$bumpOffset = F2(
 	function (newOffset, s) {
-		return {aI: s.aI + (newOffset - s.e), f: s.f, h: s.h, e: newOffset, bg: s.bg, d: s.d};
+		return {aJ: s.aJ + (newOffset - s.e), f: s.f, g: s.g, e: newOffset, bh: s.bh, d: s.d};
 	});
 var $elm$parser$Parser$Advanced$chompBase10 = _Parser_chompBase10;
 var $elm$parser$Parser$Advanced$isAsciiCode = _Parser_isAsciiCode;
@@ -13141,7 +13246,7 @@ var $elm$parser$Parser$Advanced$finalizeFloat = F6(
 			return A2(
 				$elm$parser$Parser$Advanced$Bad,
 				true,
-				A4($elm$parser$Parser$Advanced$fromInfo, s.bg, s.aI - (floatOffset + s.e), invalid, s.f));
+				A4($elm$parser$Parser$Advanced$fromInfo, s.bh, s.aJ - (floatOffset + s.e), invalid, s.f));
 		} else {
 			if (_Utils_eq(s.e, floatOffset)) {
 				return A2(
@@ -13187,37 +13292,37 @@ var $elm$parser$Parser$Advanced$number = function (c) {
 			var baseOffset = zeroOffset + 1;
 			return A3($elm$parser$Parser$Advanced$isAsciiCode, 120, zeroOffset, s.d) ? A5(
 				$elm$parser$Parser$Advanced$finalizeInt,
-				c.cw,
-				c.co,
+				c.cx,
+				c.cp,
 				baseOffset,
 				A2($elm$parser$Parser$Advanced$consumeBase16, baseOffset, s.d),
 				s) : (A3($elm$parser$Parser$Advanced$isAsciiCode, 111, zeroOffset, s.d) ? A5(
 				$elm$parser$Parser$Advanced$finalizeInt,
-				c.cw,
-				c.a3,
+				c.cx,
+				c.a4,
 				baseOffset,
 				A3($elm$parser$Parser$Advanced$consumeBase, 8, baseOffset, s.d),
 				s) : (A3($elm$parser$Parser$Advanced$isAsciiCode, 98, zeroOffset, s.d) ? A5(
 				$elm$parser$Parser$Advanced$finalizeInt,
-				c.cw,
-				c.aG,
+				c.cx,
+				c.aH,
 				baseOffset,
 				A3($elm$parser$Parser$Advanced$consumeBase, 2, baseOffset, s.d),
 				s) : A6(
 				$elm$parser$Parser$Advanced$finalizeFloat,
-				c.cw,
-				c.aS,
-				c.ct,
-				c.cc,
+				c.cx,
+				c.aT,
+				c.cu,
+				c.cd,
 				_Utils_Tuple2(zeroOffset, 0),
 				s)));
 		} else {
 			return A6(
 				$elm$parser$Parser$Advanced$finalizeFloat,
-				c.cw,
-				c.aS,
-				c.ct,
-				c.cc,
+				c.cx,
+				c.aT,
+				c.cu,
+				c.cd,
 				A3($elm$parser$Parser$Advanced$consumeBase, 10, s.e, s.d),
 				s);
 		}
@@ -13226,24 +13331,24 @@ var $elm$parser$Parser$Advanced$number = function (c) {
 var $elm$parser$Parser$number = function (i) {
 	return $elm$parser$Parser$Advanced$number(
 		{
-			aG: A2($elm$core$Result$fromMaybe, $elm$parser$Parser$ExpectingBinary, i.aG),
-			aS: $elm$parser$Parser$ExpectingNumber,
-			cc: A2($elm$core$Result$fromMaybe, $elm$parser$Parser$ExpectingFloat, i.cc),
-			co: A2($elm$core$Result$fromMaybe, $elm$parser$Parser$ExpectingHex, i.co),
-			ct: A2($elm$core$Result$fromMaybe, $elm$parser$Parser$ExpectingInt, i.ct),
-			cw: $elm$parser$Parser$ExpectingNumber,
-			a3: A2($elm$core$Result$fromMaybe, $elm$parser$Parser$ExpectingOctal, i.a3)
+			aH: A2($elm$core$Result$fromMaybe, $elm$parser$Parser$ExpectingBinary, i.aH),
+			aT: $elm$parser$Parser$ExpectingNumber,
+			cd: A2($elm$core$Result$fromMaybe, $elm$parser$Parser$ExpectingFloat, i.cd),
+			cp: A2($elm$core$Result$fromMaybe, $elm$parser$Parser$ExpectingHex, i.cp),
+			cu: A2($elm$core$Result$fromMaybe, $elm$parser$Parser$ExpectingInt, i.cu),
+			cx: $elm$parser$Parser$ExpectingNumber,
+			a4: A2($elm$core$Result$fromMaybe, $elm$parser$Parser$ExpectingOctal, i.a4)
 		});
 };
 var $stil4m$elm_syntax$Elm$Parser$Numbers$raw = F3(
 	function (floatf, intf, hexf) {
 		return $elm$parser$Parser$number(
 			{
-				aG: $elm$core$Maybe$Nothing,
-				cc: $elm$core$Maybe$Just(floatf),
-				co: $elm$core$Maybe$Just(hexf),
-				ct: $elm$core$Maybe$Just(intf),
-				a3: $elm$core$Maybe$Nothing
+				aH: $elm$core$Maybe$Nothing,
+				cd: $elm$core$Maybe$Just(floatf),
+				cp: $elm$core$Maybe$Just(hexf),
+				cu: $elm$core$Maybe$Just(intf),
+				a4: $elm$core$Maybe$Nothing
 			});
 	});
 var $stil4m$elm_syntax$Elm$Parser$Numbers$number = F3(
@@ -13305,20 +13410,20 @@ var $elm$parser$Parser$Advanced$getOffset = function (s) {
 var $elm$parser$Parser$getOffset = $elm$parser$Parser$Advanced$getOffset;
 var $stil4m$elm_syntax$Elm$Parser$Tokens$stringLiteral = function () {
 	var helper = function (s) {
-		return s.s ? A2(
+		return s.r ? A2(
 			$elm$parser$Parser$map,
 			function (v) {
 				return $elm$parser$Parser$Loop(
 					_Utils_update(
 						s,
 						{
-							s: false,
-							i: A2(
+							r: false,
+							h: A2(
 								$elm$core$List$cons,
 								$elm$core$String$fromList(
 									_List_fromArray(
 										[v])),
-								s.i)
+								s.h)
 						}));
 			},
 			$stil4m$elm_syntax$Elm$Parser$Tokens$escapedCharValue) : $elm$parser$Parser$oneOf(
@@ -13329,7 +13434,7 @@ var $stil4m$elm_syntax$Elm$Parser$Tokens$stringLiteral = function () {
 					function (_v0) {
 						return $elm$parser$Parser$Done(
 							$elm$core$String$concat(
-								$elm$core$List$reverse(s.i)));
+								$elm$core$List$reverse(s.h)));
 					},
 					$elm$parser$Parser$symbol('\"')),
 					A2(
@@ -13338,7 +13443,7 @@ var $stil4m$elm_syntax$Elm$Parser$Tokens$stringLiteral = function () {
 						return $elm$parser$Parser$Loop(
 							_Utils_update(
 								s,
-								{s: true, i: s.i}));
+								{r: true, h: s.h}));
 					},
 					$elm$parser$Parser$getChompedString(
 						$elm$parser$Parser$symbol('\\'))),
@@ -13353,7 +13458,7 @@ var $stil4m$elm_syntax$Elm$Parser$Tokens$stringLiteral = function () {
 								_Utils_update(
 									s,
 									{
-										i: A2($elm$core$List$cons, value, s.i)
+										h: A2($elm$core$List$cons, value, s.h)
 									})));
 					},
 					A2(
@@ -13385,7 +13490,7 @@ var $stil4m$elm_syntax$Elm$Parser$Tokens$stringLiteral = function () {
 				$elm$parser$Parser$symbol('\"')),
 			A2(
 				$elm$parser$Parser$loop,
-				{s: false, i: _List_Nil},
+				{r: false, h: _List_Nil},
 				helper)));
 }();
 var $miniBill$elm_unicode$Unicode$isUpper = function (c) {
@@ -13395,11 +13500,11 @@ var $miniBill$elm_unicode$Unicode$isUpper = function (c) {
 var $stil4m$elm_syntax$Elm$Parser$Tokens$typeName = $stil4m$elm_syntax$Combine$fromCore(
 	$elm$parser$Parser$variable(
 		{
-			aZ: function (c) {
+			a_: function (c) {
 				return $miniBill$elm_unicode$Unicode$isAlphaNum(c) || (c === '_');
 			},
-			bf: $elm$core$Set$fromList($stil4m$elm_syntax$Elm$Parser$Tokens$reservedList),
-			bk: $miniBill$elm_unicode$Unicode$isUpper
+			bg: $elm$core$Set$fromList($stil4m$elm_syntax$Elm$Parser$Tokens$reservedList),
+			bl: $miniBill$elm_unicode$Unicode$isUpper
 		}));
 var $stil4m$elm_syntax$Elm$Parser$Base$typeIndicator = function () {
 	var helper = function (_v0) {
@@ -13647,7 +13752,7 @@ $stil4m$elm_syntax$Elm$Parser$Patterns$cyclic$parensPattern = function () {
 var $stil4m$elm_syntax$Elm$Parser$Declarations$functionArgument = $stil4m$elm_syntax$Elm$Parser$Patterns$pattern;
 var $stil4m$elm_syntax$Elm$Syntax$Signature$Signature = F2(
 	function (name, typeAnnotation) {
-		return {t: name, aD: typeAnnotation};
+		return {s: name, aD: typeAnnotation};
 	});
 var $stil4m$elm_syntax$Elm$Parser$TypeAnnotation$Eager = 0;
 var $stil4m$elm_syntax$Elm$Parser$TypeAnnotation$Lazy = 1;
@@ -13678,7 +13783,7 @@ var $elm$core$List$member = F2(
 			xs);
 	});
 var $stil4m$elm_syntax$Elm$Parser$State$storedColumns = function (_v0) {
-	var indents = _v0.F;
+	var indents = _v0.E;
 	return A2(
 		$elm$core$List$map,
 		$elm$core$Basics$add(1),
@@ -13692,7 +13797,7 @@ var $stil4m$elm_syntax$Elm$Parser$Layout$compute = $stil4m$elm_syntax$Combine$wi
 					$elm$core$List$cons,
 					1,
 					$stil4m$elm_syntax$Elm$Parser$State$storedColumns(s));
-				return A2($elm$core$List$member, l.bP, known) ? $stil4m$elm_syntax$Combine$succeed(0) : $stil4m$elm_syntax$Combine$succeed(1);
+				return A2($elm$core$List$member, l.bQ, known) ? $stil4m$elm_syntax$Combine$succeed(0) : $stil4m$elm_syntax$Combine$succeed(1);
 			});
 	});
 var $stil4m$elm_syntax$Elm$Parser$Layout$optimisticLayout = A2(
@@ -14169,18 +14274,18 @@ var $stil4m$elm_syntax$Elm$Parser$Declarations$liftRecordAccess = function (e) {
 };
 var $stil4m$elm_syntax$Elm$Parser$Tokens$multiLineStringLiteral = function () {
 	var helper = function (s) {
-		return s.s ? A2(
+		return s.r ? A2(
 			$elm$parser$Parser$map,
 			function (v) {
 				return $elm$parser$Parser$Loop(
 					_Utils_update(
 						s,
 						{
-							s: false,
-							i: A2(
+							r: false,
+							h: A2(
 								$elm$core$List$cons,
 								$elm$core$String$fromChar(v),
-								s.i)
+								s.h)
 						}));
 			},
 			$stil4m$elm_syntax$Elm$Parser$Tokens$escapedCharValue) : $elm$parser$Parser$oneOf(
@@ -14191,7 +14296,7 @@ var $stil4m$elm_syntax$Elm$Parser$Tokens$multiLineStringLiteral = function () {
 					function (_v0) {
 						return $elm$parser$Parser$Done(
 							$elm$core$String$concat(
-								$elm$core$List$reverse(s.i)));
+								$elm$core$List$reverse(s.h)));
 					},
 					$elm$parser$Parser$symbol('\"\"\"')),
 					A2(
@@ -14201,8 +14306,8 @@ var $stil4m$elm_syntax$Elm$Parser$Tokens$multiLineStringLiteral = function () {
 							_Utils_update(
 								s,
 								{
-									y: s.y + 1,
-									i: A2($elm$core$List$cons, v, s.i)
+									x: s.x + 1,
+									h: A2($elm$core$List$cons, v, s.h)
 								}));
 					},
 					$elm$parser$Parser$getChompedString(
@@ -14213,7 +14318,7 @@ var $stil4m$elm_syntax$Elm$Parser$Tokens$multiLineStringLiteral = function () {
 						return $elm$parser$Parser$Loop(
 							_Utils_update(
 								s,
-								{y: s.y + 1, s: true, i: s.i}));
+								{x: s.x + 1, r: true, h: s.h}));
 					},
 					$elm$parser$Parser$getChompedString(
 						$elm$parser$Parser$symbol('\\'))),
@@ -14228,8 +14333,8 @@ var $stil4m$elm_syntax$Elm$Parser$Tokens$multiLineStringLiteral = function () {
 								_Utils_update(
 									s,
 									{
-										y: s.y + 1,
-										i: A2($elm$core$List$cons, value, s.i)
+										x: s.x + 1,
+										h: A2($elm$core$List$cons, value, s.h)
 									})));
 					},
 					A2(
@@ -14261,7 +14366,7 @@ var $stil4m$elm_syntax$Elm$Parser$Tokens$multiLineStringLiteral = function () {
 				$elm$parser$Parser$symbol('\"\"\"')),
 			A2(
 				$elm$parser$Parser$loop,
-				{y: 0, s: false, i: _List_Nil},
+				{x: 0, r: false, h: _List_Nil},
 				helper)));
 }();
 var $stil4m$elm_syntax$Elm$Parser$Declarations$literalExpression = $stil4m$elm_syntax$Combine$lazy(
@@ -14415,16 +14520,16 @@ var $stil4m$elm_syntax$Elm$Parser$Declarations$referenceExpression = $stil4m$elm
 		$stil4m$elm_syntax$Elm$Parser$Declarations$reference));
 var $stil4m$elm_syntax$Elm$Parser$Tokens$thenToken = $stil4m$elm_syntax$Combine$string('then');
 var $stil4m$elm_syntax$Elm$Parser$Ranges$asPointerLocation = function (_v0) {
-	var line = _v0.V;
-	var column = _v0.bP;
-	return {bP: column, bg: line};
+	var line = _v0.U;
+	var column = _v0.bQ;
+	return {bQ: column, bh: line};
 };
 var $stil4m$elm_syntax$Elm$Parser$Ranges$withCurrentPoint = function (p) {
 	return $stil4m$elm_syntax$Combine$withLocation(
 		function (start) {
 			var k = $stil4m$elm_syntax$Elm$Parser$Ranges$asPointerLocation(start);
 			return p(
-				{aQ: k, bk: k});
+				{aR: k, bl: k});
 		});
 };
 var $stil4m$elm_syntax$Elm$Parser$State$popIndent = function (_v0) {
@@ -14432,7 +14537,7 @@ var $stil4m$elm_syntax$Elm$Parser$State$popIndent = function (_v0) {
 	return _Utils_update(
 		s,
 		{
-			F: A2($elm$core$List$drop, 1, s.F)
+			E: A2($elm$core$List$drop, 1, s.E)
 		});
 };
 var $stil4m$elm_syntax$Elm$Parser$State$pushIndent = F2(
@@ -14441,7 +14546,7 @@ var $stil4m$elm_syntax$Elm$Parser$State$pushIndent = F2(
 		return _Utils_update(
 			s,
 			{
-				F: A2($elm$core$List$cons, x, s.F)
+				E: A2($elm$core$List$cons, x, s.E)
 			});
 	});
 var $stil4m$elm_syntax$Elm$Parser$State$pushColumn = F2(
@@ -14458,7 +14563,7 @@ var $stil4m$elm_syntax$Elm$Parser$Declarations$withIndentedState = function (p) 
 					$stil4m$elm_syntax$Combine$continueWith,
 					p,
 					$stil4m$elm_syntax$Combine$modifyState(
-						$stil4m$elm_syntax$Elm$Parser$State$pushColumn(location.bP))));
+						$stil4m$elm_syntax$Elm$Parser$State$pushColumn(location.bQ))));
 		});
 };
 var $stil4m$elm_syntax$Elm$Parser$Declarations$functionWithNameNode = function (pointer) {
@@ -14502,9 +14607,9 @@ var $stil4m$elm_syntax$Elm$Parser$Declarations$functionWithNameNode = function (
 	var fromParts = F2(
 		function (sig, decl) {
 			return {
-				bV: decl,
-				ab: $elm$core$Maybe$Nothing,
-				c8: $elm$core$Maybe$Just(sig)
+				bW: decl,
+				aa: $elm$core$Maybe$Nothing,
+				c9: $elm$core$Maybe$Just(sig)
 			};
 		});
 	var functionWithSignature = function (varPointer) {
@@ -14584,7 +14689,7 @@ function $stil4m$elm_syntax$Elm$Parser$Declarations$cyclic$caseExpression() {
 										A2(
 											$elm$core$List$map,
 											A2($elm$core$Basics$composeR, $elm$core$Tuple$second, $stil4m$elm_syntax$Elm$Syntax$Node$range),
-											cb.bL))),
+											cb.bM))),
 								$stil4m$elm_syntax$Elm$Syntax$Expression$CaseExpression(cb));
 						},
 						A2(
@@ -14635,7 +14740,7 @@ function $stil4m$elm_syntax$Elm$Parser$Declarations$cyclic$caseStatements() {
 							function (l) {
 								return _Utils_eq(
 									$stil4m$elm_syntax$Elm$Parser$State$expectedColumn(s),
-									l.bP) ? $stil4m$elm_syntax$Combine$choice(
+									l.bQ) ? $stil4m$elm_syntax$Combine$choice(
 									_List_fromArray(
 										[
 											A2(
@@ -14789,8 +14894,8 @@ function $stil4m$elm_syntax$Elm$Parser$Declarations$cyclic$ifBlockExpression() {
 																	return A2(
 																		$stil4m$elm_syntax$Elm$Syntax$Node$Node,
 																		{
-																			aQ: $stil4m$elm_syntax$Elm$Syntax$Node$range(ifFalse).aQ,
-																			bk: current.bk
+																			aR: $stil4m$elm_syntax$Elm$Syntax$Node$range(ifFalse).aR,
+																			bl: current.bl
 																		},
 																		A3($stil4m$elm_syntax$Elm$Syntax$Expression$IfBlock, condition, ifTrue, ifFalse));
 																}))))))))));
@@ -14904,8 +15009,8 @@ function $stil4m$elm_syntax$Elm$Parser$Declarations$cyclic$letExpression() {
 										return A2(
 											$stil4m$elm_syntax$Elm$Syntax$Node$Node,
 											{
-												aQ: $stil4m$elm_syntax$Elm$Syntax$Node$range(expr).aQ,
-												bk: current.bk
+												aR: $stil4m$elm_syntax$Elm$Syntax$Node$range(expr).aR,
+												bl: current.bl
 											},
 											$stil4m$elm_syntax$Elm$Syntax$Expression$LetExpression(
 												A2($stil4m$elm_syntax$Elm$Syntax$Expression$LetBlock, decls, expr)));
@@ -15278,7 +15383,7 @@ var $stil4m$elm_syntax$Elm$Syntax$Expression$functionRange = function (_function
 		_List_fromArray(
 			[
 				function () {
-				var _v0 = _function.ab;
+				var _v0 = _function.aa;
 				if (!_v0.$) {
 					var documentation = _v0.a;
 					return $stil4m$elm_syntax$Elm$Syntax$Node$range(documentation);
@@ -15289,23 +15394,23 @@ var $stil4m$elm_syntax$Elm$Syntax$Expression$functionRange = function (_function
 							var r = _v3.a;
 							return r;
 						}(
-							$stil4m$elm_syntax$Elm$Syntax$Node$value(_function.bV).t),
+							$stil4m$elm_syntax$Elm$Syntax$Node$value(_function.bW).s),
 						A2(
 							$elm$core$Maybe$map,
 							function (_v1) {
 								var value = _v1.b;
-								var _v2 = value.t;
+								var _v2 = value.s;
 								var r = _v2.a;
 								return r;
 							},
-							_function.c8));
+							_function.c9));
 				}
 			}(),
 				function (_v4) {
 				var r = _v4.a;
 				return r;
 			}(
-				$stil4m$elm_syntax$Elm$Syntax$Node$value(_function.bV).a)
+				$stil4m$elm_syntax$Elm$Syntax$Node$value(_function.bW).a)
 			]));
 };
 var $stil4m$elm_syntax$Elm$Parser$Declarations$function = $stil4m$elm_syntax$Combine$lazy(
@@ -15331,7 +15436,7 @@ var $stil4m$elm_syntax$Elm$Syntax$Declaration$InfixDeclaration = function (a) {
 };
 var $stil4m$elm_syntax$Elm$Syntax$Infix$Infix = F4(
 	function (direction, precedence, operator, _function) {
-		return {b$: direction, cj: _function, cV: operator, J: precedence};
+		return {b0: direction, ck: _function, cW: operator, I: precedence};
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Infix$Left = 0;
 var $stil4m$elm_syntax$Elm$Syntax$Infix$Non = 2;
@@ -15356,13 +15461,13 @@ var $elm$parser$Parser$Advanced$int = F2(
 	function (expecting, invalid) {
 		return $elm$parser$Parser$Advanced$number(
 			{
-				aG: $elm$core$Result$Err(invalid),
-				aS: expecting,
-				cc: $elm$core$Result$Err(invalid),
-				co: $elm$core$Result$Err(invalid),
-				ct: $elm$core$Result$Ok($elm$core$Basics$identity),
-				cw: invalid,
-				a3: $elm$core$Result$Err(invalid)
+				aH: $elm$core$Result$Err(invalid),
+				aT: expecting,
+				cd: $elm$core$Result$Err(invalid),
+				cp: $elm$core$Result$Err(invalid),
+				cu: $elm$core$Result$Ok($elm$core$Basics$identity),
+				cx: invalid,
+				a4: $elm$core$Result$Err(invalid)
 			});
 	});
 var $elm$parser$Parser$int = A2($elm$parser$Parser$Advanced$int, $elm$parser$Parser$ExpectingInt, $elm$parser$Parser$ExpectingInt);
@@ -15414,7 +15519,7 @@ var $stil4m$elm_syntax$Elm$Parser$Declarations$infixDeclaration = $stil4m$elm_sy
 						_List_fromArray(
 							[
 								current,
-								$stil4m$elm_syntax$Elm$Syntax$Node$range(inf.cj)
+								$stil4m$elm_syntax$Elm$Syntax$Node$range(inf.ck)
 							])),
 					$stil4m$elm_syntax$Elm$Syntax$Declaration$InfixDeclaration(inf));
 			},
@@ -15471,11 +15576,11 @@ var $stil4m$elm_syntax$Elm$Parser$Typings$DefinedType = F2(
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Type$Type = F4(
 	function (documentation, name, generics, constructors) {
-		return {bS: constructors, ab: documentation, aW: generics, t: name};
+		return {bT: constructors, aa: documentation, aX: generics, s: name};
 	});
 var $stil4m$elm_syntax$Elm$Syntax$TypeAlias$TypeAlias = F4(
 	function (documentation, name, generics, typeAnnotation) {
-		return {ab: documentation, aW: generics, t: name, aD: typeAnnotation};
+		return {aa: documentation, aX: generics, s: name, aD: typeAnnotation};
 	});
 var $stil4m$elm_syntax$Elm$Parser$Typings$genericList = $stil4m$elm_syntax$Combine$many(
 	A2(
@@ -15488,7 +15593,7 @@ var $stil4m$elm_syntax$Elm$Parser$Typings$typePrefix = A2(
 	$stil4m$elm_syntax$Combine$string('type'));
 var $stil4m$elm_syntax$Elm$Syntax$Type$ValueConstructor = F2(
 	function (name, _arguments) {
-		return {bG: _arguments, t: name};
+		return {bH: _arguments, s: name};
 	});
 var $stil4m$elm_syntax$Elm$Parser$TypeAnnotation$typeAnnotationNonGreedy = $stil4m$elm_syntax$Combine$choice(
 	_List_fromArray(
@@ -15627,7 +15732,7 @@ var $stil4m$elm_syntax$Elm$Parser$Typings$typeDefinition = $stil4m$elm_syntax$El
 												var r = _v0.a;
 												return r;
 											},
-											tipe.bS))),
+											tipe.bT))),
 								tipe);
 						},
 						A2(
@@ -15694,7 +15799,7 @@ var $stil4m$elm_syntax$Elm$Parser$File$fileDeclarations = $stil4m$elm_syntax$Com
 		$stil4m$elm_syntax$Elm$Parser$Declarations$declaration));
 var $stil4m$elm_syntax$Elm$Syntax$Import$Import = F3(
 	function (moduleName, moduleAlias, exposingList) {
-		return {b8: exposingList, a1: moduleAlias, af: moduleName};
+		return {b9: exposingList, a2: moduleAlias, af: moduleName};
 	});
 var $stil4m$elm_syntax$Elm$Parser$Tokens$asToken = $stil4m$elm_syntax$Combine$fromCore(
 	$elm$parser$Parser$keyword('as'));
@@ -15723,7 +15828,7 @@ var $stil4m$elm_syntax$Elm$Parser$Expose$infixExpose = $stil4m$elm_syntax$Combin
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Exposing$ExposedType = F2(
 	function (name, open) {
-		return {t: name, cU: open};
+		return {s: name, cV: open};
 	});
 var $stil4m$elm_syntax$Elm$Syntax$Node$map = F2(
 	function (f, _v0) {
@@ -15787,8 +15892,8 @@ var $stil4m$elm_syntax$Elm$Parser$Ranges$withRange = function (p) {
 					function (end) {
 						return $stil4m$elm_syntax$Combine$succeed(
 							{
-								aQ: $stil4m$elm_syntax$Elm$Parser$Ranges$asPointerLocation(end),
-								bk: $stil4m$elm_syntax$Elm$Parser$Ranges$asPointerLocation(start)
+								aR: $stil4m$elm_syntax$Elm$Parser$Ranges$asPointerLocation(end),
+								bl: $stil4m$elm_syntax$Elm$Parser$Ranges$asPointerLocation(start)
 							});
 					}),
 				p);
@@ -15835,8 +15940,8 @@ var $stil4m$elm_syntax$Elm$Parser$Imports$setupNode = F2(
 				$elm$core$Maybe$Just(start),
 				$elm$core$Maybe$Just(
 				$stil4m$elm_syntax$Elm$Syntax$Node$range(imp.af)),
-				A2($elm$core$Maybe$map, $stil4m$elm_syntax$Elm$Syntax$Node$range, imp.b8),
-				A2($elm$core$Maybe$map, $stil4m$elm_syntax$Elm$Syntax$Node$range, imp.a1)
+				A2($elm$core$Maybe$map, $stil4m$elm_syntax$Elm$Syntax$Node$range, imp.b9),
+				A2($elm$core$Maybe$map, $stil4m$elm_syntax$Elm$Syntax$Node$range, imp.a2)
 			]);
 		return A2(
 			$stil4m$elm_syntax$Elm$Syntax$Node$Node,
@@ -15912,11 +16017,22 @@ var $stil4m$elm_syntax$Elm$Parser$Modules$effectWhereClause = A2(
 		$stil4m$elm_syntax$Combine$andMap,
 		$stil4m$elm_syntax$Elm$Parser$Tokens$functionName,
 		$stil4m$elm_syntax$Combine$succeed($elm$core$Tuple$pair)));
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
 var $stil4m$elm_syntax$Elm$Parser$Modules$whereBlock = A2(
 	$stil4m$elm_syntax$Combine$map,
 	function (pairs) {
 		return {
-			bQ: A2(
+			bR: A2(
 				$elm$core$Maybe$map,
 				$elm$core$Tuple$second,
 				$elm$core$List$head(
@@ -15927,7 +16043,7 @@ var $stil4m$elm_syntax$Elm$Parser$Modules$whereBlock = A2(
 							$elm$core$Tuple$first,
 							$elm$core$Basics$eq('command')),
 						pairs))),
-			dc: A2(
+			de: A2(
 				$elm$core$Maybe$map,
 				$elm$core$Tuple$second,
 				$elm$core$List$head(
@@ -15960,7 +16076,7 @@ var $stil4m$elm_syntax$Elm$Parser$Modules$effectModuleDefinition = function () {
 	var createEffectModule = F3(
 		function (name, whereClauses, exp) {
 			return $stil4m$elm_syntax$Elm$Syntax$Module$EffectModule(
-				{bQ: whereClauses.bQ, b8: exp, af: name, dc: whereClauses.dc});
+				{bR: whereClauses.bR, b9: exp, af: name, de: whereClauses.de});
 		});
 	return A2(
 		$stil4m$elm_syntax$Combine$andMap,
@@ -15993,7 +16109,7 @@ var $stil4m$elm_syntax$Elm$Parser$Modules$effectModuleDefinition = function () {
 }();
 var $stil4m$elm_syntax$Elm$Syntax$Module$DefaultModuleData = F2(
 	function (moduleName, exposingList) {
-		return {b8: exposingList, af: moduleName};
+		return {b9: exposingList, af: moduleName};
 	});
 var $stil4m$elm_syntax$Elm$Parser$Modules$normalModuleDefinition = A2(
 	$stil4m$elm_syntax$Combine$map,
@@ -16205,7 +16321,7 @@ var $stil4m$elm_syntax$Elm$Processing$findNextSplit = F2(
 							$elm$core$Basics$composeR,
 							$elm$core$Tuple$second,
 							function ($) {
-								return $.b$;
+								return $.b0;
 							}),
 						$elm$core$Dict$toList(dict)))));
 		var prefix = function () {
@@ -16315,7 +16431,7 @@ var $stil4m$elm_syntax$Elm$Processing$lowestPrecedence = function (input) {
 							A2(
 								$elm$core$Basics$composeR,
 								function ($) {
-									return $.J;
+									return $.I;
 								},
 								A2(
 									$elm$core$Basics$composeR,
@@ -16332,7 +16448,7 @@ var $stil4m$elm_syntax$Elm$Processing$lowestPrecedence = function (input) {
 							A2(
 								$elm$core$Basics$composeR,
 								function ($) {
-									return $.J;
+									return $.I;
 								},
 								$stil4m$elm_syntax$Elm$Syntax$Node$value)),
 						input)))));
@@ -16348,10 +16464,10 @@ var $stil4m$elm_syntax$Elm$Processing$fixApplication = F2(
 						A2(
 							$elm$core$Maybe$withDefault,
 							{
-								b$: A2($stil4m$elm_syntax$Elm$Syntax$Node$Node, $stil4m$elm_syntax$Elm$Syntax$Range$emptyRange, 0),
-								cj: A2($stil4m$elm_syntax$Elm$Syntax$Node$Node, $stil4m$elm_syntax$Elm$Syntax$Range$emptyRange, 'todo'),
-								cV: A2($stil4m$elm_syntax$Elm$Syntax$Node$Node, $stil4m$elm_syntax$Elm$Syntax$Range$emptyRange, x),
-								J: A2($stil4m$elm_syntax$Elm$Syntax$Node$Node, $stil4m$elm_syntax$Elm$Syntax$Range$emptyRange, 5)
+								b0: A2($stil4m$elm_syntax$Elm$Syntax$Node$Node, $stil4m$elm_syntax$Elm$Syntax$Range$emptyRange, 0),
+								ck: A2($stil4m$elm_syntax$Elm$Syntax$Node$Node, $stil4m$elm_syntax$Elm$Syntax$Range$emptyRange, 'todo'),
+								cW: A2($stil4m$elm_syntax$Elm$Syntax$Node$Node, $stil4m$elm_syntax$Elm$Syntax$Range$emptyRange, x),
+								I: A2($stil4m$elm_syntax$Elm$Syntax$Node$Node, $stil4m$elm_syntax$Elm$Syntax$Range$emptyRange, 5)
 							},
 							A2($elm$core$Dict$get, x, operators)));
 				},
@@ -16377,8 +16493,8 @@ var $stil4m$elm_syntax$Elm$Processing$fixApplication = F2(
 						var s = _v0.c;
 						return A4(
 							$stil4m$elm_syntax$Elm$Syntax$Expression$OperatorApplication,
-							$stil4m$elm_syntax$Elm$Syntax$Node$value(infix.cV),
-							$stil4m$elm_syntax$Elm$Syntax$Node$value(infix.b$),
+							$stil4m$elm_syntax$Elm$Syntax$Node$value(infix.cW),
+							$stil4m$elm_syntax$Elm$Syntax$Node$value(infix.b0),
 							A2(
 								$stil4m$elm_syntax$Elm$Syntax$Node$Node,
 								$stil4m$elm_syntax$Elm$Syntax$Range$combine(
@@ -16552,14 +16668,14 @@ var $stil4m$elm_syntax$Elm$Inspector$inspectFunction = F3(
 				A2(
 					$stil4m$elm_syntax$Elm$Inspector$inspectExpression,
 					config,
-					$stil4m$elm_syntax$Elm$Syntax$Node$value(_function.bV).a),
+					$stil4m$elm_syntax$Elm$Syntax$Node$value(_function.bW).a),
 				A2(
 					$elm$core$Maybe$withDefault,
 					$elm$core$Basics$identity,
 					A2(
 						$elm$core$Maybe$map,
 						$stil4m$elm_syntax$Elm$Inspector$inspectSignature(config),
-						_function.c8))),
+						_function.c9))),
 			node,
 			context);
 	});
@@ -16630,7 +16746,7 @@ var $stil4m$elm_syntax$Elm$Inspector$inspectInnerExpression = F3(
 							_List_fromArray(
 								[left, right]));
 					},
-					{b$: dir, cF: left, cV: op, c6: right},
+					{b0: dir, cG: left, cW: op, c7: right},
 					context);
 			case 4:
 				var e1 = expression.a;
@@ -16656,7 +16772,7 @@ var $stil4m$elm_syntax$Elm$Inspector$inspectInnerExpression = F3(
 				var letBlock = expression.a;
 				var next = A2(
 					$elm$core$Basics$composeR,
-					A2($stil4m$elm_syntax$Elm$Inspector$inspectLetDeclarations, config, letBlock.bY),
+					A2($stil4m$elm_syntax$Elm$Inspector$inspectLetDeclarations, config, letBlock.bZ),
 					A2($stil4m$elm_syntax$Elm$Inspector$inspectExpression, config, letBlock.a));
 				return A4($stil4m$elm_syntax$Elm$Inspector$actionLambda, config.aq, next, letBlock, context);
 			case 16:
@@ -16669,7 +16785,7 @@ var $stil4m$elm_syntax$Elm$Inspector$inspectInnerExpression = F3(
 							return A3($stil4m$elm_syntax$Elm$Inspector$inspectCase, config, a, b);
 						}),
 					context2,
-					caseBlock.bL);
+					caseBlock.bM);
 				return context3;
 			case 17:
 				var lambda = expression.a;
@@ -16772,7 +16888,7 @@ var $stil4m$elm_syntax$Elm$Inspector$inspectValueConstructor = F3(
 			$elm$core$List$foldl,
 			$stil4m$elm_syntax$Elm$Inspector$inspectTypeAnnotation(config),
 			context,
-			valueConstructor.bG);
+			valueConstructor.bH);
 	});
 var $stil4m$elm_syntax$Elm$Inspector$inspectTypeInner = F3(
 	function (config, typeDecl, context) {
@@ -16780,7 +16896,7 @@ var $stil4m$elm_syntax$Elm$Inspector$inspectTypeInner = F3(
 			$elm$core$List$foldl,
 			$stil4m$elm_syntax$Elm$Inspector$inspectValueConstructor(config),
 			context,
-			typeDecl.bS);
+			typeDecl.bT);
 	});
 var $stil4m$elm_syntax$Elm$Inspector$inspectType = F3(
 	function (config, tipe, context) {
@@ -16886,7 +17002,7 @@ var $stil4m$elm_syntax$Elm$Inspector$inspect = F3(
 			A2(
 				$elm$core$Basics$composeR,
 				A2($stil4m$elm_syntax$Elm$Inspector$inspectImports, config, file.b),
-				A2($stil4m$elm_syntax$Elm$Inspector$inspectDeclarations, config, file.bY)),
+				A2($stil4m$elm_syntax$Elm$Inspector$inspectDeclarations, config, file.bZ)),
 			file,
 			context);
 	});
@@ -16895,8 +17011,8 @@ var $stil4m$elm_syntax$Elm$Processing$Documentation$isDocumentationForRange = F2
 		var commentRange = _v0.a;
 		var commentText = _v0.b;
 		if (A2($elm$core$String$startsWith, '{-|', commentText)) {
-			var functionStartRow = range.bk.bg;
-			return _Utils_eq(commentRange.aQ.bg + 1, functionStartRow);
+			var functionStartRow = range.bl.bh;
+			return _Utils_eq(commentRange.aR.bh + 1, functionStartRow);
 		} else {
 			return false;
 		}
@@ -16937,7 +17053,7 @@ var $stil4m$elm_syntax$Elm$Processing$Documentation$onFunction = F2(
 	function (_v0, file) {
 		var functionRange = _v0.a;
 		var _function = _v0.b;
-		var _v1 = A2($stil4m$elm_syntax$Elm$Processing$Documentation$findDocumentationForRange, functionRange, file.aJ);
+		var _v1 = A2($stil4m$elm_syntax$Elm$Processing$Documentation$findDocumentationForRange, functionRange, file.aK);
 		if (!_v1.$) {
 			var doc = _v1.a;
 			var docRange = doc.a;
@@ -16945,11 +17061,11 @@ var $stil4m$elm_syntax$Elm$Processing$Documentation$onFunction = F2(
 			return _Utils_update(
 				file,
 				{
-					aJ: A2(
+					aK: A2(
 						$elm$core$List$filter,
 						$elm$core$Basics$neq(doc),
-						file.aJ),
-					bY: A2(
+						file.aK),
+					bZ: A2(
 						$elm$core$List$map,
 						$stil4m$elm_syntax$Elm$Processing$Documentation$replaceDeclaration(
 							A2(
@@ -16959,10 +17075,10 @@ var $stil4m$elm_syntax$Elm$Processing$Documentation$onFunction = F2(
 									_Utils_update(
 										_function,
 										{
-											ab: $elm$core$Maybe$Just(
+											aa: $elm$core$Maybe$Just(
 												A2($stil4m$elm_syntax$Elm$Syntax$Node$Node, docRange, docString))
 										})))),
-						file.bY)
+						file.bZ)
 				});
 		} else {
 			return file;
@@ -16972,7 +17088,7 @@ var $stil4m$elm_syntax$Elm$Processing$Documentation$onType = F2(
 	function (_v0, file) {
 		var r = _v0.a;
 		var customType = _v0.b;
-		var _v1 = A2($stil4m$elm_syntax$Elm$Processing$Documentation$findDocumentationForRange, r, file.aJ);
+		var _v1 = A2($stil4m$elm_syntax$Elm$Processing$Documentation$findDocumentationForRange, r, file.aK);
 		if (!_v1.$) {
 			var doc = _v1.a;
 			var docRange = doc.a;
@@ -16980,11 +17096,11 @@ var $stil4m$elm_syntax$Elm$Processing$Documentation$onType = F2(
 			return _Utils_update(
 				file,
 				{
-					aJ: A2(
+					aK: A2(
 						$elm$core$List$filter,
 						$elm$core$Basics$neq(doc),
-						file.aJ),
-					bY: A2(
+						file.aK),
+					bZ: A2(
 						$elm$core$List$map,
 						$stil4m$elm_syntax$Elm$Processing$Documentation$replaceDeclaration(
 							A2(
@@ -16994,10 +17110,10 @@ var $stil4m$elm_syntax$Elm$Processing$Documentation$onType = F2(
 									_Utils_update(
 										customType,
 										{
-											ab: $elm$core$Maybe$Just(
+											aa: $elm$core$Maybe$Just(
 												A2($stil4m$elm_syntax$Elm$Syntax$Node$Node, docRange, docString))
 										})))),
-						file.bY)
+						file.bZ)
 				});
 		} else {
 			return file;
@@ -17007,7 +17123,7 @@ var $stil4m$elm_syntax$Elm$Processing$Documentation$onTypeAlias = F2(
 	function (_v0, file) {
 		var r = _v0.a;
 		var typeAlias = _v0.b;
-		var _v1 = A2($stil4m$elm_syntax$Elm$Processing$Documentation$findDocumentationForRange, r, file.aJ);
+		var _v1 = A2($stil4m$elm_syntax$Elm$Processing$Documentation$findDocumentationForRange, r, file.aK);
 		if (!_v1.$) {
 			var doc = _v1.a;
 			var docRange = doc.a;
@@ -17015,11 +17131,11 @@ var $stil4m$elm_syntax$Elm$Processing$Documentation$onTypeAlias = F2(
 			return _Utils_update(
 				file,
 				{
-					aJ: A2(
+					aK: A2(
 						$elm$core$List$filter,
 						$elm$core$Basics$neq(doc),
-						file.aJ),
-					bY: A2(
+						file.aK),
+					bZ: A2(
 						$elm$core$List$map,
 						$stil4m$elm_syntax$Elm$Processing$Documentation$replaceDeclaration(
 							A2(
@@ -17029,10 +17145,10 @@ var $stil4m$elm_syntax$Elm$Processing$Documentation$onTypeAlias = F2(
 									_Utils_update(
 										typeAlias,
 										{
-											ab: $elm$core$Maybe$Just(
+											aa: $elm$core$Maybe$Just(
 												A2($stil4m$elm_syntax$Elm$Syntax$Node$Node, docRange, docString))
 										})))),
-						file.bY)
+						file.bZ)
 				});
 		} else {
 			return file;
@@ -17073,7 +17189,7 @@ var $stil4m$elm_syntax$Elm$Syntax$Exposing$operators = function (l) {
 };
 var $stil4m$elm_syntax$Elm$Processing$buildSingle = F2(
 	function (imp, moduleIndex) {
-		var _v0 = imp.b8;
+		var _v0 = imp.b9;
 		if (_v0.$ === 1) {
 			return _List_Nil;
 		} else {
@@ -17083,7 +17199,7 @@ var $stil4m$elm_syntax$Elm$Processing$buildSingle = F2(
 					$elm$core$List$map,
 					function (x) {
 						return _Utils_Tuple2(
-							$stil4m$elm_syntax$Elm$Syntax$Node$value(x.cV),
+							$stil4m$elm_syntax$Elm$Syntax$Node$value(x.cW),
 							x);
 					},
 					$stil4m$elm_syntax$Elm$Interface$operators(
@@ -17111,7 +17227,7 @@ var $stil4m$elm_syntax$Elm$Processing$buildSingle = F2(
 						$elm$core$List$map,
 						function (x) {
 							return _Utils_Tuple2(
-								$stil4m$elm_syntax$Elm$Syntax$Node$value(x.cV),
+								$stil4m$elm_syntax$Elm$Syntax$Node$value(x.cW),
 								x);
 						},
 						$stil4m$elm_syntax$Elm$Interface$operators(
@@ -17128,12 +17244,12 @@ var $stil4m$elm_syntax$Elm$Processing$buildSingle = F2(
 var $stil4m$elm_syntax$Elm$DefaultImports$defaults = _List_fromArray(
 	[
 		{
-		b8: $elm$core$Maybe$Just(
+		b9: $elm$core$Maybe$Just(
 			A2(
 				$stil4m$elm_syntax$Elm$Syntax$Node$Node,
 				$stil4m$elm_syntax$Elm$Syntax$Range$emptyRange,
 				$stil4m$elm_syntax$Elm$Syntax$Exposing$All($stil4m$elm_syntax$Elm$Syntax$Range$emptyRange))),
-		a1: $elm$core$Maybe$Nothing,
+		a2: $elm$core$Maybe$Nothing,
 		af: A2(
 			$stil4m$elm_syntax$Elm$Syntax$Node$Node,
 			$stil4m$elm_syntax$Elm$Syntax$Range$emptyRange,
@@ -17141,7 +17257,7 @@ var $stil4m$elm_syntax$Elm$DefaultImports$defaults = _List_fromArray(
 				['Basics']))
 	},
 		{
-		b8: $elm$core$Maybe$Just(
+		b9: $elm$core$Maybe$Just(
 			A2(
 				$stil4m$elm_syntax$Elm$Syntax$Node$Node,
 				$stil4m$elm_syntax$Elm$Syntax$Range$emptyRange,
@@ -17158,7 +17274,7 @@ var $stil4m$elm_syntax$Elm$DefaultImports$defaults = _List_fromArray(
 							$stil4m$elm_syntax$Elm$Syntax$Range$emptyRange,
 							$stil4m$elm_syntax$Elm$Syntax$Exposing$InfixExpose('::'))
 						])))),
-		a1: $elm$core$Maybe$Nothing,
+		a2: $elm$core$Maybe$Nothing,
 		af: A2(
 			$stil4m$elm_syntax$Elm$Syntax$Node$Node,
 			$stil4m$elm_syntax$Elm$Syntax$Range$emptyRange,
@@ -17166,7 +17282,7 @@ var $stil4m$elm_syntax$Elm$DefaultImports$defaults = _List_fromArray(
 				['List']))
 	},
 		{
-		b8: $elm$core$Maybe$Just(
+		b9: $elm$core$Maybe$Just(
 			A2(
 				$stil4m$elm_syntax$Elm$Syntax$Node$Node,
 				$stil4m$elm_syntax$Elm$Syntax$Range$emptyRange,
@@ -17182,7 +17298,7 @@ var $stil4m$elm_syntax$Elm$DefaultImports$defaults = _List_fromArray(
 									'Maybe',
 									$elm$core$Maybe$Just($stil4m$elm_syntax$Elm$Syntax$Range$emptyRange))))
 						])))),
-		a1: $elm$core$Maybe$Nothing,
+		a2: $elm$core$Maybe$Nothing,
 		af: A2(
 			$stil4m$elm_syntax$Elm$Syntax$Node$Node,
 			$stil4m$elm_syntax$Elm$Syntax$Range$emptyRange,
@@ -17190,7 +17306,7 @@ var $stil4m$elm_syntax$Elm$DefaultImports$defaults = _List_fromArray(
 				['Maybe']))
 	},
 		{
-		b8: $elm$core$Maybe$Just(
+		b9: $elm$core$Maybe$Just(
 			A2(
 				$stil4m$elm_syntax$Elm$Syntax$Node$Node,
 				$stil4m$elm_syntax$Elm$Syntax$Range$emptyRange,
@@ -17206,7 +17322,7 @@ var $stil4m$elm_syntax$Elm$DefaultImports$defaults = _List_fromArray(
 									'Result',
 									$elm$core$Maybe$Just($stil4m$elm_syntax$Elm$Syntax$Range$emptyRange))))
 						])))),
-		a1: $elm$core$Maybe$Nothing,
+		a2: $elm$core$Maybe$Nothing,
 		af: A2(
 			$stil4m$elm_syntax$Elm$Syntax$Node$Node,
 			$stil4m$elm_syntax$Elm$Syntax$Range$emptyRange,
@@ -17214,8 +17330,8 @@ var $stil4m$elm_syntax$Elm$DefaultImports$defaults = _List_fromArray(
 				['Result']))
 	},
 		{
-		b8: $elm$core$Maybe$Nothing,
-		a1: $elm$core$Maybe$Nothing,
+		b9: $elm$core$Maybe$Nothing,
+		a2: $elm$core$Maybe$Nothing,
 		af: A2(
 			$stil4m$elm_syntax$Elm$Syntax$Node$Node,
 			$stil4m$elm_syntax$Elm$Syntax$Range$emptyRange,
@@ -17223,8 +17339,8 @@ var $stil4m$elm_syntax$Elm$DefaultImports$defaults = _List_fromArray(
 				['String']))
 	},
 		{
-		b8: $elm$core$Maybe$Nothing,
-		a1: $elm$core$Maybe$Nothing,
+		b9: $elm$core$Maybe$Nothing,
+		a2: $elm$core$Maybe$Nothing,
 		af: A2(
 			$stil4m$elm_syntax$Elm$Syntax$Node$Node,
 			$stil4m$elm_syntax$Elm$Syntax$Range$emptyRange,
@@ -17232,8 +17348,8 @@ var $stil4m$elm_syntax$Elm$DefaultImports$defaults = _List_fromArray(
 				['Tuple']))
 	},
 		{
-		b8: $elm$core$Maybe$Nothing,
-		a1: $elm$core$Maybe$Nothing,
+		b9: $elm$core$Maybe$Nothing,
+		a2: $elm$core$Maybe$Nothing,
 		af: A2(
 			$stil4m$elm_syntax$Elm$Syntax$Node$Node,
 			$stil4m$elm_syntax$Elm$Syntax$Range$emptyRange,
@@ -17241,7 +17357,7 @@ var $stil4m$elm_syntax$Elm$DefaultImports$defaults = _List_fromArray(
 				['Debug']))
 	},
 		{
-		b8: $elm$core$Maybe$Just(
+		b9: $elm$core$Maybe$Just(
 			A2(
 				$stil4m$elm_syntax$Elm$Syntax$Node$Node,
 				$stil4m$elm_syntax$Elm$Syntax$Range$emptyRange,
@@ -17254,7 +17370,7 @@ var $stil4m$elm_syntax$Elm$DefaultImports$defaults = _List_fromArray(
 							$stil4m$elm_syntax$Elm$Syntax$Exposing$TypeExpose(
 								A2($stil4m$elm_syntax$Elm$Syntax$Exposing$ExposedType, 'Program', $elm$core$Maybe$Nothing)))
 						])))),
-		a1: $elm$core$Maybe$Nothing,
+		a2: $elm$core$Maybe$Nothing,
 		af: A2(
 			$stil4m$elm_syntax$Elm$Syntax$Node$Node,
 			$stil4m$elm_syntax$Elm$Syntax$Range$emptyRange,
@@ -17262,7 +17378,7 @@ var $stil4m$elm_syntax$Elm$DefaultImports$defaults = _List_fromArray(
 				['Platform']))
 	},
 		{
-		b8: $elm$core$Maybe$Just(
+		b9: $elm$core$Maybe$Just(
 			A2(
 				$stil4m$elm_syntax$Elm$Syntax$Node$Node,
 				$stil4m$elm_syntax$Elm$Syntax$Range$emptyRange,
@@ -17279,7 +17395,7 @@ var $stil4m$elm_syntax$Elm$DefaultImports$defaults = _List_fromArray(
 							$stil4m$elm_syntax$Elm$Syntax$Range$emptyRange,
 							$stil4m$elm_syntax$Elm$Syntax$Exposing$InfixExpose('!'))
 						])))),
-		a1: $elm$core$Maybe$Nothing,
+		a2: $elm$core$Maybe$Nothing,
 		af: A2(
 			$stil4m$elm_syntax$Elm$Syntax$Node$Node,
 			$stil4m$elm_syntax$Elm$Syntax$Range$emptyRange,
@@ -17287,7 +17403,7 @@ var $stil4m$elm_syntax$Elm$DefaultImports$defaults = _List_fromArray(
 				['Platform', 'Cmd']))
 	},
 		{
-		b8: $elm$core$Maybe$Just(
+		b9: $elm$core$Maybe$Just(
 			A2(
 				$stil4m$elm_syntax$Elm$Syntax$Node$Node,
 				$stil4m$elm_syntax$Elm$Syntax$Range$emptyRange,
@@ -17300,7 +17416,7 @@ var $stil4m$elm_syntax$Elm$DefaultImports$defaults = _List_fromArray(
 							$stil4m$elm_syntax$Elm$Syntax$Exposing$TypeExpose(
 								A2($stil4m$elm_syntax$Elm$Syntax$Exposing$ExposedType, 'Sub', $elm$core$Maybe$Nothing)))
 						])))),
-		a1: $elm$core$Maybe$Nothing,
+		a2: $elm$core$Maybe$Nothing,
 		af: A2(
 			$stil4m$elm_syntax$Elm$Syntax$Node$Node,
 			$stil4m$elm_syntax$Elm$Syntax$Range$emptyRange,
@@ -17386,17 +17502,17 @@ var $stil4m$elm_syntax$Elm$Processing$visitExpressionInner = F3(
 						var letBlock = expression.a;
 						return $stil4m$elm_syntax$Elm$Syntax$Expression$LetExpression(
 							{
-								bY: A3($stil4m$elm_syntax$Elm$Processing$visitLetDeclarations, visitor, context, letBlock.bY),
+								bZ: A3($stil4m$elm_syntax$Elm$Processing$visitLetDeclarations, visitor, context, letBlock.bZ),
 								a: subVisit(letBlock.a)
 							});
 					case 16:
 						var caseBlock = expression.a;
 						return $stil4m$elm_syntax$Elm$Syntax$Expression$CaseExpression(
 							{
-								bL: A2(
+								bM: A2(
 									$elm$core$List$map,
 									$elm$core$Tuple$mapSecond(subVisit),
-									caseBlock.bL),
+									caseBlock.bM),
 								a: subVisit(caseBlock.a)
 							});
 					case 17:
@@ -17440,10 +17556,10 @@ var $stil4m$elm_syntax$Elm$Processing$visitFunctionDecl = F3(
 		var newFunctionDeclaration = A2(
 			$stil4m$elm_syntax$Elm$Syntax$Node$map,
 			A2($stil4m$elm_syntax$Elm$Processing$visitFunctionDeclaration, visitor, context),
-			_function.bV);
+			_function.bW);
 		return _Utils_update(
 			_function,
-			{bV: newFunctionDeclaration});
+			{bW: newFunctionDeclaration});
 	});
 var $stil4m$elm_syntax$Elm$Processing$visitFunctionDeclaration = F3(
 	function (visitor, context, functionDeclaration) {
@@ -17507,10 +17623,10 @@ var $stil4m$elm_syntax$Elm$Processing$visitDeclarations = F3(
 	});
 var $stil4m$elm_syntax$Elm$Processing$visit = F3(
 	function (visitor, context, file) {
-		var newDeclarations = A3($stil4m$elm_syntax$Elm$Processing$visitDeclarations, visitor, context, file.bY);
+		var newDeclarations = A3($stil4m$elm_syntax$Elm$Processing$visitDeclarations, visitor, context, file.bZ);
 		return _Utils_update(
 			file,
-			{bY: newDeclarations});
+			{bZ: newDeclarations});
 	});
 var $stil4m$elm_syntax$Elm$Processing$process = F2(
 	function (processContext, rawFile) {
@@ -17624,17 +17740,17 @@ var $author$project$DocsFromSource$toDocType = function (annotation) {
 };
 var $author$project$DocsFromSource$portToValue = function (signature) {
 	return {
-		R: '',
-		t: $author$project$Internal$Compiler$denode(signature.t),
+		Q: '',
+		s: $author$project$Internal$Compiler$denode(signature.s),
 		aC: $author$project$DocsFromSource$toDocType(
 			$author$project$Internal$Compiler$denode(signature.aD))
 	};
 };
 var $author$project$DocsFromSource$toDocAlias = function (typeAlias) {
 	return {
-		aF: A2($elm$core$List$map, $author$project$Internal$Compiler$denode, typeAlias.aW),
-		R: function () {
-			var _v0 = typeAlias.ab;
+		aG: A2($elm$core$List$map, $author$project$Internal$Compiler$denode, typeAlias.aX),
+		Q: function () {
+			var _v0 = typeAlias.aa;
 			if (_v0.$ === 1) {
 				return '';
 			} else {
@@ -17642,16 +17758,16 @@ var $author$project$DocsFromSource$toDocAlias = function (typeAlias) {
 				return $author$project$Internal$Compiler$denode(str);
 			}
 		}(),
-		t: $author$project$Internal$Compiler$denode(typeAlias.t),
+		s: $author$project$Internal$Compiler$denode(typeAlias.s),
 		aC: $author$project$DocsFromSource$toDocType(
 			$author$project$Internal$Compiler$denode(typeAlias.aD))
 	};
 };
 var $author$project$DocsFromSource$toDocUnion = function (type_) {
 	return {
-		aF: A2($elm$core$List$map, $author$project$Internal$Compiler$denode, type_.aW),
-		R: function () {
-			var _v0 = type_.ab;
+		aG: A2($elm$core$List$map, $author$project$Internal$Compiler$denode, type_.aX),
+		Q: function () {
+			var _v0 = type_.aa;
 			if (_v0.$ === 1) {
 				return '';
 			} else {
@@ -17659,32 +17775,32 @@ var $author$project$DocsFromSource$toDocUnion = function (type_) {
 				return $author$project$Internal$Compiler$denode(doc);
 			}
 		}(),
-		t: $author$project$Internal$Compiler$denode(type_.t),
-		de: A2(
+		s: $author$project$Internal$Compiler$denode(type_.s),
+		dg: A2(
 			$elm$core$List$map,
 			function (_const) {
 				var _v1 = $author$project$Internal$Compiler$denode(_const);
 				var node = _v1;
 				return _Utils_Tuple2(
-					$author$project$Internal$Compiler$denode(node.t),
+					$author$project$Internal$Compiler$denode(node.s),
 					A2(
 						$elm$core$List$map,
 						A2($elm$core$Basics$composeR, $author$project$Internal$Compiler$denode, $author$project$DocsFromSource$toDocType),
-						node.bG));
+						node.bH));
 			},
-			type_.bS)
+			type_.bT)
 	};
 };
 var $author$project$DocsFromSource$toDocValue = function (fn) {
-	var _v0 = fn.c8;
+	var _v0 = fn.c9;
 	if (_v0.$ === 1) {
 		return $elm$core$Maybe$Nothing;
 	} else {
 		var signature = _v0.a;
 		return $elm$core$Maybe$Just(
 			{
-				R: function () {
-					var _v1 = fn.ab;
+				Q: function () {
+					var _v1 = fn.aa;
 					if (_v1.$ === 1) {
 						return '';
 					} else {
@@ -17692,10 +17808,10 @@ var $author$project$DocsFromSource$toDocValue = function (fn) {
 						return $author$project$Internal$Compiler$denode(doc);
 					}
 				}(),
-				t: function () {
-					var _v2 = $author$project$Internal$Compiler$denode(fn.bV);
+				s: function () {
+					var _v2 = $author$project$Internal$Compiler$denode(fn.bW);
 					var implementation = _v2;
-					return $author$project$Internal$Compiler$denode(implementation.t);
+					return $author$project$Internal$Compiler$denode(implementation.s);
 				}(),
 				aC: $author$project$DocsFromSource$toDocType(
 					$author$project$Internal$Compiler$denode(
@@ -17717,7 +17833,7 @@ var $author$project$DocsFromSource$gather = F2(
 					return _Utils_update(
 						found,
 						{
-							L: A2($elm$core$List$cons, val, found.L)
+							K: A2($elm$core$List$cons, val, found.K)
 						});
 				}
 			case 1:
@@ -17725,30 +17841,30 @@ var $author$project$DocsFromSource$gather = F2(
 				return _Utils_update(
 					found,
 					{
-						Q: A2(
+						P: A2(
 							$elm$core$List$cons,
 							$author$project$DocsFromSource$toDocAlias(alias),
-							found.Q)
+							found.P)
 					});
 			case 2:
 				var type_ = _v0.a;
 				return _Utils_update(
 					found,
 					{
-						X: A2(
+						W: A2(
 							$elm$core$List$cons,
 							$author$project$DocsFromSource$toDocUnion(type_),
-							found.X)
+							found.W)
 					});
 			case 3:
 				var portSignature = _v0.a;
 				return _Utils_update(
 					found,
 					{
-						L: A2(
+						K: A2(
 							$elm$core$List$cons,
 							$author$project$DocsFromSource$portToValue(portSignature),
-							found.L)
+							found.K)
 					});
 			case 4:
 				var inf = _v0.a;
@@ -17761,14 +17877,14 @@ var $author$project$DocsFromSource$toDocs = function (file) {
 	var gathered = A3(
 		$elm$core$List$foldl,
 		$author$project$DocsFromSource$gather,
-		{Q: _List_Nil, X: _List_Nil, L: _List_Nil},
-		file.bY);
+		{P: _List_Nil, W: _List_Nil, K: _List_Nil},
+		file.bZ);
 	return {
-		Q: gathered.Q,
-		bI: _List_Nil,
-		R: '',
-		t: function () {
-			var _v0 = $author$project$Internal$Compiler$denode(file.cN);
+		P: gathered.P,
+		bJ: _List_Nil,
+		Q: '',
+		s: function () {
+			var _v0 = $author$project$Internal$Compiler$denode(file.cO);
 			switch (_v0.$) {
 				case 0:
 					var mod = _v0.a;
@@ -17790,8 +17906,8 @@ var $author$project$DocsFromSource$toDocs = function (file) {
 						$author$project$Internal$Compiler$denode(mod.af));
 			}
 		}(),
-		X: gathered.X,
-		L: gathered.L
+		W: gathered.W,
+		K: gathered.K
 	};
 };
 var $author$project$DocsFromSource$fromSource = function (source) {
@@ -17834,7 +17950,7 @@ var $elm$json$Json$Decode$value = _Json_decodeValue;
 var $elm$core$Platform$worker = _Platform_worker;
 var $author$project$Generate$main = $elm$core$Platform$worker(
 	{
-		cs: function (json) {
+		ct: function (json) {
 			var _v0 = A2($elm$json$Json$Decode$decodeValue, $author$project$Generate$flagsDecoder, json);
 			if (_v0.$ === 1) {
 				var err = _v0.a;
@@ -17842,8 +17958,8 @@ var $author$project$Generate$main = $elm$core$Platform$worker(
 					0,
 					$author$project$Elm$Gen$error(
 						{
-							bZ: $elm$json$Json$Decode$errorToString(err),
-							df: 'Invalid docs'
+							b_: $elm$json$Json$Decode$errorToString(err),
+							dh: 'Invalid docs'
 						}));
 			} else {
 				if (!_v0.a.$) {
@@ -17866,15 +17982,15 @@ var $author$project$Generate$main = $elm$core$Platform$worker(
 						return _Utils_Tuple2(
 							0,
 							$author$project$Elm$Gen$error(
-								{bZ: err, df: 'Error generating docs'}));
+								{b_: err, dh: 'Error generating docs'}));
 					}
 				}
 			}
 		},
-		dd: function (_v2) {
+		df: function (_v2) {
 			return $elm$core$Platform$Sub$none;
 		},
-		dm: F2(
+		$7: F2(
 			function (msg, model) {
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			})
