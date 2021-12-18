@@ -90,7 +90,7 @@ var gen_package = require("./gen-package");
 // We have to stub this in the allow Elm the ability to make http requests.
 // @ts-ignore
 globalThis["XMLHttpRequest"] = XMLHttpRequest_1.XMLHttpRequest.XMLHttpRequest;
-var currentVersion = require('root-require')('package.json').version;
+var currentVersion = require('../package.json').version;
 function run_generator(base, moduleName, elm_source, flags) {
     return __awaiter(this, void 0, void 0, function () {
         var promise;
@@ -350,7 +350,7 @@ function action(cmd, pkg, options, com) {
         return __generator(this, function (_a) {
             cwd = options.cwd || ".";
             output = path.join(cwd, options.output || "output");
-            install_dir = path.join(cwd, options.output || "codegen");
+            install_dir = path.join(cwd, "codegen");
             if (cmd == "init") {
                 init(install_dir);
             }

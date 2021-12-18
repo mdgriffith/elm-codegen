@@ -33,7 +33,7 @@ const gen_package = require("./gen-package")
 // @ts-ignore
 globalThis["XMLHttpRequest"] = XMLHttpRequest.XMLHttpRequest
 
-const currentVersion = require('root-require')('package.json').version
+const currentVersion = require('../package.json').version
 
 async function run_generator(base: string, moduleName: string, elm_source: string, flags: any) {
   eval(elm_source)
@@ -293,7 +293,7 @@ async function action(cmd: string, pkg: string | null, options: Options, com: an
 
   const cwd = options.cwd || "."
   const output = path.join(cwd, options.output || "output")
-  const install_dir = path.join(cwd, options.output || "codegen")
+  const install_dir = path.join(cwd, "codegen")
   if (cmd == "init") {
     init(install_dir)
   } else if (cmd == "install") {
