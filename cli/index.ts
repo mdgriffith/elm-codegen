@@ -180,6 +180,7 @@ async function install_package(pkg: string, output: string, version: string | nu
 
 type CodeGenJson = {
   version: string
+  output: string
   dependencies:
     { packages : {[key: string]: string}
     , local : string[]
@@ -191,7 +192,7 @@ type CodeGenJson = {
 
 function getCodeGenJson(): CodeGenJson{
   let codeGenJson = JSON.parse(fs.readFileSync(path.join(".", "elm.codegen.json")).toString());
-  return { version: codeGenJson["elm-codegen-version"], dependencies: { packages: {}, local: [] } }
+  return { version: codeGenJson["elm-codegen-version"], output: codeGenJson.output, dependencies: { packages: codeGenJson.dependencies.packages, local: codeGenJson.dependencies.local } }
 }
 
 function codeGenJsonToString(codeGen: CodeGenJson): string {
@@ -289,10 +290,21 @@ async function make(elm_file: string, moduleName: string, target_dir: string, ba
 }
 
 
+function clear(dir:string) {
+    fs.readdir(dir, (err, files) => {
+      if (err) throw err;
+      for (const file of files) {
+        fs.unlink(path.join(dir, file), err => {
+          if (err) throw err;
+        });
+      }
+    });
+}
+
 async function action(cmd: string, pkg: string | null, options: Options, com: any) {
 
   const cwd = options.cwd || "."
-  const output = path.join(cwd, options.output || "output")
+
   const install_dir = path.join(cwd, "codegen")
   if (cmd == "init") {
     init(install_dir)
@@ -300,7 +312,6 @@ async function action(cmd: string, pkg: string | null, options: Options, com: an
     // Installing packages
     if (!!pkg) {
         let codeGenJson = getCodeGenJson()
-
 
         // Package specified
         if (pkg.endsWith(".json")) {
@@ -331,6 +342,13 @@ async function action(cmd: string, pkg: string | null, options: Options, com: an
         install_from_codegen_json(options)
     }
   } else {
+    let output = path.join(cwd, options.output || "output")
+    try {
+        const codeGenJson = getCodeGenJson()
+        output = path.join(cwd, options.output || codeGenJson.output)
+    } catch(err) {}
+
+    // prepare flags
     let flags: any | null = null
     if (options.flagsFrom) {
       if (options.flagsFrom.endsWith(".json")) {
@@ -346,12 +364,15 @@ async function action(cmd: string, pkg: string | null, options: Options, com: an
       const moduleName = path.parse(cmd).name
 
       if (options.watch) {
+//         clear(output)
         generate(options.debug, cmd, moduleName, output, cwd, flags)
         chokidar.watch(path.join(cwd, "**", "*.elm"), { ignored: path.join(output, "**") }).on("all", (event, path) => {
           console.log("\nFile changed, regenerating")
           generate(options.debug, cmd, moduleName, output, cwd, flags)
         })
       } else {
+//         skipping clearing files because in my test case it was failing with permission denied all the time.
+//         clear(output)
         generate(options.debug, cmd, moduleName, output, cwd, flags)
       }
     }

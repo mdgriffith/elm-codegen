@@ -241,7 +241,7 @@ function install_package(pkg, output, version) {
 }
 function getCodeGenJson() {
     var codeGenJson = JSON.parse(fs.readFileSync(path.join(".", "elm.codegen.json")).toString());
-    return { version: codeGenJson["elm-codegen-version"], dependencies: { packages: {}, local: [] } };
+    return { version: codeGenJson["elm-codegen-version"], output: codeGenJson.output, dependencies: { packages: codeGenJson.dependencies.packages, local: codeGenJson.dependencies.local } };
 }
 function codeGenJsonToString(codeGen) {
     var obj = {};
@@ -344,12 +344,24 @@ function make(elm_file, moduleName, target_dir, base, flags) {
         });
     });
 }
+function clear(dir) {
+    fs.readdir(dir, function (err, files) {
+        if (err)
+            throw err;
+        for (var _i = 0, files_3 = files; _i < files_3.length; _i++) {
+            var file = files_3[_i];
+            fs.unlink(path.join(dir, file), function (err) {
+                if (err)
+                    throw err;
+            });
+        }
+    });
+}
 function action(cmd, pkg, options, com) {
     return __awaiter(this, void 0, void 0, function () {
-        var cwd, output, install_dir, codeGenJson, docs, flags_1, moduleName_1;
+        var cwd, install_dir, codeGenJson, docs, output_1, codeGenJson, flags_1, moduleName_1;
         return __generator(this, function (_a) {
             cwd = options.cwd || ".";
-            output = path.join(cwd, options.output || "output");
             install_dir = path.join(cwd, "codegen");
             if (cmd == "init") {
                 init(install_dir);
@@ -391,6 +403,12 @@ function action(cmd, pkg, options, com) {
                 }
             }
             else {
+                output_1 = path.join(cwd, options.output || "output");
+                try {
+                    codeGenJson = getCodeGenJson();
+                    output_1 = path.join(cwd, options.output || codeGenJson.output);
+                }
+                catch (err) { }
                 flags_1 = null;
                 if (options.flagsFrom) {
                     if (options.flagsFrom.endsWith(".json")) {
@@ -406,14 +424,16 @@ function action(cmd, pkg, options, com) {
                 if (cmd.endsWith(".elm")) {
                     moduleName_1 = path.parse(cmd).name;
                     if (options.watch) {
-                        generate(options.debug, cmd, moduleName_1, output, cwd, flags_1);
-                        chokidar.watch(path.join(cwd, "**", "*.elm"), { ignored: path.join(output, "**") }).on("all", function (event, path) {
+                        clear(output_1);
+                        generate(options.debug, cmd, moduleName_1, output_1, cwd, flags_1);
+                        chokidar.watch(path.join(cwd, "**", "*.elm"), { ignored: path.join(output_1, "**") }).on("all", function (event, path) {
                             console.log("\nFile changed, regenerating");
-                            generate(options.debug, cmd, moduleName_1, output, cwd, flags_1);
+                            generate(options.debug, cmd, moduleName_1, output_1, cwd, flags_1);
                         });
                     }
                     else {
-                        generate(options.debug, cmd, moduleName_1, output, cwd, flags_1);
+                        clear(output_1);
+                        generate(options.debug, cmd, moduleName_1, output_1, cwd, flags_1);
                     }
                 }
             }
