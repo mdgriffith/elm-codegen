@@ -1674,25 +1674,29 @@ function name toBody =
         case body.annotation of
             Ok return ->
                 let
-                    returnType =
-                        Compiler.resolveVariables return.inferences return.type_
-
-                    argOneType =
-                        Compiler.resolveVariables return.inferences
-                            (Elm.Annotation.var "a"
-                                |> Compiler.getInnerAnnotation
+                    functionType =
+                        Annotation.FunctionTypeAnnotation
+                            (Compiler.nodify
+                                (Elm.Annotation.var "a"
+                                    |> Compiler.getInnerAnnotation
+                                )
                             )
+                            (Compiler.nodify return.type_)
+                            |> Compiler.resolveVariables return.inferences
                 in
-                Just
-                    (Compiler.nodify
-                        { name = Compiler.nodify (Compiler.formatValue name)
-                        , typeAnnotation =
-                            Compiler.nodify <|
-                                Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify argOneType)
-                                    (Compiler.nodify returnType)
-                        }
-                    )
+                case functionType of
+                    Err _ ->
+                        Nothing
+
+                    Ok fnType ->
+                        Just
+                            (Compiler.nodify
+                                { name = Compiler.nodify (Compiler.formatValue name)
+                                , typeAnnotation =
+                                    Compiler.nodify
+                                        fnType
+                                }
+                            )
 
             Err _ ->
                 Nothing

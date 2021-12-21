@@ -424,7 +424,7 @@ function action(cmd, pkg, options, com) {
                 if (cmd.endsWith(".elm")) {
                     moduleName_1 = path.parse(cmd).name;
                     if (options.watch) {
-                        clear(output_1);
+                        //         clear(output)
                         generate(options.debug, cmd, moduleName_1, output_1, cwd, flags_1);
                         chokidar.watch(path.join(cwd, "**", "*.elm"), { ignored: path.join(output_1, "**") }).on("all", function (event, path) {
                             console.log("\nFile changed, regenerating");
@@ -432,7 +432,8 @@ function action(cmd, pkg, options, com) {
                         });
                     }
                     else {
-                        clear(output_1);
+                        //         skipping clearing files because in my test case it was failing with permission denied all the time.
+                        //         clear(output)
                         generate(options.debug, cmd, moduleName_1, output_1, cwd, flags_1);
                     }
                 }

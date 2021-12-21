@@ -8,6 +8,7 @@ import Elm.Syntax.ModuleName as ModuleName
 import Elm.Syntax.Node as Node exposing (Node(..))
 import Elm.Syntax.Range as Range
 import Elm.Syntax.TypeAnnotation as Annotation
+import Elm.Writer
 
 
 type Annotation
@@ -18,6 +19,12 @@ type alias AnnotationDetails =
     { imports : List Module
     , annotation : Annotation.TypeAnnotation
     }
+
+
+type Declaration
+    = Declaration Expose (List Module) Declaration.Declaration
+    | Comment String
+    | Block String
 
 
 {-| -}
@@ -64,12 +71,6 @@ type InferenceError
     | DuplicateFieldInRecord String
     | CaseBranchesReturnDifferentTypes
     | CouldNotFindField String
-
-
-type Declaration
-    = Declaration Expose (List Module) Declaration.Declaration
-    | Comment String
-    | Block String
 
 
 getGenerics : Annotation -> List (Node String)
@@ -667,7 +668,6 @@ applyType (Expression exp) args =
                 Ok types ->
                     applyTypeHelper topAnnotation.inferences topAnnotation.type_ types
 
-                --(resolveVariables inference.inferences inference.type_)
                 Err err ->
                     Err err
 
@@ -676,68 +676,263 @@ type alias VariableCache =
     Dict.Dict String Annotation.TypeAnnotation
 
 
-resolveName : String -> Dict String Annotation.TypeAnnotation -> Annotation.TypeAnnotation
-resolveName name cache =
-    case Dict.get name cache of
-        Just (Annotation.GenericType newName) ->
-            resolveName newName cache
-
-        Just newType ->
-            newType
-
-        Nothing ->
-            Annotation.GenericType name
-
-
-resolveVariables : VariableCache -> Annotation.TypeAnnotation -> Annotation.TypeAnnotation
+resolveVariables : VariableCache -> Annotation.TypeAnnotation -> Result String Annotation.TypeAnnotation
 resolveVariables cache annotation =
     case annotation of
-        Annotation.FunctionTypeAnnotation one two ->
-            Annotation.FunctionTypeAnnotation
-                (mapNode (resolveVariables cache) one)
-                (mapNode (resolveVariables cache) two)
+        Annotation.FunctionTypeAnnotation (Node.Node oneCoords one) (Node.Node twoCoords two) ->
+            Result.map2
+                (\oneResolved twoResolved ->
+                    Annotation.FunctionTypeAnnotation
+                        (Node.Node oneCoords oneResolved)
+                        (Node.Node twoCoords twoResolved)
+                )
+                (resolveVariables cache one)
+                (resolveVariables cache two)
 
         Annotation.GenericType name ->
-            resolveName name cache
+            resolveName (getRestrictions name) name cache
 
         Annotation.Typed nodedModuleName vars ->
-            Annotation.Typed nodedModuleName
-                (List.map
-                    (\node -> mapNode (resolveVariables cache) node)
-                    vars
-                )
+            Result.map (Annotation.Typed nodedModuleName)
+                (resolveVariableList cache vars [])
 
         Annotation.Unit ->
-            Annotation.Unit
+            Ok Annotation.Unit
 
         Annotation.Tupled nodes ->
-            Annotation.Tupled
-                (List.map
-                    (\node -> mapNode (resolveVariables cache) node)
-                    nodes
-                )
+            Result.map Annotation.Tupled (resolveVariableList cache nodes [])
 
         Annotation.Record fields ->
-            Annotation.Record
-                (List.map
-                    (\(Node fieldRange ( name, Node fieldTypeRange fieldType )) ->
-                        Node fieldRange
-                            ( name, Node fieldTypeRange (resolveVariables cache fieldType) )
+            Result.map (Annotation.Record << List.reverse)
+                (List.foldl
+                    (\(Node fieldRange ( name, Node fieldTypeRange fieldType )) found ->
+                        case found of
+                            Err err ->
+                                Err err
+
+                            Ok processedFields ->
+                                case resolveVariables cache fieldType of
+                                    Err err ->
+                                        Err err
+
+                                    Ok resolvedField ->
+                                        Ok
+                                            (Node fieldRange
+                                                ( name, Node fieldTypeRange resolvedField )
+                                                :: processedFields
+                                            )
                     )
+                    (Ok [])
                     fields
                 )
 
         Annotation.GenericRecord baseName (Node recordNode fields) ->
-            Annotation.GenericRecord baseName
-                (Node recordNode
-                    (List.map
-                        (\(Node fieldRange ( name, Node fieldTypeRange fieldType )) ->
-                            Node fieldRange
-                                ( name, Node fieldTypeRange (resolveVariables cache fieldType) )
+            let
+                newFieldResult =
+                    List.foldl
+                        (\(Node fieldRange ( name, Node fieldTypeRange fieldType )) found ->
+                            case found of
+                                Err err ->
+                                    Err err
+
+                                Ok processedFields ->
+                                    case resolveVariables cache fieldType of
+                                        Err err ->
+                                            Err err
+
+                                        Ok resolvedField ->
+                                            Ok
+                                                (Node fieldRange
+                                                    ( name, Node fieldTypeRange resolvedField )
+                                                    :: processedFields
+                                                )
                         )
+                        (Ok [])
                         fields
-                    )
+            in
+            Result.map
+                (\newFields ->
+                    Annotation.GenericRecord baseName
+                        (Node recordNode
+                            (List.reverse newFields)
+                        )
                 )
+                newFieldResult
+
+
+resolveVariableList cache nodes processed =
+    case nodes of
+        [] ->
+            Ok (List.reverse processed)
+
+        (Node.Node coords top) :: remain ->
+            case resolveVariables cache top of
+                Ok resolved ->
+                    resolveVariableList cache remain (Node.Node coords resolved :: remain)
+
+                Err err ->
+                    Err err
+
+
+type Restrictions
+    = NoRestrictions
+    | IsNumber
+    | IsAppendable
+    | IsComparable
+    | IsAppendableComparable
+
+
+getRestrictions : String -> Restrictions
+getRestrictions name =
+    if String.startsWith "number" name then
+        IsNumber
+
+    else if String.startsWith "comparable" name then
+        IsComparable
+
+    else if String.startsWith "appendable" name then
+        IsAppendable
+
+    else if String.startsWith "compappend" name then
+        IsAppendableComparable
+
+    else
+        NoRestrictions
+
+
+restrictFurther : Restrictions -> Restrictions -> Result String Restrictions
+restrictFurther restriction newRestriction =
+    case restriction of
+        NoRestrictions ->
+            Ok newRestriction
+
+        IsNumber ->
+            case newRestriction of
+                IsNumber ->
+                    Ok newRestriction
+
+                NoRestrictions ->
+                    Ok restriction
+
+                _ ->
+                    Err ""
+
+        IsComparable ->
+            case newRestriction of
+                NoRestrictions ->
+                    Ok restriction
+
+                IsAppendableComparable ->
+                    Ok newRestriction
+
+                IsComparable ->
+                    Ok newRestriction
+
+                _ ->
+                    Err ""
+
+        IsAppendable ->
+            case newRestriction of
+                NoRestrictions ->
+                    Ok restriction
+
+                IsAppendableComparable ->
+                    Ok newRestriction
+
+                IsComparable ->
+                    Ok newRestriction
+
+                _ ->
+                    Err ""
+
+        IsAppendableComparable ->
+            case newRestriction of
+                NoRestrictions ->
+                    Ok restriction
+
+                IsAppendableComparable ->
+                    Ok newRestriction
+
+                IsComparable ->
+                    Ok newRestriction
+
+                IsAppendable ->
+                    Ok newRestriction
+
+                _ ->
+                    Err ""
+
+
+resolveName : Restrictions -> String -> Dict String Annotation.TypeAnnotation -> Result String Annotation.TypeAnnotation
+resolveName restrictions name cache =
+    case Dict.get name cache of
+        Just (Annotation.GenericType newName) ->
+            let
+                desiredRestriction =
+                    getRestrictions newName
+            in
+            case restrictFurther restrictions desiredRestriction of
+                Ok newRestriction ->
+                    resolveName newRestriction newName cache
+
+                Err err ->
+                    Err err
+
+        Just newType ->
+            case restrictions of
+                NoRestrictions ->
+                    Ok newType
+
+                IsNumber ->
+                    if isNumber newType then
+                        Ok newType
+
+                    else
+                        Err
+                            ((Elm.Writer.writeTypeAnnotation (nodify newType)
+                                |> Elm.Writer.write
+                             )
+                                ++ " is not a number"
+                            )
+
+                IsComparable ->
+                    if isComparable newType then
+                        Ok newType
+
+                    else
+                        Err
+                            ((Elm.Writer.writeTypeAnnotation (nodify newType)
+                                |> Elm.Writer.write
+                             )
+                                ++ " is not comparable.  Only Ints, Floats, Chars, Strings and Lists and Tuples of those things are comparable."
+                            )
+
+                IsAppendable ->
+                    if isAppendable newType then
+                        Ok newType
+
+                    else
+                        Err
+                            ((Elm.Writer.writeTypeAnnotation (nodify newType)
+                                |> Elm.Writer.write
+                             )
+                                ++ " is not appendable.  Only Strings and Lists are appendable."
+                            )
+
+                IsAppendableComparable ->
+                    if isComparable newType || isAppendable newType then
+                        Ok newType
+
+                    else
+                        Err
+                            ((Elm.Writer.writeTypeAnnotation (nodify newType)
+                                |> Elm.Writer.write
+                             )
+                                ++ " is not appendable/comparable.  Only Strings and Lists are allowed here."
+                            )
+
+        Nothing ->
+            Ok (Annotation.GenericType name)
 
 
 {-| -}
@@ -843,12 +1038,172 @@ unifiable cache one two =
     unifiableHelper cache one two
 
 
+unifyNumber :
+    VariableCache
+    -> String
+    -> Annotation.TypeAnnotation
+    -> ( VariableCache, Result String Annotation.TypeAnnotation )
+unifyNumber vars numberName two =
+    case two of
+        Annotation.Typed (Node.Node _ ( [], "Int" )) _ ->
+            ( Dict.insert numberName two vars
+            , Ok two
+            )
 
--- unifiableHelper :
---     Dict.Dict String Annotation.TypeAnnotation
---     -> Annotation.TypeAnnotation
---     -> Annotation.TypeAnnotation
---     -> ( Dict.Dict String Annotation.TypeAnnotation, Result String Annotation.TypeAnnotation )
+        Annotation.Typed (Node.Node _ ( [], "Float" )) _ ->
+            ( Dict.insert numberName two vars
+            , Ok two
+            )
+
+        Annotation.GenericType twoVarName ->
+            -- We don't know how this will resolve
+            -- So, for now we say this is fine
+            -- and in the resolveVariables step, we need to check that everything works
+            ( Dict.insert numberName two vars
+            , Ok two
+            )
+
+        _ ->
+            ( Dict.insert numberName two vars
+            , Err
+                ((Elm.Writer.writeTypeAnnotation (nodify two)
+                    |> Elm.Writer.write
+                 )
+                    ++ " is not a number, but it needs to be!"
+                )
+            )
+
+
+unifyAppendable :
+    VariableCache
+    -> String
+    -> Annotation.TypeAnnotation
+    -> ( VariableCache, Result String Annotation.TypeAnnotation )
+unifyAppendable vars numberName two =
+    case two of
+        Annotation.Typed (Node.Node _ ( [], "String" )) _ ->
+            ( Dict.insert numberName two vars
+            , Ok two
+            )
+
+        Annotation.Typed (Node.Node _ ( [], "List" )) _ ->
+            ( Dict.insert numberName two vars
+            , Ok two
+            )
+
+        Annotation.GenericType twoVarName ->
+            -- We don't know how this will resolve
+            -- So, for now we say this is fine
+            -- and in the resolveVariables step, we need to check that everything works
+            ( Dict.insert numberName two vars
+            , Ok two
+            )
+
+        _ ->
+            ( Dict.insert numberName two vars
+            , Err
+                ((Elm.Writer.writeTypeAnnotation (nodify two)
+                    |> Elm.Writer.write
+                 )
+                    ++ " is not appendable.  Only Strings and Lists are appendable"
+                )
+            )
+
+
+isNumber : Annotation.TypeAnnotation -> Bool
+isNumber annotation =
+    case annotation of
+        Annotation.Typed (Node.Node _ ( [], "Int" )) _ ->
+            True
+
+        Annotation.Typed (Node.Node _ ( [], "Float" )) _ ->
+            True
+
+        _ ->
+            False
+
+
+isAppendable : Annotation.TypeAnnotation -> Bool
+isAppendable annotation =
+    case annotation of
+        Annotation.Typed (Node.Node _ ( [], "String" )) _ ->
+            True
+
+        Annotation.Typed (Node.Node _ ( [], "List" )) [ Node.Node _ inner ] ->
+            True
+
+        _ ->
+            False
+
+
+isComparable : Annotation.TypeAnnotation -> Bool
+isComparable annotation =
+    case annotation of
+        Annotation.Typed (Node.Node _ ( [], "Int" )) _ ->
+            True
+
+        Annotation.Typed (Node.Node _ ( [], "Float" )) _ ->
+            True
+
+        Annotation.Typed (Node.Node _ ( [ "Char" ], "Char" )) _ ->
+            True
+
+        Annotation.Typed (Node.Node _ ( [], "String" )) _ ->
+            True
+
+        Annotation.Typed (Node.Node _ ( [], "List" )) [ Node.Node _ inner ] ->
+            isComparable inner
+
+        Annotation.Tupled innerList ->
+            List.all (isComparable << denode) innerList
+
+        _ ->
+            False
+
+
+unifyComparable :
+    VariableCache
+    -> String
+    -> Annotation.TypeAnnotation
+    -> ( VariableCache, Result String Annotation.TypeAnnotation )
+unifyComparable vars comparableName two =
+    if isComparable two then
+        ( Dict.insert comparableName two vars
+        , Err
+            ((Elm.Writer.writeTypeAnnotation (nodify two)
+                |> Elm.Writer.write
+             )
+                ++ " is not appendable.  Only Strings and Lists are appendable"
+            )
+        )
+
+    else
+        case two of
+            Annotation.GenericType twoVarName ->
+                -- We don't know how this will resolve
+                -- So, for now we say this is fine
+                -- and in the resolveVariables step, we need to check that everything works
+                ( Dict.insert comparableName two vars
+                , Ok two
+                )
+
+            _ ->
+                ( Dict.insert comparableName two vars
+                , Err
+                    ((Elm.Writer.writeTypeAnnotation (nodify two)
+                        |> Elm.Writer.write
+                     )
+                        ++ " is not appendable.  Only Strings and Lists are appendable"
+                    )
+                )
+
+
+
+--unifiableHelper :
+--    VariableCache
+--    -> Annotation.TypeAnnotation
+--    -> Annotation.TypeAnnotation
+--    -> ( VariableCache, Result String Annotation.TypeAnnotation )
 
 
 unifiableHelper vars one two =
