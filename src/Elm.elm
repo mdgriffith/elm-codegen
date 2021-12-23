@@ -166,15 +166,19 @@ type alias Expression =
 
 {-| -}
 expressionImports : Expression -> String
-expressionImports (Compiler.Expression exp) =
-    List.filterMap (Compiler.makeImport []) exp.imports
+expressionImports exp =
+    exp
+        |> Compiler.toExpressionDetails Compiler.startIndex
+        |> Tuple.second
+        |> Compiler.getImports
+        |> List.filterMap (Compiler.makeImport [])
         |> Internal.Write.writeImports
 
 
 {-| -}
 toString : Expression -> String
 toString (Compiler.Expression exp) =
-    Internal.Write.writeExpression exp.expression
+    Internal.Write.writeExpression (exp Compiler.startIndex |> .expression)
 
 
 {-| -}
@@ -416,13 +420,14 @@ value =
 {-| -}
 valueFrom : List String -> String -> Expression
 valueFrom mod name =
-    Compiler.Expression
-        { expression =
-            Exp.FunctionOrValue mod
-                (Compiler.sanitize name)
-        , annotation = Err []
-        , imports = [ mod ]
-        }
+    Compiler.Expression <|
+        \_ ->
+            { expression =
+                Exp.FunctionOrValue mod
+                    (Compiler.sanitize name)
+            , annotation = Err []
+            , imports = [ mod ]
+            }
 
 
 
@@ -444,11 +449,12 @@ valueFrom mod name =
 
 valueWith : List String -> String -> Elm.Annotation.Annotation -> Expression
 valueWith mod name ann =
-    Compiler.Expression
-        { expression = Exp.FunctionOrValue mod (Compiler.sanitize name)
-        , annotation = Ok (Compiler.getInnerInference ann)
-        , imports = mod :: Compiler.getAnnotationImports ann
-        }
+    Compiler.Expression <|
+        \_ ->
+            { expression = Exp.FunctionOrValue mod (Compiler.sanitize name)
+            , annotation = Ok (Compiler.getInnerInference ann)
+            , imports = mod :: Compiler.getAnnotationImports ann
+            }
 
 
 {-| Sometimes you may need to add a manual type annotation.
@@ -462,22 +468,28 @@ Though be sure elm-prefab isn't already doing this automatically for you!
 
 -}
 withType : Elm.Annotation.Annotation -> Expression -> Expression
-withType ann (Compiler.Expression exp) =
-    Compiler.Expression
-        { exp
-            | annotation = Ok (Compiler.getInnerInference ann)
-            , imports = exp.imports ++ Compiler.getAnnotationImports ann
-        }
+withType ann (Compiler.Expression toExp) =
+    Compiler.Expression <|
+        \index ->
+            let
+                exp =
+                    toExp index
+            in
+            { exp
+                | annotation = Ok (Compiler.getInnerInference ann)
+                , imports = exp.imports ++ Compiler.getAnnotationImports ann
+            }
 
 
 {-| -}
 unit : Expression
 unit =
-    Compiler.Expression
-        { expression = Exp.UnitExpr
-        , annotation = Ok (Compiler.inference Annotation.Unit)
-        , imports = []
-        }
+    Compiler.Expression <|
+        \_ ->
+            { expression = Exp.UnitExpr
+            , annotation = Ok (Compiler.inference Annotation.Unit)
+            , imports = []
+            }
 
 
 {-| -}
@@ -496,51 +508,56 @@ bool on =
 {-| -}
 int : Int -> Expression
 int intVal =
-    Compiler.Expression
-        { expression = Exp.Integer intVal
-        , annotation = Ok (Compiler.getInnerInference Elm.Annotation.int)
-        , imports = []
-        }
+    Compiler.Expression <|
+        \_ ->
+            { expression = Exp.Integer intVal
+            , annotation = Ok (Compiler.getInnerInference Elm.Annotation.int)
+            , imports = []
+            }
 
 
 {-| -}
 hex : Int -> Expression
 hex hexVal =
-    Compiler.Expression
-        { expression = Exp.Hex hexVal
-        , annotation = Ok (Compiler.getInnerInference Elm.Annotation.int)
-        , imports = []
-        }
+    Compiler.Expression <|
+        \_ ->
+            { expression = Exp.Hex hexVal
+            , annotation = Ok (Compiler.getInnerInference Elm.Annotation.int)
+            , imports = []
+            }
 
 
 {-| -}
 float : Float -> Expression
 float floatVal =
-    Compiler.Expression
-        { expression = Exp.Floatable floatVal
-        , annotation = Ok (Compiler.getInnerInference Elm.Annotation.float)
-        , imports = []
-        }
+    Compiler.Expression <|
+        \_ ->
+            { expression = Exp.Floatable floatVal
+            , annotation = Ok (Compiler.getInnerInference Elm.Annotation.float)
+            , imports = []
+            }
 
 
 {-| -}
 string : String -> Expression
 string literal =
-    Compiler.Expression
-        { expression = Exp.Literal literal
-        , annotation = Ok (Compiler.getInnerInference Elm.Annotation.string)
-        , imports = []
-        }
+    Compiler.Expression <|
+        \_ ->
+            { expression = Exp.Literal literal
+            , annotation = Ok (Compiler.getInnerInference Elm.Annotation.string)
+            , imports = []
+            }
 
 
 {-| -}
 char : Char -> Expression
 char charVal =
-    Compiler.Expression
-        { expression = Exp.CharLiteral charVal
-        , annotation = Ok (Compiler.getInnerInference Elm.Annotation.char)
-        , imports = []
-        }
+    Compiler.Expression <|
+        \_ ->
+            { expression = Exp.CharLiteral charVal
+            , annotation = Ok (Compiler.getInnerInference Elm.Annotation.char)
+            , imports = []
+            }
 
 
 
@@ -553,239 +570,287 @@ char charVal =
 
 {-| -}
 tuple : Expression -> Expression -> Expression
-tuple (Compiler.Expression one) (Compiler.Expression two) =
-    Compiler.Expression
-        { expression = Exp.TupledExpression (Compiler.nodifyAll [ one.expression, two.expression ])
-        , annotation =
-            Result.map2
-                (\oneA twoA ->
-                    { type_ =
-                        Elm.Annotation.tuple
-                            (Compiler.noImports oneA.type_)
-                            (Compiler.noImports twoA.type_)
-                            |> Compiler.getInnerAnnotation
-                    , inferences =
-                        oneA.inferences
-                            |> Compiler.mergeInferences twoA.inferences
-                    }
-                )
-                one.annotation
-                two.annotation
-        , imports = one.imports ++ two.imports
-        }
+tuple oneExp twoExp =
+    Compiler.Expression <|
+        \index ->
+            let
+                ( oneIndex, one ) =
+                    Compiler.toExpressionDetails index oneExp
+
+                ( twoIndex, two ) =
+                    Compiler.toExpressionDetails oneIndex twoExp
+            in
+            { expression = Exp.TupledExpression (Compiler.nodifyAll [ one.expression, two.expression ])
+            , annotation =
+                Result.map2
+                    (\oneA twoA ->
+                        { type_ =
+                            Elm.Annotation.tuple
+                                (Compiler.noImports oneA.type_)
+                                (Compiler.noImports twoA.type_)
+                                |> Compiler.getInnerAnnotation
+                        , inferences =
+                            oneA.inferences
+                                |> Compiler.mergeInferences twoA.inferences
+                        }
+                    )
+                    one.annotation
+                    two.annotation
+            , imports = one.imports ++ two.imports
+            }
 
 
 {-| -}
 triple : Expression -> Expression -> Expression -> Expression
-triple (Compiler.Expression one) (Compiler.Expression two) (Compiler.Expression three) =
-    Compiler.Expression
-        { expression =
-            Exp.TupledExpression
-                (Compiler.nodifyAll
-                    [ one.expression, two.expression, three.expression ]
-                )
-        , annotation =
-            Result.map3
-                (\oneA twoA threeA ->
-                    { type_ =
-                        Elm.Annotation.triple
-                            (Compiler.noImports oneA.type_)
-                            (Compiler.noImports twoA.type_)
-                            (Compiler.noImports threeA.type_)
-                            |> Compiler.getInnerAnnotation
-                    , inferences =
-                        oneA.inferences
-                            |> Compiler.mergeInferences twoA.inferences
-                            |> Compiler.mergeInferences threeA.inferences
-                    }
-                )
-                one.annotation
-                two.annotation
-                three.annotation
-        , imports = one.imports ++ two.imports ++ three.imports
-        }
+triple oneExp twoExp threeExp =
+    Compiler.Expression <|
+        \index ->
+            let
+                ( oneIndex, one ) =
+                    Compiler.toExpressionDetails index oneExp
+
+                ( twoIndex, two ) =
+                    Compiler.toExpressionDetails oneIndex twoExp
+
+                ( threeIndex, three ) =
+                    Compiler.toExpressionDetails twoIndex threeExp
+            in
+            { expression =
+                Exp.TupledExpression
+                    (Compiler.nodifyAll
+                        [ one.expression, two.expression, three.expression ]
+                    )
+            , annotation =
+                Result.map3
+                    (\oneA twoA threeA ->
+                        { type_ =
+                            Elm.Annotation.triple
+                                (Compiler.noImports oneA.type_)
+                                (Compiler.noImports twoA.type_)
+                                (Compiler.noImports threeA.type_)
+                                |> Compiler.getInnerAnnotation
+                        , inferences =
+                            oneA.inferences
+                                |> Compiler.mergeInferences twoA.inferences
+                                |> Compiler.mergeInferences threeA.inferences
+                        }
+                    )
+                    one.annotation
+                    two.annotation
+                    three.annotation
+            , imports = one.imports ++ two.imports ++ three.imports
+            }
 
 
 {-| -}
 maybe : Maybe Expression -> Expression
-maybe content =
-    Compiler.Expression
-        { expression =
-            case content of
+maybe maybeContent =
+    Compiler.Expression <|
+        \index ->
+            case maybeContent of
                 Nothing ->
-                    Exp.FunctionOrValue []
-                        "Nothing"
+                    { expression =
+                        Exp.FunctionOrValue []
+                            "Nothing"
+                    , annotation =
+                        Ok
+                            (Compiler.getInnerInference
+                                (Elm.Annotation.maybe (Elm.Annotation.var "a"))
+                            )
+                    , imports =
+                        []
+                    }
 
-                Just inner ->
-                    Exp.Application
-                        [ Exp.FunctionOrValue []
-                            "Just"
-                            |> Compiler.nodify
-                        , Exp.ParenthesizedExpression
-                            (Compiler.nodify (Compiler.getInnerExpression inner))
-                            |> Compiler.nodify
-                        ]
-        , annotation =
-            case content of
-                Nothing ->
-                    Ok
-                        (Compiler.getInnerInference
-                            (Elm.Annotation.maybe (Elm.Annotation.var "a"))
-                        )
-
-                Just inner ->
-                    Result.map
-                        (\ann ->
-                            { type_ =
-                                Annotation.Typed
-                                    (Compiler.nodify ( [], "Maybe" ))
-                                    [ Compiler.nodify ann.type_ ]
-                            , inferences =
-                                ann.inferences
-                            }
-                        )
-                        (Compiler.getAnnotation inner)
-        , imports =
-            Maybe.map getImports content
-                |> Maybe.withDefault []
-        }
+                Just contentExp ->
+                    let
+                        ( _, content ) =
+                            Compiler.toExpressionDetails index contentExp
+                    in
+                    { expression =
+                        Exp.Application
+                            [ Exp.FunctionOrValue []
+                                "Just"
+                                |> Compiler.nodify
+                            , Exp.ParenthesizedExpression
+                                (Compiler.nodify content.expression)
+                                |> Compiler.nodify
+                            ]
+                    , annotation =
+                        Result.map
+                            (\ann ->
+                                { type_ =
+                                    Annotation.Typed
+                                        (Compiler.nodify ( [], "Maybe" ))
+                                        [ Compiler.nodify ann.type_ ]
+                                , inferences =
+                                    ann.inferences
+                                }
+                            )
+                            (Compiler.getAnnotation content)
+                    , imports =
+                        Compiler.getImports content
+                    }
 
 
 {-| -}
 list : List Expression -> Expression
 list exprs =
-    Compiler.Expression
-        { expression = Exp.ListExpr (List.map toList exprs)
-        , annotation =
-            Compiler.unify exprs
-                |> Result.map
-                    (\inner ->
-                        { type_ =
-                            Annotation.Typed
-                                (Compiler.nodify ( [], "List" ))
-                                [ Compiler.nodify inner.type_ ]
-                        , inferences =
-                            inner.inferences
-                        }
-                    )
-        , imports = List.concatMap getImports exprs
-        }
-
-
-toList : Expression -> Node.Node Exp.Expression
-toList (Compiler.Expression exp) =
-    Compiler.nodify exp.expression
+    Compiler.Expression <|
+        \index ->
+            let
+                exprDetails =
+                    Compiler.thread index exprs
+            in
+            { expression = Exp.ListExpr (List.map (.expression >> Compiler.nodify) exprDetails)
+            , annotation =
+                Compiler.unify exprDetails
+                    |> Result.map
+                        (\inner ->
+                            { type_ =
+                                Annotation.Typed
+                                    (Compiler.nodify ( [], "List" ))
+                                    [ Compiler.nodify inner.type_ ]
+                            , inferences =
+                                inner.inferences
+                            }
+                        )
+            , imports = List.concatMap Compiler.getImports exprDetails
+            }
 
 
 {-| -}
 updateRecord : String -> List ( String, Expression ) -> Expression
 updateRecord name fields =
-    Compiler.Expression
-        { expression =
-            fields
-                |> List.map
-                    (\( fieldName, fieldExp ) ->
-                        Compiler.nodify
-                            ( Compiler.nodify fieldName
-                            , Compiler.nodify (Compiler.getInnerExpression fieldExp)
+    Compiler.Expression <|
+        \index ->
+            let
+                fieldDetails =
+                    fields
+                        |> List.foldl
+                            (\( fieldName, fieldExp ) ( currentIndex, items ) ->
+                                let
+                                    ( newIndex, exp ) =
+                                        Compiler.toExpressionDetails currentIndex fieldExp
+                                in
+                                ( newIndex
+                                , ( fieldName, exp ) :: items
+                                )
                             )
-                    )
-                |> Exp.RecordUpdateExpression (Compiler.nodify name)
-        , annotation =
-            Err []
-        , imports =
-            List.concatMap
-                (Tuple.second >> Compiler.getImports)
-                fields
-        }
+                            ( index, [] )
+                        |> Tuple.second
+                        |> List.reverse
+            in
+            { expression =
+                fieldDetails
+                    |> List.map
+                        (\( fieldName, expDetails ) ->
+                            Compiler.nodify
+                                ( Compiler.nodify fieldName
+                                , Compiler.nodify expDetails.expression
+                                )
+                        )
+                    |> Exp.RecordUpdateExpression (Compiler.nodify name)
+            , annotation =
+                Err []
+            , imports =
+                List.concatMap
+                    (Tuple.second >> Compiler.getImports)
+                    fieldDetails
+            }
 
 
 {-| -}
 record : List Field -> Expression
 record fields =
-    let
-        unified =
-            fields
-                |> List.foldl
-                    (\(Field unformattedFieldName (Compiler.Expression exp)) found ->
-                        let
-                            fieldName =
-                                Compiler.formatValue unformattedFieldName
-                        in
-                        { fields =
-                            ( Compiler.nodify fieldName
-                            , Compiler.nodify exp.expression
+    Compiler.Expression <|
+        \index ->
+            let
+                unified =
+                    fields
+                        |> List.foldl
+                            (\(Field unformattedFieldName fieldExpression) found ->
+                                let
+                                    ( newIndex, exp ) =
+                                        Compiler.toExpressionDetails found.index fieldExpression
+
+                                    fieldName =
+                                        Compiler.formatValue unformattedFieldName
+                                in
+                                { index = newIndex
+                                , fields =
+                                    ( Compiler.nodify fieldName
+                                    , Compiler.nodify exp.expression
+                                    )
+                                        :: found.fields
+                                , errors =
+                                    if Set.member fieldName found.passed then
+                                        Compiler.DuplicateFieldInRecord fieldName :: found.errors
+
+                                    else
+                                        case exp.annotation of
+                                            Err [] ->
+                                                Compiler.SomeOtherIssue :: found.errors
+
+                                            Err errs ->
+                                                errs ++ found.errors
+
+                                            Ok ann ->
+                                                found.errors
+                                , fieldAnnotations =
+                                    case exp.annotation of
+                                        Err err ->
+                                            found.fieldAnnotations
+
+                                        Ok ann ->
+                                            ( Compiler.formatValue fieldName
+                                            , ann
+                                            )
+                                                :: found.fieldAnnotations
+                                , passed = Set.insert fieldName found.passed
+                                , imports = exp.imports ++ found.imports
+                                }
                             )
-                                :: found.fields
-                        , errors =
-                            if Set.member fieldName found.passed then
-                                Compiler.DuplicateFieldInRecord fieldName :: found.errors
-
-                            else
-                                case exp.annotation of
-                                    Err [] ->
-                                        Compiler.SomeOtherIssue :: found.errors
-
-                                    Err errs ->
-                                        errs ++ found.errors
-
-                                    Ok ann ->
-                                        found.errors
-                        , fieldAnnotations =
-                            case exp.annotation of
-                                Err err ->
-                                    found.fieldAnnotations
-
-                                Ok ann ->
-                                    ( Compiler.formatValue fieldName
-                                    , ann
-                                    )
-                                        :: found.fieldAnnotations
-                        , passed = Set.insert fieldName found.passed
-                        , imports = exp.imports ++ found.imports
-                        }
-                    )
-                    { fields = []
-                    , errors = []
-                    , fieldAnnotations = []
-                    , passed = Set.empty
-                    , imports = []
-                    }
-    in
-    Compiler.Expression
-        { expression =
-            unified.fields
-                |> List.reverse
-                |> Compiler.nodifyAll
-                |> Exp.RecordExpr
-        , annotation =
-            case unified.errors of
-                [] ->
-                    Ok
-                        { type_ =
-                            List.reverse unified.fieldAnnotations
-                                |> List.map
-                                    (\( name, ann ) ->
-                                        ( Compiler.nodify name
-                                        , Compiler.nodify ann.type_
+                            { fields = []
+                            , errors = []
+                            , fieldAnnotations = []
+                            , passed = Set.empty
+                            , imports = []
+                            , index = index
+                            }
+            in
+            { expression =
+                unified.fields
+                    |> List.reverse
+                    |> Compiler.nodifyAll
+                    |> Exp.RecordExpr
+            , annotation =
+                case unified.errors of
+                    [] ->
+                        Ok
+                            { type_ =
+                                List.reverse unified.fieldAnnotations
+                                    |> List.map
+                                        (\( name, ann ) ->
+                                            ( Compiler.nodify name
+                                            , Compiler.nodify ann.type_
+                                            )
                                         )
+                                    |> Compiler.nodifyAll
+                                    |> Annotation.Record
+                            , inferences =
+                                List.foldl
+                                    (\( name, ann ) gathered ->
+                                        Compiler.mergeInferences ann.inferences gathered
                                     )
-                                |> Compiler.nodifyAll
-                                |> Annotation.Record
-                        , inferences =
-                            List.foldl
-                                (\( name, ann ) gathered ->
-                                    Compiler.mergeInferences ann.inferences gathered
-                                )
-                                Dict.empty
-                                unified.fieldAnnotations
-                        }
+                                    Dict.empty
+                                    unified.fieldAnnotations
+                            }
 
-                errs ->
-                    Err errs
-        , imports =
-            unified.imports
-        }
+                    errs ->
+                        Err errs
+            , imports =
+                unified.imports
+            }
 
 
 {-| -}
@@ -813,38 +878,48 @@ Check out `Elm.Let` to add things to it.
 
 -}
 letIn : List ( String, Expression ) -> Expression -> Expression
-letIn decls (Compiler.Expression within) =
-    let
-        gathered =
-            List.foldr
-                (\( name, Compiler.Expression body ) accum ->
-                    { declarations =
-                        Compiler.nodify
-                            (Exp.LetDestructuring
-                                (Compiler.nodify
-                                    (Pattern.VarPattern name)
-                                )
-                                (Compiler.nodify body.expression)
-                            )
-                            :: accum.declarations
-                    , imports = accum.imports ++ body.imports
+letIn decls resultExpr =
+    Compiler.Expression <|
+        \index ->
+            let
+                ( firstIndex, within ) =
+                    Compiler.toExpressionDetails index resultExpr
+
+                gathered =
+                    List.foldr
+                        (\( name, body ) accum ->
+                            let
+                                ( new, newExpr ) =
+                                    Compiler.toExpressionDetails accum.index body
+                            in
+                            { index = new
+                            , declarations =
+                                Compiler.nodify
+                                    (Exp.LetDestructuring
+                                        (Compiler.nodify
+                                            (Pattern.VarPattern name)
+                                        )
+                                        (Compiler.nodify newExpr.expression)
+                                    )
+                                    :: accum.declarations
+                            , imports = accum.imports ++ newExpr.imports
+                            }
+                        )
+                        { index = firstIndex
+                        , declarations = []
+                        , imports = []
+                        }
+                        decls
+            in
+            { expression =
+                Exp.LetExpression
+                    { declarations = gathered.declarations
+                    , expression = Compiler.nodify within.expression
                     }
-                )
-                { declarations = []
-                , imports = []
-                }
-                decls
-    in
-    Compiler.Expression
-        { expression =
-            Exp.LetExpression
-                { declarations = gathered.declarations
-                , expression = Compiler.nodify within.expression
-                }
-        , imports = gathered.imports
-        , annotation =
-            within.annotation
-        }
+            , imports = gathered.imports
+            , annotation =
+                within.annotation
+            }
 
 
 {-|
@@ -861,17 +936,28 @@ letIn decls (Compiler.Expression within) =
 
 -}
 ifThen : Expression -> Expression -> Expression -> Expression
-ifThen (Compiler.Expression condition) (Compiler.Expression thenBranch) (Compiler.Expression elseBranch) =
-    Compiler.Expression
-        { expression =
-            Exp.IfBlock
-                (Compiler.nodify condition.expression)
-                (Compiler.nodify thenBranch.expression)
-                (Compiler.nodify elseBranch.expression)
-        , annotation =
-            thenBranch.annotation
-        , imports = condition.imports ++ thenBranch.imports ++ elseBranch.imports
-        }
+ifThen condition thenBranch elseBranch =
+    Compiler.Expression <|
+        \index ->
+            let
+                ( condIndex, cond ) =
+                    Compiler.toExpressionDetails index condition
+
+                ( thenIndex, thenB ) =
+                    Compiler.toExpressionDetails condIndex thenBranch
+
+                ( finalIndex, elseB ) =
+                    Compiler.toExpressionDetails thenIndex elseBranch
+            in
+            { expression =
+                Exp.IfBlock
+                    (Compiler.nodify cond.expression)
+                    (Compiler.nodify thenB.expression)
+                    (Compiler.nodify elseB.expression)
+            , annotation =
+                thenB.annotation
+            , imports = cond.imports ++ thenB.imports ++ elseB.imports
+            }
 
 
 {-|
@@ -885,37 +971,44 @@ results in
 
 -}
 get : String -> Expression -> Expression
-get selector (Compiler.Expression expr) =
-    Compiler.Expression
-        { expression =
-            Exp.RecordAccess (Compiler.nodify expr.expression) (Compiler.nodify (Compiler.formatValue selector))
-        , annotation =
-            case expr.annotation of
-                Ok recordAnn ->
-                    case recordAnn.type_ of
-                        Annotation.Record fields ->
-                            case getField (Compiler.formatValue selector) fields of
-                                Just ann ->
-                                    Ok { type_ = ann, inferences = recordAnn.inferences }
+get selector expresh =
+    Compiler.Expression <|
+        \index ->
+            let
+                ( _, expr ) =
+                    Compiler.toExpressionDetails index expresh
+            in
+            { expression =
+                Exp.RecordAccess
+                    (Compiler.nodify expr.expression)
+                    (Compiler.nodify (Compiler.formatValue selector))
+            , annotation =
+                case expr.annotation of
+                    Ok recordAnn ->
+                        case recordAnn.type_ of
+                            Annotation.Record fields ->
+                                case getField (Compiler.formatValue selector) fields of
+                                    Just ann ->
+                                        Ok { type_ = ann, inferences = recordAnn.inferences }
 
-                                Nothing ->
-                                    Err [ Compiler.CouldNotFindField selector ]
+                                    Nothing ->
+                                        Err [ Compiler.CouldNotFindField selector ]
 
-                        Annotation.GenericRecord name fields ->
-                            case getField (Compiler.formatValue selector) (Compiler.denode fields) of
-                                Just ann ->
-                                    Ok { type_ = ann, inferences = recordAnn.inferences }
+                            Annotation.GenericRecord name fields ->
+                                case getField (Compiler.formatValue selector) (Compiler.denode fields) of
+                                    Just ann ->
+                                        Ok { type_ = ann, inferences = recordAnn.inferences }
 
-                                Nothing ->
-                                    Err [ Compiler.CouldNotFindField selector ]
+                                    Nothing ->
+                                        Err [ Compiler.CouldNotFindField selector ]
 
-                        otherwise ->
-                            expr.annotation
+                            otherwise ->
+                                expr.annotation
 
-                otherwise ->
-                    otherwise
-        , imports = expr.imports
-        }
+                    otherwise ->
+                        otherwise
+            , imports = expr.imports
+            }
 
 
 getField :
@@ -1092,29 +1185,33 @@ parens expr =
             Exp.ParenthesizedExpression (Compiler.nodify expr)
 
 
-getExpression : Expression -> Exp.Expression
-getExpression (Compiler.Expression exp) =
-    exp.expression
-
-
-getImports : Expression -> List Compiler.Module
-getImports (Compiler.Expression exp) =
-    exp.imports
-
-
 {-| -}
 apply : Expression -> List Expression -> Expression
-apply ((Compiler.Expression exp) as top) args =
+apply express argExpressions =
     Compiler.Expression
-        { expression =
-            -- Disabling autopipe for now.
-            -- There seems to be some edge cases where it generates invalid code.
-            -- autopipe False exp.expression (List.map getExpression args)
-            Exp.Application (Compiler.nodifyAll (exp.expression :: List.map (parens << getExpression) args))
-        , annotation =
-            Compiler.applyType top args
-        , imports = exp.imports ++ List.concatMap getImports args
-        }
+        (\index ->
+            let
+                ( nextIndex, exp ) =
+                    Compiler.toExpressionDetails index express
+
+                args =
+                    Compiler.thread nextIndex argExpressions
+            in
+            { expression =
+                -- Disabling autopipe for now.
+                -- There seems to be some edge cases where it generates invalid code.
+                -- autopipe False exp.expression (List.map getExpression args)
+                Exp.Application
+                    (Compiler.nodifyAll
+                        (exp.expression
+                            :: List.map (parens << .expression) args
+                        )
+                    )
+            , annotation =
+                Compiler.applyType exp.annotation args
+            , imports = exp.imports ++ List.concatMap Compiler.getImports args
+            }
+        )
 
 
 popLast : List a -> Maybe ( List a, a )
@@ -1194,85 +1291,107 @@ autopipe committed topFn expressions =
 
 {-| -}
 lambdaWith : List ( String, Elm.Annotation.Annotation ) -> Expression -> Expression
-lambdaWith args (Compiler.Expression expr) =
-    Compiler.Expression
-        { expression =
-            Exp.LambdaExpression
-                { args = Compiler.nodifyAll (List.map (Pattern.VarPattern << Tuple.first) args)
-                , expression = Compiler.nodify expr.expression
-                }
-        , annotation =
-            case expr.annotation of
-                Err err ->
-                    Err err
+lambdaWith args (Compiler.Expression toExpr) =
+    Compiler.Expression <|
+        \index ->
+            let
+                expr =
+                    toExpr index
+            in
+            { expression =
+                Exp.LambdaExpression
+                    { args = Compiler.nodifyAll (List.map (Pattern.VarPattern << Tuple.first) args)
+                    , expression = Compiler.nodify expr.expression
+                    }
+            , annotation =
+                case expr.annotation of
+                    Err err ->
+                        Err err
 
-                Ok return ->
-                    List.foldr
-                        (\ann fnbody ->
-                            { type_ =
-                                Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify ann.type_)
-                                    (Compiler.nodify fnbody.type_)
-                            , inferences =
-                                Compiler.mergeInferences
-                                    ann.inferences
-                                    fnbody.inferences
-                            }
-                        )
-                        return
-                        (List.map (Compiler.getInnerInference << Tuple.second) args)
-                        |> Ok
-        , imports = expr.imports
-        }
+                    Ok return ->
+                        List.foldr
+                            (\ann fnbody ->
+                                { type_ =
+                                    Annotation.FunctionTypeAnnotation
+                                        (Compiler.nodify ann.type_)
+                                        (Compiler.nodify fnbody.type_)
+                                , inferences =
+                                    Compiler.mergeInferences
+                                        ann.inferences
+                                        fnbody.inferences
+                                }
+                            )
+                            return
+                            (List.map (Compiler.getInnerInference << Tuple.second) args)
+                            |> Ok
+            , imports = expr.imports
+            }
 
 
 {-| -}
 lambda : String -> Elm.Annotation.Annotation -> (Expression -> Expression) -> Expression
 lambda argBaseName argType toExpression =
-    let
-        arg1 =
-            valueWith [] argBaseName argType
+    Compiler.Expression <|
+        \index ->
+            let
+                localIndex =
+                    Compiler.dive index
 
-        (Compiler.Expression expr) =
-            toExpression arg1
-    in
-    Compiler.Expression
-        { expression =
-            Exp.LambdaExpression
-                { args = [ Compiler.nodify (Pattern.VarPattern argBaseName) ]
-                , expression = Compiler.nodify expr.expression
-                }
-        , annotation =
-            fnTypeApply expr.annotation
-                [ argType
-                ]
-        , imports = expr.imports
-        }
+                arg1Name =
+                    argBaseName ++ Compiler.indexToString localIndex
+
+                arg1 =
+                    valueWith [] arg1Name argType
+
+                (Compiler.Expression toExpr) =
+                    toExpression arg1
+
+                expr =
+                    toExpr localIndex
+            in
+            { expression =
+                Exp.LambdaExpression
+                    { args = [ Compiler.nodify (Pattern.VarPattern arg1Name) ]
+                    , expression = Compiler.nodify expr.expression
+                    }
+            , annotation =
+                fnTypeApply expr.annotation
+                    [ argType
+                    ]
+            , imports = expr.imports
+            }
 
 
 {-| -}
 lambdaBetaReduced : String -> Elm.Annotation.Annotation -> (Expression -> Expression) -> Expression
 lambdaBetaReduced argBaseName argType toExpression =
-    let
-        arg1 =
-            valueWith [] argBaseName argType
+    Compiler.Expression <|
+        \index ->
+            let
+                localIndex =
+                    Compiler.dive index
 
-        (Compiler.Expression expr) =
-            toExpression arg1
-    in
-    Compiler.Expression
-        { expression =
-            betaReduce <|
-                Exp.LambdaExpression
-                    { args = [ Compiler.nodify (Pattern.VarPattern argBaseName) ]
-                    , expression = Compiler.nodify expr.expression
-                    }
-        , annotation =
-            fnTypeApply expr.annotation
-                [ argType
-                ]
-        , imports = expr.imports
-        }
+                arg1 =
+                    valueWith [] argBaseName argType
+
+                (Compiler.Expression toExpr) =
+                    toExpression arg1
+
+                expr =
+                    toExpr localIndex
+            in
+            { expression =
+                betaReduce <|
+                    Exp.LambdaExpression
+                        { args = [ Compiler.nodify (Pattern.VarPattern argBaseName) ]
+                        , expression = Compiler.nodify expr.expression
+                        }
+            , annotation =
+                fnTypeApply expr.annotation
+                    [ argType
+                    ]
+            , imports = expr.imports
+            }
 
 
 
@@ -1379,32 +1498,33 @@ lambda2 :
     -> (Expression -> Expression -> Expression)
     -> Expression
 lambda2 argBaseName oneType twoType toExpression =
-    let
-        arg1 =
-            valueWith [] argBaseName oneType
+    Compiler.Expression <|
+        \index ->
+            let
+                arg1 =
+                    valueWith [] argBaseName oneType
 
-        arg2 =
-            valueWith [] (argBaseName ++ "2") twoType
+                arg2 =
+                    valueWith [] (argBaseName ++ "2") twoType
 
-        (Compiler.Expression expr) =
-            toExpression arg1 arg2
-    in
-    Compiler.Expression
-        { expression =
-            Exp.LambdaExpression
-                { args =
-                    [ Compiler.nodify (Pattern.VarPattern argBaseName)
-                    , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "2"))
+                ( newIndex, expr ) =
+                    Compiler.toExpressionDetails (Compiler.dive index) (toExpression arg1 arg2)
+            in
+            { expression =
+                Exp.LambdaExpression
+                    { args =
+                        [ Compiler.nodify (Pattern.VarPattern argBaseName)
+                        , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "2"))
+                        ]
+                    , expression = Compiler.nodify expr.expression
+                    }
+            , annotation =
+                fnTypeApply expr.annotation
+                    [ oneType
+                    , twoType
                     ]
-                , expression = Compiler.nodify expr.expression
-                }
-        , annotation =
-            fnTypeApply expr.annotation
-                [ oneType
-                , twoType
-                ]
-        , imports = expr.imports
-        }
+            , imports = expr.imports
+            }
 
 
 fnTypeApply :
@@ -1443,37 +1563,39 @@ lambda3 :
     -> (Expression -> Expression -> Expression -> Expression)
     -> Expression
 lambda3 argBaseName oneType twoType threeType toExpression =
-    let
-        arg1 =
-            valueWith [] argBaseName oneType
+    Compiler.Expression <|
+        \index ->
+            let
+                arg1 =
+                    valueWith [] argBaseName oneType
 
-        arg2 =
-            valueWith [] (argBaseName ++ "2") twoType
+                arg2 =
+                    valueWith [] (argBaseName ++ "2") twoType
 
-        arg3 =
-            valueWith [] (argBaseName ++ "3") threeType
+                arg3 =
+                    valueWith [] (argBaseName ++ "3") threeType
 
-        (Compiler.Expression expr) =
-            toExpression arg1 arg2 arg3
-    in
-    Compiler.Expression
-        { expression =
-            Exp.LambdaExpression
-                { args =
-                    [ Compiler.nodify (Pattern.VarPattern argBaseName)
-                    , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "2"))
-                    , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "3"))
+                ( newIndex, expr ) =
+                    Compiler.toExpressionDetails (Compiler.dive index)
+                        (toExpression arg1 arg2 arg3)
+            in
+            { expression =
+                Exp.LambdaExpression
+                    { args =
+                        [ Compiler.nodify (Pattern.VarPattern argBaseName)
+                        , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "2"))
+                        , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "3"))
+                        ]
+                    , expression = Compiler.nodify expr.expression
+                    }
+            , annotation =
+                fnTypeApply expr.annotation
+                    [ oneType
+                    , twoType
+                    , threeType
                     ]
-                , expression = Compiler.nodify expr.expression
-                }
-        , annotation =
-            fnTypeApply expr.annotation
-                [ oneType
-                , twoType
-                , threeType
-                ]
-        , imports = expr.imports
-        }
+            , imports = expr.imports
+            }
 
 
 {-| -}
@@ -1486,42 +1608,44 @@ lambda4 :
     -> (Expression -> Expression -> Expression -> Expression -> Expression)
     -> Expression
 lambda4 argBaseName oneType twoType threeType fourType toExpression =
-    let
-        arg1 =
-            valueWith [] argBaseName oneType
+    Compiler.Expression <|
+        \index ->
+            let
+                arg1 =
+                    valueWith [] argBaseName oneType
 
-        arg2 =
-            valueWith [] (argBaseName ++ "2") twoType
+                arg2 =
+                    valueWith [] (argBaseName ++ "2") twoType
 
-        arg3 =
-            valueWith [] (argBaseName ++ "3") threeType
+                arg3 =
+                    valueWith [] (argBaseName ++ "3") threeType
 
-        arg4 =
-            valueWith [] (argBaseName ++ "4") fourType
+                arg4 =
+                    valueWith [] (argBaseName ++ "4") fourType
 
-        (Compiler.Expression expr) =
-            toExpression arg1 arg2 arg3 arg4
-    in
-    Compiler.Expression
-        { expression =
-            Exp.LambdaExpression
-                { args =
-                    [ Compiler.nodify (Pattern.VarPattern argBaseName)
-                    , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "2"))
-                    , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "3"))
-                    , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "4"))
+                ( newIndex, expr ) =
+                    Compiler.toExpressionDetails (Compiler.dive index)
+                        (toExpression arg1 arg2 arg3 arg4)
+            in
+            { expression =
+                Exp.LambdaExpression
+                    { args =
+                        [ Compiler.nodify (Pattern.VarPattern argBaseName)
+                        , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "2"))
+                        , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "3"))
+                        , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "4"))
+                        ]
+                    , expression = Compiler.nodify expr.expression
+                    }
+            , annotation =
+                fnTypeApply expr.annotation
+                    [ oneType
+                    , twoType
+                    , threeType
+                    , fourType
                     ]
-                , expression = Compiler.nodify expr.expression
-                }
-        , annotation =
-            fnTypeApply expr.annotation
-                [ oneType
-                , twoType
-                , threeType
-                , fourType
-                ]
-        , imports = expr.imports
-        }
+            , imports = expr.imports
+            }
 
 
 {-| -}
@@ -1535,46 +1659,48 @@ lambda5 :
     -> (Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
     -> Expression
 lambda5 argBaseName oneType twoType threeType fourType fiveType toExpression =
-    let
-        arg1 =
-            valueWith [] argBaseName oneType
+    Compiler.Expression <|
+        \index ->
+            let
+                arg1 =
+                    valueWith [] argBaseName oneType
 
-        arg2 =
-            valueWith [] (argBaseName ++ "2") twoType
+                arg2 =
+                    valueWith [] (argBaseName ++ "2") twoType
 
-        arg3 =
-            valueWith [] (argBaseName ++ "3") threeType
+                arg3 =
+                    valueWith [] (argBaseName ++ "3") threeType
 
-        arg4 =
-            valueWith [] (argBaseName ++ "4") fourType
+                arg4 =
+                    valueWith [] (argBaseName ++ "4") fourType
 
-        arg5 =
-            valueWith [] (argBaseName ++ "5") fiveType
+                arg5 =
+                    valueWith [] (argBaseName ++ "5") fiveType
 
-        (Compiler.Expression expr) =
-            toExpression arg1 arg2 arg3 arg4 arg5
-    in
-    Compiler.Expression
-        { expression =
-            Exp.LambdaExpression
-                { args =
-                    [ Compiler.nodify (Pattern.VarPattern argBaseName)
-                    , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "2"))
-                    , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "3"))
-                    , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "4"))
-                    , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "5"))
+                ( newIndex, expr ) =
+                    Compiler.toExpressionDetails (Compiler.dive index)
+                        (toExpression arg1 arg2 arg3 arg4 arg5)
+            in
+            { expression =
+                Exp.LambdaExpression
+                    { args =
+                        [ Compiler.nodify (Pattern.VarPattern argBaseName)
+                        , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "2"))
+                        , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "3"))
+                        , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "4"))
+                        , Compiler.nodify (Pattern.VarPattern (argBaseName ++ "5"))
+                        ]
+                    , expression = Compiler.nodify expr.expression
+                    }
+            , annotation =
+                fnTypeApply expr.annotation
+                    [ oneType
+                    , twoType
+                    , threeType
+                    , fiveType
                     ]
-                , expression = Compiler.nodify expr.expression
-                }
-        , annotation =
-            fnTypeApply expr.annotation
-                [ oneType
-                , twoType
-                , threeType
-                , fiveType
-                ]
-        , imports = expr.imports
-        }
+            , imports = expr.imports
+            }
 
 
 {-| -}
@@ -1590,8 +1716,11 @@ comment content =
 
 {-| -}
 declaration : String -> Expression -> Declaration
-declaration name (Compiler.Expression body) =
-    --function name [] body
+declaration name (Compiler.Expression toBody) =
+    let
+        body =
+            toBody Compiler.startIndex
+    in
     { documentation = Compiler.nodifyMaybe Nothing
     , signature =
         case body.annotation of
@@ -1619,7 +1748,11 @@ declaration name (Compiler.Expression body) =
 
 {-| -}
 functionWith : String -> List ( String, Elm.Annotation.Annotation ) -> Expression -> Declaration
-functionWith name args (Compiler.Expression body) =
+functionWith name args (Compiler.Expression toBody) =
+    let
+        body =
+            toBody Compiler.startIndex
+    in
     { documentation = Compiler.nodifyMaybe Nothing
     , signature =
         case body.annotation of
@@ -1657,7 +1790,7 @@ functionWith name args (Compiler.Expression body) =
 
 
 function : String -> (Expression -> Expression) -> Declaration
-function name toBody =
+function name toExp =
     let
         oneName =
             "arg"
@@ -1666,8 +1799,11 @@ function name toBody =
             value oneName
                 |> withType (Elm.Annotation.var "a")
 
-        (Compiler.Expression body) =
-            toBody arg1
+        (Compiler.Expression toBody) =
+            toExp arg1
+
+        body =
+            toBody Compiler.startIndex
     in
     { documentation = Compiler.nodifyMaybe Nothing
     , signature =
@@ -1721,8 +1857,10 @@ fn name ( oneName, oneType ) toBody =
         arg1 =
             valueWith [] oneName oneType
 
-        (Compiler.Expression body) =
-            toBody arg1
+        body =
+            case toBody arg1 of
+                Compiler.Expression toExp ->
+                    toExp Compiler.startIndex
     in
     { documentation = Compiler.nodifyMaybe Nothing
     , signature =
@@ -1773,8 +1911,10 @@ fn2 name ( oneName, oneType ) ( twoName, twoType ) toBody =
         arg2 =
             valueWith [] twoName twoType
 
-        (Compiler.Expression body) =
-            toBody arg1 arg2
+        body =
+            case toBody arg1 arg2 of
+                Compiler.Expression toExp ->
+                    toExp Compiler.startIndex
     in
     { documentation = Compiler.nodifyMaybe Nothing
     , signature =
@@ -1831,8 +1971,10 @@ fn3 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) toBo
         arg3 =
             valueWith [] threeName threeType
 
-        (Compiler.Expression body) =
-            toBody arg1 arg2 arg3
+        body =
+            case toBody arg1 arg2 arg3 of
+                Compiler.Expression toExp ->
+                    toExp Compiler.startIndex
     in
     { documentation = Compiler.nodifyMaybe Nothing
     , signature =
@@ -1895,8 +2037,10 @@ fn4 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fo
         arg4 =
             valueWith [] fourName fourType
 
-        (Compiler.Expression body) =
-            toBody arg1 arg2 arg3 arg4
+        body =
+            case toBody arg1 arg2 arg3 arg4 of
+                Compiler.Expression toExp ->
+                    toExp Compiler.startIndex
     in
     { documentation = Compiler.nodifyMaybe Nothing
     , signature =
@@ -1965,8 +2109,10 @@ fn5 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fo
         arg5 =
             valueWith [] fiveName fiveType
 
-        (Compiler.Expression body) =
-            toBody arg1 arg2 arg3 arg4 arg5
+        body =
+            case toBody arg1 arg2 arg3 arg4 arg5 of
+                Compiler.Expression toExp ->
+                    toExp Compiler.startIndex
     in
     { documentation = Compiler.nodifyMaybe Nothing
     , signature =
@@ -2041,8 +2187,10 @@ fn6 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fo
         arg6 =
             valueWith [] sixName sixType
 
-        (Compiler.Expression body) =
-            toBody arg1 arg2 arg3 arg4 arg5 arg6
+        body =
+            case toBody arg1 arg2 arg3 arg4 arg5 arg6 of
+                Compiler.Expression toExp ->
+                    toExp Compiler.startIndex
     in
     { documentation = Compiler.nodifyMaybe Nothing
     , signature =
@@ -2311,17 +2459,6 @@ plus =
     applyNumber "+" Infix.Left
 
 
-
---(valueWith
---    []
---    "max"
---    (Elm.Annotation.function
---        [ Elm.Annotation.var "number", Elm.Annotation.var "number" ]
---        (Elm.Annotation.var "number")
---    )
---)
-
-
 {-| `-`
 -}
 minus : Expression -> Expression -> Expression
@@ -2553,52 +2690,96 @@ pipeLeft =
 
 
 applyBinOp : BinOp -> Expression -> Expression -> Expression
-applyBinOp (BinOp symbol dir _) (Compiler.Expression exprl) (Compiler.Expression exprr) =
-    Compiler.Expression
-        { expression =
-            Exp.OperatorApplication symbol dir (Compiler.nodify exprl.expression) (Compiler.nodify exprr.expression)
-        , annotation = Err [ Compiler.SomeOtherIssue ]
-        , imports = exprl.imports ++ exprr.imports
-        }
+applyBinOp (BinOp symbol dir _) l r =
+    Compiler.Expression <|
+        \index ->
+            let
+                ( leftIndex, left ) =
+                    Compiler.toExpressionDetails index l
+
+                ( rightIndex, right ) =
+                    Compiler.toExpressionDetails leftIndex r
+            in
+            { expression =
+                Exp.OperatorApplication symbol
+                    dir
+                    (Compiler.nodify left.expression)
+                    (Compiler.nodify right.expression)
+            , annotation = Err [ Compiler.SomeOtherIssue ]
+            , imports = left.imports ++ right.imports
+            }
 
 
 applyInfix : BinOp -> Expression -> Expression -> Expression -> Expression
-applyInfix (BinOp symbol dir _) fnAnnotation (Compiler.Expression left) (Compiler.Expression right) =
-    Compiler.Expression
-        { expression =
-            Exp.OperatorApplication symbol dir (Compiler.nodify left.expression) (Compiler.nodify right.expression)
-        , annotation =
-            Compiler.applyType fnAnnotation
-                [ Compiler.Expression left
-                , Compiler.Expression right
-                ]
-        , imports = left.imports ++ right.imports
-        }
+applyInfix (BinOp symbol dir _) fnInf l r =
+    Compiler.Expression <|
+        \index ->
+            let
+                ( fnIndex, inf ) =
+                    Compiler.toExpressionDetails index fnInf
+
+                ( leftIndex, left ) =
+                    Compiler.toExpressionDetails fnIndex l
+
+                ( rightIndex, right ) =
+                    Compiler.toExpressionDetails leftIndex r
+            in
+            { expression =
+                Exp.OperatorApplication symbol
+                    dir
+                    (Compiler.nodify left.expression)
+                    (Compiler.nodify right.expression)
+            , annotation =
+                Compiler.applyType inf.annotation
+                    [ left
+                    , right
+                    ]
+            , imports = inf.imports ++ left.imports ++ right.imports
+            }
 
 
 applyNumber : String -> Infix.InfixDirection -> Expression -> Expression -> Expression
-applyNumber symbol dir (Compiler.Expression left) (Compiler.Expression right) =
-    Compiler.Expression
-        { expression =
-            Exp.OperatorApplication symbol
-                dir
-                (Compiler.nodify left.expression)
-                (Compiler.nodify right.expression)
-        , annotation =
-            Compiler.applyType
-                (valueWith
-                    []
-                    symbol
-                    (Elm.Annotation.function
-                        [ Elm.Annotation.var "number", Elm.Annotation.var "number" ]
-                        (Elm.Annotation.var "number")
+applyNumber symbol dir l r =
+    Compiler.Expression <|
+        \index ->
+            let
+                ( leftIndex, left ) =
+                    Compiler.toExpressionDetails index l
+
+                ( rightIndex, right ) =
+                    Compiler.toExpressionDetails leftIndex r
+            in
+            { expression =
+                Exp.OperatorApplication symbol
+                    dir
+                    (Compiler.nodify left.expression)
+                    (Compiler.nodify right.expression)
+            , annotation =
+                Compiler.applyType
+                    (Ok
+                        { inferences = Dict.empty
+                        , type_ =
+                            Annotation.FunctionTypeAnnotation
+                                (Compiler.nodify
+                                    (Annotation.GenericType "number")
+                                )
+                                (Compiler.nodify
+                                    (Annotation.FunctionTypeAnnotation
+                                        (Compiler.nodify
+                                            (Annotation.GenericType "number")
+                                        )
+                                        (Compiler.nodify
+                                            (Annotation.GenericType "number")
+                                        )
+                                    )
+                                )
+                        }
                     )
-                )
-                [ Compiler.Expression left
-                , Compiler.Expression right
-                ]
-        , imports = left.imports ++ right.imports
-        }
+                    [ left
+                    , right
+                    ]
+            , imports = left.imports ++ right.imports
+            }
 
 
 {-| -}

@@ -19,8 +19,74 @@ module Elm.Case exposing
 
 import Elm exposing (Expression)
 import Elm.Syntax.Expression as Exp
+import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
 import Internal.Compiler as Compiler
+
+
+captureCase :
+    Compiler.Expression
+    -> Compiler.Index
+    -> List Branch
+    ->
+        ( Compiler.ExpressionDetails
+        , { index : Compiler.Index
+          , cases : List ( Node.Node Pattern.Pattern, Node.Node Exp.Expression )
+          , imports : List Compiler.Module
+          , annotation : Maybe (Result (List Compiler.InferenceError) Compiler.Inference)
+          }
+        )
+captureCase mainExpression index branches =
+    let
+        ( branchIndex, mainExpressionDetails ) =
+            Compiler.toExpressionDetails index mainExpression
+    in
+    ( mainExpressionDetails
+    , List.foldl
+        captureCaseHelper
+        { index = branchIndex
+        , cases = []
+        , imports = []
+        , annotation = Nothing
+        }
+        branches
+    )
+
+
+captureCaseHelper :
+    Branch
+    ->
+        { index : Compiler.Index
+        , cases : List ( Node.Node Pattern.Pattern, Node.Node Exp.Expression )
+        , imports : List Compiler.Module
+        , annotation : Maybe (Result (List Compiler.InferenceError) Compiler.Inference)
+        }
+    ->
+        { index : Compiler.Index
+        , cases : List ( Node.Node Pattern.Pattern, Node.Node Exp.Expression )
+        , imports : List Compiler.Module
+        , annotation : Maybe (Result (List Compiler.InferenceError) Compiler.Inference)
+        }
+captureCaseHelper (Branch pattern caseExpression) accum =
+    let
+        ( newIndex, exp ) =
+            Compiler.toExpressionDetails accum.index caseExpression
+    in
+    { index = newIndex
+    , cases = ( Compiler.nodify pattern, Compiler.nodify exp.expression ) :: accum.cases
+    , imports = accum.imports ++ exp.imports
+    , annotation =
+        case accum.annotation of
+            Nothing ->
+                Just exp.annotation
+
+            Just exist ->
+                if exist == exp.annotation then
+                    accum.annotation
+
+                else
+                    Just (Err [ Compiler.CaseBranchesReturnDifferentTypes ])
+    }
 
 
 {-| -}
@@ -31,51 +97,36 @@ maybe :
         , just : Expression -> Expression
         }
     -> Expression
-maybe (Compiler.Expression expr) branches =
-    let
-        gathered =
-            List.foldl
-                (\( pattern, Compiler.Expression exp ) accum ->
-                    { cases = ( Compiler.nodify pattern, Compiler.nodify exp.expression ) :: accum.cases
-                    , imports = accum.imports ++ exp.imports
-                    , annotation =
-                        case accum.annotation of
-                            Nothing ->
-                                Just exp.annotation
-
-                            Just exist ->
-                                if exist == exp.annotation then
-                                    accum.annotation
-
-                                else
-                                    Just (Err [ Compiler.CaseBranchesReturnDifferentTypes ])
-                    }
-                )
-                { cases = []
-                , imports = []
-                , annotation = Nothing
-                }
-                [ ( Pattern.NamedPattern { moduleName = [], name = "Nothing" } [], branches.nothing )
-                , ( Pattern.NamedPattern { moduleName = [], name = "Just" } [ Compiler.nodify (Pattern.VarPattern "a") ]
-                  , branches.just (Elm.value "a")
-                  )
-                ]
-    in
+maybe mainExpression branches =
     Compiler.Expression
-        { expression =
-            Exp.CaseExpression
-                { expression = Compiler.nodify expr.expression
-                , cases = List.reverse gathered.cases
-                }
-        , annotation =
-            case gathered.annotation of
-                Nothing ->
-                    Err [ Compiler.EmptyCaseStatement ]
+        (\index ->
+            let
+                ( expr, gathered ) =
+                    captureCase mainExpression
+                        index
+                        [ Branch
+                            (Pattern.NamedPattern { moduleName = [], name = "Nothing" } [])
+                            branches.nothing
+                        , Branch
+                            (Pattern.NamedPattern { moduleName = [], name = "Just" } [ Compiler.nodify (Pattern.VarPattern "a") ])
+                            (branches.just (Elm.value "a"))
+                        ]
+            in
+            { expression =
+                Exp.CaseExpression
+                    { expression = Compiler.nodify expr.expression
+                    , cases = List.reverse gathered.cases
+                    }
+            , annotation =
+                case gathered.annotation of
+                    Nothing ->
+                        Err [ Compiler.EmptyCaseStatement ]
 
-                Just ann ->
-                    ann
-        , imports = expr.imports ++ gathered.imports
-        }
+                    Just ann ->
+                        ann
+            , imports = expr.imports ++ gathered.imports
+            }
+        )
 
 
 {-| -}
@@ -83,53 +134,36 @@ tuple :
     Expression
     -> (Expression -> Expression -> Expression)
     -> Expression
-tuple (Compiler.Expression expr) branches =
-    let
-        gathered =
-            List.foldl
-                (\( pattern, Compiler.Expression exp ) accum ->
-                    { cases = ( Compiler.nodify pattern, Compiler.nodify exp.expression ) :: accum.cases
-                    , imports = accum.imports ++ exp.imports
-                    , annotation =
-                        case accum.annotation of
-                            Nothing ->
-                                Just exp.annotation
-
-                            Just exist ->
-                                if exist == exp.annotation then
-                                    accum.annotation
-
-                                else
-                                    Just (Err [ Compiler.CaseBranchesReturnDifferentTypes ])
-                    }
-                )
-                { cases = []
-                , imports = []
-                , annotation = Nothing
-                }
-                [ ( Pattern.TuplePattern
-                        [ Compiler.nodify (Pattern.VarPattern "first")
-                        , Compiler.nodify (Pattern.VarPattern "second")
+tuple mainExpression branches =
+    Compiler.Expression <|
+        \index ->
+            let
+                ( expr, gathered ) =
+                    captureCase mainExpression
+                        index
+                        [ Branch
+                            (Pattern.TuplePattern
+                                [ Compiler.nodify (Pattern.VarPattern "first")
+                                , Compiler.nodify (Pattern.VarPattern "second")
+                                ]
+                            )
+                            (branches (Elm.value "first") (Elm.value "second"))
                         ]
-                  , branches (Elm.value "first") (Elm.value "second")
-                  )
-                ]
-    in
-    Compiler.Expression
-        { expression =
-            Exp.CaseExpression
-                { expression = Compiler.nodify expr.expression
-                , cases = List.reverse gathered.cases
-                }
-        , annotation =
-            case gathered.annotation of
-                Nothing ->
-                    Err [ Compiler.EmptyCaseStatement ]
+            in
+            { expression =
+                Exp.CaseExpression
+                    { expression = Compiler.nodify expr.expression
+                    , cases = List.reverse gathered.cases
+                    }
+            , annotation =
+                case gathered.annotation of
+                    Nothing ->
+                        Err [ Compiler.EmptyCaseStatement ]
 
-                Just ann ->
-                    ann
-        , imports = expr.imports ++ gathered.imports
-        }
+                    Just ann ->
+                        ann
+            , imports = expr.imports ++ gathered.imports
+            }
 
 
 {-| -}
@@ -137,55 +171,37 @@ triple :
     Expression
     -> (Expression -> Expression -> Expression -> Expression)
     -> Expression
-triple (Compiler.Expression expr) branches =
-    let
-        gathered =
-            List.foldl
-                (\( pattern, Compiler.Expression exp ) accum ->
-                    { cases = ( Compiler.nodify pattern, Compiler.nodify exp.expression ) :: accum.cases
-                    , imports = accum.imports ++ exp.imports
-                    , annotation =
-                        case accum.annotation of
-                            Nothing ->
-                                Just exp.annotation
-
-                            Just exist ->
-                                if exist == exp.annotation then
-                                    accum.annotation
-
-                                else
-                                    Just (Err [ Compiler.CaseBranchesReturnDifferentTypes ])
-                    }
-                )
-                { cases = []
-                , imports = []
-                , annotation = Nothing
-                }
-                [ ( Pattern.TuplePattern
-                        [ Compiler.nodify (Pattern.VarPattern "first")
-                        , Compiler.nodify (Pattern.VarPattern "second")
-                        , Compiler.nodify (Pattern.VarPattern "third")
+triple mainExpression branches =
+    Compiler.Expression <|
+        \index ->
+            let
+                ( expr, gathered ) =
+                    captureCase mainExpression
+                        index
+                        [ Branch
+                            (Pattern.TuplePattern
+                                [ Compiler.nodify (Pattern.VarPattern "first")
+                                , Compiler.nodify (Pattern.VarPattern "second")
+                                , Compiler.nodify (Pattern.VarPattern "third")
+                                ]
+                            )
+                            (branches (Elm.value "first") (Elm.value "second") (Elm.value "third"))
                         ]
-                  , branches (Elm.value "first") (Elm.value "second") (Elm.value "third")
-                  )
-                ]
-    in
-    Compiler.Expression
-        { expression =
-            Exp.CaseExpression
-                { expression = Compiler.nodify expr.expression
-                , cases = List.reverse gathered.cases
-                }
-        , annotation =
-            case gathered.annotation of
-                Nothing ->
-                    Err [ Compiler.EmptyCaseStatement ]
+            in
+            { expression =
+                Exp.CaseExpression
+                    { expression = Compiler.nodify expr.expression
+                    , cases = List.reverse gathered.cases
+                    }
+            , annotation =
+                case gathered.annotation of
+                    Nothing ->
+                        Err [ Compiler.EmptyCaseStatement ]
 
-                Just ann ->
-                    ann
-        , imports = expr.imports ++ gathered.imports
-
-        }
+                    Just ann ->
+                        ann
+            , imports = expr.imports ++ gathered.imports
+            }
 
 
 {-| -}
@@ -196,54 +212,35 @@ result :
         , ok : Expression -> Expression
         }
     -> Expression
-result (Compiler.Expression expr) branches =
-    let
-        gathered =
-            List.foldl
-                (\( pattern, Compiler.Expression exp ) accum ->
-                    { cases = ( Compiler.nodify pattern, Compiler.nodify exp.expression ) :: accum.cases
-                    , imports = accum.imports ++ exp.imports
-                    , annotation =
-                        case accum.annotation of
-                            Nothing ->
-                                Just exp.annotation
-
-                            Just exist ->
-                                if exist == exp.annotation then
-                                    accum.annotation
-
-                                else
-                                    Just (Err [ Compiler.CaseBranchesReturnDifferentTypes ])
+result mainExpression branches =
+    Compiler.Expression <|
+        \index ->
+            let
+                ( expr, gathered ) =
+                    captureCase mainExpression
+                        index
+                        [ Branch
+                            (Pattern.NamedPattern { moduleName = [], name = "Err" } [ Compiler.nodify (Pattern.VarPattern "a") ])
+                            (branches.err (Elm.value "a"))
+                        , Branch
+                            (Pattern.NamedPattern { moduleName = [], name = "Ok" } [ Compiler.nodify (Pattern.VarPattern "a") ])
+                            (branches.ok (Elm.value "a"))
+                        ]
+            in
+            { expression =
+                Exp.CaseExpression
+                    { expression = Compiler.nodify expr.expression
+                    , cases = List.reverse gathered.cases
                     }
-                )
-                { cases = []
-                , imports = []
-                , annotation = Nothing
-                }
-                [ ( Pattern.NamedPattern { moduleName = [], name = "Err" } [ Compiler.nodify (Pattern.VarPattern "a") ]
-                  , branches.err (Elm.value "a")
-                  )
-                , ( Pattern.NamedPattern { moduleName = [], name = "Ok" } [ Compiler.nodify (Pattern.VarPattern "a") ]
-                  , branches.ok (Elm.value "a")
-                  )
-                ]
-    in
-    Compiler.Expression
-        { expression =
-            Exp.CaseExpression
-                { expression = Compiler.nodify expr.expression
-                , cases = List.reverse gathered.cases
-                }
-        , annotation =
-            case gathered.annotation of
-                Nothing ->
-                    Err [ Compiler.EmptyCaseStatement ]
+            , annotation =
+                case gathered.annotation of
+                    Nothing ->
+                        Err [ Compiler.EmptyCaseStatement ]
 
-                Just ann ->
-                    ann
-        , imports = expr.imports ++ gathered.imports
-
-        }
+                    Just ann ->
+                        ann
+            , imports = expr.imports ++ gathered.imports
+            }
 
 
 {-| -}
@@ -254,52 +251,34 @@ list :
         , remaining : Expression -> Expression
         }
     -> Expression
-list (Compiler.Expression expr) branches =
-    let
-        gathered =
-            List.foldl
-                (\( pattern, Compiler.Expression exp ) accum ->
-                    { cases = ( Compiler.nodify pattern, Compiler.nodify exp.expression ) :: accum.cases
-                    , imports = accum.imports ++ exp.imports
-                    , annotation =
-                        case accum.annotation of
-                            Nothing ->
-                                Just exp.annotation
-
-                            Just exist ->
-                                if exist == exp.annotation then
-                                    accum.annotation
-
-                                else
-                                    Just (Err [ Compiler.CaseBranchesReturnDifferentTypes ])
+list mainExpression branches =
+    Compiler.Expression <|
+        \index ->
+            let
+                ( expr, gathered ) =
+                    captureCase mainExpression
+                        index
+                        [ Branch
+                            (Pattern.ListPattern [])
+                            branches.empty
+                        , Branch (Pattern.VarPattern "a")
+                            (branches.remaining (Elm.value "a"))
+                        ]
+            in
+            { expression =
+                Exp.CaseExpression
+                    { expression = Compiler.nodify expr.expression
+                    , cases = List.reverse gathered.cases
                     }
-                )
-                { cases = []
-                , imports = []
-                , annotation = Nothing
-                }
-                [ ( Pattern.ListPattern [], branches.empty )
-                , ( Pattern.VarPattern "a"
-                  , branches.remaining (Elm.value "a")
-                  )
-                ]
-    in
-    Compiler.Expression
-        { expression =
-            Exp.CaseExpression
-                { expression = Compiler.nodify expr.expression
-                , cases = List.reverse gathered.cases
-                }
-        , annotation =
-            case gathered.annotation of
-                Nothing ->
-                    Err [ Compiler.EmptyCaseStatement ]
+            , annotation =
+                case gathered.annotation of
+                    Nothing ->
+                        Err [ Compiler.EmptyCaseStatement ]
 
-                Just ann ->
-                    ann
-        , imports = expr.imports ++ gathered.imports
-
-        }
+                    Just ann ->
+                        ann
+            , imports = expr.imports ++ gathered.imports
+            }
 
 
 {-| -}
@@ -311,54 +290,36 @@ list2 :
         , remaining : Expression -> Expression
         }
     -> Expression
-list2 (Compiler.Expression expr) branches =
-    let
-        gathered =
-            List.foldl
-                (\( pattern, Compiler.Expression exp ) accum ->
-                    { cases = ( Compiler.nodify pattern, Compiler.nodify exp.expression ) :: accum.cases
-                    , imports = accum.imports ++ exp.imports
-                    , annotation =
-                        case accum.annotation of
-                            Nothing ->
-                                Just exp.annotation
-
-                            Just exist ->
-                                if exist == exp.annotation then
-                                    accum.annotation
-
-                                else
-                                    Just (Err [ Compiler.CaseBranchesReturnDifferentTypes ])
+list2 mainExpression branches =
+    Compiler.Expression <|
+        \index ->
+            let
+                ( expr, gathered ) =
+                    captureCase mainExpression
+                        index
+                        [ Branch (Pattern.ListPattern []) branches.empty
+                        , Branch
+                            (Pattern.ListPattern [ Compiler.nodify (Pattern.VarPattern "a") ])
+                            (branches.one (Elm.value "a"))
+                        , Branch
+                            (Pattern.VarPattern "a")
+                            (branches.remaining (Elm.value "a"))
+                        ]
+            in
+            { expression =
+                Exp.CaseExpression
+                    { expression = Compiler.nodify expr.expression
+                    , cases = List.reverse gathered.cases
                     }
-                )
-                { cases = []
-                , imports = []
-                , annotation = Nothing
-                }
-                [ ( Pattern.ListPattern [], branches.empty )
-                , ( Pattern.ListPattern [ Compiler.nodify (Pattern.VarPattern "a") ]
-                  , branches.one (Elm.value "a")
-                  )
-                , ( Pattern.VarPattern "a"
-                  , branches.remaining (Elm.value "a")
-                  )
-                ]
-    in
-    Compiler.Expression
-        { expression =
-            Exp.CaseExpression
-                { expression = Compiler.nodify expr.expression
-                , cases = List.reverse gathered.cases
-                }
-        , annotation =
-            case gathered.annotation of
-                Nothing ->
-                    Err [ Compiler.EmptyCaseStatement ]
+            , annotation =
+                case gathered.annotation of
+                    Nothing ->
+                        Err [ Compiler.EmptyCaseStatement ]
 
-                Just ann ->
-                    ann
-        , imports = expr.imports ++ gathered.imports
-        }
+                    Just ann ->
+                        ann
+            , imports = expr.imports ++ gathered.imports
+            }
 
 
 {-| -}
@@ -371,57 +332,36 @@ list3 :
         , remaining : Expression -> Expression
         }
     -> Expression
-list3 (Compiler.Expression expr) branches =
-    let
-        gathered =
-            List.foldl
-                (\( pattern, Compiler.Expression exp ) accum ->
-                    { cases = ( Compiler.nodify pattern, Compiler.nodify exp.expression ) :: accum.cases
-                    , imports = accum.imports ++ exp.imports
-                    , annotation =
-                        case accum.annotation of
-                            Nothing ->
-                                Just exp.annotation
-
-                            Just exist ->
-                                if exist == exp.annotation then
-                                    accum.annotation
-
-                                else
-                                    Just (Err [ Compiler.CaseBranchesReturnDifferentTypes ])
+list3 mainExpression branches =
+    Compiler.Expression <|
+        \index ->
+            let
+                ( expr, gathered ) =
+                    captureCase mainExpression
+                        index
+                        [ Branch (Pattern.ListPattern []) branches.empty
+                        , Branch (Pattern.ListPattern [ Compiler.nodify (Pattern.VarPattern "a") ])
+                            (branches.one (Elm.value "a"))
+                        , Branch (Pattern.ListPattern [ Compiler.nodify (Pattern.VarPattern "a"), Compiler.nodify (Pattern.VarPattern "b") ])
+                            (branches.two (Elm.value "a") (Elm.value "b"))
+                        , Branch (Pattern.VarPattern "a")
+                            (branches.remaining (Elm.value "a"))
+                        ]
+            in
+            { expression =
+                Exp.CaseExpression
+                    { expression = Compiler.nodify expr.expression
+                    , cases = List.reverse gathered.cases
                     }
-                )
-                { cases = []
-                , imports = []
-                , annotation = Nothing
-                }
-                [ ( Pattern.ListPattern [], branches.empty )
-                , ( Pattern.ListPattern [ Compiler.nodify (Pattern.VarPattern "a") ]
-                  , branches.one (Elm.value "a")
-                  )
-                , ( Pattern.ListPattern [ Compiler.nodify (Pattern.VarPattern "a"), Compiler.nodify (Pattern.VarPattern "b") ]
-                  , branches.two (Elm.value "a") (Elm.value "b")
-                  )
-                , ( Pattern.VarPattern "a"
-                  , branches.remaining (Elm.value "a")
-                  )
-                ]
-    in
-    Compiler.Expression
-        { expression =
-            Exp.CaseExpression
-                { expression = Compiler.nodify expr.expression
-                , cases = List.reverse gathered.cases
-                }
-        , annotation =
-            case gathered.annotation of
-                Nothing ->
-                    Err [ Compiler.EmptyCaseStatement ]
+            , annotation =
+                case gathered.annotation of
+                    Nothing ->
+                        Err [ Compiler.EmptyCaseStatement ]
 
-                Just ann ->
-                    ann
-        , imports = expr.imports ++ gathered.imports
-        }
+                    Just ann ->
+                        ann
+            , imports = expr.imports ++ gathered.imports
+            }
 
 
 {-| -}
@@ -429,47 +369,29 @@ custom :
     Expression
     -> List Branch
     -> Expression
-custom (Compiler.Expression expr) branches =
-    let
-        gathered =
-            List.foldl
-                (\(Branch pattern (Compiler.Expression exp)) accum ->
-                    { cases = ( Compiler.nodify pattern, Compiler.nodify exp.expression ) :: accum.cases
-                    , imports = accum.imports ++ exp.imports
-                    , annotation =
-                        case accum.annotation of
-                            Nothing ->
-                                Just exp.annotation
-
-                            Just exist ->
-                                if exist == exp.annotation then
-                                    accum.annotation
-
-                                else
-                                    Just (Err [ Compiler.CaseBranchesReturnDifferentTypes ])
+custom mainExpression branches =
+    Compiler.Expression <|
+        \index ->
+            let
+                ( expr, gathered ) =
+                    captureCase mainExpression
+                        index
+                        branches
+            in
+            { expression =
+                Exp.CaseExpression
+                    { expression = Compiler.nodify expr.expression
+                    , cases = List.reverse gathered.cases
                     }
-                )
-                { cases = []
-                , imports = []
-                , annotation = Nothing
-                }
-                branches
-    in
-    Compiler.Expression
-        { expression =
-            Exp.CaseExpression
-                { expression = Compiler.nodify expr.expression
-                , cases = List.reverse gathered.cases
-                }
-        , annotation =
-            case gathered.annotation of
-                Nothing ->
-                    Err [ Compiler.EmptyCaseStatement ]
+            , annotation =
+                case gathered.annotation of
+                    Nothing ->
+                        Err [ Compiler.EmptyCaseStatement ]
 
-                Just ann ->
-                    ann
-        , imports = expr.imports ++ gathered.imports
-        }
+                    Just ann ->
+                        ann
+            , imports = expr.imports ++ gathered.imports
+            }
 
 
 {-| -}

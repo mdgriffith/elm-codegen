@@ -29,7 +29,55 @@ type Declaration
 
 {-| -}
 type Expression
-    = Expression ExpressionDetails
+    = Expression (Index -> ExpressionDetails)
+
+
+type Index
+    = Index Int (List Int)
+
+
+indexToString : Index -> String
+indexToString (Index top tail) =
+    case tail of
+        [] ->
+            ""
+
+        one :: [] ->
+            "_" ++ String.fromInt one
+
+        one :: two :: [] ->
+            "_"
+                ++ String.fromInt one
+                ++ "_"
+                ++ String.fromInt two
+
+        one :: two :: three :: [] ->
+            "_"
+                ++ String.fromInt one
+                ++ "_"
+                ++ String.fromInt two
+                ++ "_"
+                ++ String.fromInt three
+
+        _ ->
+            "_"
+                ++ String.join "_" (List.map String.fromInt tail)
+
+
+{-| -}
+startIndex : Index
+startIndex =
+    Index 0 []
+
+
+next : Index -> Index
+next (Index top tail) =
+    Index (top + 1) tail
+
+
+dive : Index -> Index
+dive (Index top tail) =
+    Index 0 (top :: tail)
 
 
 type alias ExpressionDetails =
@@ -143,18 +191,18 @@ getAnnotationImports (Annotation details) =
     details.imports
 
 
-getImports : Expression -> List Module
-getImports (Expression exp) =
+getImports : ExpressionDetails -> List Module
+getImports exp =
     exp.imports
 
 
-getInnerExpression : Expression -> Exp.Expression
-getInnerExpression (Expression exp) =
+getInnerExpression : ExpressionDetails -> Exp.Expression
+getInnerExpression exp =
     exp.expression
 
 
-getAnnotation : Expression -> Result (List InferenceError) Inference
-getAnnotation (Expression exp) =
+getAnnotation : ExpressionDetails -> Result (List InferenceError) Inference
+getAnnotation exp =
     exp.annotation
 
 
@@ -396,7 +444,7 @@ getExposed decls =
                                     Expose.FunctionExpose typeName
                                         |> Just
 
-                                Declaration.InfixDeclaration infix ->
+                                Declaration.InfixDeclaration inf ->
                                     Nothing
 
                                 Declaration.Destructuring _ _ ->
@@ -513,7 +561,7 @@ declName decl =
                     denode myPort.name
                         |> Just
 
-                Declaration.InfixDeclaration infix ->
+                Declaration.InfixDeclaration inf ->
                     Nothing
 
                 Declaration.Destructuring _ _ ->
@@ -617,7 +665,7 @@ formatType str =
 
 
 extractListAnnotation :
-    List Expression
+    List ExpressionDetails
     -> List Annotation.TypeAnnotation
     -> Result (List InferenceError) (List Annotation.TypeAnnotation)
 extractListAnnotation expressions annotations =
@@ -625,7 +673,7 @@ extractListAnnotation expressions annotations =
         [] ->
             Ok (List.reverse annotations)
 
-        (Expression top) :: remain ->
+        top :: remain ->
             case top.annotation of
                 Ok ann ->
                     extractListAnnotation remain (ann.type_ :: annotations)
@@ -656,10 +704,37 @@ extractListAnnotation expressions annotations =
 --                unchanged
 
 
+toExpressionDetails : Index -> Expression -> ( Index, ExpressionDetails )
+toExpressionDetails index (Expression toExp) =
+    ( next index, toExp index )
+
+
+thread : Index -> List Expression -> List ExpressionDetails
+thread index exps =
+    threadHelper index exps []
+
+
+threadHelper : Index -> List Expression -> List ExpressionDetails -> List ExpressionDetails
+threadHelper index exps rendered =
+    case exps of
+        [] ->
+            List.reverse rendered
+
+        (Expression toExpDetails) :: remain ->
+            threadHelper (next index)
+                remain
+                (toExpDetails index :: rendered)
+
+
 {-| -}
-applyType : Expression -> List Expression -> Result (List InferenceError) Inference
-applyType (Expression exp) args =
-    case exp.annotation of
+applyType :
+    Result
+        (List InferenceError)
+        Inference
+    -> List ExpressionDetails
+    -> Result (List InferenceError) Inference
+applyType annotation args =
+    case annotation of
         Err err ->
             Err err
 
@@ -973,7 +1048,7 @@ applyTypeHelper cache fn args =
                     Err [ FunctionAppliedToTooManyArgs ]
 
 
-unify : List Expression -> Result (List InferenceError) Inference
+unify : List ExpressionDetails -> Result (List InferenceError) Inference
 unify exps =
     case exps of
         [] ->
@@ -982,7 +1057,7 @@ unify exps =
                 , inferences = Dict.empty
                 }
 
-        (Expression top) :: remain ->
+        top :: remain ->
             case top.annotation of
                 Ok ann ->
                     unifyHelper remain ann
@@ -992,7 +1067,7 @@ unify exps =
 
 
 unifyHelper :
-    List Expression
+    List ExpressionDetails
     -> Inference
     -> Result (List InferenceError) Inference
 unifyHelper exps existing =
@@ -1000,7 +1075,7 @@ unifyHelper exps existing =
         [] ->
             Ok existing
 
-        (Expression top) :: remain ->
+        top :: remain ->
             case top.annotation of
                 Ok ann ->
                     case unifiable ann.inferences ann.type_ existing.type_ of
