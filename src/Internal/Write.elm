@@ -1,4 +1,11 @@
-module Internal.Write exposing (write, writeDeclaration, writeExpression, writeImports)
+module Internal.Write exposing
+    ( write
+    , writeAnnotation
+    , writeDeclaration
+    , writeExpression
+    , writeImports
+    , writeSignature
+    )
 
 {-| This is borrowed basically in it's entirety from: <https://github.com/the-sett/elm-syntax-dsl/blob/master/src/Elm/Pretty.elm>
 
@@ -94,6 +101,18 @@ write =
 writeExpression : Expression -> String
 writeExpression exp =
     prettyExpression noAliases exp
+        |> Pretty.pretty 80
+
+
+writeSignature : Signature -> String
+writeSignature sig =
+    prettySignature noAliases sig
+        |> Pretty.pretty 80
+
+
+writeAnnotation : TypeAnnotation -> String
+writeAnnotation sig =
+    prettyTypeAnnotation noAliases sig
         |> Pretty.pretty 80
 
 
