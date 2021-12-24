@@ -75,6 +75,11 @@ next (Index top tail) =
     Index (top + 1) tail
 
 
+nextN : Int -> Index -> Index
+nextN n (Index top tail) =
+    Index (top + n) tail
+
+
 dive : Index -> Index
 dive (Index top tail) =
     Index 0 (top :: tail)
@@ -113,12 +118,33 @@ inference type_ =
 
 type InferenceError
     = MismatchedList Annotation.TypeAnnotation Annotation.TypeAnnotation
-    | SomeOtherIssue
     | EmptyCaseStatement
     | FunctionAppliedToTooManyArgs
     | DuplicateFieldInRecord String
     | CaseBranchesReturnDifferentTypes
     | CouldNotFindField String
+
+
+inferenceErrorToString : InferenceError -> String
+inferenceErrorToString inf =
+    case inf of
+        MismatchedList one two ->
+            "There are multiple different types in a list!"
+
+        EmptyCaseStatement ->
+            "Case statement is empty"
+
+        FunctionAppliedToTooManyArgs ->
+            "A funciton is applied to too many arguments"
+
+        DuplicateFieldInRecord fieldName ->
+            "There is a duplicate field in a record: " ++ fieldName
+
+        CaseBranchesReturnDifferentTypes ->
+            "Case returns different types."
+
+        CouldNotFindField fieldName ->
+            "I can't find the " ++ fieldName ++ " field in the record"
 
 
 getGenerics : Annotation -> List (Node String)
