@@ -184,7 +184,11 @@ toString (Compiler.Expression exp) =
 {-| -}
 signature : Expression -> String
 signature (Compiler.Expression exp) =
-    case exp Compiler.startIndex |> .annotation of
+    let
+        expresh =
+            exp Compiler.startIndex
+    in
+    case expresh.annotation of
         Ok sig ->
             case Compiler.resolveVariables sig.inferences sig.type_ of
                 Ok finalType ->
@@ -635,7 +639,6 @@ tuple oneExp twoExp =
                     )
                     one.annotation
                     two.annotation
-                    |> Debug.log "TUPLED"
             , imports = one.imports ++ two.imports
             }
 
@@ -743,7 +746,7 @@ list exprs =
             in
             { expression = Exp.ListExpr (List.map (.expression >> Compiler.nodify) exprDetails)
             , annotation =
-                Compiler.unify exprDetails
+                Compiler.unify index exprDetails
                     |> Result.map
                         (\inner ->
                             { type_ =
@@ -878,12 +881,16 @@ record fields =
                                     |> Compiler.nodifyAll
                                     |> Annotation.Record
                             , inferences =
-                                List.foldl
-                                    (\( name, ann ) gathered ->
-                                        Compiler.mergeInferences ann.inferences gathered
-                                    )
-                                    Dict.empty
-                                    unified.fieldAnnotations
+                                let
+                                    infs =
+                                        List.foldl
+                                            (\( name, ann ) gathered ->
+                                                Compiler.mergeInferences ann.inferences gathered
+                                            )
+                                            Dict.empty
+                                            unified.fieldAnnotations
+                                in
+                                infs
                             }
 
                     errs ->
@@ -1023,7 +1030,7 @@ get selector recordExpression =
                     (Compiler.nodify expr.expression)
                     (Compiler.nodify (Compiler.formatValue selector))
             , annotation =
-                case Debug.log "    GET FROM:" expr.annotation of
+                case expr.annotation of
                     Ok recordAnn ->
                         case recordAnn.type_ of
                             Annotation.Record fields ->
@@ -1965,6 +1972,12 @@ declaration name (Compiler.Expression toBody) =
     , signature =
         case body.annotation of
             Ok sig ->
+                -- let
+                --     _ =
+                --         Debug.log "  RAW TYPE" sig.type_
+                --     _ =
+                --         List.map (Debug.log "   INFS") (Dict.toList sig.inferences)
+                -- in
                 case Compiler.resolveVariables sig.inferences sig.type_ of
                     Ok finalType ->
                         Just

@@ -6,9 +6,10 @@ import Elm.Syntax.Exposing as Expose
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.ModuleName as ModuleName
 import Elm.Syntax.Node as Node exposing (Node(..))
-import Elm.Syntax.Range as Range
+import Elm.Syntax.Range as Range exposing (emptyRange)
 import Elm.Syntax.TypeAnnotation as Annotation
 import Elm.Writer
+import Error.Format
 
 
 type Annotation
@@ -106,7 +107,29 @@ mergeInferences :
     -> Dict String Annotation.TypeAnnotation
     -> Dict String Annotation.TypeAnnotation
 mergeInferences one two =
-    Dict.union one two
+    Dict.merge
+        Dict.insert
+        (\key oneVal twoVal d ->
+            case oneVal of
+                Annotation.GenericRecord recordName (Node.Node oneRange recordDefinition) ->
+                    case twoVal of
+                        Annotation.GenericRecord twoRecordName (Node.Node twoRange twoRecordDefinition) ->
+                            Dict.insert key
+                                (Annotation.GenericRecord recordName
+                                    (Node.Node oneRange (recordDefinition ++ twoRecordDefinition))
+                                )
+                                d
+
+                        _ ->
+                            Dict.insert key oneVal d
+
+                _ ->
+                    Dict.insert key oneVal d
+        )
+        Dict.insert
+        one
+        two
+        Dict.empty
 
 
 inference : Annotation.TypeAnnotation -> Inference
@@ -811,7 +834,7 @@ resolveVariables cache annotation =
     --     _ =
     --         Debug.log "Resolve" "--"
     -- in
-    -- Debug.log "RETURN" <|
+    -- Debug.log "    RETURN" <|
     case annotation of
         Annotation.FunctionTypeAnnotation (Node.Node oneCoords one) (Node.Node twoCoords two) ->
             Result.map2
@@ -1016,6 +1039,11 @@ restrictFurther restriction newRestriction =
 
 resolveName : Restrictions -> String -> Dict String Annotation.TypeAnnotation -> Result String Annotation.TypeAnnotation
 resolveName restrictions name cache =
+    -- let
+    --     _ =
+    --         Debug.log "\n   Resolve" name
+    -- in
+    -- Debug.log "   resed:" <|
     case Dict.get name cache of
         Just (Annotation.GenericType newName) ->
             let
@@ -1030,12 +1058,35 @@ resolveName restrictions name cache =
                     Err err
 
         Just (Annotation.GenericRecord (Node.Node range recordName) (Node.Node fieldRange fields)) ->
-            case Dict.get recordName cache of
-                Nothing ->
-                    Ok (Annotation.Record fields)
+            let
+                result =
+                    List.foldl
+                        (\(Node.Node totalRange ( Node.Node fRange field, Node.Node vRange existingType )) existing ->
+                            case existing of
+                                Err _ ->
+                                    existing
 
-                Just newType ->
-                    Ok newType
+                                Ok existingFields ->
+                                    case resolveVariables cache existingType of
+                                        Ok newFieldType ->
+                                            Ok
+                                                (Node.Node totalRange
+                                                    ( Node.Node fRange field, Node.Node vRange newFieldType )
+                                                    :: existingFields
+                                                )
+
+                                        Err err ->
+                                            Err err
+                        )
+                        (Ok [])
+                        fields
+            in
+            case result of
+                Ok resolvedFields ->
+                    Ok (Annotation.Record resolvedFields)
+
+                Err err ->
+                    Err err
 
         Just newType ->
             case restrictions of
@@ -1135,8 +1186,8 @@ applyTypeHelper cache fn args =
                     Err [ FunctionAppliedToTooManyArgs ]
 
 
-unify : List ExpressionDetails -> Result (List InferenceError) Inference
-unify exps =
+unify : Index -> List ExpressionDetails -> Result (List InferenceError) Inference
+unify index exps =
     case exps of
         [] ->
             Ok
@@ -1172,7 +1223,7 @@ unifyHelper exps existing =
                         ( cache, Ok new ) ->
                             unifyHelper remain
                                 { type_ = new
-                                , inferences = cache
+                                , inferences = mergeInferences existing.inferences cache
                                 }
 
                 Err err ->
@@ -1414,15 +1465,11 @@ addInference key value infs =
         infs
 
 
-
--- Dict.insert key value infs
---unifiableHelper :
---    VariableCache
---    -> Annotation.TypeAnnotation
---    -> Annotation.TypeAnnotation
---    -> ( VariableCache, Result String Annotation.TypeAnnotation )
-
-
+unifiableHelper :
+    VariableCache
+    -> Annotation.TypeAnnotation
+    -> Annotation.TypeAnnotation
+    -> ( VariableCache, Result InferenceError Annotation.TypeAnnotation )
 unifiableHelper vars one two =
     case one of
         Annotation.GenericType varName ->
@@ -1473,7 +1520,9 @@ unifiableHelper vars one two =
                         ( vars, Err (UnableToUnify one two) )
 
                 Annotation.GenericType b ->
-                    ( vars, Ok one )
+                    ( addInference b one vars
+                    , Ok one
+                    )
 
                 _ ->
                     ( vars, Err (UnableToUnify one two) )
@@ -1534,10 +1583,15 @@ unifiableHelper vars one two =
                         Just foundTwo ->
                             unifiableHelper vars one foundTwo
 
+                Annotation.GenericRecord twoRecName fieldsB ->
+                    ( vars, Err (UnableToUnify one two) )
+
                 Annotation.Record fieldsB ->
                     case unifiableFields vars fieldsA fieldsB [] of
                         ( newVars, Ok unifiedFields ) ->
-                            ( newVars, Ok (Annotation.Record unifiedFields) )
+                            ( newVars
+                            , Ok (Annotation.Record unifiedFields)
+                            )
 
                         ( newVars, Err err ) ->
                             ( newVars, Err err )
@@ -1545,7 +1599,7 @@ unifiableHelper vars one two =
                 _ ->
                     ( vars, Err (UnableToUnify one two) )
 
-        Annotation.GenericRecord reVarName fieldsA ->
+        Annotation.GenericRecord reVarName (Node.Node fieldsARange fieldsA) ->
             case two of
                 Annotation.GenericType b ->
                     case Dict.get b vars of
@@ -1557,8 +1611,18 @@ unifiableHelper vars one two =
                         Just foundTwo ->
                             unifiableHelper vars one foundTwo
 
-                Annotation.Record fieldsB ->
+                Annotation.GenericRecord twoRecName fieldsB ->
                     ( vars, Err (UnableToUnify one two) )
+
+                Annotation.Record fieldsB ->
+                    case unifiableFields vars fieldsA fieldsB [] of
+                        ( newVars, Ok unifiedFields ) ->
+                            ( newVars
+                            , Ok (Annotation.Record unifiedFields)
+                            )
+
+                        ( newVars, Err err ) ->
+                            ( newVars, Err err )
 
                 _ ->
                     ( vars, Err (UnableToUnify one two) )
@@ -1598,6 +1662,15 @@ unifiableHelper vars one two =
                     ( vars, Err (UnableToUnify one two) )
 
 
+unifiableFields :
+    VariableCache
+    -> List (Node ( Node String, Node Annotation.TypeAnnotation ))
+    -> List (Node ( Node String, Node Annotation.TypeAnnotation ))
+    -> List Annotation.RecordField
+    ->
+        ( VariableCache
+        , Result InferenceError Annotation.RecordDefinition
+        )
 unifiableFields vars one two unified =
     case ( one, two ) of
         ( [], [] ) ->
@@ -1617,10 +1690,15 @@ unifiableFields vars one two unified =
             case getField oneName oneVal twoFields [] of
                 Ok ( matchingFieldVal, remainingTwo ) ->
                     let
-                        ( newVars, unifiedField ) =
+                        ( newVars, unifiedFieldResult ) =
                             unifiableHelper vars oneVal matchingFieldVal
                     in
-                    unifiableFields newVars oneRemain remainingTwo (unifiedField :: unified)
+                    case unifiedFieldResult of
+                        Ok unifiedField ->
+                            unifiableFields newVars oneRemain remainingTwo (( nodify oneName, nodify unifiedField ) :: unified)
+
+                        Err err ->
+                            ( newVars, Err err )
 
                 Err notFound ->
                     ( vars, Err notFound )
