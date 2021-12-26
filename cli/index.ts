@@ -195,11 +195,30 @@ type CodeGenJson = {
 }
 
 function getCodeGenJson(): CodeGenJson {
-  let codeGenJson = JSON.parse(fs.readFileSync(path.join(".", "elm.codegen.json")).toString())
-  return {
-    version: codeGenJson["elm-codegen-version"],
-    output: codeGenJson.output,
-    dependencies: { packages: codeGenJson.dependencies.packages, local: codeGenJson.dependencies.local },
+  let stringContents = ""
+  try {
+    stringContents = fs.readFileSync(path.join(".", "elm.codegen.json")).toString()
+  } catch (error) {
+    console.log(
+      format_block([
+        "Looks like there's no " + chalk.yellow("elm.codegen.json") + ".",
+        "Run " + chalk.cyan("elm-codegen init") + " to generate one!",
+      ])
+    )
+    process.exit(1)
+  }
+
+  try {
+    let codeGenJson = JSON.parse(stringContents)
+    return {
+      version: codeGenJson["elm-codegen-version"],
+      output: codeGenJson.output,
+      dependencies: { packages: codeGenJson.dependencies.packages, local: codeGenJson.dependencies.local },
+    }
+  } catch (exception_var) {
+    // TODO: convert this exception to a more useful error message
+    console.log(format_block(["Looks like there's an issue with " + chalk.yellow("elm.codegen.json") + "."]))
+    process.exit(1)
   }
 }
 
@@ -320,7 +339,7 @@ async function action(cmd: string, pkg: string | null, options: Options, com: an
 
       // Package specified
       if (pkg.endsWith(".json")) {
-        if (pkg in codeGenJson.dependencies.local) {
+        if (codeGenJson.dependencies.local.includes(pkg)) {
           console.log(`${pkg} is already installed!`)
           process.exit(1)
         }

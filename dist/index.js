@@ -90,7 +90,7 @@ var gen_package = require("./gen-package");
 // We have to stub this in the allow Elm the ability to make http requests.
 // @ts-ignore
 globalThis["XMLHttpRequest"] = XMLHttpRequest_1.XMLHttpRequest.XMLHttpRequest;
-var currentVersion = require('../package.json').version;
+var currentVersion = require("../package.json").version;
 function run_generator(base, moduleName, elm_source, flags) {
     return __awaiter(this, void 0, void 0, function () {
         var promise;
@@ -130,7 +130,11 @@ function run_generator(base, moduleName, elm_source, flags) {
 var program = new commander.Command();
 function generate(debug, elm_file, moduleName, target_dir, base, flags) {
     try {
-        var data = elm_compiler.compileToStringSync([elm_file], { cwd: base, optimize: !debug, processOpts: { stdio: [null, null, 'inherit'] } });
+        var data = elm_compiler.compileToStringSync([elm_file], {
+            cwd: base,
+            optimize: !debug,
+            processOpts: { stdio: [null, null, "inherit"] },
+        });
         // @ts-ignore
         return new run_generator(target_dir, moduleName, data.toString(), flags);
     }
@@ -214,13 +218,20 @@ function install_package(pkg, output, version) {
                     docs = _a.sent();
                     codeGenJson = getCodeGenJson();
                     if (codeGenJson.version != currentVersion) {
-                        console.log(chalk_1.default.cyan("elm.codegen.json") + " says you are on version " + chalk_1.default.yellow(codeGenJson.version) + ", but you're running version " + chalk_1.default.yellow(currentVersion));
+                        console.log(chalk_1.default.cyan("elm.codegen.json") +
+                            " says you are on version " +
+                            chalk_1.default.yellow(codeGenJson.version) +
+                            ", but you're running version " +
+                            chalk_1.default.yellow(currentVersion));
                         process.exit();
                     }
                     if (codeGenJson.dependencies && codeGenJson.dependencies.packages && pkg in codeGenJson.dependencies.packages) {
                         console.log(chalk_1.default.yellow(pkg) + " is already installed!");
                         if (codeGenJson.dependencies.packages[pkg] != version) {
-                            console.log("If you want to change versions, adjust " + chalk_1.default.cyan("elm.codegen.json") + " and run " + chalk_1.default.cyan("elm-codegen install"));
+                            console.log("If you want to change versions, adjust " +
+                                chalk_1.default.cyan("elm.codegen.json") +
+                                " and run " +
+                                chalk_1.default.cyan("elm-codegen install"));
                         }
                         process.exit(1);
                     }
@@ -240,14 +251,36 @@ function install_package(pkg, output, version) {
     });
 }
 function getCodeGenJson() {
-    var codeGenJson = JSON.parse(fs.readFileSync(path.join(".", "elm.codegen.json")).toString());
-    return { version: codeGenJson["elm-codegen-version"], output: codeGenJson.output, dependencies: { packages: codeGenJson.dependencies.packages, local: codeGenJson.dependencies.local } };
+    var stringContents = "";
+    try {
+        stringContents = fs.readFileSync(path.join(".", "elm.codegen.json")).toString();
+    }
+    catch (error) {
+        console.log(format_block([
+            "Looks like there's no " + chalk_1.default.yellow("elm.codegen.json") + ".",
+            "Run " + chalk_1.default.cyan("elm-codegen init") + " to generate one!",
+        ]));
+        process.exit(1);
+    }
+    try {
+        var codeGenJson = JSON.parse(stringContents);
+        return {
+            version: codeGenJson["elm-codegen-version"],
+            output: codeGenJson.output,
+            dependencies: { packages: codeGenJson.dependencies.packages, local: codeGenJson.dependencies.local },
+        };
+    }
+    catch (exception_var) {
+        // TODO: convert this exception to a more useful error message
+        console.log(format_block(["Looks like there's an issue with " + chalk_1.default.yellow("elm.codegen.json") + "."]));
+        process.exit(1);
+    }
 }
 function codeGenJsonToString(codeGen) {
     var obj = {};
     obj["elm-codegen-version"] = codeGen.version;
     obj.dependencies = codeGen.dependencies;
-    return JSON.stringify(obj);
+    return JSON.stringify(obj, null, 4);
 }
 // INIT
 //    Start a new elm-codegen project
@@ -272,7 +305,7 @@ function init(install_dir) {
                     codeGenJson["elm-codegen-version"] = currentVersion;
                     fs.mkdirSync(base);
                     fs.mkdirSync(path.join(base, "Elm"));
-                    fs.writeFileSync(path.join(".", "elm.codegen.json"), JSON.stringify(codeGenJson));
+                    fs.writeFileSync(path.join(".", "elm.codegen.json"), JSON.stringify(codeGenJson, null, 2));
                     fs.writeFileSync(path.join(base, "elm.json"), templates_1.default.init.elmJson());
                     fs.writeFileSync(path.join(base, "Generate.elm"), templates_1.default.init.starter());
                     fs.writeFileSync(path.join(base, "Elm", "Gen.elm"), templates_1.default.init.elmGen());
@@ -296,7 +329,7 @@ function install_from_codegen_json(options) {
     return __awaiter(this, void 0, void 0, function () {
         var cwd, codeGenJson, install_dir, _i, _a, _b, key, value, elmSources, item, docs;
         return __generator(this, function (_c) {
-            console.log("Installing " + chalk_1.default.cyan('elm-codegen') + " dependencies");
+            console.log("Installing " + chalk_1.default.cyan("elm-codegen") + " dependencies");
             cwd = options.cwd || ".";
             codeGenJson = getCodeGenJson();
             install_dir = path.join(cwd, options.output || "codegen");
@@ -332,7 +365,11 @@ function make(elm_file, moduleName, target_dir, base, flags) {
         var data;
         return __generator(this, function (_a) {
             try {
-                data = elm_compiler.compileToStringSync([elm_file], { cwd: base, optimize: true, processOpts: { stdio: [null, null, 'inherit'] } });
+                data = elm_compiler.compileToStringSync([elm_file], {
+                    cwd: base,
+                    optimize: true,
+                    processOpts: { stdio: [null, null, "inherit"] },
+                });
                 // @ts-ignore
                 return [2 /*return*/, new run_generator(target_dir, moduleName, data.toString(), flags)];
             }
@@ -372,7 +409,7 @@ function action(cmd, pkg, options, com) {
                     codeGenJson = getCodeGenJson();
                     // Package specified
                     if (pkg.endsWith(".json")) {
-                        if (pkg in codeGenJson.dependencies.local) {
+                        if (codeGenJson.dependencies.local.includes(pkg)) {
                             console.log(pkg + " is already installed!");
                             process.exit(1);
                         }
