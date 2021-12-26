@@ -120,11 +120,21 @@ type InferenceError
     = MismatchedList Annotation.TypeAnnotation Annotation.TypeAnnotation
     | EmptyCaseStatement
     | FunctionAppliedToTooManyArgs
+    | MismatchedTypeVariables
     | DuplicateFieldInRecord String
     | CaseBranchesReturnDifferentTypes
     | CouldNotFindField String
+    | NotAppendable Annotation.TypeAnnotation
+    | NotComparable Annotation.TypeAnnotation
+    | UnableToUnify Annotation.TypeAnnotation Annotation.TypeAnnotation
 
 
+{-|
+
+    Elm.Writer.writeTypeAnnotation (nodify two)
+        |> Elm.Writer.write
+
+-}
 inferenceErrorToString : InferenceError -> String
 inferenceErrorToString inf =
     case inf of
@@ -145,6 +155,24 @@ inferenceErrorToString inf =
 
         CouldNotFindField fieldName ->
             "I can't find the " ++ fieldName ++ " field in the record"
+
+        NotAppendable type_ ->
+            (Elm.Writer.writeTypeAnnotation (nodify type_)
+                |> Elm.Writer.write
+            )
+                ++ " is not appendable.  Only Strings and Lists are appendable"
+
+        NotComparable type_ ->
+            (Elm.Writer.writeTypeAnnotation (nodify type_)
+                |> Elm.Writer.write
+            )
+                ++ " is not appendable.  Only Strings and Lists are appendable"
+
+        UnableToUnify one two ->
+            "Unable to unify"
+
+        MismatchedTypeVariables ->
+            "Different list sof type variables"
 
 
 getGenerics : Annotation -> List (Node String)
@@ -779,6 +807,11 @@ type alias VariableCache =
 
 resolveVariables : VariableCache -> Annotation.TypeAnnotation -> Result String Annotation.TypeAnnotation
 resolveVariables cache annotation =
+    -- let
+    --     _ =
+    --         Debug.log "Resolve" "--"
+    -- in
+    -- Debug.log "RETURN" <|
     case annotation of
         Annotation.FunctionTypeAnnotation (Node.Node oneCoords one) (Node.Node twoCoords two) ->
             Result.map2
@@ -861,6 +894,11 @@ resolveVariables cache annotation =
                 newFieldResult
 
 
+resolveVariableList :
+    VariableCache
+    -> List (Node Annotation.TypeAnnotation)
+    -> List (Node Annotation.TypeAnnotation)
+    -> Result String (List (Node Annotation.TypeAnnotation))
 resolveVariableList cache nodes processed =
     case nodes of
         [] ->
@@ -869,7 +907,7 @@ resolveVariableList cache nodes processed =
         (Node.Node coords top) :: remain ->
             case resolveVariables cache top of
                 Ok resolved ->
-                    resolveVariableList cache remain (Node.Node coords resolved :: remain)
+                    resolveVariableList cache remain (Node.Node coords resolved :: processed)
 
                 Err err ->
                     Err err
@@ -881,6 +919,7 @@ type Restrictions
     | IsAppendable
     | IsComparable
     | IsAppendableComparable
+    | RecordWith (List (Node Annotation.RecordField))
 
 
 getRestrictions : String -> Restrictions
@@ -906,6 +945,17 @@ restrictFurther restriction newRestriction =
     case restriction of
         NoRestrictions ->
             Ok newRestriction
+
+        RecordWith fields ->
+            case newRestriction of
+                NoRestrictions ->
+                    Ok restriction
+
+                RecordWith newFields ->
+                    Ok newRestriction
+
+                _ ->
+                    Err ""
 
         IsNumber ->
             case newRestriction of
@@ -979,9 +1029,20 @@ resolveName restrictions name cache =
                 Err err ->
                     Err err
 
+        Just (Annotation.GenericRecord (Node.Node range recordName) (Node.Node fieldRange fields)) ->
+            case Dict.get recordName cache of
+                Nothing ->
+                    Ok (Annotation.Record fields)
+
+                Just newType ->
+                    Ok newType
+
         Just newType ->
             case restrictions of
                 NoRestrictions ->
+                    Ok newType
+
+                RecordWith fields ->
                     Ok newType
 
                 IsNumber ->
@@ -1118,6 +1179,38 @@ unifyHelper exps existing =
                     Err err
 
 
+unifyOn :
+    Annotation
+    ->
+        Result
+            (List InferenceError)
+            Inference
+    ->
+        Result
+            (List InferenceError)
+            Inference
+unifyOn (Annotation annDetails) res =
+    case res of
+        Err _ ->
+            res
+
+        Ok inf ->
+            let
+                ( newInferences, finalResult ) =
+                    unifiable inf.inferences annDetails.annotation inf.type_
+            in
+            case finalResult of
+                Ok finalType ->
+                    Ok
+                        { type_ = finalType
+                        , inferences = newInferences
+                        }
+
+                Err err ->
+                    Err
+                        [ err ]
+
+
 {-| This is definitely not correct, but will do for now!
 
     type TypeAnnotation
@@ -1134,7 +1227,7 @@ unifiable :
     VariableCache
     -> Annotation.TypeAnnotation
     -> Annotation.TypeAnnotation
-    -> ( VariableCache, Result String Annotation.TypeAnnotation )
+    -> ( VariableCache, Result InferenceError Annotation.TypeAnnotation )
 unifiable cache one two =
     unifiableHelper cache one two
 
@@ -1266,16 +1359,12 @@ unifyComparable :
     VariableCache
     -> String
     -> Annotation.TypeAnnotation
-    -> ( VariableCache, Result String Annotation.TypeAnnotation )
+    -> ( VariableCache, Result InferenceError Annotation.TypeAnnotation )
 unifyComparable vars comparableName two =
     if isComparable two then
         ( Dict.insert comparableName two vars
         , Err
-            ((Elm.Writer.writeTypeAnnotation (nodify two)
-                |> Elm.Writer.write
-             )
-                ++ " is not appendable.  Only Strings and Lists are appendable"
-            )
+            (NotAppendable two)
         )
 
     else
@@ -1291,15 +1380,42 @@ unifyComparable vars comparableName two =
             _ ->
                 ( Dict.insert comparableName two vars
                 , Err
-                    ((Elm.Writer.writeTypeAnnotation (nodify two)
-                        |> Elm.Writer.write
-                     )
-                        ++ " is not appendable.  Only Strings and Lists are appendable"
-                    )
+                    (NotAppendable two)
                 )
 
 
+addInference key value infs =
+    -- let
+    --     _ =
+    --         Debug.log "   FACT:" ( key, value )
+    -- in
+    Dict.update key
+        (\maybeValue ->
+            case maybeValue of
+                Nothing ->
+                    Just value
 
+                Just (Annotation.GenericRecord (Node.Node range recordName) (Node.Node fieldRange fields)) ->
+                    case value of
+                        Annotation.GenericRecord (Node.Node existingRange existingRecordName) (Node.Node existingFieldRange existingFields) ->
+                            Just
+                                (Annotation.GenericRecord
+                                    (Node.Node range recordName)
+                                    (Node.Node fieldRange (fields ++ existingFields))
+                                )
+
+                        _ ->
+                            maybeValue
+
+                Just existing ->
+                    -- this is likely an error
+                    Just existing
+        )
+        infs
+
+
+
+-- Dict.insert key value infs
 --unifiableHelper :
 --    VariableCache
 --    -> Annotation.TypeAnnotation
@@ -1312,16 +1428,27 @@ unifiableHelper vars one two =
         Annotation.GenericType varName ->
             case Dict.get varName vars of
                 Nothing ->
-                    ( Dict.insert varName two vars
-                    , Ok two
-                    )
+                    case two of
+                        Annotation.GenericType varNameB ->
+                            if varNameB == varName then
+                                ( vars, Ok one )
+
+                            else
+                                ( addInference varName two vars
+                                , Ok two
+                                )
+
+                        _ ->
+                            ( addInference varName two vars
+                            , Ok two
+                            )
 
                 Just found ->
                     case two of
                         Annotation.GenericType varNameB ->
                             case Dict.get varNameB vars of
                                 Nothing ->
-                                    ( Dict.insert varNameB found vars
+                                    ( addInference varNameB found vars
                                     , Ok two
                                     )
 
@@ -1343,20 +1470,20 @@ unifiableHelper vars one two =
                                 ( newVars, Err err )
 
                     else
-                        ( vars, Err "Unable to unify container!" )
+                        ( vars, Err (UnableToUnify one two) )
 
                 Annotation.GenericType b ->
                     ( vars, Ok one )
 
                 _ ->
-                    ( vars, Err "Unable to unify container!" )
+                    ( vars, Err (UnableToUnify one two) )
 
         Annotation.Unit ->
             case two of
                 Annotation.GenericType b ->
                     case Dict.get b vars of
                         Nothing ->
-                            ( Dict.insert b one vars
+                            ( addInference b one vars
                             , Ok one
                             )
 
@@ -1367,14 +1494,14 @@ unifiableHelper vars one two =
                     ( vars, Ok Annotation.Unit )
 
                 _ ->
-                    ( vars, Err "Unable to unify units!" )
+                    ( vars, Err (UnableToUnify one two) )
 
         Annotation.Tupled valsA ->
             case two of
                 Annotation.GenericType b ->
                     case Dict.get b vars of
                         Nothing ->
-                            ( Dict.insert b one vars
+                            ( addInference b one vars
                             , Ok one
                             )
 
@@ -1393,14 +1520,14 @@ unifiableHelper vars one two =
                             ( newVars, Err err )
 
                 _ ->
-                    ( vars, Err "Unable to unify tuples!" )
+                    ( vars, Err (UnableToUnify one two) )
 
         Annotation.Record fieldsA ->
             case two of
                 Annotation.GenericType b ->
                     case Dict.get b vars of
                         Nothing ->
-                            ( Dict.insert b one vars
+                            ( addInference b one vars
                             , Ok one
                             )
 
@@ -1416,14 +1543,14 @@ unifiableHelper vars one two =
                             ( newVars, Err err )
 
                 _ ->
-                    ( vars, Err "Unable to unify function with non function type!" )
+                    ( vars, Err (UnableToUnify one two) )
 
         Annotation.GenericRecord reVarName fieldsA ->
             case two of
                 Annotation.GenericType b ->
                     case Dict.get b vars of
                         Nothing ->
-                            ( Dict.insert b one vars
+                            ( addInference b one vars
                             , Ok one
                             )
 
@@ -1431,17 +1558,17 @@ unifiableHelper vars one two =
                             unifiableHelper vars one foundTwo
 
                 Annotation.Record fieldsB ->
-                    ( vars, Err "Unable to unify function with non function type!" )
+                    ( vars, Err (UnableToUnify one two) )
 
                 _ ->
-                    ( vars, Err "Unable to unify function with non function type!" )
+                    ( vars, Err (UnableToUnify one two) )
 
         Annotation.FunctionTypeAnnotation oneA oneB ->
             case two of
                 Annotation.GenericType b ->
                     case Dict.get b vars of
                         Nothing ->
-                            ( Dict.insert b one vars
+                            ( addInference b one vars
                             , Ok one
                             )
 
@@ -1468,7 +1595,7 @@ unifiableHelper vars one two =
                             otherwise
 
                 _ ->
-                    ( vars, Err "Unable to unify function with non function type!" )
+                    ( vars, Err (UnableToUnify one two) )
 
 
 unifiableFields vars one two unified =
@@ -1496,16 +1623,16 @@ unifiableFields vars one two unified =
                     unifiableFields newVars oneRemain remainingTwo (unifiedField :: unified)
 
                 Err notFound ->
-                    ( vars, Err ("Could not find " ++ oneName) )
+                    ( vars, Err notFound )
 
         _ ->
-            ( vars, Err "Mismatched numbers of type variables" )
+            ( vars, Err MismatchedTypeVariables )
 
 
 getField name val fields captured =
     case fields of
         [] ->
-            Err ("Could not find " ++ name)
+            Err (CouldNotFindField name)
 
         top :: remain ->
             let
@@ -1550,4 +1677,4 @@ unifiableLists vars one two unified =
                     ( vars, Err err )
 
         _ ->
-            ( vars, Err "Mismatched numbers of type variables" )
+            ( vars, Err MismatchedTypeVariables )

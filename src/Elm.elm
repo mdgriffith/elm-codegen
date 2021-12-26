@@ -24,9 +24,10 @@ module Elm exposing
     , slash, question
     , portIncoming, portOutgoing
     , parse, unsafe
-    , toString, signatureString, expressionImports
+    , toString, signature, expressionImports
     , declarationToString, declarationImports
     , value, valueFrom
+    , lambdaWith
     )
 
 {-|
@@ -128,7 +129,7 @@ For precise control over what is rendered for the module comment, use [fileWith]
 
 # Rendering to string
 
-@docs toString, signatureString, expressionImports
+@docs toString, signature, expressionImports
 
 @docs declarationToString, declarationImports
 
@@ -181,8 +182,8 @@ toString (Compiler.Expression exp) =
 
 
 {-| -}
-signatureString : Expression -> String
-signatureString (Compiler.Expression exp) =
+signature : Expression -> String
+signature (Compiler.Expression exp) =
     case exp Compiler.startIndex |> .annotation of
         Ok sig ->
             case Compiler.resolveVariables sig.inferences sig.type_ of
@@ -509,7 +510,8 @@ withType ann (Compiler.Expression toExp) =
                     toExp index
             in
             { exp
-                | annotation = Ok (Compiler.getInnerInference ann)
+                | annotation =
+                    Compiler.unifyOn ann exp.annotation
                 , imports = exp.imports ++ Compiler.getAnnotationImports ann
             }
 
@@ -613,15 +615,19 @@ tuple oneExp twoExp =
                 ( twoIndex, two ) =
                     Compiler.toExpressionDetails oneIndex twoExp
             in
-            { expression = Exp.TupledExpression (Compiler.nodifyAll [ one.expression, two.expression ])
+            { expression =
+                Exp.TupledExpression
+                    [ Compiler.nodify one.expression
+                    , Compiler.nodify two.expression
+                    ]
             , annotation =
                 Result.map2
                     (\oneA twoA ->
                         { type_ =
-                            Elm.Annotation.tuple
-                                (Compiler.noImports oneA.type_)
-                                (Compiler.noImports twoA.type_)
-                                |> Compiler.getInnerAnnotation
+                            Annotation.Tupled
+                                [ Compiler.nodify oneA.type_
+                                , Compiler.nodify twoA.type_
+                                ]
                         , inferences =
                             oneA.inferences
                                 |> Compiler.mergeInferences twoA.inferences
@@ -629,6 +635,7 @@ tuple oneExp twoExp =
                     )
                     one.annotation
                     two.annotation
+                    |> Debug.log "TUPLED"
             , imports = one.imports ++ two.imports
             }
 
@@ -1004,25 +1011,25 @@ results in
 
 -}
 get : String -> Expression -> Expression
-get selector expresh =
+get selector recordExpression =
     Compiler.Expression <|
         \index ->
             let
                 ( _, expr ) =
-                    Compiler.toExpressionDetails index expresh
+                    Compiler.toExpressionDetails index recordExpression
             in
             { expression =
                 Exp.RecordAccess
                     (Compiler.nodify expr.expression)
                     (Compiler.nodify (Compiler.formatValue selector))
             , annotation =
-                case expr.annotation of
+                case Debug.log "    GET FROM:" expr.annotation of
                     Ok recordAnn ->
                         case recordAnn.type_ of
                             Annotation.Record fields ->
                                 case getField (Compiler.formatValue selector) fields of
                                     Just ann ->
-                                        Ok { type_ = ann, inferences = recordAnn.inferences }
+                                        Ok { type_ = ann, inferences = Dict.empty }
 
                                     Nothing ->
                                         Err [ Compiler.CouldNotFindField selector ]
@@ -1030,10 +1037,35 @@ get selector expresh =
                             Annotation.GenericRecord name fields ->
                                 case getField (Compiler.formatValue selector) (Compiler.denode fields) of
                                     Just ann ->
-                                        Ok { type_ = ann, inferences = recordAnn.inferences }
+                                        Ok { type_ = ann, inferences = Dict.empty }
 
                                     Nothing ->
                                         Err [ Compiler.CouldNotFindField selector ]
+
+                            Annotation.GenericType nameOfRecord ->
+                                let
+                                    fieldType =
+                                        Annotation.GenericType
+                                            (Compiler.formatValue
+                                                (selector ++ Compiler.indexToString index)
+                                            )
+                                in
+                                Ok
+                                    { type_ = fieldType
+                                    , inferences =
+                                        Dict.empty
+                                            |> Compiler.addInference
+                                                nameOfRecord
+                                                (Annotation.GenericRecord (Compiler.nodify nameOfRecord)
+                                                    (Compiler.nodify
+                                                        [ Compiler.nodify
+                                                            ( Compiler.nodify selector
+                                                            , Compiler.nodify fieldType
+                                                            )
+                                                        ]
+                                                    )
+                                                )
+                                    }
 
                             otherwise ->
                                 expr.annotation
@@ -1320,45 +1352,6 @@ autopipe committed topFn expressions =
                     _ ->
                         Exp.Application
                             (List.map (Compiler.nodify << parens) (topFn :: expressions))
-
-
-{-| -}
-lambdaWith : List ( String, Elm.Annotation.Annotation ) -> Expression -> Expression
-lambdaWith args (Compiler.Expression toExpr) =
-    Compiler.Expression <|
-        \index ->
-            let
-                expr =
-                    toExpr index
-            in
-            { expression =
-                Exp.LambdaExpression
-                    { args = Compiler.nodifyAll (List.map (Pattern.VarPattern << Tuple.first) args)
-                    , expression = Compiler.nodify expr.expression
-                    }
-            , annotation =
-                case expr.annotation of
-                    Err err ->
-                        Err err
-
-                    Ok return ->
-                        List.foldr
-                            (\ann fnbody ->
-                                { type_ =
-                                    Annotation.FunctionTypeAnnotation
-                                        (Compiler.nodify ann.type_)
-                                        (Compiler.nodify fnbody.type_)
-                                , inferences =
-                                    Compiler.mergeInferences
-                                        ann.inferences
-                                        fnbody.inferences
-                                }
-                            )
-                            return
-                            (List.map (Compiler.getInnerInference << Tuple.second) args)
-                            |> Ok
-            , imports = expr.imports
-            }
 
 
 {-| -}
@@ -2005,6 +1998,11 @@ declaration name (Compiler.Expression toBody) =
     }
         |> Declaration.FunctionDeclaration
         |> Compiler.Declaration Compiler.NotExposed body.imports
+
+
+lambdaWith : List ( String, Elm.Annotation.Annotation ) -> Expression -> Expression
+lambdaWith args fullExp =
+    function (List.map (\( name, ann ) -> ( name, Just ann )) args) (\_ -> fullExp)
 
 
 {-|
