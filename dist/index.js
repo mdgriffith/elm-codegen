@@ -327,11 +327,12 @@ function init(install_dir) {
 }
 function install_from_codegen_json(options) {
     return __awaiter(this, void 0, void 0, function () {
-        var cwd, codeGenJson, install_dir, _i, _a, _b, key, value, elmSources, item, docs;
-        return __generator(this, function (_c) {
-            console.log("Installing " + chalk_1.default.cyan("elm-codegen") + " dependencies");
+        var cwd, codeGenJson, install_dir, _i, _a, _b, key, value, elmSources, _c, _d, item, docs;
+        return __generator(this, function (_e) {
+            console.log("Installing dependencies from " + chalk_1.default.yellow("elm.codegen.json"));
             cwd = options.cwd || ".";
             codeGenJson = getCodeGenJson();
+            console.log(codeGenJson);
             install_dir = path.join(cwd, options.output || "codegen");
             for (_i = 0, _a = Object.entries(codeGenJson.dependencies.packages); _i < _a.length; _i++) {
                 _b = _a[_i], key = _b[0], value = _b[1];
@@ -340,8 +341,11 @@ function install_from_codegen_json(options) {
                 install_package(key, install_dir, value);
             }
             elmSources = [];
-            for (item in codeGenJson.dependencies.local) {
+            for (_c = 0, _d = codeGenJson.dependencies.local; _c < _d.length; _c++) {
+                item = _d[_c];
+                console.log("Installing " + item);
                 if (item.endsWith(".json")) {
+                    console.log("From json " + item);
                     docs = JSON.parse(fs.readFileSync(item).toString());
                     run_package_generator(install_dir, { docs: docs });
                 }
@@ -410,7 +414,7 @@ function action(cmd, pkg, options, com) {
                     // Package specified
                     if (pkg.endsWith(".json")) {
                         if (codeGenJson.dependencies.local.includes(pkg)) {
-                            console.log(pkg + " is already installed!");
+                            console.log(format_block([chalk_1.default.cyan(pkg) + " is already installed!"]));
                             process.exit(1);
                         }
                         console.log(format_block(["Adding " + chalk_1.default.cyan(pkg) + " to local dependencies and installing."]));
@@ -421,7 +425,7 @@ function action(cmd, pkg, options, com) {
                     }
                     else if (pkg.endsWith(".elm")) {
                         if (pkg in codeGenJson.dependencies.local) {
-                            console.log(pkg + " is already installed!");
+                            console.log(format_block([chalk_1.default.cyan(pkg) + " is already installed!"]));
                             process.exit(1);
                         }
                         run_package_generator(install_dir, { elmSource: [fs.readFileSync(pkg).toString()] });

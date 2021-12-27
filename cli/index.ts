@@ -270,9 +270,10 @@ async function init(install_dir: string) {
 }
 
 async function install_from_codegen_json(options: Options) {
-  console.log("Installing " + chalk.cyan("elm-codegen") + " dependencies")
+  console.log("Installing dependencies from " + chalk.yellow("elm.codegen.json"))
   const cwd = options.cwd || "."
   let codeGenJson = getCodeGenJson()
+  console.log(codeGenJson)
   const install_dir = path.join(cwd, options.output || "codegen")
 
   for (let [key, value] of Object.entries(codeGenJson.dependencies.packages)) {
@@ -282,8 +283,10 @@ async function install_from_codegen_json(options: Options) {
   }
   const elmSources = []
 
-  for (const item in codeGenJson.dependencies.local) {
+  for (const item of codeGenJson.dependencies.local) {
+    console.log("Installing " + item)
     if (item.endsWith(".json")) {
+      console.log("From json " + item)
       let docs = JSON.parse(fs.readFileSync(item).toString())
       run_package_generator(install_dir, { docs: docs })
     } else if (item.endsWith(".elm")) {
@@ -340,7 +343,7 @@ async function action(cmd: string, pkg: string | null, options: Options, com: an
       // Package specified
       if (pkg.endsWith(".json")) {
         if (codeGenJson.dependencies.local.includes(pkg)) {
-          console.log(`${pkg} is already installed!`)
+          console.log(format_block([chalk.cyan(pkg) + " is already installed!"]))
           process.exit(1)
         }
         console.log(format_block(["Adding " + chalk.cyan(pkg) + " to local dependencies and installing."]))
@@ -350,7 +353,7 @@ async function action(cmd: string, pkg: string | null, options: Options, com: an
         fs.writeFileSync(path.join(".", "elm.codegen.json"), codeGenJsonToString(codeGenJson))
       } else if (pkg.endsWith(".elm")) {
         if (pkg in codeGenJson.dependencies.local) {
-          console.log(`${pkg} is already installed!`)
+          console.log(format_block([chalk.cyan(pkg) + " is already installed!"]))
           process.exit(1)
         }
         run_package_generator(install_dir, { elmSource: [fs.readFileSync(pkg).toString()] })

@@ -11,7 +11,7 @@
     "build:docs": "elm make --docs=docs.json",
     "pkg:build": "cd cli/gen-package; elm make src/Generate.elm --optimize --output=../../dist/gen-package.js",
     "pkg:build-debug": "cd cli/gen-package; elm make src/Generate.elm --output=../../dist/gen-package.js",
-    "pkg:generate-codegen-bindings": "node dist/index.js install docs.json --output prefab-src --cwd cli/gen-package",
+    "pkg:generate-codegen-bindings": "node dist/index.js install --cwd cli/gen-package",
     "pkg:test-install": "node dist/index.js src/Generate.elm --output engine --cwd cli/gen-package --debug --flags-from playground/docs/gql-docs.json",
     "pkg:install-elm-json": "(npm run build; node dist/index.js install elm/json)",
     "pkg:install-elm-core": "(npm run build; node dist/index.js install elm/core)",
