@@ -744,16 +744,27 @@ formatType str =
 extractListAnnotation :
     List ExpressionDetails
     -> List Annotation.TypeAnnotation
-    -> Result (List InferenceError) (List Annotation.TypeAnnotation)
-extractListAnnotation expressions annotations =
+    -> Dict String Annotation.TypeAnnotation
+    ->
+        Result
+            (List InferenceError)
+            { types : List Annotation.TypeAnnotation
+            , inferences : Dict String Annotation.TypeAnnotation
+            }
+extractListAnnotation expressions annotations inferences =
     case expressions of
         [] ->
-            Ok (List.reverse annotations)
+            Ok
+                { types = List.reverse annotations
+                , inferences = inferences
+                }
 
         top :: remain ->
             case top.annotation of
                 Ok ann ->
-                    extractListAnnotation remain (ann.type_ :: annotations)
+                    extractListAnnotation remain
+                        (ann.type_ :: annotations)
+                        (mergeInferences inferences ann.inferences)
 
                 Err err ->
                     Err err
@@ -801,27 +812,6 @@ threadHelper index exps rendered =
             threadHelper (next index)
                 remain
                 (toExpDetails index :: rendered)
-
-
-{-| -}
-applyType :
-    Result
-        (List InferenceError)
-        Inference
-    -> List ExpressionDetails
-    -> Result (List InferenceError) Inference
-applyType annotation args =
-    case annotation of
-        Err err ->
-            Err err
-
-        Ok topAnnotation ->
-            case extractListAnnotation args [] of
-                Ok types ->
-                    applyTypeHelper topAnnotation.inferences topAnnotation.type_ types
-
-                Err err ->
-                    Err err
 
 
 type alias VariableCache =
@@ -1146,6 +1136,27 @@ resolveName restrictions name cache =
 
         Nothing ->
             Ok (Annotation.GenericType name)
+
+
+{-| -}
+applyType :
+    Result
+        (List InferenceError)
+        Inference
+    -> List ExpressionDetails
+    -> Result (List InferenceError) Inference
+applyType annotation args =
+    case annotation of
+        Err err ->
+            Err err
+
+        Ok topAnnotation ->
+            case extractListAnnotation args [] topAnnotation.inferences of
+                Ok extracted ->
+                    applyTypeHelper extracted.inferences topAnnotation.type_ extracted.types
+
+                Err err ->
+                    Err err
 
 
 {-| -}
