@@ -168,7 +168,7 @@ inferenceErrorToString inf =
             "Case statement is empty"
 
         FunctionAppliedToTooManyArgs ->
-            "A funciton is applied to too many arguments"
+            "A function is applied to too many arguments"
 
         DuplicateFieldInRecord fieldName ->
             "There is a duplicate field in a record: " ++ fieldName

@@ -21,13 +21,13 @@ module Elm exposing
     , plus, minus, multiply, divide, intDivide, power
     , lt, gt, lte, gte, and, or
     , keep, skip
-    , slash, question
+    , slash, query
     , portIncoming, portOutgoing
     , parse, unsafe
     , toString, signature, expressionImports
     , declarationToString, declarationImports
     , value, valueFrom
-    , lambdaWith
+    , facts, lambdaWith
     )
 
 {-|
@@ -114,7 +114,7 @@ For precise control over what is rendered for the module comment, use [fileWith]
 
 ## Url parsing
 
-@docs slash, question
+@docs slash, query
 
 
 # Ports
@@ -155,6 +155,7 @@ import Elm.Syntax.Range as Range
 import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Comments
 import Internal.Compiler as Compiler
+import Internal.Types
 import Internal.Write
 import Set
 
@@ -179,6 +180,43 @@ expressionImports exp =
 toString : Expression -> String
 toString (Compiler.Expression exp) =
     Internal.Write.writeExpression (exp Compiler.startIndex |> .expression)
+
+
+{-| -}
+facts : Expression -> Result String (List ( String, String ))
+facts (Compiler.Expression exp) =
+    let
+        expresh =
+            exp Compiler.startIndex
+    in
+    case expresh.annotation of
+        Ok sig ->
+            sig.inferences
+                |> Dict.toList
+                |> List.map
+                    (\( key, type_ ) ->
+                        ( key, Internal.Write.writeAnnotation type_ )
+                    )
+                |> Ok
+
+        -- case Compiler.resolveVariables sig.inferences sig.type_ of
+        --     Ok finalType ->
+        --         Internal.Write.writeAnnotation finalType
+        --     Err errMsg ->
+        --         errMsg
+        Err inferenceError ->
+            List.foldl
+                (\err str ->
+                    case str of
+                        "" ->
+                            Compiler.inferenceErrorToString err
+
+                        _ ->
+                            str ++ "\n\n" ++ Compiler.inferenceErrorToString err
+                )
+                ""
+                inferenceError
+                |> Err
 
 
 {-| -}
@@ -885,6 +923,10 @@ record fields =
                                     infs =
                                         List.foldl
                                             (\( name, ann ) gathered ->
+                                                let
+                                                    _ =
+                                                        Debug.log "    recordgathering:" (Dict.keys ann.inferences)
+                                                in
                                                 Compiler.mergeInferences ann.inferences gathered
                                             )
                                             Dict.empty
@@ -1036,7 +1078,7 @@ get selector recordExpression =
                             Annotation.Record fields ->
                                 case getField (Compiler.formatValue selector) fields of
                                     Just ann ->
-                                        Ok { type_ = ann, inferences = Dict.empty }
+                                        Ok { type_ = ann, inferences = recordAnn.inferences }
 
                                     Nothing ->
                                         Err [ Compiler.CouldNotFindField selector ]
@@ -1044,7 +1086,7 @@ get selector recordExpression =
                             Annotation.GenericRecord name fields ->
                                 case getField (Compiler.formatValue selector) (Compiler.denode fields) of
                                     Just ann ->
-                                        Ok { type_ = ann, inferences = Dict.empty }
+                                        Ok { type_ = ann, inferences = recordAnn.inferences }
 
                                     Nothing ->
                                         Err [ Compiler.CouldNotFindField selector ]
@@ -1060,7 +1102,7 @@ get selector recordExpression =
                                 Ok
                                     { type_ = fieldType
                                     , inferences =
-                                        Dict.empty
+                                        recordAnn.inferences
                                             |> Compiler.addInference
                                                 nameOfRecord
                                                 (Annotation.GenericRecord (Compiler.nodify nameOfRecord)
@@ -1367,11 +1409,11 @@ fn arg1BaseName toExpression =
     Compiler.Expression <|
         \index ->
             let
-                localIndex =
+                childIndex =
                     Compiler.dive index
 
                 arg1Name =
-                    arg1BaseName ++ Compiler.indexToString localIndex
+                    arg1BaseName ++ Compiler.indexToString index
 
                 arg1Type =
                     Elm.Annotation.var arg1Name
@@ -1385,7 +1427,7 @@ fn arg1BaseName toExpression =
                     toExpression arg1
 
                 expr =
-                    toExpr localIndex
+                    toExpr childIndex
             in
             { expression =
                 Exp.LambdaExpression
@@ -1406,7 +1448,7 @@ functionReduced argBaseName argType toExpression =
     Compiler.Expression <|
         \index ->
             let
-                localIndex =
+                childIndex =
                     Compiler.dive index
 
                 arg1 =
@@ -1416,7 +1458,7 @@ functionReduced argBaseName argType toExpression =
                     toExpression arg1
 
                 expr =
-                    toExpr localIndex
+                    toExpr childIndex
             in
             { expression =
                 betaReduce <|
@@ -1536,10 +1578,10 @@ fn2 :
     -> Expression
 fn2 oneBaseName twoBaseName toExpression =
     Compiler.Expression <|
-        \parentIndex ->
+        \index ->
             let
-                index =
-                    Compiler.dive parentIndex
+                childIndex =
+                    Compiler.dive index
 
                 oneName =
                     oneBaseName ++ Compiler.indexToString index
@@ -1560,7 +1602,7 @@ fn2 oneBaseName twoBaseName toExpression =
                     valueWith [] twoName twoType
 
                 ( newIndex, expr ) =
-                    Compiler.toExpressionDetails index (toExpression arg1 arg2)
+                    Compiler.toExpressionDetails childIndex (toExpression arg1 arg2)
             in
             { expression =
                 Exp.LambdaExpression
@@ -1615,11 +1657,8 @@ fn3 :
     -> Expression
 fn3 oneBaseName twoBaseName threeBaseName toExpression =
     Compiler.Expression <|
-        \parentIndex ->
+        \index ->
             let
-                index =
-                    Compiler.dive parentIndex
-
                 oneName =
                     oneBaseName ++ Compiler.indexToString index
 
@@ -1650,7 +1689,7 @@ fn3 oneBaseName twoBaseName threeBaseName toExpression =
                     valueWith [] threeName threeType
 
                 ( newIndex, expr ) =
-                    Compiler.toExpressionDetails index (toExpression arg1 arg2 arg3)
+                    Compiler.toExpressionDetails (Compiler.dive index) (toExpression arg1 arg2 arg3)
             in
             { expression =
                 Exp.LambdaExpression
@@ -1681,11 +1720,8 @@ fn4 :
     -> Expression
 fn4 oneBaseName twoBaseName threeBaseName fourBaseName toExpression =
     Compiler.Expression <|
-        \parentIndex ->
+        \index ->
             let
-                index =
-                    Compiler.dive parentIndex
-
                 oneName =
                     oneBaseName ++ Compiler.indexToString index
 
@@ -1727,7 +1763,7 @@ fn4 oneBaseName twoBaseName threeBaseName fourBaseName toExpression =
                     valueWith [] fourName fourType
 
                 ( newIndex, expr ) =
-                    Compiler.toExpressionDetails index (toExpression arg1 arg2 arg3 arg4)
+                    Compiler.toExpressionDetails (Compiler.dive index) (toExpression arg1 arg2 arg3 arg4)
             in
             { expression =
                 Exp.LambdaExpression
@@ -1761,11 +1797,8 @@ fn5 :
     -> Expression
 fn5 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName toExpression =
     Compiler.Expression <|
-        \parentIndex ->
+        \index ->
             let
-                index =
-                    Compiler.dive parentIndex
-
                 oneName =
                     oneBaseName ++ Compiler.indexToString index
 
@@ -1818,7 +1851,7 @@ fn5 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName toExpression
                     valueWith [] fiveName fiveType
 
                 ( newIndex, expr ) =
-                    Compiler.toExpressionDetails index (toExpression arg1 arg2 arg3 arg4 arg5)
+                    Compiler.toExpressionDetails (Compiler.dive index) (toExpression arg1 arg2 arg3 arg4 arg5)
             in
             { expression =
                 Exp.LambdaExpression
@@ -1855,11 +1888,8 @@ fn6 :
     -> Expression
 fn6 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName sixBaseName toExpression =
     Compiler.Expression <|
-        \parentIndex ->
+        \index ->
             let
-                index =
-                    Compiler.dive parentIndex
-
                 oneName =
                     oneBaseName ++ Compiler.indexToString index
 
@@ -1923,7 +1953,7 @@ fn6 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName sixBaseName 
                     valueWith [] sixName sixType
 
                 ( newIndex, expr ) =
-                    Compiler.toExpressionDetails index (toExpression arg1 arg2 arg3 arg4 arg5 arg6)
+                    Compiler.toExpressionDetails (Compiler.dive index) (toExpression arg1 arg2 arg3 arg4 arg5 arg6)
             in
             { expression =
                 Exp.LambdaExpression
@@ -2039,10 +2069,10 @@ lambdaWith args fullExp =
 function : List ( String, Maybe Elm.Annotation.Annotation ) -> (List Expression -> Expression) -> Expression
 function initialArgList toFullExpression =
     Compiler.Expression <|
-        \parentIndex ->
+        \index ->
             let
-                index =
-                    Compiler.dive parentIndex
+                childIndex =
+                    Compiler.dive index
 
                 args =
                     List.foldl
@@ -2088,7 +2118,7 @@ function initialArgList toFullExpression =
                 expr =
                     case fullExpression of
                         Compiler.Expression toExpr ->
-                            toExpr index
+                            toExpr childIndex
             in
             { expression =
                 Exp.LambdaExpression
@@ -2281,18 +2311,17 @@ type BinOp
     = BinOp String Infix.InfixDirection Int
 
 
-{-| `>>`
--}
-compose : Expression -> Expression -> Expression
-compose =
-    applyBinOp (BinOp ">>" Infix.Left 9)
 
-
-{-| `<<`
--}
-composeLeft : Expression -> Expression -> Expression
-composeLeft =
-    applyBinOp (BinOp "<<" Infix.Right 9)
+-- {-| `>>`
+-- -}
+-- compose : Expression -> Expression -> Expression
+-- compose =
+--     applyBinOp (BinOp ">>" Infix.Left 9)
+-- {-| `<<`
+-- -}
+-- composeLeft : Expression -> Expression -> Expression
+-- composeLeft =
+--     applyBinOp (BinOp "<<" Infix.Right 9)
 
 
 {-| The to-the-power-of operator `^`
@@ -2313,14 +2342,12 @@ multiply =
 -}
 divide : Expression -> Expression -> Expression
 divide =
-    applyInfix (BinOp "/" Infix.Left 7)
-        (valueWith
-            []
-            "/"
-            (Elm.Annotation.function
-                [ Elm.Annotation.float, Elm.Annotation.float ]
-                Elm.Annotation.float
-            )
+    applyInfix2 (BinOp "/" Infix.Left 7)
+        (Internal.Types.function
+            [ Internal.Types.float
+            , Internal.Types.float
+            ]
+            Internal.Types.float
         )
 
 
@@ -2328,14 +2355,12 @@ divide =
 -}
 intDivide : Expression -> Expression -> Expression
 intDivide =
-    applyInfix (BinOp "//" Infix.Left 7)
-        (valueWith
-            []
-            "/"
-            (Elm.Annotation.function
-                [ Elm.Annotation.int, Elm.Annotation.int ]
-                Elm.Annotation.int
-            )
+    applyInfix2 (BinOp "//" Infix.Left 7)
+        (Internal.Types.function
+            [ Internal.Types.int
+            , Internal.Types.int
+            ]
+            Internal.Types.int
         )
 
 
@@ -2357,27 +2382,13 @@ minus =
 -}
 append : Expression -> Expression -> Expression
 append =
-    applyInfix
+    applyInfix2
         (BinOp "++" Infix.Right 5)
-        (valueWith
-            []
-            "append"
-            (Elm.Annotation.function
-                [ Elm.Annotation.namedWith
-                    []
-                    "List"
-                    [ Elm.Annotation.var "a" ]
-                , Elm.Annotation.namedWith
-                    []
-                    "List"
-                    [ Elm.Annotation.var "a" ]
-                ]
-                (Elm.Annotation.namedWith
-                    []
-                    "List"
-                    [ Elm.Annotation.var "a" ]
-                )
-            )
+        (Internal.Types.function
+            [ Internal.Types.appendable
+            , Internal.Types.appendable
+            ]
+            Internal.Types.appendable
         )
 
 
@@ -2385,16 +2396,12 @@ append =
 -}
 cons : Expression -> Expression -> Expression
 cons =
-    applyInfix (BinOp "::" Infix.Right 5)
-        (valueWith
-            []
-            "cons"
-            (Elm.Annotation.function
-                [ Elm.Annotation.var "a"
-                , Elm.Annotation.list (Elm.Annotation.var "a")
-                ]
-                (Elm.Annotation.list (Elm.Annotation.var "a"))
-            )
+    applyInfix2 (BinOp "::" Infix.Right 5)
+        (Internal.Types.function
+            [ Internal.Types.var "a"
+            , Internal.Types.list (Internal.Types.var "a")
+            ]
+            (Internal.Types.list (Internal.Types.var "a"))
         )
 
 
@@ -2402,16 +2409,12 @@ cons =
 -}
 equal : Expression -> Expression -> Expression
 equal =
-    applyInfix (BinOp "==" Infix.Left 4)
-        (valueWith
-            []
-            "equal"
-            (Elm.Annotation.function
-                [ Elm.Annotation.var "a"
-                , Elm.Annotation.var "a"
-                ]
-                Elm.Annotation.bool
-            )
+    applyInfix2 (BinOp "==" Infix.Left 4)
+        (Internal.Types.function
+            [ Internal.Types.var "a"
+            , Internal.Types.var "a"
+            ]
+            Internal.Types.bool
         )
 
 
@@ -2419,14 +2422,12 @@ equal =
 -}
 notEqual : Expression -> Expression -> Expression
 notEqual =
-    applyInfix (BinOp "/=" Infix.Left 4)
-        (valueWith
-            []
-            "equal"
-            (Elm.Annotation.function
-                [ Elm.Annotation.var "a", Elm.Annotation.var "a" ]
-                Elm.Annotation.bool
-            )
+    applyInfix2 (BinOp "/=" Infix.Left 4)
+        (Internal.Types.function
+            [ Internal.Types.var "a"
+            , Internal.Types.var "a"
+            ]
+            Internal.Types.bool
         )
 
 
@@ -2434,14 +2435,12 @@ notEqual =
 -}
 lt : Expression -> Expression -> Expression
 lt =
-    applyInfix (BinOp "<" Infix.Non 4)
-        (valueWith
-            []
-            "equal"
-            (Elm.Annotation.function
-                [ Elm.Annotation.var "comparable", Elm.Annotation.var "comparable" ]
-                Elm.Annotation.bool
-            )
+    applyInfix2 (BinOp "<" Infix.Non 4)
+        (Internal.Types.function
+            [ Internal.Types.comparable
+            , Internal.Types.comparable
+            ]
+            Internal.Types.bool
         )
 
 
@@ -2449,14 +2448,12 @@ lt =
 -}
 gt : Expression -> Expression -> Expression
 gt =
-    applyInfix (BinOp ">" Infix.Non 4)
-        (valueWith
-            []
-            "equal"
-            (Elm.Annotation.function
-                [ Elm.Annotation.var "comparable", Elm.Annotation.var "comparable" ]
-                Elm.Annotation.bool
-            )
+    applyInfix2 (BinOp ">" Infix.Non 4)
+        (Internal.Types.function
+            [ Internal.Types.comparable
+            , Internal.Types.comparable
+            ]
+            Internal.Types.bool
         )
 
 
@@ -2464,14 +2461,12 @@ gt =
 -}
 lte : Expression -> Expression -> Expression
 lte =
-    applyInfix (BinOp "<=" Infix.Non 4)
-        (valueWith
-            []
-            "equal"
-            (Elm.Annotation.function
-                [ Elm.Annotation.var "comparable", Elm.Annotation.var "comparable" ]
-                Elm.Annotation.bool
-            )
+    applyInfix2 (BinOp "<=" Infix.Non 4)
+        (Internal.Types.function
+            [ Internal.Types.comparable
+            , Internal.Types.comparable
+            ]
+            Internal.Types.bool
         )
 
 
@@ -2479,14 +2474,12 @@ lte =
 -}
 gte : Expression -> Expression -> Expression
 gte =
-    applyInfix (BinOp ">=" Infix.Non 4)
-        (valueWith
-            []
-            "equal"
-            (Elm.Annotation.function
-                [ Elm.Annotation.var "comparable", Elm.Annotation.var "comparable" ]
-                Elm.Annotation.bool
-            )
+    applyInfix2 (BinOp ">=" Infix.Non 4)
+        (Internal.Types.function
+            [ Internal.Types.comparable
+            , Internal.Types.comparable
+            ]
+            Internal.Types.bool
         )
 
 
@@ -2494,14 +2487,12 @@ gte =
 -}
 and : Expression -> Expression -> Expression
 and =
-    applyInfix (BinOp "&&" Infix.Right 3)
-        (valueWith
-            []
-            "equal"
-            (Elm.Annotation.function
-                [ Elm.Annotation.bool, Elm.Annotation.bool ]
-                Elm.Annotation.bool
-            )
+    applyInfix2 (BinOp "&&" Infix.Right 3)
+        (Internal.Types.function
+            [ Internal.Types.bool
+            , Internal.Types.bool
+            ]
+            Internal.Types.bool
         )
 
 
@@ -2509,14 +2500,12 @@ and =
 -}
 or : Expression -> Expression -> Expression
 or =
-    applyInfix (BinOp "||" Infix.Right 2)
-        (valueWith
-            []
-            "equal"
-            (Elm.Annotation.function
-                [ Elm.Annotation.bool, Elm.Annotation.bool ]
-                Elm.Annotation.bool
-            )
+    applyInfix2 (BinOp "||" Infix.Right 2)
+        (Internal.Types.function
+            [ Internal.Types.bool
+            , Internal.Types.bool
+            ]
+            Internal.Types.bool
         )
 
 
@@ -2527,28 +2516,104 @@ or =
 -}
 keep : Expression -> Expression -> Expression
 keep =
-    applyBinOp (BinOp "|=" Infix.Left 5)
+    applyInfix2 (BinOp "|=" Infix.Left 5)
+        -- Parser (a -> b) -> Parser a -> Parser b
+        (Internal.Types.function
+            [ Internal.Types.custom [ "Parser" ]
+                "Parser"
+                [ Internal.Types.var "a"
+                , Internal.Types.var "b"
+                ]
+            , Internal.Types.custom [ "Parser" ]
+                "Parser"
+                [ Internal.Types.var "a"
+                ]
+            ]
+            (Internal.Types.custom [ "Parser" ]
+                "Parser"
+                [ Internal.Types.var "b"
+                ]
+            )
+        )
 
 
 {-| `|.`
 -}
 skip : Expression -> Expression -> Expression
 skip =
-    applyBinOp (BinOp "|." Infix.Left 6)
+    applyInfix2 (BinOp "|." Infix.Left 6)
+        (Internal.Types.function
+            [ Internal.Types.custom [ "Parser" ]
+                "Parser"
+                [ Internal.Types.var "keep"
+                ]
+            , Internal.Types.custom [ "Parser" ]
+                "Parser"
+                [ Internal.Types.var "ignore"
+                ]
+            ]
+            (Internal.Types.custom [ "Parser" ]
+                "Parser"
+                [ Internal.Types.var "keep"
+                ]
+            )
+        )
 
 
 {-| `</>` used in url parsing
 -}
 slash : Expression -> Expression -> Expression
 slash =
-    applyBinOp (BinOp "</>" Infix.Right 7)
+    applyInfix2 (BinOp "</>" Infix.Right 7)
+        --  Parser a b -> Parser b c -> Parser a c
+        (Internal.Types.function
+            [ Internal.Types.custom [ "Url", "Parser" ]
+                "Parser"
+                [ Internal.Types.var "a"
+                , Internal.Types.var "b"
+                ]
+            , Internal.Types.custom [ "Url", "Parser" ]
+                "Parser"
+                [ Internal.Types.var "b"
+                , Internal.Types.var "c"
+                ]
+            ]
+            (Internal.Types.custom [ "Url", "Parser" ]
+                "Parser"
+                [ Internal.Types.var "a"
+                , Internal.Types.var "c"
+                ]
+            )
+        )
 
 
 {-| `<?>` used in url parsing
 -}
-question : Expression -> Expression -> Expression
-question =
-    applyBinOp (BinOp "<?>" Infix.Left 8)
+query : Expression -> Expression -> Expression
+query =
+    applyInfix2 (BinOp "<?>" Infix.Left 8)
+        -- Parser a (query -> b) -> Parser query -> Parser a b
+        (Internal.Types.function
+            [ Internal.Types.custom [ "Url", "Parser" ]
+                "Parser"
+                [ Internal.Types.var "a"
+                , Internal.Types.function
+                    [ Internal.Types.var "query"
+                    ]
+                    (Internal.Types.var "b")
+                ]
+            , Internal.Types.custom [ "Url", "Parser", "Query" ]
+                "Parser"
+                [ Internal.Types.var "query"
+                ]
+            ]
+            (Internal.Types.custom [ "Url", "Parser" ]
+                "Parser"
+                [ Internal.Types.var "a"
+                , Internal.Types.var "b"
+                ]
+            )
+        )
 
 
 {-| `|>`
@@ -2566,18 +2631,38 @@ Results in
 -}
 pipe : Expression -> Expression -> Expression
 pipe r l =
-    applyBinOp (BinOp "|>" Infix.Left 0) l r
+    applyInfix2 (BinOp "|>" Infix.Left 0)
+        (Internal.Types.function
+            [ Internal.Types.var "a"
+            , Internal.Types.function
+                [ Internal.Types.var "a"
+                ]
+                (Internal.Types.var "b")
+            ]
+            (Internal.Types.var "b")
+        )
+        l
+        r
 
 
 {-| `<|`
 -}
 pipeLeft : Expression -> Expression -> Expression
 pipeLeft =
-    applyBinOp (BinOp "<|" Infix.Right 0)
+    applyInfix2 (BinOp "<|" Infix.Right 0)
+        (Internal.Types.function
+            [ Internal.Types.function
+                [ Internal.Types.var "a"
+                ]
+                (Internal.Types.var "b")
+            , Internal.Types.var "a"
+            ]
+            (Internal.Types.var "b")
+        )
 
 
-applyBinOp : BinOp -> Expression -> Expression -> Expression
-applyBinOp (BinOp symbol dir _) l r =
+applyInfix2 : BinOp -> Annotation.TypeAnnotation -> Expression -> Expression -> Expression
+applyInfix2 (BinOp symbol dir _) infixAnnotation l r =
     Compiler.Expression <|
         \index ->
             let
@@ -2592,36 +2677,17 @@ applyBinOp (BinOp symbol dir _) l r =
                     dir
                     (Compiler.nodify left.expression)
                     (Compiler.nodify right.expression)
-            , annotation = Err []
-            , imports = left.imports ++ right.imports
-            }
-
-
-applyInfix : BinOp -> Expression -> Expression -> Expression -> Expression
-applyInfix (BinOp symbol dir _) fnInf l r =
-    Compiler.Expression <|
-        \index ->
-            let
-                ( fnIndex, inf ) =
-                    Compiler.toExpressionDetails index fnInf
-
-                ( leftIndex, left ) =
-                    Compiler.toExpressionDetails fnIndex l
-
-                ( rightIndex, right ) =
-                    Compiler.toExpressionDetails leftIndex r
-            in
-            { expression =
-                Exp.OperatorApplication symbol
-                    dir
-                    (Compiler.nodify left.expression)
-                    (Compiler.nodify right.expression)
             , annotation =
-                Compiler.applyType inf.annotation
+                Compiler.applyType
+                    (Ok
+                        { type_ = infixAnnotation
+                        , inferences = Dict.empty
+                        }
+                    )
                     [ left
                     , right
                     ]
-            , imports = inf.imports ++ left.imports ++ right.imports
+            , imports = left.imports ++ right.imports
             }
 
 
