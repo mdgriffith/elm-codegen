@@ -384,16 +384,19 @@ prettyDeclarations aliases decls =
                     doc
                         |> Pretty.a (Pretty.string (content ++ "\n"))
                         |> Pretty.a Pretty.line
+                        |> Pretty.a Pretty.line
 
                 Util.Block source ->
                     doc
                         |> Pretty.a (Pretty.string source)
                         |> Pretty.a Pretty.line
                         |> Pretty.a Pretty.line
+                        |> Pretty.a Pretty.line
 
                 Util.Declaration _ _ innerDecl ->
                     doc
                         |> Pretty.a (prettyElmSyntaxDeclaration aliases innerDecl)
+                        |> Pretty.a Pretty.line
                         |> Pretty.a Pretty.line
                         |> Pretty.a Pretty.line
         )

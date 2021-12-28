@@ -923,10 +923,6 @@ record fields =
                                     infs =
                                         List.foldl
                                             (\( name, ann ) gathered ->
-                                                let
-                                                    _ =
-                                                        Debug.log "    recordgathering:" (Dict.keys ann.inferences)
-                                                in
                                                 Compiler.mergeInferences ann.inferences gathered
                                             )
                                             Dict.empty

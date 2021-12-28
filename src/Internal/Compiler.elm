@@ -162,7 +162,15 @@ inferenceErrorToString : InferenceError -> String
 inferenceErrorToString inf =
     case inf of
         MismatchedList one two ->
-            "There are multiple different types in a list!"
+            "There are multiple different types in a list!: \n\n"
+                ++ "\n\n"
+                ++ (Elm.Writer.writeTypeAnnotation (nodify one)
+                        |> Elm.Writer.write
+                   )
+                ++ "\n\n"
+                ++ (Elm.Writer.writeTypeAnnotation (nodify two)
+                        |> Elm.Writer.write
+                   )
 
         EmptyCaseStatement ->
             "Case statement is empty"
@@ -1194,7 +1202,9 @@ applyTypeHelper cache fn args =
                         }
 
                 _ ->
-                    Err [ FunctionAppliedToTooManyArgs ]
+                    Err
+                        [ FunctionAppliedToTooManyArgs
+                        ]
 
 
 unify : Index -> List ExpressionDetails -> Result (List InferenceError) Inference
@@ -1228,8 +1238,10 @@ unifyHelper exps existing =
             case top.annotation of
                 Ok ann ->
                     case unifiable ann.inferences ann.type_ existing.type_ of
-                        ( _, Err _ ) ->
-                            Err [ MismatchedList ann.type_ existing.type_ ]
+                        ( _, Err err ) ->
+                            Err
+                                [ MismatchedList ann.type_ existing.type_
+                                ]
 
                         ( cache, Ok new ) ->
                             unifyHelper remain
