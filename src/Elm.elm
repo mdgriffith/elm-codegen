@@ -10,7 +10,7 @@ module Elm exposing
     , Declaration
     , comment, declaration
     , withDocumentation
-    , fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced
+    , fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, functionAdvanced
     , customType, Variant, variant, variantWith
     , alias
     , expose
@@ -26,7 +26,7 @@ module Elm exposing
     , parse, unsafe
     , toString, signature, expressionImports
     , declarationToString, declarationImports
-    , value, valueFrom
+    , value, valueFrom, valueWith
     , facts, lambdaWith
     )
 
@@ -66,7 +66,7 @@ module Elm exposing
 
 @docs withDocumentation
 
-@docs fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced
+@docs fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, functionAdvanced
 
 
 ## Custom Types
@@ -136,7 +136,7 @@ For precise control over what is rendered for the module comment, use [fileWith]
 
 # Low-level
 
-@docs value, valueFrom
+@docs value, valueFrom, valueWith
 
 -}
 
@@ -245,7 +245,7 @@ signature (Compiler.Expression exp) =
                         _ ->
                             str ++ "\n\n" ++ Compiler.inferenceErrorToString err
                 )
-                ""
+                "Err: "
                 inferenceError
 
 
@@ -523,14 +523,76 @@ valueFrom mod name =
 ---}
 
 
-valueWith : List String -> String -> Elm.Annotation.Annotation -> Expression
-valueWith mod name ann =
-    Compiler.Expression <|
-        \_ ->
-            { expression = Exp.FunctionOrValue mod (Compiler.sanitize name)
-            , annotation = Ok (Compiler.getInnerInference ann)
-            , imports = mod :: Compiler.getAnnotationImports ann
-            }
+valueWithHelper : List String -> String -> Elm.Annotation.Annotation -> Expression
+valueWithHelper mod name ann =
+    valueWith
+        { importFrom = mod
+        , name = name
+        , annotation = Just ann
+        }
+
+
+valueWith :
+    { importFrom : List String
+    , name : String
+    , annotation : Maybe Elm.Annotation.Annotation
+    }
+    -> Expression
+valueWith details =
+    case details.importFrom of
+        [] ->
+            Compiler.Expression <|
+                \index ->
+                    { expression = Exp.FunctionOrValue details.importFrom (Compiler.sanitize details.name)
+                    , annotation =
+                        case details.annotation of
+                            Nothing ->
+                                Ok
+                                    { type_ =
+                                        Annotation.GenericType
+                                            (Compiler.formatValue
+                                                (details.name ++ Compiler.indexToString index)
+                                            )
+                                    , inferences = Dict.empty
+                                    }
+
+                            Just ann ->
+                                Ok (Compiler.getInnerInference ann)
+                    , imports =
+                        case details.annotation of
+                            Nothing ->
+                                []
+
+                            Just ann ->
+                                Compiler.getAnnotationImports ann
+                    }
+
+        _ ->
+            Compiler.Expression <|
+                \index ->
+                    { expression = Exp.FunctionOrValue details.importFrom (Compiler.sanitize details.name)
+                    , annotation =
+                        case details.annotation of
+                            Nothing ->
+                                Ok
+                                    { type_ =
+                                        Annotation.GenericType
+                                            (Compiler.formatValue
+                                                (details.name ++ Compiler.indexToString index)
+                                            )
+                                    , inferences = Dict.empty
+                                    }
+
+                            Just ann ->
+                                Ok (Compiler.getInnerInference ann)
+                    , imports =
+                        case details.annotation of
+                            Nothing ->
+                                [ details.importFrom ]
+
+                            Just ann ->
+                                details.importFrom :: Compiler.getAnnotationImports ann
+                    }
 
 
 {-| Sometimes you may need to add a manual type annotation.
@@ -572,14 +634,23 @@ unit =
 {-| -}
 bool : Bool -> Expression
 bool on =
-    valueWith []
-        (if on then
-            "True"
+    Compiler.Expression <|
+        \_ ->
+            { expression =
+                Exp.FunctionOrValue []
+                    (if on then
+                        "True"
 
-         else
-            "False"
-        )
-        Elm.Annotation.bool
+                     else
+                        "False"
+                    )
+            , annotation =
+                Ok
+                    { inferences = Dict.empty
+                    , type_ = Internal.Types.bool
+                    }
+            , imports = []
+            }
 
 
 {-| -}
@@ -588,7 +659,11 @@ int intVal =
     Compiler.Expression <|
         \_ ->
             { expression = Exp.Integer intVal
-            , annotation = Ok (Compiler.getInnerInference Elm.Annotation.int)
+            , annotation =
+                Ok
+                    { inferences = Dict.empty
+                    , type_ = Internal.Types.int
+                    }
             , imports = []
             }
 
@@ -599,7 +674,11 @@ hex hexVal =
     Compiler.Expression <|
         \_ ->
             { expression = Exp.Hex hexVal
-            , annotation = Ok (Compiler.getInnerInference Elm.Annotation.int)
+            , annotation =
+                Ok
+                    { inferences = Dict.empty
+                    , type_ = Internal.Types.int
+                    }
             , imports = []
             }
 
@@ -610,7 +689,11 @@ float floatVal =
     Compiler.Expression <|
         \_ ->
             { expression = Exp.Floatable floatVal
-            , annotation = Ok (Compiler.getInnerInference Elm.Annotation.float)
+            , annotation =
+                Ok
+                    { inferences = Dict.empty
+                    , type_ = Internal.Types.float
+                    }
             , imports = []
             }
 
@@ -621,7 +704,11 @@ string literal =
     Compiler.Expression <|
         \_ ->
             { expression = Exp.Literal literal
-            , annotation = Ok (Compiler.getInnerInference Elm.Annotation.string)
+            , annotation =
+                Ok
+                    { inferences = Dict.empty
+                    , type_ = Internal.Types.string
+                    }
             , imports = []
             }
 
@@ -632,8 +719,12 @@ char charVal =
     Compiler.Expression <|
         \_ ->
             { expression = Exp.CharLiteral charVal
-            , annotation = Ok (Compiler.getInnerInference Elm.Annotation.char)
-            , imports = []
+            , annotation =
+                Ok
+                    { inferences = Dict.empty
+                    , type_ = Internal.Types.char
+                    }
+            , imports = [ [ "Char" ] ]
             }
 
 
@@ -1415,7 +1506,7 @@ fn arg1BaseName toExpression =
                     Elm.Annotation.var arg1Name
 
                 arg1 =
-                    valueWith []
+                    valueWithHelper []
                         arg1Name
                         arg1Type
 
@@ -1448,7 +1539,7 @@ functionReduced argBaseName argType toExpression =
                     Compiler.dive index
 
                 arg1 =
-                    valueWith [] argBaseName argType
+                    valueWithHelper [] argBaseName argType
 
                 (Compiler.Expression toExpr) =
                     toExpression arg1
@@ -1586,7 +1677,7 @@ fn2 oneBaseName twoBaseName toExpression =
                     Elm.Annotation.var oneName
 
                 arg1 =
-                    valueWith [] oneName oneType
+                    valueWithHelper [] oneName oneType
 
                 twoName =
                     twoBaseName ++ Compiler.indexToString (Compiler.next index)
@@ -1595,7 +1686,7 @@ fn2 oneBaseName twoBaseName toExpression =
                     Elm.Annotation.var twoName
 
                 arg2 =
-                    valueWith [] twoName twoType
+                    valueWithHelper [] twoName twoType
 
                 ( newIndex, expr ) =
                     Compiler.toExpressionDetails childIndex (toExpression arg1 arg2)
@@ -1662,7 +1753,7 @@ fn3 oneBaseName twoBaseName threeBaseName toExpression =
                     Elm.Annotation.var oneName
 
                 arg1 =
-                    valueWith [] oneName oneType
+                    valueWithHelper [] oneName oneType
 
                 twoName =
                     twoBaseName ++ Compiler.indexToString (Compiler.next index)
@@ -1671,7 +1762,7 @@ fn3 oneBaseName twoBaseName threeBaseName toExpression =
                     Elm.Annotation.var twoName
 
                 arg2 =
-                    valueWith [] twoName twoType
+                    valueWithHelper [] twoName twoType
 
                 threeName =
                     threeBaseName
@@ -1682,7 +1773,7 @@ fn3 oneBaseName twoBaseName threeBaseName toExpression =
                     Elm.Annotation.var threeName
 
                 arg3 =
-                    valueWith [] threeName threeType
+                    valueWithHelper [] threeName threeType
 
                 ( newIndex, expr ) =
                     Compiler.toExpressionDetails (Compiler.dive index) (toExpression arg1 arg2 arg3)
@@ -1725,7 +1816,7 @@ fn4 oneBaseName twoBaseName threeBaseName fourBaseName toExpression =
                     Elm.Annotation.var oneName
 
                 arg1 =
-                    valueWith [] oneName oneType
+                    valueWithHelper [] oneName oneType
 
                 twoName =
                     twoBaseName ++ Compiler.indexToString (Compiler.next index)
@@ -1734,7 +1825,7 @@ fn4 oneBaseName twoBaseName threeBaseName fourBaseName toExpression =
                     Elm.Annotation.var twoName
 
                 arg2 =
-                    valueWith [] twoName twoType
+                    valueWithHelper [] twoName twoType
 
                 threeName =
                     threeBaseName
@@ -1745,7 +1836,7 @@ fn4 oneBaseName twoBaseName threeBaseName fourBaseName toExpression =
                     Elm.Annotation.var threeName
 
                 arg3 =
-                    valueWith [] threeName threeType
+                    valueWithHelper [] threeName threeType
 
                 fourName =
                     fourBaseName
@@ -1756,7 +1847,7 @@ fn4 oneBaseName twoBaseName threeBaseName fourBaseName toExpression =
                     Elm.Annotation.var fourName
 
                 arg4 =
-                    valueWith [] fourName fourType
+                    valueWithHelper [] fourName fourType
 
                 ( newIndex, expr ) =
                     Compiler.toExpressionDetails (Compiler.dive index) (toExpression arg1 arg2 arg3 arg4)
@@ -1802,7 +1893,7 @@ fn5 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName toExpression
                     Elm.Annotation.var oneName
 
                 arg1 =
-                    valueWith [] oneName oneType
+                    valueWithHelper [] oneName oneType
 
                 twoName =
                     twoBaseName ++ Compiler.indexToString (Compiler.next index)
@@ -1811,7 +1902,7 @@ fn5 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName toExpression
                     Elm.Annotation.var twoName
 
                 arg2 =
-                    valueWith [] twoName twoType
+                    valueWithHelper [] twoName twoType
 
                 threeName =
                     threeBaseName
@@ -1822,7 +1913,7 @@ fn5 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName toExpression
                     Elm.Annotation.var threeName
 
                 arg3 =
-                    valueWith [] threeName threeType
+                    valueWithHelper [] threeName threeType
 
                 fourName =
                     fourBaseName
@@ -1833,7 +1924,7 @@ fn5 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName toExpression
                     Elm.Annotation.var fourName
 
                 arg4 =
-                    valueWith [] fourName fourType
+                    valueWithHelper [] fourName fourType
 
                 fiveName =
                     fiveBaseName
@@ -1844,7 +1935,7 @@ fn5 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName toExpression
                     Elm.Annotation.var fiveName
 
                 arg5 =
-                    valueWith [] fiveName fiveType
+                    valueWithHelper [] fiveName fiveType
 
                 ( newIndex, expr ) =
                     Compiler.toExpressionDetails (Compiler.dive index) (toExpression arg1 arg2 arg3 arg4 arg5)
@@ -1893,7 +1984,7 @@ fn6 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName sixBaseName 
                     Elm.Annotation.var oneName
 
                 arg1 =
-                    valueWith [] oneName oneType
+                    valueWithHelper [] oneName oneType
 
                 twoName =
                     twoBaseName ++ Compiler.indexToString (Compiler.next index)
@@ -1902,7 +1993,7 @@ fn6 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName sixBaseName 
                     Elm.Annotation.var twoName
 
                 arg2 =
-                    valueWith [] twoName twoType
+                    valueWithHelper [] twoName twoType
 
                 threeName =
                     threeBaseName
@@ -1913,7 +2004,7 @@ fn6 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName sixBaseName 
                     Elm.Annotation.var threeName
 
                 arg3 =
-                    valueWith [] threeName threeType
+                    valueWithHelper [] threeName threeType
 
                 fourName =
                     fourBaseName
@@ -1924,7 +2015,7 @@ fn6 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName sixBaseName 
                     Elm.Annotation.var fourName
 
                 arg4 =
-                    valueWith [] fourName fourType
+                    valueWithHelper [] fourName fourType
 
                 fiveName =
                     fiveBaseName
@@ -1935,7 +2026,7 @@ fn6 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName sixBaseName 
                     Elm.Annotation.var fiveName
 
                 arg5 =
-                    valueWith [] fiveName fiveType
+                    valueWithHelper [] fiveName fiveType
 
                 sixName =
                     sixBaseName
@@ -1946,7 +2037,7 @@ fn6 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName sixBaseName 
                     Elm.Annotation.var sixName
 
                 arg6 =
-                    valueWith [] sixName sixType
+                    valueWithHelper [] sixName sixType
 
                 ( newIndex, expr ) =
                     Compiler.toExpressionDetails (Compiler.dive index) (toExpression arg1 arg2 arg3 arg4 arg5 arg6)
@@ -2044,6 +2135,57 @@ lambdaWith args fullExp =
     function (List.map (\( name, ann ) -> ( name, Just ann )) args) (\_ -> fullExp)
 
 
+{-| For when you want the most control over a function being generated.
+
+This is for when:
+
+    1. You want your variable names to be exactly as provided(i.e. you don't want the variable name collision protection)
+    2. You know exactly what type each variable should be.
+
+-}
+functionAdvanced : List ( String, Elm.Annotation.Annotation ) -> Expression -> Expression
+functionAdvanced args fullExpression =
+    Compiler.Expression <|
+        \index ->
+            let
+                childIndex =
+                    Compiler.dive index
+
+                expr =
+                    case fullExpression of
+                        Compiler.Expression toExpr ->
+                            toExpr childIndex
+            in
+            { expression =
+                Exp.LambdaExpression
+                    { args =
+                        List.map
+                            (\( name, ann ) -> Compiler.nodify (Pattern.VarPattern name))
+                            args
+                    , expression = Compiler.nodify expr.expression
+                    }
+            , annotation =
+                case expr.annotation of
+                    Err err ->
+                        Err err
+
+                    Ok return ->
+                        Ok
+                            { type_ =
+                                List.foldr
+                                    (\( name, Compiler.Annotation ann ) fnbody ->
+                                        Annotation.FunctionTypeAnnotation
+                                            (Compiler.nodify ann.annotation)
+                                            (Compiler.nodify fnbody)
+                                    )
+                                    return.type_
+                                    args
+                            , inferences = return.inferences
+                            }
+            , imports = expr.imports
+            }
+
+
 {-|
 
         Elm.function
@@ -2091,7 +2233,7 @@ function initialArgList toFullExpression =
                                         maybeType
 
                                 arg =
-                                    valueWith []
+                                    valueWithHelper []
                                         name
                                         argType
                             in
