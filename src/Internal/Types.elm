@@ -1,4 +1,4 @@
-module Internal.Types exposing (appendable, bool, comparable, custom, float, function, int, list, var)
+module Internal.Types exposing (appendable, bool, char, comparable, custom, float, function, int, list, string, var)
 
 import Elm.Syntax.Node as Node exposing (Node(..))
 import Elm.Syntax.Range as Range
@@ -73,6 +73,20 @@ bool : Annotation.TypeAnnotation
 bool =
     Annotation.Typed
         (nodify ( [], "Bool" ))
+        []
+
+
+string : Annotation.TypeAnnotation
+string =
+    Annotation.Typed
+        (nodify ( [], "String" ))
+        []
+
+
+char : Annotation.TypeAnnotation
+char =
+    Annotation.Typed
+        (nodify ( [ "Char" ], "Char" ))
         []
 
 
