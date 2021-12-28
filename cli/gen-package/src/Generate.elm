@@ -107,8 +107,8 @@ moduleToFile docs =
                 |> Elm.withDocumentation " The name of this module. "
                 |> Elm.expose
 
-        ids =
-            Elm.declaration "id_"
+        values =
+            Elm.declaration "values_"
                 (Elm.record
                     (List.filterMap blockToIdField blocks)
                 )
@@ -125,9 +125,8 @@ moduleToFile docs =
         }
         (modNameBlock
             :: generateTypeRecord blocks
-            :: generateTypeBuilderRecord blocks
+            :: values
             :: List.concatMap generateBlocks blocks
-            ++ [ ids ]
         )
 
 
@@ -301,44 +300,10 @@ debug tag exp =
     exp
 
 
-{-| Types are referenced via a big record.
-
-    types =
-        { mutation :
-            { annotation: arg1 -> Elm.Annotation }
-        , make :
-            { ...variants that can be made
-            }
-
-        }
-
-This creates that record
-
--}
-generateTypeBuilderRecord : List Elm.Docs.Block -> Elm.Declaration
-generateTypeBuilderRecord blocks =
-    let
-        maker =
-             blocks
-                |> List.filterMap generateTypeBuilderRecordHelper
-                |> Elm.record
 
 
-
-
-
-            -- case maker of
-            --     (Compiler.Expression toExpression) ->
-            --         toExpression Compiler.startIndex
-            --             |> Debug.log "record"
-    in
-    maker
-        |> Elm.declaration "make_"
-        |> Elm.expose
-
-
-generateTypeBuilderRecordHelper : Elm.Docs.Block -> Maybe Elm.Field
-generateTypeBuilderRecordHelper block =
+block2Maker : Elm.Docs.Block -> Maybe Elm.Expression
+block2Maker block =
     case block of
         Elm.Docs.MarkdownBlock str ->
             Nothing
@@ -350,7 +315,7 @@ generateTypeBuilderRecordHelper block =
                     Nothing
 
                 _ ->
-                    Elm.field union.name
+
                         (Elm.record
                             (List.map
                                 (\( name, tags ) ->
@@ -420,7 +385,7 @@ generateTypeBuilderRecordHelper block =
                                 |> ElmGen.record
 
                     in
-                    Elm.field name
+
                         (Elm.fn "arg" lambdaValue
 
                         )
@@ -469,13 +434,48 @@ generateTypeRecordHelper block =
             Nothing
 
         Elm.Docs.UnionBlock union ->
-            Elm.field union.name (annotationNamed union.name union.args)
-                |> Just
+            case block2Maker block of
+                Nothing ->
+                    Elm.field union.name
+                        (Elm.record
+                            [ Elm.field "annotation"
+                                 (annotationNamed union.name union.args)
+                            ]
+                        )
+                        |> Just
+
+                Just maker ->
+                    Elm.field union.name
+                        (Elm.record
+                            [ Elm.field "annotation"
+                                 (annotationNamed union.name union.args)
+                            , Elm.field "create"
+                                maker
+                            ]
+                        )
+                        |> Just
 
         Elm.Docs.AliasBlock alias ->
-            Elm.field alias.name
-                (annotationNamed alias.name alias.args)
-                |> Just
+            case block2Maker block of
+                Nothing ->
+                    Elm.field alias.name
+                        (Elm.record
+                            [ Elm.field "annotation"
+                                (annotationNamed alias.name alias.args)
+                            ]
+                        )
+                        |> Just
+
+                Just maker ->
+                    Elm.field alias.name
+                        (Elm.record
+                            [ Elm.field "annotation"
+                                (annotationNamed alias.name alias.args)
+                            , Elm.field "create"
+                                maker
+                            ]
+                        )
+                        |> Just
 
         Elm.Docs.ValueBlock value ->
             Nothing
@@ -504,7 +504,7 @@ generateBlocks block =
 
         Elm.Docs.ValueBlock value ->
             let
-                tagName = "fileWith"
+                tagName = "unknown"
                 _ =
                     if value.name == tagName then
                         Debug.log "BLOCK"
@@ -529,11 +529,6 @@ generateBlocks block =
                                     ]
                                 }
 
-                        -- _ =
-                        --     if value.name == tagName then
-                        --         Debug.log "args"  (List.reverse (List.drop 1 captured.values))
-                        --     else
-                        --         (List.reverse (List.drop 1 captured.values))
                     in
                     [ Elm.function
                         ( (List.reverse (List.drop 1 captured.arguments)))
@@ -841,7 +836,7 @@ getArgumentUnpackerForLambdas freshCount tipe functionToCall args =
                 Elm.Type.Lambda _ _ ->
                     -- This is a multiple argument lambda!
                     -- keep recursing!
-                    ElmGen.lambdaBetaReduced (Elm.string varName)
+                    ElmGen.functionReduced (Elm.string varName)
                         (typeToExpression one)
                         (\_ ->
                             Elm.functionReduced varName
@@ -855,7 +850,7 @@ getArgumentUnpackerForLambdas freshCount tipe functionToCall args =
                         )
 
                 _ ->
-                    ElmGen.lambdaBetaReduced (Elm.string varName)
+                    ElmGen.functionReduced (Elm.string varName)
                         (typeToExpression one)
                         (\_ ->
                             Elm.functionReduced varName
