@@ -1,6 +1,6 @@
 {
   "type": "application",
-  "source-directories": ["src", "prefab-src", "../../src"],
+  "source-directories": ["src", "codegen", "../../src"],
   "elm-version": "0.19.1",
   "dependencies": {
     "direct": {

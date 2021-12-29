@@ -7,8 +7,8 @@ import Elm
 import Elm.Annotation as Annotation
 import Elm.Docs
 import Elm.Gen
-import Elm.Gen.Elm as ElmGen
-import Elm.Gen.Elm.Annotation as GenType
+import Gen.Elm as ElmGen
+import Gen.Elm.Annotation as GenType
 import Elm.Type
 import Json.Decode as Json
 import Internal.Compiler as Compiler
@@ -99,7 +99,7 @@ moduleToFile docs =
             String.split "." docs.name
 
         modName =
-            "Elm" :: "Gen" :: sourceModName
+            "Gen" :: sourceModName
 
         modNameBlock =
             Elm.declaration "moduleName_"
@@ -110,7 +110,7 @@ moduleToFile docs =
         values =
             Elm.declaration "values_"
                 (Elm.record
-                    (List.filterMap blockToIdField blocks)
+                    (List.filterMap (blockToIdField sourceModName) blocks)
                 )
 
                 |> Elm.withDocumentation " Every value/function in this module in case you need to refer to it directly. "
@@ -124,9 +124,9 @@ moduleToFile docs =
             ]
         }
         (modNameBlock
-            :: generateTypeRecord blocks
+            :: generateTypeRecord sourceModName blocks
             :: values
-            :: List.concatMap generateBlocks blocks
+            :: List.concatMap (generateBlocks sourceModName) blocks
         )
 
 
@@ -156,8 +156,8 @@ thisModuleName =
         |> Elm.withType (Annotation.list Annotation.string)
 
 
-valueWith : Elm.Expression -> Elm.Type.Type -> Elm.Expression
-valueWith name annotation =
+valueWith : List String -> Elm.Expression -> Elm.Type.Type -> Elm.Expression
+valueWith thisModule name annotation =
     (Elm.apply
         (Elm.valueFrom [ "Elm" ] "withType"
             |> Elm.withType
@@ -168,7 +168,7 @@ valueWith name annotation =
                     (Annotation.namedWith [ "Elm" ] "Expression" [])
                 )
         )
-        [ typeToExpression annotation
+        [ typeToExpression thisModule annotation
         , Elm.apply
             (Elm.valueFrom
                 [ "Elm" ]
@@ -244,8 +244,8 @@ localType name args =
         ]
 
 
-blockToIdField : Elm.Docs.Block -> Maybe Elm.Field
-blockToIdField block =
+blockToIdField : List String -> Elm.Docs.Block -> Maybe Elm.Field
+blockToIdField thisModule block =
     case block of
         Elm.Docs.MarkdownBlock str ->
             Nothing
@@ -260,7 +260,7 @@ blockToIdField block =
             Just
                 (Elm.field
                     value.name
-                    (valueWith
+                    (valueWith thisModule
                         (Elm.string value.name)
                         value.tipe
                     )
@@ -302,8 +302,8 @@ debug tag exp =
 
 
 
-block2Maker : Elm.Docs.Block -> Maybe Elm.Expression
-block2Maker block =
+block2Maker : List String -> Elm.Docs.Block -> Maybe Elm.Expression
+block2Maker thisModule block =
     case block of
         Elm.Docs.MarkdownBlock str ->
             Nothing
@@ -322,7 +322,7 @@ block2Maker block =
                                     case tags of
                                         [] ->
                                             Elm.field name
-                                                (valueWith
+                                                (valueWith thisModule
                                                     (Elm.string name)
                                                     (Elm.Type.Type union.name
                                                         (List.map Elm.Type.Var union.args)
@@ -342,7 +342,7 @@ block2Maker block =
                                                     )
                                                     (\vars ->
                                                         apply
-                                                            (valueWith
+                                                            (valueWith thisModule
                                                                 (Elm.string name)
                                                                 (Elm.Type.Type union.name
                                                                     (List.map Elm.Type.Var union.args)
@@ -418,23 +418,23 @@ block2Maker block =
 This creates that record
 
 -}
-generateTypeRecord : List Elm.Docs.Block -> Elm.Declaration
-generateTypeRecord blocks =
+generateTypeRecord : List String -> List Elm.Docs.Block -> Elm.Declaration
+generateTypeRecord thisModule blocks =
     blocks
-        |> List.filterMap generateTypeRecordHelper
+        |> List.filterMap (generateTypeRecordHelper thisModule)
         |> Elm.record
         |> Elm.declaration "types_"
         |> Elm.expose
 
 
-generateTypeRecordHelper : Elm.Docs.Block -> Maybe Elm.Field
-generateTypeRecordHelper block =
+generateTypeRecordHelper : List String -> Elm.Docs.Block -> Maybe Elm.Field
+generateTypeRecordHelper thisModule block =
     case block of
         Elm.Docs.MarkdownBlock str ->
             Nothing
 
         Elm.Docs.UnionBlock union ->
-            case block2Maker block of
+            case block2Maker thisModule block of
                 Nothing ->
                     Elm.field union.name
                         (Elm.record
@@ -456,7 +456,7 @@ generateTypeRecordHelper block =
                         |> Just
 
         Elm.Docs.AliasBlock alias ->
-            case block2Maker block of
+            case block2Maker thisModule block of
                 Nothing ->
                     Elm.field alias.name
                         (Elm.record
@@ -487,8 +487,8 @@ generateTypeRecordHelper block =
             Nothing
 
 
-generateBlocks : Elm.Docs.Block -> List Elm.Declaration
-generateBlocks block =
+generateBlocks : List String -> Elm.Docs.Block -> List Elm.Declaration
+generateBlocks thisModule block =
     case block of
         Elm.Docs.MarkdownBlock str ->
             []
@@ -534,7 +534,7 @@ generateBlocks block =
                         ( (List.reverse (List.drop 1 captured.arguments)))
                         (\vars ->
                             (ElmGen.apply
-                                (valueWith
+                                (valueWith thisModule
                                     (Elm.string value.name)
                                     value.tipe
 
@@ -553,7 +553,7 @@ generateBlocks block =
 
                 _ ->
                     [ Elm.declaration value.name
-                        (valueWith
+                        (valueWith thisModule
                             (Elm.string value.name)
                             value.tipe
                             |> Elm.withType expressionType
@@ -824,45 +824,45 @@ functionNew arg1 body =
 
 
 
-getArgumentUnpackerForLambdas : Int -> Elm.Type.Type -> Elm.Expression -> List Elm.Expression -> Elm.Expression
-getArgumentUnpackerForLambdas freshCount tipe functionToCall args =
-    case tipe of
-        Elm.Type.Lambda one two ->
-            let
-                varName =
-                    "lambdaArg" ++ String.fromInt freshCount
-            in
-            case two of
-                Elm.Type.Lambda _ _ ->
-                    -- This is a multiple argument lambda!
-                    -- keep recursing!
-                    ElmGen.functionReduced (Elm.string varName)
-                        (typeToExpression one)
-                        (\_ ->
-                            Elm.functionReduced varName
-                                (typeToAnnotation one)
-                                (\_ ->
-                                    getArgumentUnpackerForLambdas (freshCount + 1)
-                                        two
-                                        functionToCall
-                                        (Elm.value varName :: args)
-                                )
-                        )
+-- getArgumentUnpackerForLambdas : List String -> Int -> Elm.Type.Type -> Elm.Expression -> List Elm.Expression -> Elm.Expression
+-- getArgumentUnpackerForLambdas thisModule freshCount tipe functionToCall args =
+--     case tipe of
+--         Elm.Type.Lambda one two ->
+--             let
+--                 varName =
+--                     "lambdaArg" ++ String.fromInt freshCount
+--             in
+--             case two of
+--                 Elm.Type.Lambda _ _ ->
+--                     -- This is a multiple argument lambda!
+--                     -- keep recursing!
+--                     ElmGen.functionReduced (Elm.string varName)
+--                         (typeToExpression thisModule one)
+--                         (\_ ->
+--                             Elm.functionReduced varName
+--                                 (typeToAnnotation one)
+--                                 (\_ ->
+--                                     getArgumentUnpackerForLambdas thisModule (freshCount + 1)
+--                                         two
+--                                         functionToCall
+--                                         (Elm.value varName :: args)
+--                                 )
+--                         )
 
-                _ ->
-                    ElmGen.functionReduced (Elm.string varName)
-                        (typeToExpression one)
-                        (\_ ->
-                            Elm.functionReduced varName
-                                (typeToAnnotation one)
-                                (\_ ->
-                                    Elm.apply functionToCall
-                                        (List.reverse (Elm.value varName :: args))
-                                )
-                        )
+--                 _ ->
+--                     ElmGen.functionReduced (Elm.string varName)
+--                         (typeToExpression thisModule one)
+--                         (\_ ->
+--                             Elm.functionReduced varName
+--                                 (typeToAnnotation one)
+--                                 (\_ ->
+--                                     Elm.apply functionToCall
+--                                         (List.reverse (Elm.value varName :: args))
+--                                 )
+--                         )
 
-        _ ->
-            Elm.apply functionToCall (List.reverse args)
+--         _ ->
+--             Elm.apply functionToCall (List.reverse args)
 
 
 {-|
@@ -1010,29 +1010,29 @@ typeToGeneratedAnnotationExpression elmType =
             Annotation.namedWith [ "Elm" ] "Expression" []
 
 
-chompLambdas : List Elm.Expression -> Elm.Type.Type -> Elm.Expression
-chompLambdas exps tipe =
+chompLambdas : List String -> List Elm.Expression -> Elm.Type.Type -> Elm.Expression
+chompLambdas thisModule exps tipe =
     case tipe of
         Elm.Type.Lambda one two ->
-            chompLambdas
-                (typeToExpression one :: exps)
+            chompLambdas thisModule
+                (typeToExpression thisModule one :: exps)
                 two
 
         _ ->
             GenType.function
                 (List.reverse exps)
-                (typeToExpression tipe)
+                (typeToExpression thisModule tipe)
 
 
-typeToExpression : Elm.Type.Type -> Elm.Expression
-typeToExpression elmType =
+typeToExpression : List String -> Elm.Type.Type -> Elm.Expression
+typeToExpression thisModule elmType =
     case elmType of
         Elm.Type.Var string ->
             GenType.var (Elm.string string)
 
         Elm.Type.Lambda one two ->
-            chompLambdas
-                [ typeToExpression one
+            chompLambdas thisModule
+                [ typeToExpression thisModule one
                 ]
                 two
 
@@ -1043,14 +1043,14 @@ typeToExpression elmType =
 
                 [ one, two ] ->
                     GenType.tuple
-                        (typeToExpression one)
-                        (typeToExpression two)
+                        (typeToExpression thisModule one)
+                        (typeToExpression thisModule two)
 
                 [ one, two, three ] ->
                     GenType.triple
-                        (typeToExpression one)
-                        (typeToExpression two)
-                        (typeToExpression three)
+                        (typeToExpression thisModule one)
+                        (typeToExpression thisModule two)
+                        (typeToExpression thisModule three)
 
                 _ ->
                     -- this should never happen :/
@@ -1058,7 +1058,7 @@ typeToExpression elmType =
                         |> Elm.withType annotationType
 
         Elm.Type.Type name types ->
-            namedWithType name types
+            namedWithType thisModule name types
 
         Elm.Type.Record fields maybeExtensible ->
             case maybeExtensible of
@@ -1068,7 +1068,7 @@ typeToExpression elmType =
                             (\( fieldName, fieldType ) ->
                                 Elm.tuple
                                     (Elm.string fieldName)
-                                    (typeToExpression fieldType)
+                                    (typeToExpression thisModule fieldType)
                             )
                             fields
                         )
@@ -1080,15 +1080,15 @@ typeToExpression elmType =
                             (\( fieldName, fieldType ) ->
                                 Elm.tuple
                                     (Elm.string fieldName)
-                                    (typeToExpression fieldType)
+                                    (typeToExpression thisModule fieldType)
                             )
                             fields
                         )
 
 
 
-namedWithType : String -> List Elm.Type.Type -> Elm.Expression
-namedWithType name types =
+namedWithType : List String -> String -> List Elm.Type.Type -> Elm.Expression
+namedWithType thisModule name types =
     let
         frags =
             String.split "." name
@@ -1097,7 +1097,7 @@ namedWithType name types =
         [ "List", "List" ] ->
             case types of
                 [ inner ] ->
-                    GenType.list (typeToExpression inner)
+                    GenType.list (typeToExpression thisModule inner)
 
                 _ ->
                     GenType.unit
@@ -1105,7 +1105,7 @@ namedWithType name types =
         [ "Maybe", "Maybe" ] ->
             case types of
                 [ inner ] ->
-                    GenType.maybe (typeToExpression inner)
+                    GenType.maybe (typeToExpression thisModule inner)
 
                 _ ->
                     GenType.unit
@@ -1135,7 +1135,32 @@ namedWithType name types =
                         |> List.head
                         |> Maybe.withDefault name
             in
-            GenType.namedWith
-                (List.map Elm.string (List.take (fragsLength - 1) frags))
-                (Elm.string typeName)
-                (List.map typeToExpression types)
+            if isLocal thisModule frags then
+                Elm.value "types_"
+                    |> Elm.get typeName
+                    |> Elm.get "annotation"
+
+            else
+                GenType.namedWith
+                    (List.map Elm.string (List.take (fragsLength - 1) frags))
+                    (Elm.string (typeName))
+                    (List.map (typeToExpression thisModule) types)
+
+
+isLocal thisModule thisType =
+    case thisModule of
+        [] ->
+            case thisType of
+                [one ] ->
+                    True
+                _ ->
+                    False
+        (thisModuleTop :: remain) ->
+            case thisType of
+                [] ->
+                    False
+                (thisTypeTop :: thisTypeRemain ) ->
+                    if thisModuleTop == thisTypeTop then
+                        isLocal remain thisTypeRemain
+                    else
+                        False
