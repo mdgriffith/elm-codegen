@@ -30,29 +30,42 @@ values_ :
     }
 values_ =
     { block =
-        Elm.withType
-            (Type.function [ Type.list Type.string ] Type.string)
-            (Elm.valueFrom moduleName_ "block")
+        Elm.valueWith
+            { importFrom = [ "Error", "Format" ]
+            , name = "block"
+            , annotation =
+                Just (Type.function [ Type.list Type.string ] Type.string)
+            }
     , cyan =
-        Elm.withType
-            (Type.function [ Type.string ] Type.string)
-            (Elm.valueFrom moduleName_ "cyan")
+        Elm.valueWith
+            { importFrom = [ "Error", "Format" ]
+            , name = "cyan"
+            , annotation = Just (Type.function [ Type.string ] Type.string)
+            }
     , yellow =
-        Elm.withType
-            (Type.function [ Type.string ] Type.string)
-            (Elm.valueFrom moduleName_ "yellow")
+        Elm.valueWith
+            { importFrom = [ "Error", "Format" ]
+            , name = "yellow"
+            , annotation = Just (Type.function [ Type.string ] Type.string)
+            }
     , green =
-        Elm.withType
-            (Type.function [ Type.string ] Type.string)
-            (Elm.valueFrom moduleName_ "green")
+        Elm.valueWith
+            { importFrom = [ "Error", "Format" ]
+            , name = "green"
+            , annotation = Just (Type.function [ Type.string ] Type.string)
+            }
     , red =
-        Elm.withType
-            (Type.function [ Type.string ] Type.string)
-            (Elm.valueFrom moduleName_ "red")
+        Elm.valueWith
+            { importFrom = [ "Error", "Format" ]
+            , name = "red"
+            , annotation = Just (Type.function [ Type.string ] Type.string)
+            }
     , grey =
-        Elm.withType
-            (Type.function [ Type.string ] Type.string)
-            (Elm.valueFrom moduleName_ "grey")
+        Elm.valueWith
+            { importFrom = [ "Error", "Format" ]
+            , name = "grey"
+            , annotation = Just (Type.function [ Type.string ] Type.string)
+            }
     }
 
 
@@ -61,9 +74,12 @@ values_ =
 block : List Elm.Expression -> Elm.Expression
 block arg1 =
     Elm.apply
-        (Elm.withType
-            (Type.function [ Type.list Type.string ] Type.string)
-            (Elm.valueFrom moduleName_ "block")
+        (Elm.valueWith
+            { importFrom = [ "Error", "Format" ]
+            , name = "block"
+            , annotation =
+                Just (Type.function [ Type.list Type.string ] Type.string)
+            }
         )
         [ Elm.list arg1 ]
 
@@ -72,9 +88,11 @@ block arg1 =
 cyan : Elm.Expression -> Elm.Expression
 cyan arg1 =
     Elm.apply
-        (Elm.withType
-            (Type.function [ Type.string ] Type.string)
-            (Elm.valueFrom moduleName_ "cyan")
+        (Elm.valueWith
+            { importFrom = [ "Error", "Format" ]
+            , name = "cyan"
+            , annotation = Just (Type.function [ Type.string ] Type.string)
+            }
         )
         [ arg1 ]
 
@@ -83,9 +101,11 @@ cyan arg1 =
 yellow : Elm.Expression -> Elm.Expression
 yellow arg1 =
     Elm.apply
-        (Elm.withType
-            (Type.function [ Type.string ] Type.string)
-            (Elm.valueFrom moduleName_ "yellow")
+        (Elm.valueWith
+            { importFrom = [ "Error", "Format" ]
+            , name = "yellow"
+            , annotation = Just (Type.function [ Type.string ] Type.string)
+            }
         )
         [ arg1 ]
 
@@ -94,9 +114,11 @@ yellow arg1 =
 green : Elm.Expression -> Elm.Expression
 green arg1 =
     Elm.apply
-        (Elm.withType
-            (Type.function [ Type.string ] Type.string)
-            (Elm.valueFrom moduleName_ "green")
+        (Elm.valueWith
+            { importFrom = [ "Error", "Format" ]
+            , name = "green"
+            , annotation = Just (Type.function [ Type.string ] Type.string)
+            }
         )
         [ arg1 ]
 
@@ -105,9 +127,11 @@ green arg1 =
 red : Elm.Expression -> Elm.Expression
 red arg1 =
     Elm.apply
-        (Elm.withType
-            (Type.function [ Type.string ] Type.string)
-            (Elm.valueFrom moduleName_ "red")
+        (Elm.valueWith
+            { importFrom = [ "Error", "Format" ]
+            , name = "red"
+            , annotation = Just (Type.function [ Type.string ] Type.string)
+            }
         )
         [ arg1 ]
 
@@ -116,9 +140,11 @@ red arg1 =
 grey : Elm.Expression -> Elm.Expression
 grey arg1 =
     Elm.apply
-        (Elm.withType
-            (Type.function [ Type.string ] Type.string)
-            (Elm.valueFrom moduleName_ "grey")
+        (Elm.valueWith
+            { importFrom = [ "Error", "Format" ]
+            , name = "grey"
+            , annotation = Just (Type.function [ Type.string ] Type.string)
+            }
         )
         [ arg1 ]
 
