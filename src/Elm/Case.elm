@@ -407,10 +407,7 @@ branch name exp =
         exp
 
 
-{-|
-
-    A catchall branch in case you want the case to be nonexhaustive.
-
+{-| A catchall branch in case you want the case to be nonexhaustive.
 -}
 otherwise : (Expression -> Expression) -> Branch
 otherwise toExp =
