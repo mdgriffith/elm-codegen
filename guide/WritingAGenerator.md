@@ -85,3 +85,9 @@ eightyFour : Int
 eightyFour =
     42 + 42
 ```
+
+There's a bunch more, but it's probably better covered by the [elm-codegen package documentation](https://elm-doc-preview.netlify.app/?repo=mdgriffith/elm-codegen).
+
+Let's take a look at one final thing before you go!
+
+💁 [Using packages](/guide/UsingPackages.md)

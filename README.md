@@ -6,8 +6,8 @@ Here's what this tool does for you in order to make generating code simpler.
 
 1. **Automatic imports** — Import declarations are calculated.
 2. **Builtin type inference** — The types for your generated code are inferred.
-3. **Use existing packages easily** — For generating code that uses a specific _library_ such as [`elm-ui`](), the [`elm-codegen` CLI]() can create some Elm code to help you out.
-   Check out the [Using packages]() guide to get a better idea of what this looks like!
+3. **Use existing packages easily** — For generating code that uses a specific _library_ such as [`elm-ui`](https://package.elm-lang.org/packages/mdgriffith/elm-ui/1.1.8/), the `elm-codegen` CLI can create some Elm code to help you out.
+   Check out the [Using packages](/guide/UsingPackages.md) guide to get a better idea of what this looks like!
 
 To get started, here's a small example to give you an idea of what the code looks like!
 
@@ -37,6 +37,6 @@ Even in the best of times, code generation can be a challenging subject!
 
 ## Check out the guide!
 
-- [Getting started]()
-- [Writing a generator]()
-- [Using packages]()
+- [Getting started](/guide/01_GettingStarted.md)
+- [Writing a generator](/guide/WritingAGenerator.md)
+- [Using packages](/guide/UsingPackages.md)
