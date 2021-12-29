@@ -27,7 +27,6 @@ module Elm exposing
     , toString, signature, expressionImports
     , declarationToString, declarationImports
     , value, valueFrom, valueWith
-    , facts, lambdaWith
     )
 
 {-|
@@ -199,11 +198,6 @@ facts (Compiler.Expression exp) =
                     )
                 |> Ok
 
-        -- case Compiler.resolveVariables sig.inferences sig.type_ of
-        --     Ok finalType ->
-        --         Internal.Write.writeAnnotation finalType
-        --     Err errMsg ->
-        --         errMsg
         Err inferenceError ->
             List.foldl
                 (\err str ->
@@ -532,6 +526,7 @@ valueWithHelper mod name ann =
         }
 
 
+{-| -}
 valueWith :
     { importFrom : List String
     , name : String
@@ -2128,11 +2123,6 @@ declaration name (Compiler.Expression toBody) =
     }
         |> Declaration.FunctionDeclaration
         |> Compiler.Declaration Compiler.NotExposed body.imports
-
-
-lambdaWith : List ( String, Elm.Annotation.Annotation ) -> Expression -> Expression
-lambdaWith args fullExp =
-    function (List.map (\( name, ann ) -> ( name, Just ann )) args) (\_ -> fullExp)
 
 
 {-| For when you want the most control over a function being generated.
