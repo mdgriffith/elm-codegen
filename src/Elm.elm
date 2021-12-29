@@ -6,16 +6,14 @@ module Elm exposing
     , withType
     , record, field, Field, get, updateRecord
     , letIn, ifThen
-    , apply
     , Declaration
     , comment, declaration
     , withDocumentation
+    , expose, exposeWith
+    , fileWith, docs
     , fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, functionAdvanced
     , customType, Variant, variant, variantWith
     , alias
-    , expose
-    , exposeWith
-    , fileWith, docs
     , equal, notEqual
     , append, cons
     , plus, minus, multiply, divide, intDivide, power
@@ -26,7 +24,7 @@ module Elm exposing
     , parse, unsafe
     , toString, signature, expressionImports
     , declarationToString, declarationImports
-    , value, valueFrom, valueWith
+    , apply, value, valueFrom, valueWith
     )
 
 {-|
@@ -54,8 +52,6 @@ module Elm exposing
 
 @docs letIn, ifThen
 
-@docs apply
-
 
 ## Top level
 
@@ -65,6 +61,13 @@ module Elm exposing
 
 @docs withDocumentation
 
+@docs expose, exposeWith
+
+@docs fileWith, docs
+
+
+## Functions
+
 @docs fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, functionAdvanced
 
 
@@ -73,26 +76,6 @@ module Elm exposing
 @docs customType, Variant, variant, variantWith
 
 @docs alias
-
-
-## Exposing values
-
-By default, everything is exposed for your module.
-
-However, you can tag specific declarations you want exposed, and then only those things will be exposed.
-
-@docs expose
-
-
-## Grouping exposed values in the module comment
-
-You can also add a group tag to an exposed value. This will automatically group the `docs` statements in the module docs.
-
-For precise control over what is rendered for the module comment, use [fileWith](#fileWith)
-
-@docs exposeWith
-
-@docs fileWith, docs
 
 
 # Operators
@@ -135,7 +118,7 @@ For precise control over what is rendered for the module comment, use [fileWith]
 
 # Low-level
 
-@docs value, valueFrom, valueWith
+@docs apply, value, valueFrom, valueWith
 
 -}
 
@@ -303,6 +286,14 @@ renderStandardComment groups =
 
     @docs one, two, three
 
+If a `group` has been given, it will be rendered as a second level header.
+
+```markdown
+## Group name
+
+@docs one, two, three
+```
+
 -}
 docs :
     { group : Maybe String
@@ -310,14 +301,31 @@ docs :
     }
     -> String
 docs group =
-    "@docs " ++ String.join ", " group.members
+    case group.group of
+        Nothing ->
+            "@docs " ++ String.join ", " group.members
+
+        Just groupName ->
+            "## " ++ groupName ++ "\n\n\n@docs " ++ String.join ", " group.members
 
 
 {-| Same as [file](#file), but you have more control over how the module comment is generated!
 
 Pass in a function that determines how to render a `@doc` comment.
 
-Each exposed item is grouped based on the string used in [exposeWith](#exposeWith)
+Each exposed item is grouped based on the string used in [exposeWith](#exposeWith).
+
+**aliases** allow you to specify a module alias to be used.
+
+    aliases =
+        [ (["Json", "Encode"), "Encode")
+        ]
+
+would make an import statement like
+
+    import Json.Encode as Encode
+
+All values rendered in this file that are from this module would also automatically respect this alias as well.
 
 -}
 fileWith :
@@ -926,7 +934,14 @@ updateRecord name fields =
             }
 
 
-{-| -}
+{-|
+
+    Elm.record
+        [ Elm.field "name" (Elm.string "Elm")
+        , Elm.field "designation" (Elm.string "Pretty fabulous")
+        ]
+
+-}
 record : List Field -> Expression
 record fields =
     Compiler.Expression <|
@@ -1037,9 +1052,8 @@ field =
 
 {-| A let block.
 
-Check out `Elm.Let` to add things to it.
+    import Elm
 
-    import Elm.Let as Let
 
     Elm.letIn
         [ ("one", (Elm.int 5))
@@ -1098,6 +1112,8 @@ letIn decls resultExpr =
     ifThen (Elm.bool True)
         (Elm.string "yes")
         (Elm.string "no")
+
+Will generate
 
     if True then
         "yes"
@@ -1230,7 +1246,8 @@ getField selector fields =
 
     Elm.customType "MyType"
         [ Elm.variant "One"
-        , Elm.variantWith "Two" [ Elm.Annotation.list Elm.Annotation.string ]
+        , Elm.variantWith "Two"
+            [ Elm.Annotation.list Elm.Annotation.string ]
         ]
 
 Will result in
@@ -1485,7 +1502,45 @@ autopipe committed topFn expressions =
                             (List.map (Compiler.nodify << parens) (topFn :: expressions))
 
 
-{-| -}
+{-| Create a function with a single argument.
+
+This may seem a little weird the first time you encounter it, so let's break it down.
+
+Here's what's happening for the `fn*` functions —
+
+  - The `String` arguments are the **names of the arguments** for the generated function.
+  - The `(Expression -> Expression)` function is where we're providing you an `Expression` that represents an argument coming in to the generated function.
+
+So, this
+
+    Elm.fn "firstInt"
+        (\firstArgument ->
+            Elm.plus (Elm.int 42) firstArgument
+        )
+
+Generates
+
+    \firstInt -> 42 + firstInt
+
+And the final thing to note is that if you want to generate a **top level** function, use `Elm.declaration`.
+
+    Elm.declaration "add42" <|
+        Elm.fn "firstInt"
+            (\firstArgument ->
+                Elm.plus (Elm.int 42) firstArgument
+            )
+
+Results in
+
+    add42 : Int -> Int
+    add42 firstInt =
+        42 + firstInt
+
+**Note** — Elm CodeGen will protect variable names if they're used in a nested `fn*` by adding a string of numbers to the end of the name. So, you may see a variable name be something like `myVariable_0_1`.
+
+If you absolutely don't want this behavior, you'll need to use [`functionAdvanced`](#functionAdvanced).
+
+-}
 fn : String -> (Expression -> Expression) -> Expression
 fn arg1BaseName toExpression =
     Compiler.Expression <|
@@ -2129,8 +2184,9 @@ declaration name (Compiler.Expression toBody) =
 
 This is for when:
 
-    1. You want your variable names to be exactly as provided(i.e. you don't want the variable name collision protection)
-    2. You know exactly what type each variable should be.
+1.  You want your variable names to be exactly as provided
+    (i.e. you don't want the variable name collision protection)
+2.  You know exactly what type each variable should be.
 
 -}
 functionAdvanced : List ( String, Elm.Annotation.Annotation ) -> Expression -> Expression
@@ -2288,13 +2344,21 @@ withDocumentation =
     Compiler.documentation
 
 
-{-| -}
+{-| By default, everything is exposed for your module.
+
+However, you can tag specific declarations you want exposed, and then only those things will be exposed.
+
+-}
 expose : Declaration -> Declaration
 expose =
     Compiler.expose
 
 
-{-| -}
+{-| You can also add a group tag to an exposed value. This will automatically group the `docs` statements in the module docs.
+
+For precise control over what is rendered for the module comment, use [fileWith](#fileWith)
+
+-}
 exposeWith : { exposeConstructor : Bool, group : Maybe String } -> Declaration -> Declaration
 exposeWith =
     Compiler.exposeWith
