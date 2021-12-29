@@ -1,6 +1,5 @@
 {
   "elm-codegen-version": "0.1.0",
-  "output": "codegen",
   "dependencies": {
     "packages": {},
     "local": ["docs.json"]

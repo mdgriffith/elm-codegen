@@ -190,7 +190,6 @@ async function install_package(pkg: string, output: string, version: string | nu
 
 type CodeGenJson = {
   version: string
-  output: string
   dependencies: { packages: { [key: string]: string }; local: string[] }
 }
 
@@ -212,7 +211,6 @@ function getCodeGenJson(): CodeGenJson {
     let codeGenJson = JSON.parse(stringContents)
     return {
       version: codeGenJson["elm-codegen-version"],
-      output: codeGenJson.output,
       dependencies: { packages: codeGenJson.dependencies.packages, local: codeGenJson.dependencies.local },
     }
   } catch (exception_var) {
@@ -274,7 +272,7 @@ async function install_from_codegen_json(options: Options) {
   const cwd = options.cwd || "."
   let codeGenJson = getCodeGenJson()
   console.log(codeGenJson)
-  const install_dir = path.join(cwd, options.output || "codegen")
+  const install_dir = path.join(cwd, "codegen")
 
   for (let [key, value] of Object.entries(codeGenJson.dependencies.packages)) {
     // `value` is a string
@@ -369,11 +367,7 @@ async function action(cmd: string, pkg: string | null, options: Options, com: an
       install_from_codegen_json(options)
     }
   } else {
-    let output = path.join(cwd, options.output || "output")
-    try {
-      const codeGenJson = getCodeGenJson()
-      output = path.join(cwd, options.output || codeGenJson.output)
-    } catch (err) {}
+    let output = path.join(cwd, options.output || "generated")
 
     // prepare flags
     let flags: any | null = null

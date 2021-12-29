@@ -26,7 +26,7 @@ main =
 
 
 file =
-    Elm.file [ "My", "Module" ]
+    Elm.file [ "HelloWorld" ]
         [ Elm.declaration "hello"
             (Elm.string "World!")
         ]

@@ -266,7 +266,6 @@ function getCodeGenJson() {
         var codeGenJson = JSON.parse(stringContents);
         return {
             version: codeGenJson["elm-codegen-version"],
-            output: codeGenJson.output,
             dependencies: { packages: codeGenJson.dependencies.packages, local: codeGenJson.dependencies.local },
         };
     }
@@ -333,7 +332,7 @@ function install_from_codegen_json(options) {
             cwd = options.cwd || ".";
             codeGenJson = getCodeGenJson();
             console.log(codeGenJson);
-            install_dir = path.join(cwd, options.output || "codegen");
+            install_dir = path.join(cwd, "codegen");
             for (_i = 0, _a = Object.entries(codeGenJson.dependencies.packages); _i < _a.length; _i++) {
                 _b = _a[_i], key = _b[0], value = _b[1];
                 // `value` is a string
@@ -400,7 +399,7 @@ function clear(dir) {
 }
 function action(cmd, pkg, options, com) {
     return __awaiter(this, void 0, void 0, function () {
-        var cwd, install_dir, codeGenJson, docs, output_1, codeGenJson, flags_1, moduleName_1;
+        var cwd, install_dir, codeGenJson, docs, output_1, flags_1, moduleName_1;
         return __generator(this, function (_a) {
             cwd = options.cwd || ".";
             install_dir = path.join(cwd, "codegen");
@@ -444,12 +443,7 @@ function action(cmd, pkg, options, com) {
                 }
             }
             else {
-                output_1 = path.join(cwd, options.output || "output");
-                try {
-                    codeGenJson = getCodeGenJson();
-                    output_1 = path.join(cwd, options.output || codeGenJson.output);
-                }
-                catch (err) { }
+                output_1 = path.join(cwd, options.output || "generated");
                 flags_1 = null;
                 if (options.flagsFrom) {
                     if (options.flagsFrom.endsWith(".json")) {
