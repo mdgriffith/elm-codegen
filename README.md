@@ -40,3 +40,5 @@ Even in the best of times, code generation can be a challenging subject!
 - [Getting started](/guide/01_GettingStarted.md)
 - [Writing a generator](/guide/WritingAGenerator.md)
 - [Using packages](/guide/UsingPackages.md)
+
+And finally, the [elm-codegen package documentation](https://elm-doc-preview.netlify.app/?repo=mdgriffith/elm-codegen).
