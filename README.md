@@ -2,6 +2,8 @@
 
 Elm CodeGen is an **Elm package** and **CLI tool** for generating Elm code easily and maintainably.
 
+The goal is to be easier to write and more maintainable than that string template you have lying around. 😏
+
 Here's what this tool does for you in order to make generating code simpler.
 
 1. **Automatic imports** — Import declarations are calculated.
