@@ -171,37 +171,6 @@ valueWith thisModule name annotation =
                 |> Elm.maybe
 
         }
-    -- (Elm.apply
-    --     (Elm.valueFrom [ "Elm" ] "withType"
-    --         |> Elm.withType
-    --             (Annotation.function
-    --                 [ Annotation.namedWith [ "Elm", "Annotation"] "Annotation" []
-    --                 , Annotation.namedWith [ "Elm" ] "Expression" []
-    --                 ]
-    --                 (Annotation.namedWith [ "Elm" ] "Expression" [])
-    --             )
-    --     )
-    --     [ typeToExpression thisModule annotation
-    --     , Elm.apply
-    --         (Elm.valueFrom
-    --             [ "Elm" ]
-    --             "valueFrom"
-    --             |> Elm.withType
-    --                 (Annotation.function
-    --                     [ Annotation.list Annotation.string
-    --                     , Annotation.string
-    --                     ]
-    --                     (Annotation.namedWith [ "Elm" ] "Expression" [])
-    --                 )
-    --         )
-    --         [ thisModuleName, name ]
-
-    --     ]
-
-    -- )
-
-
-
 
 apply : Elm.Expression -> List Elm.Expression -> Elm.Expression
 apply fn args =
@@ -284,35 +253,6 @@ blockToIdField thisModule block =
 
         Elm.Docs.UnknownBlock str ->
             Nothing
-
-debugWhen on tag exp =
-    if on then
-        debug tag exp
-    else
-        exp
-
-debug tag exp =
-    let
-        _ =
-            Debug.log ("\n\n" ++ tag ++ ".sig" ) (Elm.signature exp)
-
-        _ = Debug.log (tag ++ ".body") (Elm.toString exp)
-
-        _ =
-            (case Elm.facts exp of
-                Ok facts ->
-                    List.map (Debug.log ( tag ++ ".facts")) facts
-                Err err ->
-                    let
-                        _ = Debug.log (tag ++ ".facts") err
-                    in
-                    []
-
-            )
-    in
-    exp
-
-
 
 
 block2Maker : List String -> Elm.Docs.Block -> Maybe Elm.Expression
@@ -515,18 +455,6 @@ generateBlocks thisModule block =
             []
 
         Elm.Docs.ValueBlock value ->
-            let
-                tagName = "unknown"
-                _ =
-                    if value.name == tagName then
-                        Debug.log "BLOCK"
-                            (value.tipe
-
-                            )
-                    else
-                        value.tipe
-
-            in
             case value.tipe of
                 Elm.Type.Lambda one two ->
                     let
@@ -549,13 +477,9 @@ generateBlocks thisModule block =
                                 (valueWith thisModule
                                     (Elm.string value.name)
                                     value.tipe
-
-                                    |> debugWhen (value.name == tagName) "INNER TYPE"
                                 )
                                 (List.reverse (List.drop 1 captured.values))
                             )
-                                |> debugWhen  (value.name == tagName) "BLOCKTYPE"
-
                         )
 
                         |> Elm.declaration value.name
