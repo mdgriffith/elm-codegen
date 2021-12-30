@@ -2,7 +2,7 @@ export default () => `
 {
     "type": "application",
     "source-directories": [
-        ".", "../src"
+        "."
     ],
     "elm-version": "0.19.1",
     "dependencies": {
