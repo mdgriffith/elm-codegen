@@ -90,4 +90,4 @@ There's a bunch more, but it's probably better covered by the [elm-codegen packa
 
 Let's take a look at one final thing before you go!
 
-💁 [Using packages](/guide/UsingPackages.md)
+💁 [Using packages](https://github.com/mdgriffith/elm-codegen/tree/main/guide/UsingPackages.md)

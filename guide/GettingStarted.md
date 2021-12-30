@@ -5,7 +5,7 @@ Elm CodeGen is an Elm package and CLI tool.
 The `elm-codegen` CLI tool mainly helps with two things.
 
 - Running the generator and creating the actual files.
-- [Installing package helpers](/guide/UsingPackages.md), which we'll cover a little later.
+- [Installing package helpers](https://github.com/mdgriffith/elm-codegen/tree/main/guide/UsingPackages.md), which we'll cover a little later.
 
 First to get you started, let's initialize a new project.
 
@@ -28,7 +28,7 @@ Now that we've done that, we can run `elm-codegen codegen/Generate.elm`!
 
 This will generate create a `generated` folder with a `HelloWorld.elm` file in it 🎉
 
-You should be good to proceed to the [Writing a Generator](/guide/WritingAGenerator.md) section, but before you go, let's quickly cover some other useful options in the `elm-codegen` CLI.
+You should be good to proceed to the [Writing a Generator](https://github.com/mdgriffith/elm-codegen/tree/main/guide/WritingAGenerator.md) section, but before you go, let's quickly cover some other useful options in the `elm-codegen` CLI.
 
 - `--output=generated` — Specify a different directory to generate files in.
 - `--watch` — Watch the `.elm` files in the `codegen` directory and regenerate if anything changes.
@@ -38,4 +38,4 @@ You should be good to proceed to the [Writing a Generator](/guide/WritingAGenera
 
 Great! Onward!
 
-💁 [Writing a Generator](/guide/WritingAGenerator.md)
+💁 [Writing a Generator](https://github.com/mdgriffith/elm-codegen/tree/main/guide/WritingAGenerator.md)
