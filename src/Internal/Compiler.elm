@@ -37,6 +37,33 @@ type Index
     = Index Int (List Int)
 
 
+var : Index -> String -> ( Index, String, Expression )
+var index name =
+    let
+        protectedName =
+            sanitize (name ++ indexToString index)
+    in
+    ( next index
+    , protectedName
+    , Expression
+        (\existingIndex_ ->
+            -- we ignore the given index because we are basing the name on the provided one.
+            { expression =
+                Exp.FunctionOrValue []
+                    protectedName
+            , annotation =
+                Ok
+                    { type_ =
+                        Annotation.GenericType protectedName
+                    , inferences = Dict.empty
+                    }
+            , imports =
+                []
+            }
+        )
+    )
+
+
 indexToString : Index -> String
 indexToString (Index top tail) =
     case tail of
@@ -141,6 +168,7 @@ inference type_ =
 
 type InferenceError
     = MismatchedList Annotation.TypeAnnotation Annotation.TypeAnnotation
+    | Todo String
     | EmptyCaseStatement
     | FunctionAppliedToTooManyArgs
     | MismatchedTypeVariables
@@ -161,6 +189,9 @@ type InferenceError
 inferenceErrorToString : InferenceError -> String
 inferenceErrorToString inf =
     case inf of
+        Todo str ->
+            "Todo " ++ str
+
         MismatchedList one two ->
             "There are multiple different types in a list!: \n\n"
                 ++ "\n\n"
@@ -1191,7 +1222,17 @@ applyTypeHelper cache fn args =
                                 rest
 
                         ( varCache, Err err ) ->
-                            Err []
+                            Err
+                                [ err
+
+                                -- Todo
+                                -- ("Unable to unify: "
+                                --     ++ Debug.toString (denode one)
+                                --     ++ " AND "
+                                --     ++ Debug.toString top
+                                --     ++ String.join "cache:" (Dict.keys varCache)
+                                -- )
+                                ]
 
         final ->
             case args of
@@ -1204,6 +1245,13 @@ applyTypeHelper cache fn args =
                 _ ->
                     Err
                         [ FunctionAppliedToTooManyArgs
+
+                        --   Todo
+                        --     (Debug.toString final
+                        --         ++ " (APPLIED TO )"
+                        --         ++ Debug.toString args
+                        --         ++ String.join ":" (Dict.keys cache)
+                        --     )
                         ]
 
 
