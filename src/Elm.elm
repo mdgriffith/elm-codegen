@@ -1517,7 +1517,9 @@ So, this
 
     Elm.fn "firstInt"
         (\firstArgument ->
-            Elm.plus (Elm.int 42) firstArgument
+            Elm.plus
+                (Elm.int 42)
+                firstArgument
         )
 
 Generates
@@ -1529,7 +1531,9 @@ If you want to generate a **top level** function instead of an anonymous functio
     Elm.declaration "add42" <|
         Elm.fn "firstInt"
             (\firstArgument ->
-                Elm.plus (Elm.int 42) firstArgument
+                Elm.plus
+                    (Elm.int 42)
+                    firstArgument
             )
 
 Results in
@@ -1551,7 +1555,10 @@ In this case you can use [`withType`](#withType) to manually attach a type to a 
 
     Elm.fn "firstInt"
         (\firstArgument ->
-            (Elm.withType (Elm.Annotation.named ["MyOwnModule"] "MyCustomType") firstArgument)
+            (firstArgument
+                |> Elm.withType
+                    (Elm.Annotation.named ["MyOwnModule"] "MyCustomType")
+            )
         )
 
 -}
@@ -1593,7 +1600,19 @@ fn arg1BaseName toExpression =
             }
 
 
-{-| -}
+{-| This is a special case of function declaration which will _reduce_ itself if possible.
+
+Meaning, if this would generate the following code
+
+    \myArg -> someOtherFunction myArg
+
+Then it will replace itself with just
+
+    someOtherFunction
+
+**Note** you likely won't need this! It's generally used by the package-helper generator, but that might be a relatively special case.
+
+-}
 functionReduced : String -> Elm.Annotation.Annotation -> (Expression -> Expression) -> Expression
 functionReduced argBaseName argType toExpression =
     Compiler.Expression <|
@@ -2246,22 +2265,14 @@ functionAdvanced args fullExpression =
             }
 
 
-{-|
+{-| You may run into situations where you don't know the number of arguments for a function at compile-time.
 
-        Elm.function
-            [ ("firstArg", Nothing)
-            , ("secondArg", Just Type.string)
-            ]
-            (\variables ->
-                -- variables is a list of expressions
-                case variables of
-                    [firstArg, secondArg] ->
-                        -- do something with the first and second arg
-                    _ ->
-                        Elm.unit
+In that case you can use `function`. It follows the same pattern as the `fn*` functions.
 
+Provide it with —
 
-            )
+  - A list of argument names and an optional type
+  - A function which will be given all the input arguments as `Expression`s.
 
 -}
 function : List ( String, Maybe Elm.Annotation.Annotation ) -> (List Expression -> Expression) -> Expression
@@ -2351,7 +2362,7 @@ function initialArgList toFullExpression =
             }
 
 
-{-| Add documentation to a declaration!
+{-| Add a documentation comment to a declaration!
 -}
 withDocumentation : String -> Declaration -> Declaration
 withDocumentation =
