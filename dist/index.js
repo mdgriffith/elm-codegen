@@ -266,7 +266,7 @@ function getCodeGenJson() {
         var codeGenJson = JSON.parse(stringContents);
         return {
             version: codeGenJson["elm-codegen-version"],
-            dependencies: { packages: codeGenJson.dependencies.packages, local: codeGenJson.dependencies.local },
+            dependencies: { packages: codeGenJson["codegen-helpers"].packages, local: codeGenJson["codegen-helpers"].local },
         };
     }
     catch (exception_var) {
