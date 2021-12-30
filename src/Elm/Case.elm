@@ -1,5 +1,5 @@
 module Elm.Case exposing
-    ( maybe, result, list, list2, list3
+    ( maybe, result, list
     , tuple, triple
     , custom
     , Branch, otherwise, branch, branch2, branch3, branch4, branch5
@@ -7,7 +7,7 @@ module Elm.Case exposing
 
 {-|
 
-@docs maybe, result, list, list2, list3
+@docs maybe, result, list
 
 @docs tuple, triple
 
@@ -243,12 +243,33 @@ result mainExpression branches =
             }
 
 
-{-| -}
+{-|
+
+    Elm.fn "myList" <|
+        \myList ->
+            Elm.Case.list myList
+                { empty = Elm.int 0
+                , remaining =
+                    \top remaining ->
+                        Elm.plus (Elm.int 5) top
+                }
+
+Generates
+
+    \myList ->
+        case myList of
+            [] ->
+                0
+
+            top :: remaining ->
+                top + 5
+
+-}
 list :
     Expression
     ->
         { empty : Expression
-        , remaining : Expression -> Expression
+        , remaining : Expression -> Expression -> Expression
         }
     -> Expression
 list mainExpression branches =
@@ -261,91 +282,12 @@ list mainExpression branches =
                         [ Branch
                             (Pattern.ListPattern [])
                             branches.empty
-                        , Branch (Pattern.VarPattern "a")
-                            (branches.remaining (Elm.value "a"))
-                        ]
-            in
-            { expression =
-                Exp.CaseExpression
-                    { expression = Compiler.nodify expr.expression
-                    , cases = List.reverse gathered.cases
-                    }
-            , annotation =
-                case gathered.annotation of
-                    Nothing ->
-                        Err [ Compiler.EmptyCaseStatement ]
-
-                    Just ann ->
-                        ann
-            , imports = expr.imports ++ gathered.imports
-            }
-
-
-{-| -}
-list2 :
-    Expression
-    ->
-        { empty : Expression
-        , one : Expression -> Expression
-        , remaining : Expression -> Expression
-        }
-    -> Expression
-list2 mainExpression branches =
-    Compiler.Expression <|
-        \index ->
-            let
-                ( expr, gathered ) =
-                    captureCase mainExpression
-                        index
-                        [ Branch (Pattern.ListPattern []) branches.empty
                         , Branch
-                            (Pattern.ListPattern [ Compiler.nodify (Pattern.VarPattern "a") ])
-                            (branches.one (Elm.value "a"))
-                        , Branch
-                            (Pattern.VarPattern "a")
-                            (branches.remaining (Elm.value "a"))
-                        ]
-            in
-            { expression =
-                Exp.CaseExpression
-                    { expression = Compiler.nodify expr.expression
-                    , cases = List.reverse gathered.cases
-                    }
-            , annotation =
-                case gathered.annotation of
-                    Nothing ->
-                        Err [ Compiler.EmptyCaseStatement ]
-
-                    Just ann ->
-                        ann
-            , imports = expr.imports ++ gathered.imports
-            }
-
-
-{-| -}
-list3 :
-    Expression
-    ->
-        { empty : Expression
-        , one : Expression -> Expression
-        , two : Expression -> Expression -> Expression
-        , remaining : Expression -> Expression
-        }
-    -> Expression
-list3 mainExpression branches =
-    Compiler.Expression <|
-        \index ->
-            let
-                ( expr, gathered ) =
-                    captureCase mainExpression
-                        index
-                        [ Branch (Pattern.ListPattern []) branches.empty
-                        , Branch (Pattern.ListPattern [ Compiler.nodify (Pattern.VarPattern "a") ])
-                            (branches.one (Elm.value "a"))
-                        , Branch (Pattern.ListPattern [ Compiler.nodify (Pattern.VarPattern "a"), Compiler.nodify (Pattern.VarPattern "b") ])
-                            (branches.two (Elm.value "a") (Elm.value "b"))
-                        , Branch (Pattern.VarPattern "a")
-                            (branches.remaining (Elm.value "a"))
+                            (Pattern.UnConsPattern
+                                (Compiler.nodify (Pattern.VarPattern "top"))
+                                (Compiler.nodify (Pattern.VarPattern "remaining"))
+                            )
+                            (branches.remaining (Elm.value "top") (Elm.value "remaining"))
                         ]
             in
             { expression =
