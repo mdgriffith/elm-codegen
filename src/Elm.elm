@@ -1524,7 +1524,7 @@ Generates
 
     \firstInt -> 42 + firstInt
 
-And the final thing to note is that if you want to generate a **top level** function, use `Elm.declaration`.
+If you want to generate a **top level** function instead of an anonymous function, use `Elm.declaration`.
 
     Elm.declaration "add42" <|
         Elm.fn "firstInt"
@@ -1541,6 +1541,18 @@ Results in
 **Note** — Elm CodeGen will protect variable names if they're used in a nested `fn*` by adding a string of numbers to the end of the name. So, you may see a variable name be something like `myVariable_0_1`.
 
 If you absolutely don't want this behavior, you'll need to use [`functionAdvanced`](#functionAdvanced).
+
+**Another Note** — There may be situations where `elm-codegen` is unable to infer the type of one of the parameters. This is especially the case if you are using type aliases.
+
+In this case you can use [`withType`](#withType) to manually attach a type to a value. That looks like this:
+
+    import Elm
+    import Elm.Annotation
+
+    Elm.fn "firstInt"
+        (\firstArgument ->
+            (Elm.withType (Elm.Annotation.named ["MyOwnModule"] "MyCustomType") firstArgument)
+        )
 
 -}
 fn : String -> (Expression -> Expression) -> Expression
