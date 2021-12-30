@@ -511,7 +511,7 @@ valueFrom mod name =
 
 --{-| Add an annotation to a value.
 --
---**Note** this may not _literally_ add an annotation to the code, but will inform `elm-prefab`s type inference so that top level values can be auto-annotated.
+--**Note** this may not _literally_ add an annotation to the code, but will inform `elm-codegen`s type inference so that top level values can be auto-annotated.
 --
 --So, for example, if we have.
 --
@@ -605,7 +605,7 @@ valueWith details =
     Elm.value "myString"
         |> Elm.withType (Type.string)
 
-Though be sure elm-prefab isn't already doing this automatically for you!
+Though be sure `elm-codegen` isn't already doing this automatically for you!
 
 -}
 withType : Elm.Annotation.Annotation -> Expression -> Expression
@@ -894,7 +894,7 @@ list exprs =
 
 
 {-| -}
-updateRecord : String -> List ( String, Expression ) -> Expression
+updateRecord : String -> List Field -> Expression
 updateRecord name fields =
     Compiler.Expression <|
         \index ->
@@ -902,7 +902,7 @@ updateRecord name fields =
                 fieldDetails =
                     fields
                         |> List.foldl
-                            (\( fieldName, fieldExp ) ( currentIndex, items ) ->
+                            (\(Field fieldName fieldExp) ( currentIndex, items ) ->
                                 let
                                     ( newIndex, exp ) =
                                         Compiler.toExpressionDetails currentIndex fieldExp
