@@ -464,20 +464,13 @@ list mainExpression branches =
     Elm.fn "maybeString" <|
         \maybeString ->
             Elm.Case.custom maybeString
-                [ Elm.Case.branch ["Maybe"] "Nothing"
+                [ Elm.Case.branch [ "Maybe" ]
+                    "Nothing"
                     (Elm.string "It's nothing, I swear!")
-                , Elm.Case.branch2 ["Maybe"] "Just" <|
+                , Elm.Case.branch2 [ "Maybe" ] "Just" <|
                     \just ->
                         Elm.append (Elm.string "Actually, it's: ") just
-
-
-
                 ]
-                -- { empty = Elm.int 0
-                -- , nonEmpty =
-                --     \top remaining ->
-                --         Elm.plus (Elm.int 5) top
-                -- }
 
 Generates
 
