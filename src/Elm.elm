@@ -546,7 +546,9 @@ valueWith details =
         [] ->
             Compiler.Expression <|
                 \index ->
-                    { expression = Exp.FunctionOrValue details.importFrom (Compiler.sanitize details.name)
+                    { expression =
+                        Exp.FunctionOrValue details.importFrom
+                            (Compiler.sanitize details.name)
                     , annotation =
                         case details.annotation of
                             Nothing ->
