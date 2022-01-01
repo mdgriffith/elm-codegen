@@ -306,7 +306,7 @@ docs group =
             "@docs " ++ String.join ", " group.members
 
         Just groupName ->
-            "## " ++ groupName ++ "\n\n\n@docs " ++ String.join ", " group.members
+            "## " ++ groupName ++ "\n\n@docs " ++ String.join ", " group.members
 
 
 {-| Same as [file](#file), but you have more control over how the module comment is generated!
@@ -405,8 +405,15 @@ render toDocComment fileDetails =
                         (Internal.Comments.addPart
                             Internal.Comments.emptyComment
                             (Internal.Comments.Markdown
-                                (toDocComment exposedGroups
-                                    |> String.join "\n\n"
+                                (case exposedGroups of
+                                    [] ->
+                                        ""
+
+                                    _ ->
+                                        "\n"
+                                            ++ (toDocComment exposedGroups
+                                                    |> String.join "\n\n"
+                                               )
                                 )
                             )
                         )
