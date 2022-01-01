@@ -87,8 +87,8 @@ function generate(debug: boolean, elm_file: string, moduleName: string, target_d
 
 type Options = {
   debug: boolean
-  cwd: string | null
-  output: string | null
+  // cwd: string | null
+  output: string
   flagsFrom: string | null
   flags: string | null
   watch: boolean
@@ -267,9 +267,9 @@ async function init(install_dir: string) {
   )
 }
 
-async function install_from_codegen_json(options: Options) {
+async function install_from_codegen_json(cwd: string) {
   console.log("Installing dependencies from " + chalk.yellow("elm.codegen.json"))
-  const cwd = options.cwd || "."
+
   let codeGenJson = getCodeGenJson()
   console.log(codeGenJson)
   const install_dir = path.join(cwd, "codegen")
@@ -327,91 +327,118 @@ function clear(dir: string) {
   })
 }
 
-async function action(cmd: string, pkg: string | null, options: Options, com: any) {
-  const cwd = options.cwd || "."
+async function run_install(pkg: string) {
+  const install_dir = "codegen"
+  if (!!pkg) {
+    let codeGenJson = getCodeGenJson()
 
-  const install_dir = path.join(cwd, "codegen")
-  if (cmd == "init") {
-    init(install_dir)
-  } else if (cmd == "install") {
-    // Installing packages
-    if (!!pkg) {
-      let codeGenJson = getCodeGenJson()
-
-      // Package specified
-      if (pkg.endsWith(".json")) {
-        if (codeGenJson.dependencies.local.includes(pkg)) {
-          console.log(format_block([chalk.cyan(pkg) + " is already installed!"]))
-          process.exit(1)
-        }
-        console.log(format_block(["Adding " + chalk.cyan(pkg) + " to local dependencies and installing."]))
-        let docs = JSON.parse(fs.readFileSync(pkg).toString())
-        run_package_generator(install_dir, { docs: docs })
-        codeGenJson.dependencies.local.push(pkg)
-        fs.writeFileSync(path.join(".", "elm.codegen.json"), codeGenJsonToString(codeGenJson))
-      } else if (pkg.endsWith(".elm")) {
-        if (pkg in codeGenJson.dependencies.local) {
-          console.log(format_block([chalk.cyan(pkg) + " is already installed!"]))
-          process.exit(1)
-        }
-        run_package_generator(install_dir, { elmSource: [fs.readFileSync(pkg).toString()] })
-        codeGenJson.dependencies.local.push(pkg)
-        fs.writeFileSync(path.join(".", "elm.codegen.json"), codeGenJsonToString(codeGenJson))
-      } else {
-        console.log("Installing " + chalk.cyan(pkg) + " in " + chalk.yellow(install_dir))
-        install_package(pkg, install_dir, null)
+    // Package specified
+    if (pkg.endsWith(".json")) {
+      if (codeGenJson.dependencies.local.includes(pkg)) {
+        console.log(format_block([chalk.cyan(pkg) + " is already installed!"]))
+        process.exit(1)
       }
+      console.log(format_block(["Adding " + chalk.cyan(pkg) + " to local dependencies and installing."]))
+      let docs = JSON.parse(fs.readFileSync(pkg).toString())
+      run_package_generator(install_dir, { docs: docs })
+      codeGenJson.dependencies.local.push(pkg)
+      fs.writeFileSync(path.join(".", "elm.codegen.json"), codeGenJsonToString(codeGenJson))
+    } else if (pkg.endsWith(".elm")) {
+      if (pkg in codeGenJson.dependencies.local) {
+        console.log(format_block([chalk.cyan(pkg) + " is already installed!"]))
+        process.exit(1)
+      }
+      run_package_generator(install_dir, { elmSource: [fs.readFileSync(pkg).toString()] })
+      codeGenJson.dependencies.local.push(pkg)
+      fs.writeFileSync(path.join(".", "elm.codegen.json"), codeGenJsonToString(codeGenJson))
     } else {
-      // elm-codegen install
-      // means reinstall all packages
-      install_from_codegen_json(options)
+      console.log("Installing " + chalk.cyan(pkg) + " in " + chalk.yellow(install_dir))
+      install_package(pkg, install_dir, null)
     }
   } else {
-    let output = path.join(cwd, options.output || "generated")
+    // elm-codegen install
+    // means reinstall all packages
+    install_from_codegen_json(".")
+  }
+}
+async function run_generation(elmFile: string, options: Options) {
+  const cwd = "."
+  let output = path.join(cwd, options.output)
 
-    // prepare flags
-    let flags: any | null = null
-    if (options.flagsFrom) {
-      if (options.flagsFrom.endsWith(".json")) {
-        flags = JSON.parse(fs.readFileSync(options.flagsFrom).toString())
-      } else {
-        flags = fs.readFileSync(options.flagsFrom).toString()
-      }
-    } else if (options.flags) {
-      flags = JSON.parse(options.flags)
+  // prepare flags
+  let flags: any | null = null
+  if (options.flagsFrom) {
+    if (options.flagsFrom.endsWith(".json")) {
+      flags = JSON.parse(fs.readFileSync(options.flagsFrom).toString())
+    } else {
+      flags = fs.readFileSync(options.flagsFrom).toString()
     }
+  } else if (options.flags) {
+    flags = JSON.parse(options.flags)
+  }
 
-    if (cmd.endsWith(".elm")) {
-      const moduleName = path.parse(cmd).name
+  if (elmFile.endsWith(".elm")) {
+    const moduleName = path.parse(elmFile).name
 
-      if (options.watch) {
-        //         clear(output)
-        generate(options.debug, cmd, moduleName, output, cwd, flags)
-        chokidar.watch(path.join(cwd, "**", "*.elm"), { ignored: path.join(output, "**") }).on("all", (event, path) => {
-          console.log("\nFile changed, regenerating")
-          generate(options.debug, cmd, moduleName, output, cwd, flags)
-        })
-      } else {
-        //         skipping clearing files because in my test case it was failing with permission denied all the time.
-        //         clear(output)
-        generate(options.debug, cmd, moduleName, output, cwd, flags)
-      }
+    if (options.watch) {
+      //         clear(output)
+      generate(options.debug, elmFile, moduleName, output, cwd, flags)
+      chokidar.watch(path.join(cwd, "**", "*.elm"), { ignored: path.join(output, "**") }).on("all", (event, path) => {
+        console.log("\nFile changed, regenerating")
+        generate(options.debug, elmFile, moduleName, output, cwd, flags)
+      })
+    } else {
+      //         skipping clearing files because in my test case it was failing with permission denied all the time.
+      //         clear(output)
+      generate(options.debug, elmFile, moduleName, output, cwd, flags)
     }
+  } else {
   }
 }
 
+const helpText = `
+Welcome to ${chalk.cyan("elm-codegen")}!
+
+Make sure to check out the ${chalk.yellow("guides")}:
+    https://github.com/mdgriffith/elm-codegen#check-out-the-guide
+`
+
+program.version("0.1.0").name("elm-codegen").addHelpText("before", helpText)
+
+const initDocs = `
+    Start an Elm CodeGen project.
+    This will create a ${chalk.yellow("codegen")} directory and provide you with everything you need to get started.
+`
+
+program.command("init").description(initDocs).action(init)
+
+const installDocs = `
+    Install helpers for an ${chalk.yellow("Elm package")} or a local Elm file.
+    ${chalk.cyan("elm-codegen install elm/json")}
+    ${chalk.cyan("elm-codegen install codegen/helpers/LocalFile.elm")}
+`
+
+program.command("install").description(installDocs).argument("<package>").action(run_install)
+
+const runDocs = `
+    Run an Elm code generator.
+    ${chalk.cyan("elm-codegen run codegen/Generator.elm")}
+`
+
 program
-  .version("0.1.0")
-  .arguments("[cmd] [package]")
+  .command("run")
+  .description(runDocs)
+  .argument("<Generator.elm>")
   .option("--debug", "Run your generator in debug mode, allowing you to use Debug.log in your elm.", false)
-  .option("--watch", "Watch the given file for changes and rerun the generator when a change is made.")
-  .option("--cwd <dir>", "Change the base directory for compiling your Elm generator")
-  .option("--output <dir>", "The directory where your generated files should go.")
+  .option("--watch", "Watch the given file for changes and rerun the generator when a change is made.", false)
+  .option("--output <dir>", "The directory where your generated files should go.", "generated")
   .option(
     "--flags-from <file>",
     "The file to feed to your elm app as flags.  If it has a json extension, it will be handed in as json."
   )
   .option("--flags <json>", "Json to pass to your elm app.  if --flags-from is given, that will take precedence.")
-  .action(action)
+  .action(run_generation)
+
+program.showHelpAfterError()
 
 program.parseAsync()

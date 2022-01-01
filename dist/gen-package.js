@@ -8246,7 +8246,7 @@ var $author$project$Elm$docs = function (group) {
 		return '@docs ' + A2($elm$core$String$join, ', ', group.a5);
 	} else {
 		var groupName = _v0.a;
-		return '## ' + (groupName + ('\n\n\n@docs ' + A2($elm$core$String$join, ', ', group.a5)));
+		return '## ' + (groupName + ('\n\n@docs ' + A2($elm$core$String$join, ', ', group.a5)));
 	}
 };
 var $author$project$Internal$Compiler$Exposed = function (a) {
@@ -11998,10 +11998,16 @@ var $author$project$Elm$render = F2(
 						$author$project$Internal$Comments$addPart,
 						$author$project$Internal$Comments$emptyComment,
 						$author$project$Internal$Comments$Markdown(
-							A2(
-								$elm$core$String$join,
-								'\n\n',
-								toDocComment(exposedGroups))))),
+							function () {
+								if (!exposedGroups.b) {
+									return '';
+								} else {
+									return '\n' + A2(
+										$elm$core$String$join,
+										'\n\n',
+										toDocComment(exposedGroups));
+								}
+							}()))),
 				b0: fileDetails.E,
 				b: A2(
 					$elm$core$List$filterMap,
