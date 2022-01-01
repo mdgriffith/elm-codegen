@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Codegen for Elm",
   "main": "./dist/index.js",
+  "bin": {
+    "elm-codegen": "./bin/elm-codegen"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc && npm run pkg:build",
