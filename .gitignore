@@ -7,3 +7,4 @@ node_modules
 generated
 yarn.lock
 generators
+playground/codegen
