@@ -19,7 +19,7 @@ Which, if you use `Elm.toString` on it
 ```elm
 asAString : String
 asAString =
-    Elm.toString (Elm.plus (Elm.int 42) (Elm.int 42))`
+    Elm.toString (Elm.plus (Elm.int 42) (Elm.int 42))
 ```
 
 would generate exactly what you might think:
