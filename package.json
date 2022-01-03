@@ -21,6 +21,10 @@
     "playground": "(npm run build; cd playground; node ../dist/index.js run src/Gen.elm --debug)",
     "playground-watch": "(npm run build; cd playground; node ../dist/index.js run src/Gen.elm --debug --watch)"
   },
+  "files": [
+    "dist",
+    "bin"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mdgriffith/elm-codegen.git"
