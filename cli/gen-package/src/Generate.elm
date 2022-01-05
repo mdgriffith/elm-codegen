@@ -648,6 +648,20 @@ getArity i tipe =
             i
 
 
+functionArgTypes : Elm.Type.Type -> List Elm.Type.Type -> { args : List Elm.Type.Type, return : Elm.Type.Type}
+functionArgTypes fnType args =
+    case fnType of
+        Elm.Type.Lambda one two ->
+            functionArgTypes two (one :: args)
+
+        _ ->
+            { args = List.reverse args
+            , return = fnType
+            }
+
+
+
+
 getArgumentUnpacker : Int -> Elm.Type.Type -> Elm.Expression -> Elm.Expression
 getArgumentUnpacker freshCount tipe value =
     case tipe of
@@ -655,37 +669,72 @@ getArgumentUnpacker freshCount tipe value =
             let
                 argCount =
                     getArity 1 two
+
+                args = functionArgTypes tipe []
             in
             ElmGen.functionAdvanced
-                (List.map
-                    (\i ->
+            --     (List.map
+            --         (\i ->
+                        -- Elm.tuple
+                        --     (Elm.string ("ar" ++ String.fromInt i))
+                        --     (GenType.named
+                        --         [ Elm.string "Elm" ]
+                        --             (Elm.string "Expression")
+                        --     )
+            --         )
+            --         (List.range 1 argCount)
+            --     )
+                (List.indexedMap
+                    (\i argType ->
                         Elm.tuple
                             (Elm.string ("ar" ++ String.fromInt i))
-                            (GenType.named
-                                [ Elm.string "Elm" ]
-                                    (Elm.string "Expression")
-                            )
+                            -- (GenType.named
+                            --     [ Elm.string "Elm" ]
+                            --         (Elm.string "Expression")
+                            -- )
+                            (typeToExpression [] argType)
+                            -- (typeToGeneratedAnnotation argType)
                     )
-                    (List.range 1 argCount)
+                    args.args
+
                 )
                 ( Elm.apply value
-                    (List.map
-                        (\i ->
+                    -- (List.map
+                    --     (\i ->
+                    --         ElmGen.valueWith
+                    --             { importFrom = []
+                    --             , name = (Elm.string ("ar" ++ String.fromInt i))
+                    --             , annotation =
+                    --                 Elm.maybe
+                    --                     (Just
+                    --                         (GenType.named
+                    --                             [ Elm.string "Elm" ]
+                    --                             (Elm.string "Expression")
+                    --                         )
+                    --                     )
+
+                    --             }
+                    --     )
+                    --     (List.range 1 argCount)
+                    -- )
+                    (List.indexedMap
+                        (\i argType ->
                             ElmGen.valueWith
                                 { importFrom = []
                                 , name = (Elm.string ("ar" ++ String.fromInt i))
                                 , annotation =
+                                    Elm.maybe
+                                        -- (Just
+                                        --     (GenType.named
+                                        --         [ Elm.string "Elm" ]
+                                        --         (Elm.string "Expression")
+                                        --     )
+                                        -- )
+                                        (Just (typeToExpression [] argType))
 
-                                        (Elm.maybe
-                                            (Just
-                                                (GenType.named
-                                                [ Elm.string "Elm" ]
-                                                (Elm.string "Expression")
-                                            ))
-                                        )
                                 }
                         )
-                        (List.range 1 argCount)
+                        args.args
                     )
                 )
 
@@ -999,16 +1048,10 @@ namedWithType thisModule name types =
                         |> List.head
                         |> Maybe.withDefault name
             in
-            if isLocal thisModule frags then
-                Elm.value "types_"
-                    |> Elm.get typeName
-                    |> Elm.get "annotation"
-
-            else
-                GenType.namedWith
-                    (List.map Elm.string (List.take (fragsLength - 1) frags))
-                    (Elm.string (typeName))
-                    (List.map (typeToExpression thisModule) types)
+            GenType.namedWith
+                (List.map Elm.string (List.take (fragsLength - 1) frags))
+                (Elm.string (typeName))
+                (List.map (typeToExpression thisModule) types)
 
 
 isLocal thisModule thisType =

@@ -2174,18 +2174,29 @@ declaration name (Compiler.Expression toBody) =
     let
         body =
             toBody Compiler.startIndex
+
+        resolvedType =
+            body.annotation
+                |> Result.mapError
+                    (List.map Compiler.inferenceErrorToString
+                        >> String.join "\n\n"
+                    )
+                |> Result.andThen
+                    (\sig -> Compiler.resolveVariables sig.inferences sig.type_)
     in
-    { documentation = Compiler.nodifyMaybe Nothing
+    { documentation =
+        Compiler.nodifyMaybe
+            -- (case resolvedType of
+            --     Ok _ ->
+            --         Nothing
+            --     Err err ->
+            --         Just err
+            -- )
+            Nothing
     , signature =
         case body.annotation of
             Ok sig ->
-                -- let
-                --     _ =
-                --         Debug.log "  RAW TYPE" sig.type_
-                --     _ =
-                --         List.map (Debug.log "   INFS") (Dict.toList sig.inferences)
-                -- in
-                case Compiler.resolveVariables sig.inferences sig.type_ of
+                case resolvedType of
                     Ok finalType ->
                         Just
                             (Compiler.nodify
