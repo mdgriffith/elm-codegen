@@ -39,7 +39,7 @@ Even in the best of times, code generation can be a challenging subject!
 
 ## Check out the guide!
 
-- [Getting started](https://github.com/mdgriffith/elm-codegen/tree/main/guide/01_GettingStarted.md)
+- [Getting started](https://github.com/mdgriffith/elm-codegen/tree/main/guide/GettingStarted.md)
 - [Writing a generator](https://github.com/mdgriffith/elm-codegen/tree/main/guide/WritingAGenerator.md)
 - [Using packages](https://github.com/mdgriffith/elm-codegen/tree/main/guide/UsingPackages.md)
 
