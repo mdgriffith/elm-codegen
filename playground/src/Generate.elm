@@ -26,12 +26,27 @@ files list =
 
 
 {-|
-     Report an error.  The script will end
+     Report an error.  The script will end.
 
 -}
-error : { title : String, description : String } -> Cmd msg
-error err =
-     onFailureSend err
+error :
+     List
+          { title : String
+          , description : String
+          } -> Cmd msg
+error errs =
+     onFailureSend (List.map encodeErr err)
+
+
+encodeError :
+     { title : String
+     , description : String
+     } -> Json.Value
+encodeError err =
+     Json.object
+        [ ("title", (Json.string file.title))
+        , ("description", (Json.string file.description))
+        ]
 
 {-| Report some info.  The script will continue to run.
 
@@ -44,8 +59,7 @@ info err =
 
 port onSuccessSend : List Json.Value -> Cmd msg
 
-port onFailureSend : { title : String, description : String } -> Cmd msg
+port onFailureSend : List Json.Value -> Cmd msg
 
 port onInfoSend : String -> Cmd msg
-
 

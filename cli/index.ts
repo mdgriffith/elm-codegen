@@ -61,8 +61,12 @@ async function run_generator(base: string, moduleName: string, elm_source: strin
       const s = files.length == 1 ? "" : "s"
       console.log(format_block([`${chalk.yellow(files.length)} file${s} generated!`]))
     })
-    .catch((reason) => {
-      console.error(format_title(reason.title), "\n\n" + reason.description + "\n")
+    .catch((errors) => {
+      let formatted = ""
+      for (const err of errors) {
+        formatted = formatted + format_title(err.title) + "\n\n" + err.description + "\n"
+      }
+      console.error(formatted)
     })
   return promise
 }
@@ -371,8 +375,8 @@ async function run_generation(options: Options) {
   if (!fs.existsSync(elmFile)) {
     console.log(
       format_block([
-        "I wasn't able to find  " + chalk.yellow(elmFile) + ".",
-        "Have you set up a project using " + +chalk.cyan("elm-codegen init") + "?",
+        "I wasn't able to find " + chalk.yellow(elmFile) + ".",
+        "Have you set up a project using " + chalk.cyan("elm-codegen init") + "?",
       ])
     )
     process.exit(0)

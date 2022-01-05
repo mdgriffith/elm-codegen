@@ -120,8 +120,13 @@ function run_generator(base, moduleName, elm_source, flags) {
                 var s = files.length == 1 ? "" : "s";
                 console.log(format_block([chalk_1.default.yellow(files.length) + " file" + s + " generated!"]));
             })
-                .catch(function (reason) {
-                console.error(format_title(reason.title), "\n\n" + reason.description + "\n");
+                .catch(function (errors) {
+                var formatted = "";
+                for (var _i = 0, errors_1 = errors; _i < errors_1.length; _i++) {
+                    var err = errors_1[_i];
+                    formatted = formatted + format_title(err.title) + "\n\n" + err.description + "\n";
+                }
+                console.error(formatted);
             });
             return [2 /*return*/, promise];
         });
@@ -449,7 +454,7 @@ function run_generation(options) {
             if (!fs.existsSync(elmFile)) {
                 console.log(format_block([
                     "I wasn't able to find  " + chalk_1.default.yellow(elmFile) + ".",
-                    "Have you set up a project using " + +chalk_1.default.cyan("elm-codegen init") + "?",
+                    "Have you set up a project using " + chalk_1.default.cyan("elm-codegen init") + "?",
                 ]));
                 process.exit(0);
             }
