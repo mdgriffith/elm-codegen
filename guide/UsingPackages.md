@@ -6,7 +6,7 @@ Let's say you wanted to generate some code that uses [`elm-html`](https://packag
 
 If you haven't already, make a new codegen project by running `elm-codegen init`, like you did in [Getting Started](https://github.com/mdgriffith/elm-codegen/tree/main/guide/GettingStarted.md)
 
-Now, run `elm-codegen install elm/html`.
+Now, run `cd codegen ; elm-codegen install elm/html`.
 
 This will create the following files —
 

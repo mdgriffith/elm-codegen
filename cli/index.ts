@@ -251,7 +251,7 @@ async function init() {
 
   fs.mkdirSync(base)
   fs.mkdirSync(path.join(base, "Elm"))
-  fs.writeFileSync(path.join(".", "elm.codegen.json"), JSON.stringify(codeGenJson, null, 2))
+  fs.writeFileSync(path.join(base, "elm.codegen.json"), JSON.stringify(codeGenJson, null, 2))
   fs.writeFileSync(path.join(base, "elm.json"), templates.init.elmJson())
   fs.writeFileSync(path.join(base, "Generate.elm"), templates.init.starter())
   fs.writeFileSync(path.join(base, "Elm", "Gen.elm"), templates.init.elmGen())
@@ -264,7 +264,7 @@ async function init() {
       "I've created the " + chalk.cyan(install_dir) + " folder and added some files.",
       chalk.cyan(path.join(base, "Generate.elm")) + " is a good place to start to see how everything works!",
       "",
-      "Run your generator by running " + chalk.yellow("elm-codegen run " + path.join(base, "Generate.elm")) + ".",
+      "Run your generator by running " + chalk.yellow("elm-codegen run"),
     ])
   )
 }
@@ -330,7 +330,7 @@ function clear(dir: string) {
 }
 
 async function run_install(pkg: string) {
-  const install_dir = "codegen"
+  const install_dir = "."
   if (!!pkg) {
     let codeGenJson = getCodeGenJson()
 
@@ -364,8 +364,8 @@ async function run_install(pkg: string) {
   }
 }
 async function run_generation(options: Options) {
-  const elmFile = "./codegen/Generate.elm"
-  const cwd = "."
+  const elmFile = "Generate.elm"
+  const cwd = "./codegen"
   let output = path.join(cwd, options.output)
 
   if (!fs.existsSync(elmFile)) {

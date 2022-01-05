@@ -305,7 +305,7 @@ function init() {
                     codeGenJson["elm-codegen-version"] = currentVersion;
                     fs.mkdirSync(base);
                     fs.mkdirSync(path.join(base, "Elm"));
-                    fs.writeFileSync(path.join(".", "elm.codegen.json"), JSON.stringify(codeGenJson, null, 2));
+                    fs.writeFileSync(path.join(base, "elm.codegen.json"), JSON.stringify(codeGenJson, null, 2));
                     fs.writeFileSync(path.join(base, "elm.json"), templates_1.default.init.elmJson());
                     fs.writeFileSync(path.join(base, "Generate.elm"), templates_1.default.init.starter());
                     fs.writeFileSync(path.join(base, "Elm", "Gen.elm"), templates_1.default.init.elmGen());
@@ -318,7 +318,7 @@ function init() {
                         "I've created the " + chalk_1.default.cyan(install_dir) + " folder and added some files.",
                         chalk_1.default.cyan(path.join(base, "Generate.elm")) + " is a good place to start to see how everything works!",
                         "",
-                        "Run your generator by running " + chalk_1.default.yellow("elm-codegen run " + path.join(base, "Generate.elm")) + ".",
+                        "Run your generator by running " + chalk_1.default.yellow("elm-codegen run"),
                     ]));
                     return [2 /*return*/];
             }
@@ -401,7 +401,7 @@ function run_install(pkg) {
     return __awaiter(this, void 0, void 0, function () {
         var install_dir, codeGenJson, docs;
         return __generator(this, function (_a) {
-            install_dir = "codegen";
+            install_dir = ".";
             if (!!pkg) {
                 codeGenJson = getCodeGenJson();
                 // Package specified
@@ -443,8 +443,8 @@ function run_generation(options) {
     return __awaiter(this, void 0, void 0, function () {
         var elmFile, cwd, output, flags, moduleName;
         return __generator(this, function (_a) {
-            elmFile = "./codegen/Generate.elm";
-            cwd = ".";
+            elmFile = "Generate.elm";
+            cwd = "./codegen";
             output = path.join(cwd, options.output);
             if (!fs.existsSync(elmFile)) {
                 console.log(format_block([
