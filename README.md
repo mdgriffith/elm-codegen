@@ -33,10 +33,6 @@ anExample =
     }
 ```
 
-## Best practices for Code Generation
-
-Even in the best of times, code generation can be a challenging subject!
-
 ## Check out the guide!
 
 - [Getting started](https://github.com/mdgriffith/elm-codegen/tree/main/guide/GettingStarted.md)
