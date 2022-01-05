@@ -525,7 +525,7 @@ prettyDestructuring aliases pattern expr =
 
 prettyDocumentation : Documentation -> Doc t
 prettyDocumentation docs =
-    Pretty.string docs
+    Pretty.string ("{-|" ++ docs ++ "-}")
 
 
 {-| Pretty prints a type signature.

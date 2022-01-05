@@ -170,7 +170,7 @@ type InferenceError
     = MismatchedList Annotation.TypeAnnotation Annotation.TypeAnnotation
     | Todo String
     | EmptyCaseStatement
-    | FunctionAppliedToTooManyArgs
+    | FunctionAppliedToTooManyArgs Annotation.TypeAnnotation (List Annotation.TypeAnnotation)
     | MismatchedTypeVariables
     | DuplicateFieldInRecord String
     | CaseBranchesReturnDifferentTypes
@@ -206,7 +206,7 @@ inferenceErrorToString inf =
         EmptyCaseStatement ->
             "Case statement is empty"
 
-        FunctionAppliedToTooManyArgs ->
+        FunctionAppliedToTooManyArgs fn args ->
             "A function is applied to too many arguments"
 
         DuplicateFieldInRecord fieldName ->
@@ -231,7 +231,14 @@ inferenceErrorToString inf =
                 ++ " is not appendable.  Only Strings and Lists are appendable"
 
         UnableToUnify one two ->
-            "Unable to unify"
+            "I found\n    "
+                ++ (Elm.Writer.writeTypeAnnotation (nodify one)
+                        |> Elm.Writer.write
+                   )
+                ++ "\nBut I was expecting:\n     "
+                ++ (Elm.Writer.writeTypeAnnotation (nodify two)
+                        |> Elm.Writer.write
+                   )
 
         MismatchedTypeVariables ->
             "Different list sof type variables"
@@ -333,29 +340,44 @@ documentation doc decl =
 
         Declaration exp imports body ->
             let
-                str =
-                    "{-|" ++ doc ++ "-}"
+                addDocs maybeNodedExistingDocs =
+                    case maybeNodedExistingDocs of
+                        Nothing ->
+                            doc
+
+                        Just (Node.Node range existing) ->
+                            doc ++ "\n\n" ++ existing
             in
             case body of
                 Declaration.FunctionDeclaration func ->
                     Declaration exp
                         imports
                         (Declaration.FunctionDeclaration
-                            { func | documentation = Just (nodify str) }
+                            { func
+                                | documentation =
+                                    Just (nodify (addDocs func.documentation))
+                            }
                         )
 
                 Declaration.AliasDeclaration typealias ->
                     Declaration exp
                         imports
                         (Declaration.AliasDeclaration
-                            { typealias | documentation = Just (nodify str) }
+                            { typealias
+                                | documentation =
+                                    Just (nodify (addDocs typealias.documentation))
+                            }
                         )
 
                 Declaration.CustomTypeDeclaration typeDecl ->
                     Declaration exp
                         imports
                         (Declaration.CustomTypeDeclaration
-                            { typeDecl | documentation = Just (nodify str) }
+                            { typeDecl
+                                | documentation =
+                                    Just
+                                        (nodify (addDocs typeDecl.documentation))
+                            }
                         )
 
                 Declaration.PortDeclaration sig ->
@@ -1224,14 +1246,6 @@ applyTypeHelper cache fn args =
                         ( varCache, Err err ) ->
                             Err
                                 [ err
-
-                                -- Todo
-                                -- ("Unable to unify: "
-                                --     ++ Debug.toString (denode one)
-                                --     ++ " AND "
-                                --     ++ Debug.toString top
-                                --     ++ String.join "cache:" (Dict.keys varCache)
-                                -- )
                                 ]
 
         final ->
@@ -1244,14 +1258,7 @@ applyTypeHelper cache fn args =
 
                 _ ->
                     Err
-                        [ FunctionAppliedToTooManyArgs
-
-                        --   Todo
-                        --     (Debug.toString final
-                        --         ++ " (APPLIED TO )"
-                        --         ++ Debug.toString args
-                        --         ++ String.join ":" (Dict.keys cache)
-                        --     )
+                        [ FunctionAppliedToTooManyArgs final args
                         ]
 
 
