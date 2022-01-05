@@ -439,12 +439,20 @@ function run_install(pkg) {
         });
     });
 }
-function run_generation(elmFile, options) {
+function run_generation(options) {
     return __awaiter(this, void 0, void 0, function () {
-        var cwd, output, flags, moduleName_1;
+        var elmFile, cwd, output, flags, moduleName;
         return __generator(this, function (_a) {
+            elmFile = "./codegen/Generate.elm";
             cwd = ".";
             output = path.join(cwd, options.output);
+            if (!fs.existsSync(elmFile)) {
+                console.log(format_block([
+                    "I wasn't able to find  " + chalk_1.default.yellow(elmFile) + ".",
+                    "Have you set up a project using " + +chalk_1.default.cyan("elm-codegen init") + "?",
+                ]));
+                process.exit(0);
+            }
             flags = null;
             if (options.flagsFrom) {
                 if (options.flagsFrom.endsWith(".json")) {
@@ -457,23 +465,19 @@ function run_generation(elmFile, options) {
             else if (options.flags) {
                 flags = JSON.parse(options.flags);
             }
-            if (elmFile.endsWith(".elm")) {
-                moduleName_1 = path.parse(elmFile).name;
-                if (options.watch) {
-                    //         clear(output)
-                    generate(options.debug, elmFile, moduleName_1, output, cwd, flags);
-                    chokidar.watch(path.join(cwd, "**", "*.elm"), { ignored: path.join(output, "**") }).on("all", function (event, path) {
-                        console.log("\nFile changed, regenerating");
-                        generate(options.debug, elmFile, moduleName_1, output, cwd, flags);
-                    });
-                }
-                else {
-                    //         skipping clearing files because in my test case it was failing with permission denied all the time.
-                    //         clear(output)
-                    generate(options.debug, elmFile, moduleName_1, output, cwd, flags);
-                }
+            moduleName = path.parse(elmFile).name;
+            if (options.watch) {
+                //         clear(output)
+                generate(options.debug, elmFile, moduleName, output, cwd, flags);
+                chokidar.watch(path.join(cwd, "**", "*.elm"), { ignored: path.join(output, "**") }).on("all", function (event, path) {
+                    console.log("\nFile changed, regenerating");
+                    generate(options.debug, elmFile, moduleName, output, cwd, flags);
+                });
             }
             else {
+                //         skipping clearing files because in my test case it was failing with permission denied all the time.
+                //         clear(output)
+                generate(options.debug, elmFile, moduleName, output, cwd, flags);
             }
             return [2 /*return*/];
         });
@@ -485,11 +489,10 @@ var initDocs = "\n    Start an Elm CodeGen project.\n    This will create a " + 
 program.command("init").description(initDocs).action(init);
 var installDocs = "\n    Install helpers for an " + chalk_1.default.yellow("Elm package") + " or a local Elm file.\n    " + chalk_1.default.cyan("elm-codegen install elm/json") + "\n    " + chalk_1.default.cyan("elm-codegen install codegen/helpers/LocalFile.elm") + "\n";
 program.command("install").description(installDocs).argument("<package>").action(run_install);
-var runDocs = "\n    Run an Elm code generator.\n    " + chalk_1.default.cyan("elm-codegen run Generate.elm") + "\n";
+var runDocs = "\n    Run " + chalk_1.default.yellow("codegen/Generate.elm") + ".\n    " + chalk_1.default.cyan("elm-codegen run") + "\n";
 program
     .command("run")
     .description(runDocs)
-    .argument("<Generator.elm>")
     .option("--debug", "Run your generator in debug mode, allowing you to use Debug.log in your elm.", false)
     .option("--watch", "Watch the given file for changes and rerun the generator when a change is made.", false)
     .option("--output <dir>", "The directory where your generated files should go.", "generated")

@@ -368,6 +368,16 @@ async function run_generation(options: Options) {
   const cwd = "."
   let output = path.join(cwd, options.output)
 
+  if (!fs.existsSync(elmFile)) {
+    console.log(
+      format_block([
+        "I wasn't able to find  " + chalk.yellow(elmFile) + ".",
+        "Have you set up a project using " + +chalk.cyan("elm-codegen init") + "?",
+      ])
+    )
+    process.exit(0)
+  }
+
   // prepare flags
   let flags: any | null = null
   if (options.flagsFrom) {
