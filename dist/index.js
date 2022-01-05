@@ -278,18 +278,19 @@ function getCodeGenJson() {
 function codeGenJsonToString(codeGen) {
     var obj = {};
     obj["elm-codegen-version"] = codeGen.version;
-    obj.dependencies = codeGen.dependencies;
+    obj["codegen-helpers"] = codeGen.dependencies;
     return JSON.stringify(obj, null, 4);
 }
 // INIT
 //    Start a new elm-codegen project
 //    Generates some files and installs `core`
-function init(install_dir) {
+function init() {
     return __awaiter(this, void 0, void 0, function () {
-        var base, codeGenJson;
+        var install_dir, base, codeGenJson;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
+                    install_dir = "codegen";
                     base = path.join(".", install_dir);
                     // create folder
                     if (fs.existsSync(base)) {
@@ -317,7 +318,7 @@ function init(install_dir) {
                         "I've created the " + chalk_1.default.cyan(install_dir) + " folder and added some files.",
                         chalk_1.default.cyan(path.join(base, "Generate.elm")) + " is a good place to start to see how everything works!",
                         "",
-                        "Run your generator by running " + chalk_1.default.yellow("elm-codegen") + ".",
+                        "Run your generator by running " + chalk_1.default.yellow("elm-codegen run " + path.join(base, "Generate.elm")) + ".",
                     ]));
                     return [2 /*return*/];
             }
@@ -396,73 +397,6 @@ function clear(dir) {
         }
     });
 }
-// async function action(cmd: string, pkg: string | null, options: Options, com: any) {
-//   const cwd = "."
-//   const install_dir = path.join(cwd, "codegen")
-//   if (cmd == "init") {
-//     init(install_dir)
-//   } else if (cmd == "install") {
-//     // Installing packages
-//     if (!!pkg) {
-//       let codeGenJson = getCodeGenJson()
-//       // Package specified
-//       if (pkg.endsWith(".json")) {
-//         if (codeGenJson.dependencies.local.includes(pkg)) {
-//           console.log(format_block([chalk.cyan(pkg) + " is already installed!"]))
-//           process.exit(1)
-//         }
-//         console.log(format_block(["Adding " + chalk.cyan(pkg) + " to local dependencies and installing."]))
-//         let docs = JSON.parse(fs.readFileSync(pkg).toString())
-//         run_package_generator(install_dir, { docs: docs })
-//         codeGenJson.dependencies.local.push(pkg)
-//         fs.writeFileSync(path.join(".", "elm.codegen.json"), codeGenJsonToString(codeGenJson))
-//       } else if (pkg.endsWith(".elm")) {
-//         if (pkg in codeGenJson.dependencies.local) {
-//           console.log(format_block([chalk.cyan(pkg) + " is already installed!"]))
-//           process.exit(1)
-//         }
-//         run_package_generator(install_dir, { elmSource: [fs.readFileSync(pkg).toString()] })
-//         codeGenJson.dependencies.local.push(pkg)
-//         fs.writeFileSync(path.join(".", "elm.codegen.json"), codeGenJsonToString(codeGenJson))
-//       } else {
-//         console.log("Installing " + chalk.cyan(pkg) + " in " + chalk.yellow(install_dir))
-//         install_package(pkg, install_dir, null)
-//       }
-//     } else {
-//       // elm-codegen install
-//       // means reinstall all packages
-//       install_from_codegen_json(cwd)
-//     }
-//   } else {
-//     let output = path.join(cwd, options.output || "generated")
-//     // prepare flags
-//     let flags: any | null = null
-//     if (options.flagsFrom) {
-//       if (options.flagsFrom.endsWith(".json")) {
-//         flags = JSON.parse(fs.readFileSync(options.flagsFrom).toString())
-//       } else {
-//         flags = fs.readFileSync(options.flagsFrom).toString()
-//       }
-//     } else if (options.flags) {
-//       flags = JSON.parse(options.flags)
-//     }
-//     if (cmd.endsWith(".elm")) {
-//       const moduleName = path.parse(cmd).name
-//       if (options.watch) {
-//         //         clear(output)
-//         generate(options.debug, cmd, moduleName, output, cwd, flags)
-//         chokidar.watch(path.join(cwd, "**", "*.elm"), { ignored: path.join(output, "**") }).on("all", (event, path) => {
-//           console.log("\nFile changed, regenerating")
-//           generate(options.debug, cmd, moduleName, output, cwd, flags)
-//         })
-//       } else {
-//         //         skipping clearing files because in my test case it was failing with permission denied all the time.
-//         //         clear(output)
-//         generate(options.debug, cmd, moduleName, output, cwd, flags)
-//       }
-//     }
-//   }
-// }
 function run_install(pkg) {
     return __awaiter(this, void 0, void 0, function () {
         var install_dir, codeGenJson, docs;
@@ -551,7 +485,7 @@ var initDocs = "\n    Start an Elm CodeGen project.\n    This will create a " + 
 program.command("init").description(initDocs).action(init);
 var installDocs = "\n    Install helpers for an " + chalk_1.default.yellow("Elm package") + " or a local Elm file.\n    " + chalk_1.default.cyan("elm-codegen install elm/json") + "\n    " + chalk_1.default.cyan("elm-codegen install codegen/helpers/LocalFile.elm") + "\n";
 program.command("install").description(installDocs).argument("<package>").action(run_install);
-var runDocs = "\n    Run an Elm code generator.\n    " + chalk_1.default.cyan("elm-codegen run codegen/Generator.elm") + "\n";
+var runDocs = "\n    Run an Elm code generator.\n    " + chalk_1.default.cyan("elm-codegen run Generate.elm") + "\n";
 program
     .command("run")
     .description(runDocs)

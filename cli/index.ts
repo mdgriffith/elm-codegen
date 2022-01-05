@@ -223,14 +223,16 @@ function getCodeGenJson(): CodeGenJson {
 function codeGenJsonToString(codeGen: CodeGenJson): string {
   let obj: any = {}
   obj["elm-codegen-version"] = codeGen.version
-  obj.dependencies = codeGen.dependencies
+  obj["codegen-helpers"] = codeGen.dependencies
   return JSON.stringify(obj, null, 4)
 }
 
 // INIT
 //    Start a new elm-codegen project
 //    Generates some files and installs `core`
-async function init(install_dir: string) {
+async function init() {
+  const install_dir = "codegen"
+
   const base = path.join(".", install_dir)
   // create folder
   if (fs.existsSync(base)) {
@@ -262,7 +264,7 @@ async function init(install_dir: string) {
       "I've created the " + chalk.cyan(install_dir) + " folder and added some files.",
       chalk.cyan(path.join(base, "Generate.elm")) + " is a good place to start to see how everything works!",
       "",
-      "Run your generator by running " + chalk.yellow("elm-codegen") + ".",
+      "Run your generator by running " + chalk.yellow("elm-codegen run " + path.join(base, "Generate.elm")) + ".",
     ])
   )
 }
@@ -361,7 +363,8 @@ async function run_install(pkg: string) {
     install_from_codegen_json(".")
   }
 }
-async function run_generation(elmFile: string, options: Options) {
+async function run_generation(options: Options) {
+  const elmFile = "./codegen/Generate.elm"
   const cwd = "."
   let output = path.join(cwd, options.output)
 
@@ -377,22 +380,19 @@ async function run_generation(elmFile: string, options: Options) {
     flags = JSON.parse(options.flags)
   }
 
-  if (elmFile.endsWith(".elm")) {
-    const moduleName = path.parse(elmFile).name
+  const moduleName = path.parse(elmFile).name
 
-    if (options.watch) {
-      //         clear(output)
+  if (options.watch) {
+    //         clear(output)
+    generate(options.debug, elmFile, moduleName, output, cwd, flags)
+    chokidar.watch(path.join(cwd, "**", "*.elm"), { ignored: path.join(output, "**") }).on("all", (event, path) => {
+      console.log("\nFile changed, regenerating")
       generate(options.debug, elmFile, moduleName, output, cwd, flags)
-      chokidar.watch(path.join(cwd, "**", "*.elm"), { ignored: path.join(output, "**") }).on("all", (event, path) => {
-        console.log("\nFile changed, regenerating")
-        generate(options.debug, elmFile, moduleName, output, cwd, flags)
-      })
-    } else {
-      //         skipping clearing files because in my test case it was failing with permission denied all the time.
-      //         clear(output)
-      generate(options.debug, elmFile, moduleName, output, cwd, flags)
-    }
+    })
   } else {
+    //         skipping clearing files because in my test case it was failing with permission denied all the time.
+    //         clear(output)
+    generate(options.debug, elmFile, moduleName, output, cwd, flags)
   }
 }
 
@@ -421,14 +421,13 @@ const installDocs = `
 program.command("install").description(installDocs).argument("<package>").action(run_install)
 
 const runDocs = `
-    Run an Elm code generator.
-    ${chalk.cyan("elm-codegen run codegen/Generator.elm")}
+    Run ${chalk.yellow("codegen/Generate.elm")}.
+    ${chalk.cyan("elm-codegen run")}
 `
 
 program
   .command("run")
   .description(runDocs)
-  .argument("<Generator.elm>")
   .option("--debug", "Run your generator in debug mode, allowing you to use Debug.log in your elm.", false)
   .option("--watch", "Watch the given file for changes and rerun the generator when a change is made.", false)
   .option("--output <dir>", "The directory where your generated files should go.", "generated")

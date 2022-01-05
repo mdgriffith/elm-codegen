@@ -24,9 +24,9 @@ In a fresh directory, run `elm-codegen init` which will —
    - `Elm.Gen.elm` — This has a few ports that `elm-codegen` is expecting when it runs your generator. Take a peek inside, it's not very scary.
    - We'll also install helpers for `elm/core`.
 
-Now that we've done that, we can run `elm-codegen codegen/Generate.elm`!
+Now that we've done that, we can run `elm-codegen run`!
 
-This will generate create a `generated` folder with a `HelloWorld.elm` file in it 🎉
+This will run `codegen/Generate.elm` and create a `generated` folder with a `HelloWorld.elm` file in it 🎉
 
 You should be good to proceed to the [Writing a Generator](https://github.com/mdgriffith/elm-codegen/tree/main/guide/WritingAGenerator.md) section, but before you go, let's quickly cover some other useful options in the `elm-codegen` CLI.
 
