@@ -138,7 +138,12 @@ async function run_package_generator(output: string, flags: any) {
 
 // INSTALL
 //   Install bindings for a package
-async function install_package(pkg: string, output: string, version: string | null) {
+async function install_package(
+  pkg: string,
+  install_dir: string,
+  version: string | null,
+  codeGenJson: CodeGenJson
+): Promise<CodeGenJson> {
   if (version == null) {
     const searchResp = await fetch("https://elm-package-cache-psi.vercel.app/search.json")
     const search = await searchResp.json()
@@ -149,14 +154,14 @@ async function install_package(pkg: string, output: string, version: string | nu
       }
     }
     if (version == null) {
-      console.log(format_block([`No package found for ${pkg}`]))
+      console.log(format_block([`No package found for ${chalk.yellow(pkg)}`]))
       process.exit()
     }
   }
   const docsResp = await fetch(`https://elm-package-cache-psi.vercel.app/packages/${pkg}/${version}/docs.json`)
   const docs = await docsResp.json()
 
-  let codeGenJson = getCodeGenJson()
+  // let codeGenJson = getCodeGenJson(install_dir)
 
   if (codeGenJson.version != currentVersion) {
     console.log(
@@ -182,13 +187,15 @@ async function install_package(pkg: string, output: string, version: string | nu
   }
 
   try {
+    run_package_generator(install_dir, { docs: docs })
     codeGenJson.dependencies.packages[pkg] = version
-    fs.writeFileSync(path.join(".", "elm.codegen.json"), codeGenJsonToString(codeGenJson))
-    run_package_generator(output, { docs: docs })
+    // fs.writeFileSync(path.join(install_dir, "elm.codegen.json"), codeGenJsonToString(codeGenJson))
+    return codeGenJson
   } catch (error: unknown) {
     console.log(`There was an issue generating docs for ${pkg}`)
     // @ts-ignore
     console.log(format_block([error]))
+    process.exit(1)
   }
 }
 
@@ -197,10 +204,26 @@ type CodeGenJson = {
   dependencies: { packages: { [key: string]: string }; local: string[] }
 }
 
-function getCodeGenJson(): CodeGenJson {
+function getCodeGenJsonDir(): string {
+  if (fs.existsSync("elm.codegen.json")) {
+    return "."
+  } else if (fs.existsSync("codegen/elm.codegen.json")) {
+    return "codegen"
+  }
+
+  console.log(
+    format_block([
+      "Looks like there's no " + chalk.yellow("elm.codegen.json") + ".",
+      "Run " + chalk.cyan("elm-codegen init") + " to generate one!",
+    ])
+  )
+  process.exit(1)
+}
+
+function getCodeGenJson(cwd: string): CodeGenJson {
   let stringContents = ""
   try {
-    stringContents = fs.readFileSync(path.join(".", "elm.codegen.json")).toString()
+    stringContents = fs.readFileSync(path.join(cwd, "elm.codegen.json")).toString()
   } catch (error) {
     console.log(
       format_block([
@@ -210,9 +233,12 @@ function getCodeGenJson(): CodeGenJson {
     )
     process.exit(1)
   }
+  return json2CodeGenConfig(stringContents)
+}
 
+function json2CodeGenConfig(stringJson: string): CodeGenJson {
   try {
-    let codeGenJson = JSON.parse(stringContents)
+    let codeGenJson = JSON.parse(stringJson)
     return {
       version: codeGenJson["elm-codegen-version"],
       dependencies: { packages: codeGenJson["codegen-helpers"].packages, local: codeGenJson["codegen-helpers"].local },
@@ -229,6 +255,13 @@ function codeGenJsonToString(codeGen: CodeGenJson): string {
   obj["elm-codegen-version"] = codeGen.version
   obj["codegen-helpers"] = codeGen.dependencies
   return JSON.stringify(obj, null, 4)
+}
+
+function codeGenJsonDefault(): CodeGenJson {
+  let codeGenJson = JSON.parse(templates.init.elmCodegenJson())
+  codeGenJson["elm-codegen-version"] = currentVersion
+
+  return json2CodeGenConfig(JSON.stringify(codeGenJson))
 }
 
 // INIT
@@ -250,16 +283,17 @@ async function init() {
     process.exit(1)
   }
 
-  let codeGenJson = JSON.parse(templates.init.elmCodegenJson())
-  codeGenJson["elm-codegen-version"] = currentVersion
+  const codeGenJson = codeGenJsonDefault()
 
   fs.mkdirSync(base)
   fs.mkdirSync(path.join(base, "Elm"))
-  fs.writeFileSync(path.join(base, "elm.codegen.json"), JSON.stringify(codeGenJson, null, 2))
+
   fs.writeFileSync(path.join(base, "elm.json"), templates.init.elmJson())
   fs.writeFileSync(path.join(base, "Generate.elm"), templates.init.starter())
   fs.writeFileSync(path.join(base, "Elm", "Gen.elm"), templates.init.elmGen())
-  await install_package("elm/core", install_dir, null)
+  const updatedCodeGenJson = await install_package("elm/core", install_dir, null, codeGenJson)
+
+  fs.writeFileSync(path.join(base, "elm.codegen.json"), codeGenJsonToString(updatedCodeGenJson))
 
   console.log(
     format_block([
@@ -273,17 +307,18 @@ async function init() {
   )
 }
 
-async function install_from_codegen_json(cwd: string) {
+async function reinstall_everything(install_dir: string, codeGenJson: CodeGenJson) {
   console.log("Installing dependencies from " + chalk.yellow("elm.codegen.json"))
 
-  let codeGenJson = getCodeGenJson()
-  console.log(codeGenJson)
-  const install_dir = path.join(cwd, "codegen")
+  const emptyCodeGenJson = codeGenJsonDefault()
 
-  for (let [key, value] of Object.entries(codeGenJson.dependencies.packages)) {
-    // `value` is a string
+  for (let [key, version] of Object.entries(codeGenJson.dependencies.packages)) {
+    // `version` is a string
+    // install_package returns a new CodeGenJson,
+    // but we already know it should be exactly like the one we have
+
     // @ts-ignore
-    install_package(key, install_dir, value)
+    await install_package(key, install_dir, version, emptyCodeGenJson)
   }
   const elmSources = []
 
@@ -334,12 +369,14 @@ function clear(dir: string) {
 }
 
 async function run_install(pkg: string) {
-  const install_dir = "."
+  const install_dir = getCodeGenJsonDir()
+  let codeGenJson = getCodeGenJson(install_dir)
+  const codeGenJsonPath = path.join(install_dir, "elm.codegen.json")
   if (!!pkg) {
-    let codeGenJson = getCodeGenJson()
-
     // Package specified
     if (pkg.endsWith(".json")) {
+      //
+      // Install local docs file
       if (codeGenJson.dependencies.local.includes(pkg)) {
         console.log(format_block([chalk.cyan(pkg) + " is already installed!"]))
         process.exit(1)
@@ -348,34 +385,45 @@ async function run_install(pkg: string) {
       let docs = JSON.parse(fs.readFileSync(pkg).toString())
       run_package_generator(install_dir, { docs: docs })
       codeGenJson.dependencies.local.push(pkg)
-      fs.writeFileSync(path.join(".", "elm.codegen.json"), codeGenJsonToString(codeGenJson))
+      fs.writeFileSync(codeGenJsonPath, codeGenJsonToString(codeGenJson))
     } else if (pkg.endsWith(".elm")) {
+      //
+      // Install local elm file
       if (pkg in codeGenJson.dependencies.local) {
         console.log(format_block([chalk.cyan(pkg) + " is already installed!"]))
         process.exit(1)
       }
       run_package_generator(install_dir, { elmSource: [fs.readFileSync(pkg).toString()] })
       codeGenJson.dependencies.local.push(pkg)
-      fs.writeFileSync(path.join(".", "elm.codegen.json"), codeGenJsonToString(codeGenJson))
+      fs.writeFileSync(codeGenJsonPath, codeGenJsonToString(codeGenJson))
     } else {
+      //
+      // Install from elm package
       console.log("Installing " + chalk.cyan(pkg) + " in " + chalk.yellow(install_dir))
-      install_package(pkg, install_dir, null)
+      const updatedCodeGenJson = await install_package(pkg, install_dir, null, codeGenJson)
+      fs.writeFileSync(codeGenJsonPath, codeGenJsonToString(updatedCodeGenJson))
     }
   } else {
     // elm-codegen install
     // means reinstall all packages
-    install_from_codegen_json(".")
+    reinstall_everything(install_dir, codeGenJson)
   }
 }
-async function run_generation(options: Options) {
-  const elmFile = "Generate.elm"
-  const cwd = "./codegen"
+async function run_generation(desiredElmFile: string | null, options: Options) {
+  let elmFile = "Generate.elm"
+  let cwd = "./codegen"
+
+  if (desiredElmFile != null) {
+    cwd = "."
+    elmFile = desiredElmFile
+  }
+  let fullSourcePath = path.join(cwd, elmFile)
   let output = path.join(cwd, options.output)
 
-  if (!fs.existsSync(elmFile)) {
+  if (!fs.existsSync(fullSourcePath)) {
     console.log(
       format_block([
-        "I wasn't able to find " + chalk.yellow(elmFile) + ".",
+        "I wasn't able to find " + chalk.yellow(fullSourcePath) + ".",
         "Have you set up a project using " + chalk.cyan("elm-codegen init") + "?",
       ])
     )
@@ -437,11 +485,14 @@ program.command("install").description(installDocs).argument("<package>").action
 const runDocs = `
     Run ${chalk.yellow("codegen/Generate.elm")}.
     ${chalk.cyan("elm-codegen run")}
+
+    You may pass it a specific Elm file to run.
 `
 
 program
   .command("run")
   .description(runDocs)
+  .argument("<elmFile>")
   .option("--debug", "Run your generator in debug mode, allowing you to use Debug.log in your elm.", false)
   .option("--watch", "Watch the given file for changes and rerun the generator when a change is made.", false)
   .option("--output <dir>", "The directory where your generated files should go.", "generated")
