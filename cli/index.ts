@@ -368,7 +368,7 @@ function clear(dir: string) {
   })
 }
 
-async function run_install(pkg: string) {
+async function run_install(pkg: string, version: string | null) {
   const install_dir = getCodeGenJsonDir()
   let codeGenJson = getCodeGenJson(install_dir)
   const codeGenJsonPath = path.join(install_dir, "elm.codegen.json")
@@ -400,7 +400,7 @@ async function run_install(pkg: string) {
       //
       // Install from elm package
       console.log("Installing " + chalk.cyan(pkg) + " in " + chalk.yellow(install_dir))
-      const updatedCodeGenJson = await install_package(pkg, install_dir, null, codeGenJson)
+      const updatedCodeGenJson = await install_package(pkg, install_dir, version, codeGenJson)
       fs.writeFileSync(codeGenJsonPath, codeGenJsonToString(updatedCodeGenJson))
     }
   } else {
@@ -480,7 +480,7 @@ const installDocs = `
     ${chalk.cyan("elm-codegen install codegen/helpers/LocalFile.elm")}
 `
 
-program.command("install").description(installDocs).argument("<package>").action(run_install)
+program.command("install").description(installDocs).argument("<package>").argument("[version]").action(run_install)
 
 const runDocs = `
     Run ${chalk.yellow("codegen/Generate.elm")}.
@@ -492,7 +492,7 @@ const runDocs = `
 program
   .command("run")
   .description(runDocs)
-  .argument("<elmFile>")
+  .argument("[elmFile]")
   .option("--debug", "Run your generator in debug mode, allowing you to use Debug.log in your elm.", false)
   .option("--watch", "Watch the given file for changes and rerun the generator when a change is made.", false)
   .option("--output <dir>", "The directory where your generated files should go.", "generated")

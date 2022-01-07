@@ -442,7 +442,7 @@ function clear(dir) {
         }
     });
 }
-function run_install(pkg) {
+function run_install(pkg, version) {
     return __awaiter(this, void 0, void 0, function () {
         var install_dir, codeGenJson, codeGenJsonPath, docs, updatedCodeGenJson;
         return __generator(this, function (_a) {
@@ -481,7 +481,7 @@ function run_install(pkg) {
                     //
                     // Install from elm package
                     console.log("Installing " + chalk_1.default.cyan(pkg) + " in " + chalk_1.default.yellow(install_dir));
-                    return [4 /*yield*/, install_package(pkg, install_dir, null, codeGenJson)];
+                    return [4 /*yield*/, install_package(pkg, install_dir, version, codeGenJson)];
                 case 3:
                     updatedCodeGenJson = _a.sent();
                     fs.writeFileSync(codeGenJsonPath, codeGenJsonToString(updatedCodeGenJson));
@@ -551,12 +551,12 @@ program.version("0.1.0").name("elm-codegen").addHelpText("before", helpText);
 var initDocs = "\n    Start an Elm CodeGen project.\n    This will create a " + chalk_1.default.yellow("codegen") + " directory and provide you with everything you need to get started.\n";
 program.command("init").description(initDocs).action(init);
 var installDocs = "\n    Install helpers for an " + chalk_1.default.yellow("Elm package") + " or a local Elm file.\n    " + chalk_1.default.cyan("elm-codegen install elm/json") + "\n    " + chalk_1.default.cyan("elm-codegen install codegen/helpers/LocalFile.elm") + "\n";
-program.command("install").description(installDocs).argument("<package>").action(run_install);
+program.command("install").description(installDocs).argument("<package>").argument("[version]").action(run_install);
 var runDocs = "\n    Run " + chalk_1.default.yellow("codegen/Generate.elm") + ".\n    " + chalk_1.default.cyan("elm-codegen run") + "\n\n    You may pass it a specific Elm file to run.\n";
 program
     .command("run")
     .description(runDocs)
-    .argument("<elmFile>")
+    .argument("[elmFile]")
     .option("--debug", "Run your generator in debug mode, allowing you to use Debug.log in your elm.", false)
     .option("--watch", "Watch the given file for changes and rerun the generator when a change is made.", false)
     .option("--output <dir>", "The directory where your generated files should go.", "generated")
