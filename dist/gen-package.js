@@ -14812,16 +14812,16 @@ var $author$project$Generate$moduleToFile = function (docs) {
 		A2(
 			$elm$core$List$cons,
 			modNameBlock,
-			A2(
-				$elm$core$List$cons,
-				A2($author$project$Generate$generateTypeRecord, sourceModName, blocks),
+			_Utils_ap(
 				A2(
-					$elm$core$List$cons,
-					values,
-					A2(
-						$elm$core$List$concatMap,
-						$author$project$Generate$generateBlocks(sourceModName),
-						blocks)))));
+					$elm$core$List$concatMap,
+					$author$project$Generate$generateBlocks(sourceModName),
+					blocks),
+				_List_fromArray(
+					[
+						A2($author$project$Generate$generateTypeRecord, sourceModName, blocks),
+						values
+					]))));
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);

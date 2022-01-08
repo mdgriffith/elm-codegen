@@ -124,9 +124,10 @@ moduleToFile docs =
             ]
         }
         (modNameBlock
-            :: generateTypeRecord sourceModName blocks
-            :: values
             :: List.concatMap (generateBlocks sourceModName) blocks
+            ++ [ generateTypeRecord sourceModName blocks
+               , values
+               ]
         )
 
 
