@@ -1,5 +1,5 @@
 export default () => `
-module Generator exposing (main)
+module Generate exposing (main)
 
 {-| -}
 

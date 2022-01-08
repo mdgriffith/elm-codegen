@@ -37,7 +37,8 @@ error :
           , description : String
           } -> Cmd msg
 error errs =
-     onFailureSend (List.map encodeErr err)
+     onFailureSend (List.map encodeError errs)
+
 
 
 encodeError :
@@ -46,8 +47,8 @@ encodeError :
      } -> Json.Value
 encodeError err =
      Json.object
-          [ ("title", (Json.string file.title))
-          , ("description", (Json.string file.description))
+          [ ("title", (Json.string err.title))
+          , ("description", (Json.string err.description))
           ]
 
 {-| Report some info.  The script will continue to run.
