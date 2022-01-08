@@ -4,7 +4,6 @@ import Elm.Syntax.Exposing exposing (ExposedType, Exposing(..), TopLevelExpose(.
 import Elm.Syntax.Import exposing (Import)
 import Elm.Syntax.Node as Node exposing (Node(..))
 import Elm.Syntax.Range exposing (emptyRange)
-import Maybe.Extra
 
 
 
@@ -212,7 +211,7 @@ combineImports innerImports =
                     List.foldl
                         (\imp result ->
                             { moduleName = imp.moduleName
-                            , moduleAlias = Maybe.Extra.or imp.moduleAlias result.moduleAlias
+                            , moduleAlias = or imp.moduleAlias result.moduleAlias
                             , exposingList =
                                 joinMaybeExposings (denodeMaybe imp.exposingList) (denodeMaybe result.exposingList)
                                     |> nodifyMaybe
@@ -226,6 +225,16 @@ combineImports innerImports =
                     Maybe.map (denode >> sortAndDedupExposing >> nodify)
                         combinedImports.exposingList
             }
+
+
+or : Maybe a -> Maybe a -> Maybe a
+or ma mb =
+    case ma of
+        Nothing ->
+            mb
+
+        Just _ ->
+            ma
 
 
 

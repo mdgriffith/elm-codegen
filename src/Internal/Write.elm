@@ -13,7 +13,6 @@ Thank you Rupert!
 
 -}
 
-import Bool.Extra
 import Elm.Syntax.Declaration
 import Elm.Syntax.Documentation exposing (Documentation)
 import Elm.Syntax.Exposing exposing (ExposedType, Exposing(..), TopLevelExpose(..))
@@ -942,7 +941,7 @@ prettyApplication aliases indent exprs =
                 )
                 (denodeAll exprs)
                 |> List.unzip
-                |> Tuple.mapSecond Bool.Extra.any
+                |> Tuple.mapSecond (List.any identity)
     in
     ( prettyExpressions
         |> Pretty.lines
@@ -1045,7 +1044,7 @@ prettyOperatorApplicationRight aliases indent symbol _ exprl exprr =
         ( prettyExpressions, alwaysBreak ) =
             innerOpApply True symbol exprl exprr
                 |> List.unzip
-                |> Tuple.mapSecond Bool.Extra.any
+                |> Tuple.mapSecond (List.any identity)
     in
     ( prettyExpressions
         |> Pretty.join (Pretty.nest indent Pretty.line)
@@ -1158,7 +1157,7 @@ prettyTupledExpression aliases indent exprs =
                 ( prettyExpressions, alwaysBreak ) =
                     List.map (prettyExpressionInner aliases topContext (decrementIndent indent 2)) (denodeAll exprs)
                         |> List.unzip
-                        |> Tuple.mapSecond Bool.Extra.any
+                        |> Tuple.mapSecond (List.any identity)
             in
             ( prettyExpressions
                 |> Pretty.separators ", "
@@ -1299,7 +1298,7 @@ prettyRecordExpr aliases setters =
                 ( prettyExpressions, alwaysBreak ) =
                     List.map (prettySetter aliases) (denodeAll setters)
                         |> List.unzip
-                        |> Tuple.mapSecond Bool.Extra.any
+                        |> Tuple.mapSecond (List.any identity)
             in
             ( prettyExpressions
                 |> Pretty.separators ", "
@@ -1347,7 +1346,7 @@ prettyList aliases indent exprs =
                 ( prettyExpressions, alwaysBreak ) =
                     List.map (prettyExpressionInner aliases topContext (decrementIndent indent 2)) (denodeAll exprs)
                         |> List.unzip
-                        |> Tuple.mapSecond Bool.Extra.any
+                        |> Tuple.mapSecond (List.any identity)
             in
             ( prettyExpressions
                 |> Pretty.separators ", "
@@ -1402,7 +1401,7 @@ prettyRecordUpdateExpression aliases indent var setters =
                 ( prettyExpressions, alwaysBreak ) =
                     List.map (prettySetter aliases) (denodeAll setters)
                         |> List.unzip
-                        |> Tuple.mapSecond Bool.Extra.any
+                        |> Tuple.mapSecond (List.any identity)
             in
             ( open
                 |> Pretty.a
