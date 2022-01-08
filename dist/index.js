@@ -117,8 +117,12 @@ function run_generator(base, moduleName, elm_source, flags) {
                     fs.mkdirSync(path.dirname(fullpath), { recursive: true });
                     fs.writeFileSync(fullpath, file.contents);
                 }
-                var s = files.length == 1 ? "" : "s";
-                console.log(format_block([chalk_1.default.yellow(files.length) + " file" + s + " generated!"]));
+                if (files.length == 1) {
+                    console.log(format_block([chalk_1.default.yellow(files[0].path) + " was created in " + chalk_1.default.cyan(base) + "!"]));
+                }
+                else {
+                    console.log(format_block([chalk_1.default.yellow(files.length) + " files generated in " + chalk_1.default.cyan(base) + "!"]));
+                }
             })
                 .catch(function (errors) {
                 var formatted = "";

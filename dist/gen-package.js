@@ -8994,7 +8994,7 @@ var $author$project$Internal$ImportsAndExposing$joinMaybeExposings = F2(
 		}
 	});
 var $author$project$Internal$ImportsAndExposing$nodifyMaybe = $elm$core$Maybe$map($author$project$Internal$ImportsAndExposing$nodify);
-var $elm_community$maybe_extra$Maybe$Extra$or = F2(
+var $author$project$Internal$ImportsAndExposing$or = F2(
 	function (ma, mb) {
 		if (ma.$ === 1) {
 			return mb;
@@ -9034,7 +9034,7 @@ var $author$project$Internal$ImportsAndExposing$combineImports = function (inner
 								$author$project$Internal$ImportsAndExposing$joinMaybeExposings,
 								$author$project$Internal$ImportsAndExposing$denodeMaybe(imp.cc),
 								$author$project$Internal$ImportsAndExposing$denodeMaybe(result.cc))),
-						a6: A2($elm_community$maybe_extra$Maybe$Extra$or, imp.a6, result.a6),
+						a6: A2($author$project$Internal$ImportsAndExposing$or, imp.a6, result.a6),
 						ak: imp.ak
 					};
 				}),
@@ -9736,7 +9736,6 @@ var $the_sett$elm_pretty_printer$Pretty$align = function (doc) {
 				});
 		});
 };
-var $Chadtech$elm_bool_extra$Bool$Extra$any = $elm$core$List$any($elm$core$Basics$identity);
 var $elm$core$Basics$modBy = _Basics_modBy;
 var $author$project$Internal$Write$decrementIndent = F2(
 	function (currentIndent, spaces) {
@@ -10260,7 +10259,7 @@ var $author$project$Internal$Write$prettyApplication = F3(
 	function (aliases, indent, exprs) {
 		var _v30 = A2(
 			$elm$core$Tuple$mapSecond,
-			$Chadtech$elm_bool_extra$Bool$Extra$any,
+			$elm$core$List$any($elm$core$Basics$identity),
 			$elm$core$List$unzip(
 				A2(
 					$elm$core$List$map,
@@ -10748,7 +10747,7 @@ var $author$project$Internal$Write$prettyList = F3(
 		} else {
 			var _v20 = A2(
 				$elm$core$Tuple$mapSecond,
-				$Chadtech$elm_bool_extra$Bool$Extra$any,
+				$elm$core$List$any($elm$core$Basics$identity),
 				$elm$core$List$unzip(
 					A2(
 						$elm$core$List$map,
@@ -10884,7 +10883,7 @@ var $author$project$Internal$Write$prettyOperatorApplicationRight = F6(
 			});
 		var _v12 = A2(
 			$elm$core$Tuple$mapSecond,
-			$Chadtech$elm_bool_extra$Bool$Extra$any,
+			$elm$core$List$any($elm$core$Basics$identity),
 			$elm$core$List$unzip(
 				A4(innerOpApply, true, symbol, exprl, exprr)));
 		var prettyExpressions = _v12.a;
@@ -10962,7 +10961,7 @@ var $author$project$Internal$Write$prettyRecordExpr = F2(
 		} else {
 			var _v8 = A2(
 				$elm$core$Tuple$mapSecond,
-				$Chadtech$elm_bool_extra$Bool$Extra$any,
+				$elm$core$List$any($elm$core$Basics$identity),
 				$elm$core$List$unzip(
 					A2(
 						$elm$core$List$map,
@@ -11021,7 +11020,7 @@ var $author$project$Internal$Write$prettyRecordUpdateExpression = F4(
 		} else {
 			var _v5 = A2(
 				$elm$core$Tuple$mapSecond,
-				$Chadtech$elm_bool_extra$Bool$Extra$any,
+				$elm$core$List$any($elm$core$Basics$identity),
 				$elm$core$List$unzip(
 					A2(
 						$elm$core$List$map,
@@ -11101,7 +11100,7 @@ var $author$project$Internal$Write$prettyTupledExpression = F3(
 		} else {
 			var _v1 = A2(
 				$elm$core$Tuple$mapSecond,
-				$Chadtech$elm_bool_extra$Bool$Extra$any,
+				$elm$core$List$any($elm$core$Basics$identity),
 				$elm$core$List$unzip(
 					A2(
 						$elm$core$List$map,

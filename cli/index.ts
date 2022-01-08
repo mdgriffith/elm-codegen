@@ -57,9 +57,11 @@ async function run_generator(base: string, moduleName: string, elm_source: strin
         fs.mkdirSync(path.dirname(fullpath), { recursive: true })
         fs.writeFileSync(fullpath, file.contents)
       }
-
-      const s = files.length == 1 ? "" : "s"
-      console.log(format_block([`${chalk.yellow(files.length)} file${s} generated!`]))
+      if (files.length == 1) {
+        console.log(format_block([`${chalk.yellow(files[0].path)} was created in ${chalk.cyan(base)}!`]))
+      } else {
+        console.log(format_block([`${chalk.yellow(files.length)} files generated in ${chalk.cyan(base)}!`]))
+      }
     })
     .catch((errors) => {
       let formatted = ""
