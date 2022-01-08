@@ -404,6 +404,7 @@ async function run_install(pkg: string, version: string | null) {
       console.log("Installing " + chalk.cyan(pkg) + " in " + chalk.yellow(install_dir))
       const updatedCodeGenJson = await install_package(pkg, install_dir, version, codeGenJson)
       fs.writeFileSync(codeGenJsonPath, codeGenJsonToString(updatedCodeGenJson))
+      console.log(chalk.green("Success!"))
     }
   } else {
     // elm-codegen install
@@ -482,7 +483,7 @@ const installDocs = `
     ${chalk.cyan("elm-codegen install codegen/helpers/LocalFile.elm")}
 `
 
-program.command("install").description(installDocs).argument("<package>").argument("[version]").action(run_install)
+program.command("install").description(installDocs).argument("[package]").argument("[version]").action(run_install)
 
 const runDocs = `
     Run ${chalk.yellow("codegen/Generate.elm")}.

@@ -489,6 +489,7 @@ function run_install(pkg, version) {
                 case 3:
                     updatedCodeGenJson = _a.sent();
                     fs.writeFileSync(codeGenJsonPath, codeGenJsonToString(updatedCodeGenJson));
+                    console.log(chalk_1.default.green("Success!"));
                     _a.label = 4;
                 case 4: return [3 /*break*/, 6];
                 case 5:
@@ -555,7 +556,7 @@ program.version("0.1.0").name("elm-codegen").addHelpText("before", helpText);
 var initDocs = "\n    Start an Elm CodeGen project.\n    This will create a " + chalk_1.default.yellow("codegen") + " directory and provide you with everything you need to get started.\n";
 program.command("init").description(initDocs).action(init);
 var installDocs = "\n    Install helpers for an " + chalk_1.default.yellow("Elm package") + " or a local Elm file.\n    " + chalk_1.default.cyan("elm-codegen install elm/json") + "\n    " + chalk_1.default.cyan("elm-codegen install codegen/helpers/LocalFile.elm") + "\n";
-program.command("install").description(installDocs).argument("<package>").argument("[version]").action(run_install);
+program.command("install").description(installDocs).argument("[package]").argument("[version]").action(run_install);
 var runDocs = "\n    Run " + chalk_1.default.yellow("codegen/Generate.elm") + ".\n    " + chalk_1.default.cyan("elm-codegen run") + "\n\n    You may pass it a specific Elm file to run.\n";
 program
     .command("run")
