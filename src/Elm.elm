@@ -903,39 +903,136 @@ list exprs =
 
 
 {-| -}
-updateRecord : String -> List Field -> Expression
-updateRecord name fields =
+updateRecord : Expression -> List Field -> Expression
+updateRecord recordExpression fields =
     Compiler.Expression <|
         \index ->
             let
-                fieldDetails =
+                ( recordIndex, recordExp ) =
+                    Compiler.toExpressionDetails index recordExpression
+
+                ( fieldIndex, fieldAnnotationsGathered, fieldDetails ) =
                     fields
                         |> List.foldl
-                            (\(Field fieldName fieldExp) ( currentIndex, items ) ->
+                            (\(Field fieldName fieldExp) ( currentIndex, fieldAnnotationResult, items ) ->
                                 let
                                     ( newIndex, exp ) =
                                         Compiler.toExpressionDetails currentIndex fieldExp
+
+                                    currentFieldAnnotations =
+                                        case fieldAnnotationResult of
+                                            Ok fieldAnns ->
+                                                case exp.annotation of
+                                                    Ok fs ->
+                                                        Ok (( fieldName, fs ) :: fieldAnns)
+
+                                                    Err newErr ->
+                                                        Err newErr
+
+                                            Err err ->
+                                                case exp.annotation of
+                                                    Ok _ ->
+                                                        fieldAnnotationResult
+
+                                                    Err newErr ->
+                                                        Err (err ++ newErr)
                                 in
                                 ( newIndex
+                                , currentFieldAnnotations
                                 , ( fieldName, exp ) :: items
                                 )
                             )
-                            ( index, [] )
-                        |> Tuple.second
-                        |> List.reverse
+                            ( recordIndex, Ok [], [] )
             in
             { expression =
-                fieldDetails
-                    |> List.map
-                        (\( fieldName, expDetails ) ->
-                            Compiler.nodify
-                                ( Compiler.nodify fieldName
-                                , Compiler.nodify expDetails.expression
+                case recordExp.expression of
+                    Exp.FunctionOrValue _ name ->
+                        fieldDetails
+                            |> List.reverse
+                            |> List.map
+                                (\( fieldName, expDetails ) ->
+                                    Compiler.nodify
+                                        ( Compiler.nodify fieldName
+                                        , Compiler.nodify expDetails.expression
+                                        )
                                 )
-                        )
-                    |> Exp.RecordUpdateExpression (Compiler.nodify name)
+                            |> Exp.RecordUpdateExpression (Compiler.nodify name)
+
+                    _ ->
+                        let
+                            name =
+                                "record" ++ Compiler.indexToString fieldIndex
+                        in
+                        Exp.LetExpression
+                            { declarations =
+                                [ Compiler.nodify
+                                    (Exp.LetDestructuring
+                                        (Compiler.nodify
+                                            (Pattern.VarPattern name)
+                                        )
+                                        (Compiler.nodify recordExp.expression)
+                                    )
+                                ]
+                            , expression =
+                                Compiler.nodify
+                                    (fieldDetails
+                                        |> List.map
+                                            (\( fieldName, expDetails ) ->
+                                                Compiler.nodify
+                                                    ( Compiler.nodify fieldName
+                                                    , Compiler.nodify expDetails.expression
+                                                    )
+                                            )
+                                        |> Exp.RecordUpdateExpression (Compiler.nodify name)
+                                    )
+                            }
             , annotation =
-                Err []
+                case fieldAnnotationsGathered of
+                    Err fieldErrors ->
+                        -- Add in existing errors
+                        Err fieldErrors
+
+                    Ok verifiedFieldAnnotations ->
+                        case recordExp.annotation of
+                            Ok recordAnn ->
+                                case recordAnn.type_ of
+                                    Annotation.Record existingFields ->
+                                        -- must match all existing fields
+                                        case verifyFields verifiedFieldAnnotations existingFields of
+                                            Nothing ->
+                                                recordExp.annotation
+
+                                            Just err ->
+                                                Err [ err ]
+
+                                    Annotation.GenericType nameOfRecord ->
+                                        -- We can attempt to infer that his is a record
+                                        Ok
+                                            { type_ = recordAnn.type_
+                                            , inferences =
+                                                recordAnn.inferences
+                                                    |> Compiler.addInference
+                                                        nameOfRecord
+                                                        (Annotation.GenericRecord (Compiler.nodify nameOfRecord)
+                                                            (Compiler.nodify
+                                                                (List.map
+                                                                    (\( fieldName, inference ) ->
+                                                                        Compiler.nodify
+                                                                            ( Compiler.nodify fieldName
+                                                                            , Compiler.nodify inference.type_
+                                                                            )
+                                                                    )
+                                                                    verifiedFieldAnnotations
+                                                                )
+                                                            )
+                                                        )
+                                            }
+
+                                    otherwise ->
+                                        recordExp.annotation
+
+                            otherwise ->
+                                otherwise
             , imports =
                 List.concatMap
                     (Tuple.second >> Compiler.getImports)
@@ -1249,6 +1346,63 @@ getField selector fields =
 
                     else
                         getField selector remain
+
+
+verifyFields : List ( String, Compiler.Inference ) -> List (Node.Node Annotation.RecordField) -> Maybe Compiler.InferenceError
+verifyFields updatedFields existingFields =
+    if verifyFieldsHelper existingFields updatedFields then
+        Nothing
+
+    else
+        Just
+            (Compiler.RecordUpdateIncorrectFields
+                { existingFields =
+                    List.map
+                        (\(Node.Node _ ( Node.Node _ fieldName, Node.Node _ fieldInference )) ->
+                            ( fieldName, fieldInference )
+                        )
+                        existingFields
+                , attemptingToUpdate =
+                    List.map
+                        (\( fieldName, fieldInference ) ->
+                            ( fieldName, fieldInference.type_ )
+                        )
+                        updatedFields
+                }
+            )
+
+
+verifyFieldsHelper :
+    List (Node.Node Annotation.RecordField)
+    -> List ( String, Compiler.Inference )
+    -> Bool
+verifyFieldsHelper existingFields updatedFields =
+    case updatedFields of
+        [] ->
+            True
+
+        ( fieldName, fieldInference ) :: remain ->
+            if presentAndMatching fieldName fieldInference existingFields then
+                verifyFieldsHelper existingFields remain
+
+            else
+                False
+
+
+presentAndMatching fieldName fieldInference existingFields =
+    List.foldl
+        (\(Node.Node _ ( Node.Node _ existingFieldName, Node.Node _ existingFieldType )) gathered ->
+            if gathered then
+                gathered
+
+            else if fieldName == existingFieldName then
+                True
+
+            else
+                False
+        )
+        False
+        existingFields
 
 
 {-| A custom type declaration.

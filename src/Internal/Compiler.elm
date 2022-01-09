@@ -175,6 +175,10 @@ type InferenceError
     | DuplicateFieldInRecord String
     | CaseBranchesReturnDifferentTypes
     | CouldNotFindField String
+    | RecordUpdateIncorrectFields
+        { existingFields : List ( String, Annotation.TypeAnnotation )
+        , attemptingToUpdate : List ( String, Annotation.TypeAnnotation )
+        }
     | NotAppendable Annotation.TypeAnnotation
     | NotComparable Annotation.TypeAnnotation
     | UnableToUnify Annotation.TypeAnnotation Annotation.TypeAnnotation
@@ -202,6 +206,9 @@ inferenceErrorToString inf =
                 ++ (Elm.Writer.writeTypeAnnotation (nodify two)
                         |> Elm.Writer.write
                    )
+
+        RecordUpdateIncorrectFields details ->
+            "Mismatched record update"
 
         EmptyCaseStatement ->
             "Case statement is empty"
@@ -1513,6 +1520,11 @@ unifyComparable vars comparableName two =
                 )
 
 
+addInference :
+    String
+    -> Annotation.TypeAnnotation
+    -> Dict String Annotation.TypeAnnotation
+    -> Dict String Annotation.TypeAnnotation
 addInference key value infs =
     -- let
     --     _ =
