@@ -269,8 +269,8 @@ function codeGenJsonDefault(): CodeGenJson {
 // INIT
 //    Start a new elm-codegen project
 //    Generates some files and installs `core`
-async function init() {
-  const install_dir = "codegen"
+async function init(desiredInstallDir: string | null) {
+  const install_dir = desiredInstallDir || "codegen"
 
   const base = path.join(".", install_dir)
   // create folder
@@ -475,7 +475,7 @@ const initDocs = `
     This will create a ${chalk.yellow("codegen")} directory and provide you with everything you need to get started.
 `
 
-program.command("init").description(initDocs).action(init)
+program.command("init").description(initDocs).argument("[installDir]").action(init)
 
 const installDocs = `
     Install helpers for an ${chalk.yellow("Elm package")} or a local Elm file.

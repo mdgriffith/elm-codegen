@@ -318,13 +318,13 @@ function codeGenJsonDefault() {
 // INIT
 //    Start a new elm-codegen project
 //    Generates some files and installs `core`
-function init() {
+function init(desiredInstallDir) {
     return __awaiter(this, void 0, void 0, function () {
         var install_dir, base, codeGenJson, updatedCodeGenJson;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    install_dir = "codegen";
+                    install_dir = desiredInstallDir || "codegen";
                     base = path.join(".", install_dir);
                     // create folder
                     if (fs.existsSync(base)) {
@@ -554,7 +554,7 @@ function run_generation(desiredElmFile, options) {
 var helpText = "\nWelcome to " + chalk_1.default.cyan("elm-codegen") + "!\n\nMake sure to check out the " + chalk_1.default.yellow("guides") + ":\n    https://github.com/mdgriffith/elm-codegen#check-out-the-guide\n";
 program.version("0.1.0").name("elm-codegen").addHelpText("before", helpText);
 var initDocs = "\n    Start an Elm CodeGen project.\n    This will create a " + chalk_1.default.yellow("codegen") + " directory and provide you with everything you need to get started.\n";
-program.command("init").description(initDocs).action(init);
+program.command("init").description(initDocs).argument("[installDir]").action(init);
 var installDocs = "\n    Install helpers for an " + chalk_1.default.yellow("Elm package") + " or a local Elm file.\n    " + chalk_1.default.cyan("elm-codegen install elm/json") + "\n    " + chalk_1.default.cyan("elm-codegen install codegen/helpers/LocalFile.elm") + "\n";
 program.command("install").description(installDocs).argument("[package]").argument("[version]").action(run_install);
 var runDocs = "\n    Run " + chalk_1.default.yellow("codegen/Generate.elm") + ".\n    " + chalk_1.default.cyan("elm-codegen run") + "\n\n    You may pass it a specific Elm file to run.\n";
