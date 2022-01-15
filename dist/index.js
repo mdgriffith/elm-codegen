@@ -55,8 +55,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.run = void 0;
+exports.runWith = exports.run = void 0;
 var Run = __importStar(require("./run"));
+//
 function run(targetFile, options) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -65,3 +66,12 @@ function run(targetFile, options) {
     });
 }
 exports.run = run;
+//
+function runWith(targetFile, options, app) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, Run.run(targetFile, options)];
+        });
+    });
+}
+exports.runWith = runWith;
