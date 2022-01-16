@@ -16,7 +16,7 @@ module Elm.Let exposing
 
 import Dict
 import Elm exposing (Expression)
-import Elm.Annotation exposing (record)
+import Elm.Annotation
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
@@ -44,19 +44,39 @@ letIn return =
     Let (\index -> ( [], return ))
 
 
-{-| -}
-value : String -> Expression -> Let Expression
-value desiredName valueExpr =
+with : Let a -> Let (a -> b) -> Let b
+with (Let toScopeA) (Let toScopeAB) =
     Let
         (\index ->
             let
-                ( name, valueReference ) =
-                    asValue index desiredName valueExpr
+                ( scopeA, a ) =
+                    toScopeA index
+
+                ( scopeToB, toB ) =
+                    toScopeAB (Compiler.next index)
             in
-            ( [ Value name valueExpr ]
-            , valueReference
+            ( scopeA ++ scopeToB
+            , toB a
             )
         )
+
+
+{-| -}
+value : String -> Expression -> Let (Expression -> a) -> Let a
+value desiredName valueExpr sourceLet =
+    with
+        (Let
+            (\index ->
+                let
+                    ( name, valueReference ) =
+                        asValue index desiredName valueExpr
+                in
+                ( [ Value name valueExpr ]
+                , valueReference
+                )
+            )
+        )
+        sourceLet
 
 
 asValue : Compiler.Index -> String -> Expression -> ( String, Expression )
@@ -84,18 +104,21 @@ asValue index desiredName sourceExpression =
 
 
 {-| -}
-tuple : String -> String -> Expression -> Let ( Expression, Expression )
-tuple desiredNameOne desiredNameTwo valueExpr =
-    Let
-        (\index ->
-            let
-                myTuple =
-                    unpackTuple index desiredNameOne desiredNameTwo valueExpr
-            in
-            ( [ Tuple myTuple.one.name myTuple.two.name valueExpr ]
-            , ( myTuple.one.reference, myTuple.two.reference )
+tuple : String -> String -> Expression -> Let (( Expression, Expression ) -> a) -> Let a
+tuple desiredNameOne desiredNameTwo valueExpr sourceLet =
+    sourceLet
+        |> with
+            (Let
+                (\index ->
+                    let
+                        myTuple =
+                            unpackTuple index desiredNameOne desiredNameTwo valueExpr
+                    in
+                    ( [ Tuple myTuple.one.name myTuple.two.name valueExpr ]
+                    , ( myTuple.one.reference, myTuple.two.reference )
+                    )
+                )
             )
-        )
 
 
 unpackTuple :
@@ -176,16 +199,23 @@ unpackTuple index desiredNameOne desiredNameTwo sourceExpression =
 
 
 {-| -}
-record : List String -> Expression -> Let (List Expression)
-record fields valueExpr =
+record :
+    List String
+    -> Expression
+    -> Let (List Expression -> a)
+    -> Let a --Let (List Expression)
+record fields valueExpr sourceLet =
     -- Note, we can't actually guard the field names against collision here
     -- They have to be the actual field names in the record, duh.
-    Let
-        (\index ->
-            ( [ Record fields valueExpr ]
-            , unpackRecord index fields valueExpr
+    sourceLet
+        |> with
+            (Let
+                (\index ->
+                    ( [ Record fields valueExpr ]
+                    , unpackRecord index fields valueExpr
+                    )
+                )
             )
-        )
 
 
 unpackRecord :
@@ -293,23 +323,6 @@ toRef name annotation =
             , imports =
                 []
             }
-
-
-with : Let a -> Let (a -> b) -> Let b
-with (Let toScopeA) (Let toScopeAB) =
-    Let
-        (\index ->
-            let
-                ( scopeA, a ) =
-                    toScopeA index
-
-                ( scopeToB, toB ) =
-                    toScopeAB (Compiler.next index)
-            in
-            ( scopeA ++ scopeToB
-            , toB a
-            )
-        )
 
 
 {-| -}
