@@ -55,7 +55,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.runWith = exports.run = void 0;
+exports.run = void 0;
 var Run = __importStar(require("./run"));
 //
 function run(targetFile, options) {
@@ -66,12 +66,7 @@ function run(targetFile, options) {
     });
 }
 exports.run = run;
-//
-function runWith(targetFile, options, app) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/, Run.run(targetFile, options)];
-        });
-    });
-}
-exports.runWith = runWith;
+// Would be cool to provide a way to run an app by only specifying it's subscriptions
+// export async function runWith(targetFile: string, options: Options, app: Promise<any>) {
+//   return Run.run(targetFile, options)
+// }
