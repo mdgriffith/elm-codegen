@@ -42,7 +42,7 @@ program
     .action(Run.run_install);
 program
     .command("run")
-    .description("\n  Run " + chalk_1.default.yellow("codegen/Generate.elm") + ".\n  " + chalk_1.default.cyan("elm-codegen run") + "\n\n  You may pass it a specific Elm file to run.\n")
+    .description("\n    Run " + chalk_1.default.yellow("codegen/Generate.elm") + ".\n    " + chalk_1.default.cyan("elm-codegen run") + "\n\n  You may pass it a specific Elm file to run.\n")
     .argument("[elmFile]")
     .option("--debug", "Run your generator in debug mode, allowing you to use Debug.log in your elm.", false)
     .option("--watch", "Watch the given file for changes and rerun the generator when a change is made.", false)

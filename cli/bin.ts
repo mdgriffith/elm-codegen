@@ -43,8 +43,8 @@ program
   .command("run")
   .description(
     `
-  Run ${chalk.yellow("codegen/Generate.elm")}.
-  ${chalk.cyan("elm-codegen run")}
+    Run ${chalk.yellow("codegen/Generate.elm")}.
+    ${chalk.cyan("elm-codegen run")}
 
   You may pass it a specific Elm file to run.
 `
