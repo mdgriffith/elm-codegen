@@ -1264,7 +1264,7 @@ results in
 
 -}
 get : String -> Expression -> Expression
-get selector recordExpression =
+get fieldName recordExpression =
     Compiler.Expression <|
         \index ->
             let
@@ -1274,50 +1274,31 @@ get selector recordExpression =
             { expression =
                 Exp.RecordAccess
                     (Compiler.nodify expr.expression)
-                    (Compiler.nodify (Compiler.formatValue selector))
+                    (Compiler.nodify (Compiler.formatValue fieldName))
             , annotation =
                 case expr.annotation of
                     Ok recordAnn ->
                         case recordAnn.type_ of
                             Annotation.Record fields ->
-                                case getField (Compiler.formatValue selector) fields of
+                                case getField (Compiler.formatValue fieldName) fields of
                                     Just ann ->
                                         Ok { type_ = ann, inferences = recordAnn.inferences }
 
                                     Nothing ->
-                                        Err [ Compiler.CouldNotFindField selector ]
+                                        Err [ Compiler.CouldNotFindField fieldName ]
 
                             Annotation.GenericRecord name fields ->
-                                case getField (Compiler.formatValue selector) (Compiler.denode fields) of
+                                case getField (Compiler.formatValue fieldName) (Compiler.denode fields) of
                                     Just ann ->
                                         Ok { type_ = ann, inferences = recordAnn.inferences }
 
                                     Nothing ->
-                                        Err [ Compiler.CouldNotFindField selector ]
+                                        Err [ Compiler.CouldNotFindField fieldName ]
 
                             Annotation.GenericType nameOfRecord ->
-                                let
-                                    fieldType =
-                                        Annotation.GenericType
-                                            (Compiler.formatValue
-                                                (selector ++ Compiler.indexToString index)
-                                            )
-                                in
-                                Ok
-                                    { type_ = fieldType
-                                    , inferences =
-                                        recordAnn.inferences
-                                            |> Compiler.addInference
-                                                nameOfRecord
-                                                (Annotation.GenericRecord (Compiler.nodify nameOfRecord)
-                                                    (Compiler.nodify
-                                                        [ Compiler.nodify
-                                                            ( Compiler.nodify selector
-                                                            , Compiler.nodify fieldType
-                                                            )
-                                                        ]
-                                                    )
-                                                )
+                                Compiler.inferRecordField index
+                                    { nameOfRecord = nameOfRecord
+                                    , fieldName = fieldName
                                     }
 
                             otherwise ->

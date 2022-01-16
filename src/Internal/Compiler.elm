@@ -175,6 +175,9 @@ type InferenceError
     | DuplicateFieldInRecord String
     | CaseBranchesReturnDifferentTypes
     | CouldNotFindField String
+    | LetFieldNotFound
+        { desiredField : String
+        }
     | RecordUpdateIncorrectFields
         { existingFields : List ( String, Annotation.TypeAnnotation )
         , attemptingToUpdate : List ( String, Annotation.TypeAnnotation )
@@ -224,6 +227,9 @@ inferenceErrorToString inf =
 
         CouldNotFindField fieldName ->
             "I can't find the " ++ fieldName ++ " field in the record"
+
+        LetFieldNotFound details ->
+            details.desiredField ++ " not found, though I was trying to unpack it in a let expression."
 
         NotAppendable type_ ->
             (Elm.Writer.writeTypeAnnotation (nodify type_)
@@ -1553,6 +1559,33 @@ addInference key value infs =
                     Just existing
         )
         infs
+
+
+inferRecordField : Index -> { nameOfRecord : String, fieldName : String } -> Result (List InferenceError) Inference
+inferRecordField index { nameOfRecord, fieldName } =
+    let
+        fieldType =
+            Annotation.GenericType
+                (formatValue
+                    (fieldName ++ indexToString index)
+                )
+    in
+    Ok
+        { type_ = fieldType
+        , inferences =
+            Dict.empty
+                |> addInference
+                    nameOfRecord
+                    (Annotation.GenericRecord (nodify nameOfRecord)
+                        (nodify
+                            [ nodify
+                                ( nodify fieldName
+                                , nodify fieldType
+                                )
+                            ]
+                        )
+                    )
+        }
 
 
 unifiableHelper :
