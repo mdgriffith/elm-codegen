@@ -33,35 +33,62 @@ type Expression
     = Expression (Index -> ExpressionDetails)
 
 
+type alias ExpressionDetails =
+    { expression : Exp.Expression
+    , annotation :
+        Result
+            (List InferenceError)
+            Inference
+    , imports : List Module
+    }
+
+
+type alias Inference =
+    { type_ : Annotation.TypeAnnotation
+    , inferences : Dict String Annotation.TypeAnnotation
+    }
+
+
+{-| Indexes to make type checking work!
+
+Every `Expression` will be passed an index which it can use to add an identifier to variables (both type variables and normal ones).
+
+The "top" is never rendered, which allows for top level identifiers to be rendered with their desired name.
+
+The general flow goes like this:
+
+    declaration: startIndex
+        -> a function
+            1. Can use the index or a Compiler.next index on it's arguments
+            2. Needs to use Compiler.dive index when handing it to it's children.
+
+This means that indices as provided should always be usable at the level they show up at.
+If you're handing an index to a lower lever, use Compiler.dive.
+
+-}
 type Index
     = Index Int (List Int)
 
 
-var : Index -> String -> ( Index, String, Expression )
-var index name =
-    let
-        protectedName =
-            sanitize (name ++ indexToString index)
-    in
-    ( next index
-    , protectedName
-    , Expression
-        (\existingIndex_ ->
-            -- we ignore the given index because we are basing the name on the provided one.
-            { expression =
-                Exp.FunctionOrValue []
-                    protectedName
-            , annotation =
-                Ok
-                    { type_ =
-                        Annotation.GenericType protectedName
-                    , inferences = Dict.empty
-                    }
-            , imports =
-                []
-            }
-        )
-    )
+{-| -}
+startIndex : Index
+startIndex =
+    Index 0 []
+
+
+next : Index -> Index
+next (Index top tail) =
+    Index (top + 1) tail
+
+
+nextN : Int -> Index -> Index
+nextN n (Index top tail) =
+    Index (top + n) tail
+
+
+dive : Index -> Index
+dive (Index top tail) =
+    Index 0 (top :: tail)
 
 
 indexToString : Index -> String
@@ -92,41 +119,31 @@ indexToString (Index top tail) =
                 ++ String.join "_" (List.map String.fromInt tail)
 
 
-{-| -}
-startIndex : Index
-startIndex =
-    Index 0 []
-
-
-next : Index -> Index
-next (Index top tail) =
-    Index (top + 1) tail
-
-
-nextN : Int -> Index -> Index
-nextN n (Index top tail) =
-    Index (top + n) tail
-
-
-dive : Index -> Index
-dive (Index top tail) =
-    Index 0 (top :: tail)
-
-
-type alias ExpressionDetails =
-    { expression : Exp.Expression
-    , annotation :
-        Result
-            (List InferenceError)
-            Inference
-    , imports : List Module
-    }
-
-
-type alias Inference =
-    { type_ : Annotation.TypeAnnotation
-    , inferences : Dict String Annotation.TypeAnnotation
-    }
+var : Index -> String -> ( Index, String, Expression )
+var index name =
+    let
+        protectedName =
+            sanitize (name ++ indexToString index)
+    in
+    ( next index
+    , protectedName
+    , Expression
+        (\existingIndex_ ->
+            -- we ignore the given index because we are basing the name on the provided one.
+            { expression =
+                Exp.FunctionOrValue []
+                    protectedName
+            , annotation =
+                Ok
+                    { type_ =
+                        Annotation.GenericType protectedName
+                    , inferences = Dict.empty
+                    }
+            , imports =
+                []
+            }
+        )
+    )
 
 
 mergeInferences :

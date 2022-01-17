@@ -880,8 +880,11 @@ maybe maybeContent =
 list : List Expression -> Expression
 list exprs =
     Compiler.Expression <|
-        \index ->
+        \sourceIndex ->
             let
+                index =
+                    Compiler.dive sourceIndex
+
                 exprDetails =
                     Compiler.thread index exprs
             in
@@ -906,8 +909,11 @@ list exprs =
 updateRecord : Expression -> List Field -> Expression
 updateRecord recordExpression fields =
     Compiler.Expression <|
-        \index ->
+        \sourceIndex ->
             let
+                index =
+                    Compiler.dive sourceIndex
+
                 ( recordIndex, recordExp ) =
                     Compiler.toExpressionDetails index recordExpression
 
@@ -1051,7 +1057,7 @@ updateRecord recordExpression fields =
 record : List Field -> Expression
 record fields =
     Compiler.Expression <|
-        \index ->
+        \sourceIndex ->
             let
                 unified =
                     fields
@@ -1103,7 +1109,7 @@ record fields =
                             , fieldAnnotations = []
                             , passed = Set.empty
                             , imports = []
-                            , index = index
+                            , index = Compiler.dive sourceIndex
                             }
             in
             { expression =
@@ -2320,14 +2326,18 @@ declaration name (Compiler.Expression toBody) =
                     (\sig -> Compiler.resolveVariables sig.inferences sig.type_)
     in
     { documentation =
-        Compiler.nodifyMaybe
-            -- (case resolvedType of
-            --     Ok _ ->
-            --         Nothing
-            --     Err err ->
-            --         Just err
-            -- )
-            Nothing
+        Compiler.nodifyMaybe Nothing
+
+    -- (case resolvedType of
+    --     Ok sig ->
+    --         case body.annotation of
+    --             Ok inference ->
+    --                 Just (Internal.Write.writeInference inference)
+    --             Err err ->
+    --                 Nothing
+    --     Err err ->
+    --         Just err
+    -- )
     , signature =
         case body.annotation of
             Ok sig ->
@@ -2450,7 +2460,7 @@ function initialArgList toFullExpression =
                                             , annotation =
                                                 Annotation.GenericType
                                                     (Compiler.formatValue
-                                                        (name ++ Compiler.indexToString index)
+                                                        (name ++ Compiler.indexToString found.index)
                                                     )
                                             }
                                         )

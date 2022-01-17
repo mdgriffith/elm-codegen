@@ -4,6 +4,7 @@ module Internal.Write exposing
     , writeDeclaration
     , writeExpression
     , writeImports
+    , writeInference
     , writeSignature
     )
 
@@ -13,6 +14,7 @@ Thank you Rupert!
 
 -}
 
+import Dict
 import Elm.Syntax.Declaration
 import Elm.Syntax.Documentation exposing (Documentation)
 import Elm.Syntax.Exposing exposing (ExposedType, Exposing(..), TopLevelExpose(..))
@@ -113,6 +115,29 @@ writeAnnotation : TypeAnnotation -> String
 writeAnnotation sig =
     prettyTypeAnnotation noAliases sig
         |> Pretty.pretty 80
+
+
+writeInference : Util.Inference -> String
+writeInference inf =
+    "--TYPE:\n  "
+        ++ (writeAnnotation inf.type_
+                |> String.lines
+                |> String.join "\n    "
+           )
+        ++ "\n\n-- INFERRED\n\n  "
+        ++ (Dict.toList inf.inferences
+                |> List.map
+                    (\( key, val ) ->
+                        key
+                            ++ ":\n    "
+                            ++ (writeAnnotation val
+                                    |> String.lines
+                                    |> String.join "\n      "
+                               )
+                    )
+                |> String.join "\n\n  "
+           )
+        ++ "\n\n----END-----\n\n"
 
 
 writeImports : List Import -> String

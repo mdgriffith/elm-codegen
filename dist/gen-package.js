@@ -6217,6 +6217,14 @@ var $elm$core$Basics$composeR = F3(
 		return g(
 			f(x));
 	});
+var $author$project$Internal$Compiler$dive = function (_v0) {
+	var top = _v0.a;
+	var tail = _v0.b;
+	return A2(
+		$author$project$Internal$Compiler$Index,
+		0,
+		A2($elm$core$List$cons, top, tail));
+};
 var $author$project$Internal$Compiler$MismatchedList = F2(
 	function (a, b) {
 		return {$: 0, a: a, b: b};
@@ -6282,7 +6290,8 @@ var $author$project$Internal$Compiler$unify = F2(
 		}
 	});
 var $author$project$Elm$list = function (exprs) {
-	return function (index) {
+	return function (sourceIndex) {
+		var index = $author$project$Internal$Compiler$dive(sourceIndex);
 		var exprDetails = A2($author$project$Internal$Compiler$thread, index, exprs);
 		return {
 			c: A2(
@@ -7040,7 +7049,7 @@ var $elm$core$Set$insert = F2(
 		return A3($elm$core$Dict$insert, key, 0, dict);
 	});
 var $author$project$Elm$record = function (fields) {
-	return function (index) {
+	return function (sourceIndex) {
 		var unified = A3(
 			$elm$core$List$foldl,
 			F2(
@@ -7048,7 +7057,7 @@ var $author$project$Elm$record = function (fields) {
 					var unformattedFieldName = _v3.a;
 					var fieldExpression = _v3.b;
 					var fieldName = $author$project$Internal$Compiler$formatValue(unformattedFieldName);
-					var _v4 = A2($author$project$Internal$Compiler$toExpressionDetails, found.u, fieldExpression);
+					var _v4 = A2($author$project$Internal$Compiler$toExpressionDetails, found.t, fieldExpression);
 					var newIndex = _v4.a;
 					var exp = _v4.b;
 					return {
@@ -7095,11 +7104,18 @@ var $author$project$Elm$record = function (fields) {
 								$author$project$Internal$Compiler$nodify(exp.a)),
 							found.ab),
 						b: _Utils_ap(exp.b, found.b),
-						u: newIndex,
+						t: newIndex,
 						ae: A2($elm$core$Set$insert, fieldName, found.ae)
 					};
 				}),
-			{F: _List_Nil, R: _List_Nil, ab: _List_Nil, b: _List_Nil, u: index, ae: $elm$core$Set$empty},
+			{
+				F: _List_Nil,
+				R: _List_Nil,
+				ab: _List_Nil,
+				b: _List_Nil,
+				t: $author$project$Internal$Compiler$dive(sourceIndex),
+				ae: $elm$core$Set$empty
+			},
 			fields);
 		return {
 			c: function () {
@@ -12271,14 +12287,6 @@ var $author$project$Elm$betaReduce = function (e) {
 		return e;
 	}
 };
-var $author$project$Internal$Compiler$dive = function (_v0) {
-	var top = _v0.a;
-	var tail = _v0.b;
-	return A2(
-		$author$project$Internal$Compiler$Index,
-		0,
-		A2($elm$core$List$cons, top, tail));
-};
 var $author$project$Elm$fnTypeApply = F2(
 	function (annotation, args) {
 		if (annotation.$ === 1) {
@@ -14057,12 +14065,12 @@ var $author$project$Generate$captureFunction = F2(
 					$temp$captured = {
 					bK: A2(
 						$elm$core$List$cons,
-						A2($author$project$Generate$asArgument, captured.u, one),
+						A2($author$project$Generate$asArgument, captured.t, one),
 						captured.bK),
-					u: captured.u + 1,
+					t: captured.t + 1,
 					N: A2(
 						$elm$core$List$cons,
-						A2($author$project$Generate$asValue, captured.u, one),
+						A2($author$project$Generate$asValue, captured.t, one),
 						captured.N)
 				};
 				tipe = $temp$tipe;
@@ -14072,12 +14080,12 @@ var $author$project$Generate$captureFunction = F2(
 				return {
 					bK: A2(
 						$elm$core$List$cons,
-						A2($author$project$Generate$asArgument, captured.u, tipe),
+						A2($author$project$Generate$asArgument, captured.t, tipe),
 						captured.bK),
-					u: captured.u + 1,
+					t: captured.t + 1,
 					N: A2(
 						$elm$core$List$cons,
-						A2($author$project$Generate$asValue, captured.u, tipe),
+						A2($author$project$Generate$asValue, captured.t, tipe),
 						captured.N)
 				};
 			}
@@ -14095,7 +14103,7 @@ var $author$project$Elm$function = F2(
 						var maybeType = _v2.b;
 						var name = _Utils_ap(
 							nameBase,
-							$author$project$Internal$Compiler$indexToString(found.u));
+							$author$project$Internal$Compiler$indexToString(found.t));
 						var argType = A2(
 							$elm$core$Maybe$withDefault,
 							{
@@ -14103,14 +14111,14 @@ var $author$project$Elm$function = F2(
 									$author$project$Internal$Compiler$formatValue(
 										_Utils_ap(
 											name,
-											$author$project$Internal$Compiler$indexToString(index)))),
+											$author$project$Internal$Compiler$indexToString(found.t)))),
 								b: _List_Nil
 							},
 							maybeType);
 						var arg = A3($author$project$Elm$valueWithHelper, _List_Nil, name, argType);
 						return {
 							aL: A2($elm$core$List$cons, arg, found.aL),
-							u: $author$project$Internal$Compiler$next(found.u),
+							t: $author$project$Internal$Compiler$next(found.t),
 							ac: A2($elm$core$List$cons, name, found.ac),
 							af: A2(
 								$elm$core$List$cons,
@@ -14118,7 +14126,7 @@ var $author$project$Elm$function = F2(
 								found.af)
 						};
 					}),
-				{aL: _List_Nil, u: index, ac: _List_Nil, af: _List_Nil},
+				{aL: _List_Nil, t: index, ac: _List_Nil, af: _List_Nil},
 				initialArgList);
 			var fullExpression = toFullExpression(
 				$elm$core$List$reverse(args.aL));
@@ -14279,7 +14287,7 @@ var $author$project$Generate$generateBlocks = F2(
 								[
 									A2($author$project$Generate$asArgument, 1, one)
 								]),
-							u: 2,
+							t: 2,
 							N: _List_fromArray(
 								[
 									A2($author$project$Generate$asValue, 1, one)
@@ -16261,14 +16269,14 @@ var $elm$parser$Parser$Advanced$getOffset = function (s) {
 var $elm$parser$Parser$getOffset = $elm$parser$Parser$Advanced$getOffset;
 var $stil4m$elm_syntax$Elm$Parser$Tokens$stringLiteral = function () {
 	var helper = function (s) {
-		return s.t ? A2(
+		return s.u ? A2(
 			$elm$parser$Parser$map,
 			function (v) {
 				return $elm$parser$Parser$Loop(
 					_Utils_update(
 						s,
 						{
-							t: false,
+							u: false,
 							j: A2(
 								$elm$core$List$cons,
 								$elm$core$String$fromList(
@@ -16294,7 +16302,7 @@ var $stil4m$elm_syntax$Elm$Parser$Tokens$stringLiteral = function () {
 						return $elm$parser$Parser$Loop(
 							_Utils_update(
 								s,
-								{t: true, j: s.j}));
+								{u: true, j: s.j}));
 					},
 					$elm$parser$Parser$getChompedString(
 						$elm$parser$Parser$symbol('\\'))),
@@ -16341,7 +16349,7 @@ var $stil4m$elm_syntax$Elm$Parser$Tokens$stringLiteral = function () {
 				$elm$parser$Parser$symbol('\"')),
 			A2(
 				$elm$parser$Parser$loop,
-				{t: false, j: _List_Nil},
+				{u: false, j: _List_Nil},
 				helper)));
 }();
 var $miniBill$elm_unicode$Unicode$isUpper = function (c) {
@@ -17125,14 +17133,14 @@ var $stil4m$elm_syntax$Elm$Parser$Declarations$liftRecordAccess = function (e) {
 };
 var $stil4m$elm_syntax$Elm$Parser$Tokens$multiLineStringLiteral = function () {
 	var helper = function (s) {
-		return s.t ? A2(
+		return s.u ? A2(
 			$elm$parser$Parser$map,
 			function (v) {
 				return $elm$parser$Parser$Loop(
 					_Utils_update(
 						s,
 						{
-							t: false,
+							u: false,
 							j: A2(
 								$elm$core$List$cons,
 								$elm$core$String$fromChar(v),
@@ -17169,7 +17177,7 @@ var $stil4m$elm_syntax$Elm$Parser$Tokens$multiLineStringLiteral = function () {
 						return $elm$parser$Parser$Loop(
 							_Utils_update(
 								s,
-								{z: s.z + 1, t: true, j: s.j}));
+								{z: s.z + 1, u: true, j: s.j}));
 					},
 					$elm$parser$Parser$getChompedString(
 						$elm$parser$Parser$symbol('\\'))),
@@ -17217,7 +17225,7 @@ var $stil4m$elm_syntax$Elm$Parser$Tokens$multiLineStringLiteral = function () {
 				$elm$parser$Parser$symbol('\"\"\"')),
 			A2(
 				$elm$parser$Parser$loop,
-				{z: 0, t: false, j: _List_Nil},
+				{z: 0, u: false, j: _List_Nil},
 				helper)));
 }();
 var $stil4m$elm_syntax$Elm$Parser$Declarations$literalExpression = $stil4m$elm_syntax$Combine$lazy(

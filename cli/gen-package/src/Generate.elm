@@ -330,18 +330,13 @@ block2Maker thisModule block =
                                 |> List.map
                                     (\( fieldName, _ ) ->
                                         ElmGen.field (Elm.string fieldName)
-                                            ((Elm.get fieldName arg)
-
+                                            (Elm.get fieldName arg
                                             )
-
                                     )
                                 |> ElmGen.record
 
                     in
-
-                        (Elm.fn "arg" lambdaValue
-
-                        )
+                    Elm.fn "arg" lambdaValue
                         |> Just
 
                 _ ->
@@ -858,7 +853,6 @@ typeToGeneratedAnnotation : Elm.Type.Type -> Annotation.Annotation
 typeToGeneratedAnnotation elmType =
     case elmType of
         Elm.Type.Var string ->
-            -- Annotation.var string
             Annotation.namedWith [ "Elm" ] "Expression" []
 
         Elm.Type.Lambda one two ->
@@ -902,7 +896,7 @@ typeToGeneratedAnnotationExpression : Elm.Type.Type -> Annotation.Annotation
 typeToGeneratedAnnotationExpression elmType =
     case elmType of
         Elm.Type.Var string ->
-            -- Annotation.var string
+
             Annotation.namedWith [ "Elm" ] "Expression" []
 
         Elm.Type.Lambda one two ->
