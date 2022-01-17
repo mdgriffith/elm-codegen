@@ -2,7 +2,7 @@ module Elm.Case exposing
     ( maybe, result, list
     , tuple, triple
     , custom
-    , Branch, otherwise, branch, branch2, branch3, branch4, branch5
+    , Branch, otherwise, branch, branch2, branch3, branch4, branch5, branchWith
     )
 
 {-|
@@ -13,7 +13,7 @@ module Elm.Case exposing
 
 @docs custom
 
-@docs Branch, otherwise, branch, branch2, branch3, branch4, branch5
+@docs Branch, otherwise, branch, branch2, branch3, branch4, branch5, branchWith
 
 -}
 
@@ -646,5 +646,32 @@ branch5 name toExp =
                 , Compiler.nodify (Pattern.VarPattern fourName)
                 ]
             , toExp oneExp twoExp threeExp fourExp
+            )
+        )
+
+
+{-| -}
+branchWith : List String -> String -> Int -> (List Expression -> Expression) -> Branch
+branchWith moduleName name arity toExp =
+    Branch
+        (\index ->
+            let
+                ( patterns, args ) =
+                    List.range 1 arity
+                        |> List.map
+                            (\i ->
+                                let
+                                    ( _, varName, varExp ) =
+                                        Compiler.var index <| "arg" ++ String.fromInt i
+                                in
+                                ( Compiler.nodify (Pattern.VarPattern varName)
+                                , varExp
+                                )
+                            )
+                        |> List.unzip
+            in
+            ( Compiler.next index
+            , Pattern.NamedPattern { moduleName = moduleName, name = name } patterns
+            , toExp args
             )
         )
