@@ -2,7 +2,7 @@ module Elm.Case exposing
     ( maybe, result, list
     , tuple, triple
     , custom
-    , Branch, otherwise, branch, branch2, branch3, branch4, branch5, branchWith
+    , Branch, otherwise, branch0, branch1, branch2, branch3, branch4, branchWith
     )
 
 {-|
@@ -13,7 +13,7 @@ module Elm.Case exposing
 
 @docs custom
 
-@docs Branch, otherwise, branch, branch2, branch3, branch4, branch5, branchWith
+@docs Branch, otherwise, branch0, branch1, branch2, branch3, branch4, branchWith
 
 -}
 
@@ -518,8 +518,8 @@ type Branch
 
 
 {-| -}
-branch : List String -> String -> Expression -> Branch
-branch mod name exp =
+branch0 : List String -> String -> Expression -> Branch
+branch0 mod name exp =
     Branch
         (\index ->
             ( index
@@ -547,8 +547,8 @@ otherwise toExp =
 
 
 {-| -}
-branch2 : String -> (Expression -> Expression) -> Branch
-branch2 name toExp =
+branch1 : List String -> String -> (Expression -> Expression) -> Branch
+branch1 moduleName name toExp =
     Branch
         (\index ->
             let
@@ -556,7 +556,7 @@ branch2 name toExp =
                     Compiler.var index "one"
             in
             ( oneIndex
-            , Pattern.NamedPattern { moduleName = [], name = name }
+            , Pattern.NamedPattern { moduleName = moduleName, name = name }
                 [ Compiler.nodify (Pattern.VarPattern oneName) ]
             , toExp oneExp
             )
@@ -564,8 +564,8 @@ branch2 name toExp =
 
 
 {-| -}
-branch3 : String -> (Expression -> Expression -> Expression) -> Branch
-branch3 name toExp =
+branch2 : List String -> String -> (Expression -> Expression -> Expression) -> Branch
+branch2 moduleName name toExp =
     Branch
         (\index ->
             let
@@ -586,8 +586,8 @@ branch3 name toExp =
 
 
 {-| -}
-branch4 : String -> (Expression -> Expression -> Expression -> Expression) -> Branch
-branch4 name toExp =
+branch3 : List String -> String -> (Expression -> Expression -> Expression -> Expression) -> Branch
+branch3 moduleName name toExp =
     Branch
         (\index ->
             let
@@ -601,7 +601,7 @@ branch4 name toExp =
                     Compiler.var twoIndex "three"
             in
             ( oneIndex
-            , Pattern.NamedPattern { moduleName = [], name = name }
+            , Pattern.NamedPattern { moduleName = moduleName, name = name }
                 [ Compiler.nodify (Pattern.VarPattern oneName)
                 , Compiler.nodify (Pattern.VarPattern twoName)
                 , Compiler.nodify (Pattern.VarPattern threeName)
@@ -612,17 +612,8 @@ branch4 name toExp =
 
 
 {-| -}
-branch5 : String -> (Expression -> Expression -> Expression -> Expression -> Expression) -> Branch
-branch5 name toExp =
-    -- Branch
-    --     (Pattern.NamedPattern { moduleName = [], name = name }
-    --         [ Compiler.nodify (Pattern.VarPattern "a")
-    --         , Compiler.nodify (Pattern.VarPattern "b")
-    --         , Compiler.nodify (Pattern.VarPattern "c")
-    --         , Compiler.nodify (Pattern.VarPattern "d")
-    --         ]
-    --     )
-    --     (toExp (Elm.value "a") (Elm.value "b") (Elm.value "c") (Elm.value "d"))
+branch4 : List String -> String -> (Expression -> Expression -> Expression -> Expression -> Expression) -> Branch
+branch4 moduleName name toExp =
     Branch
         (\index ->
             let
@@ -639,7 +630,7 @@ branch5 name toExp =
                     Compiler.var threeIndex "four"
             in
             ( oneIndex
-            , Pattern.NamedPattern { moduleName = [], name = name }
+            , Pattern.NamedPattern { moduleName = moduleName, name = name }
                 [ Compiler.nodify (Pattern.VarPattern oneName)
                 , Compiler.nodify (Pattern.VarPattern twoName)
                 , Compiler.nodify (Pattern.VarPattern threeName)
