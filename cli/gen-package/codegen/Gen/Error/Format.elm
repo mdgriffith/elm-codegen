@@ -1,6 +1,7 @@
 module Gen.Error.Format exposing (block, cyan, green, grey, moduleName_, red, types_, values_, yellow)
 
-{-| @docs moduleName_, types_, values_, block, cyan, yellow, green, red, grey
+{-| 
+@docs moduleName_, block, cyan, yellow, green, red, grey, types_, values_
 -}
 
 
@@ -12,61 +13,6 @@ import Elm.Annotation as Type
 moduleName_ : List String
 moduleName_ =
     [ "Error", "Format" ]
-
-
-types_ : {}
-types_ =
-    {}
-
-
-{-| Every value/function in this module in case you need to refer to it directly. -}
-values_ :
-    { block : Elm.Expression
-    , cyan : Elm.Expression
-    , yellow : Elm.Expression
-    , green : Elm.Expression
-    , red : Elm.Expression
-    , grey : Elm.Expression
-    }
-values_ =
-    { block =
-        Elm.valueWith
-            { importFrom = [ "Error", "Format" ]
-            , name = "block"
-            , annotation =
-                Just (Type.function [ Type.list Type.string ] Type.string)
-            }
-    , cyan =
-        Elm.valueWith
-            { importFrom = [ "Error", "Format" ]
-            , name = "cyan"
-            , annotation = Just (Type.function [ Type.string ] Type.string)
-            }
-    , yellow =
-        Elm.valueWith
-            { importFrom = [ "Error", "Format" ]
-            , name = "yellow"
-            , annotation = Just (Type.function [ Type.string ] Type.string)
-            }
-    , green =
-        Elm.valueWith
-            { importFrom = [ "Error", "Format" ]
-            , name = "green"
-            , annotation = Just (Type.function [ Type.string ] Type.string)
-            }
-    , red =
-        Elm.valueWith
-            { importFrom = [ "Error", "Format" ]
-            , name = "red"
-            , annotation = Just (Type.function [ Type.string ] Type.string)
-            }
-    , grey =
-        Elm.valueWith
-            { importFrom = [ "Error", "Format" ]
-            , name = "grey"
-            , annotation = Just (Type.function [ Type.string ] Type.string)
-            }
-    }
 
 
 {-| An indented block with a newline above and below
@@ -147,5 +93,60 @@ grey arg1 =
             }
         )
         [ arg1 ]
+
+
+types_ : {}
+types_ =
+    {}
+
+
+{-| Every value/function in this module in case you need to refer to it directly. -}
+values_ :
+    { block : Elm.Expression
+    , cyan : Elm.Expression
+    , yellow : Elm.Expression
+    , green : Elm.Expression
+    , red : Elm.Expression
+    , grey : Elm.Expression
+    }
+values_ =
+    { block =
+        Elm.valueWith
+            { importFrom = [ "Error", "Format" ]
+            , name = "block"
+            , annotation =
+                Just (Type.function [ Type.list Type.string ] Type.string)
+            }
+    , cyan =
+        Elm.valueWith
+            { importFrom = [ "Error", "Format" ]
+            , name = "cyan"
+            , annotation = Just (Type.function [ Type.string ] Type.string)
+            }
+    , yellow =
+        Elm.valueWith
+            { importFrom = [ "Error", "Format" ]
+            , name = "yellow"
+            , annotation = Just (Type.function [ Type.string ] Type.string)
+            }
+    , green =
+        Elm.valueWith
+            { importFrom = [ "Error", "Format" ]
+            , name = "green"
+            , annotation = Just (Type.function [ Type.string ] Type.string)
+            }
+    , red =
+        Elm.valueWith
+            { importFrom = [ "Error", "Format" ]
+            , name = "red"
+            , annotation = Just (Type.function [ Type.string ] Type.string)
+            }
+    , grey =
+        Elm.valueWith
+            { importFrom = [ "Error", "Format" ]
+            , name = "grey"
+            , annotation = Just (Type.function [ Type.string ] Type.string)
+            }
+    }
 
 
