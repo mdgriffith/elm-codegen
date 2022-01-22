@@ -13,6 +13,7 @@ import Gen.Elm.Annotation as GenType
 import Elm.Type
 import Json.Decode as Json
 import Internal.Compiler as Compiler
+import Elm.Case
 
 
 main : Program Json.Value () ()
@@ -251,14 +252,6 @@ blockToCall thisModule block =
             Nothing
 
         Elm.Docs.ValueBlock value ->
-            -- Just
-            --     (Elm.field
-            --         value.name
-            --         (valueWith thisModule
-            --             (Elm.string value.name)
-            --             value.tipe
-            --         )
-            --     )
              case value.tipe of
                 Elm.Type.Lambda one two ->
                     let
@@ -369,123 +362,82 @@ block2Case thisModule union =
             Nothing
 
         _ ->
-            Just
-                (Elm.fn2 "expresssion" "tags"
-                    (\express tagRecord ->
-                        Gen.Elm.Case.custom express
-                            (List.map
-                                (\(tagname, subtypes) ->
-                                    case subtypes of
-                                        [] ->
-                                            Gen.Elm.Case.branch0
-                                                (List.map Elm.string thisModule)
-                                                (Elm.string tagname)
-                                                (Elm.get tagname tagRecord)
+                Just
+                    (Elm.fn2 "expresssion" "tags"
+                        (\express tagRecord ->
+                            Gen.Elm.Case.custom express
+                                (List.filterMap
+                                    (\(tagname, subtypes) ->
+                                        let
+                                            moduleName = Elm.list (List.map Elm.string thisModule)
 
-                                        [ _ ] ->
-                                            branch1
-                                                (List.map Elm.string thisModule)
-                                                (Elm.string tagname)
-                                                (Elm.get tagname tagRecord)
+                                            tagString = Elm.string tagname
 
-                                        _ ->
-                                            branchWith
-                                                thisModule
-                                                tagname
-                                                (List.length subtypes)
-                                                (
-                                                        (Elm.get tagname tagRecord)
-                                                    --   [ tagVars ]
 
-                                                )
+                                        in
+                                        case subtypes of
+                                            [] ->
+                                                Gen.Elm.Case.call_.branch0
+                                                    moduleName
+                                                    tagString
+                                                    (Elm.get tagname tagRecord)
+                                                    |> Just
+
+                                            [ _ ] ->
+                                                Gen.Elm.Case.call_.branch1
+                                                    moduleName
+                                                    tagString
+                                                    (Elm.get tagname tagRecord)
+                                                    |> Just
+
+                                            [ _, _ ] ->
+                                                Gen.Elm.Case.call_.branch2
+                                                    moduleName
+                                                    tagString
+                                                    (Elm.get tagname tagRecord)
+                                                    |> Just
+
+                                            [ _, _, _] ->
+                                                Gen.Elm.Case.call_.branch3
+                                                    moduleName
+                                                    tagString
+                                                    (Elm.get tagname tagRecord)
+                                                    |> Just
+
+
+                                            [ _, _, _, _] ->
+                                                Gen.Elm.Case.call_.branch4
+                                                    moduleName
+                                                    tagString
+                                                    (Elm.get tagname tagRecord)
+                                                    |> Just
+
+                                            [ _, _, _, _, _] ->
+                                                Gen.Elm.Case.call_.branch5
+                                                    moduleName
+                                                    tagString
+                                                    (Elm.get tagname tagRecord)
+                                                    |> Just
+
+                                            [ _, _, _, _, _, _] ->
+                                                Gen.Elm.Case.call_.branch6
+                                                    moduleName
+                                                    tagString
+                                                    (Elm.get tagname tagRecord)
+                                                    |> Just
+
+
+                                            _ ->
+                                               Nothing
+
+
+                                    )
+                                    union.tags
                                 )
-                                union.tags
-                            )
 
+                        )
                     )
-                )
 
-
-
-{-| -}
-branch1 :
-    List Elm.Expression
-    -> Elm.Expression
-    -> Elm.Expression
-    -> Elm.Expression
-branch1 arg1 arg2 arg3 =
-    Elm.apply
-        (Elm.valueWith
-            { importFrom = [ "Elm", "Case" ]
-            , name = "branch1"
-            , annotation =
-                Just
-                    (Annotation.function
-                        [ Annotation.list Annotation.string
-                        , Annotation.string
-                        , Annotation.function
-                            [ Annotation.namedWith [ "Elm" ] "Expression" [] ]
-                            (Annotation.namedWith [ "Elm" ] "Expression" [])
-                        ]
-                        (Annotation.namedWith [ "Elm", "Case" ] "Branch" [])
-                    )
-            }
-        )
-        [ Elm.list arg1
-        , arg2
-        , arg3
-        ]
-
-
-
-{-| -}
-branchWith :
-    List String
-    -> String
-    -> Int
-    -- -> (Elm.Expression -> Elm.Expression)
-    -> Elm.Expression
-    -> Elm.Expression
-branchWith thisModule name count expFn =
-    Elm.apply
-        (Elm.valueWith
-            { importFrom = [ "Elm", "Case" ]
-            , name = "branchWith"
-            , annotation =
-                Just
-                    (Annotation.function
-                        [ Annotation.list Annotation.string
-                        , Annotation.string
-                        , Annotation.int
-                        , Annotation.function
-                            [ Annotation.list
-                                (Annotation.namedWith [ "Elm" ] "Expression" [])
-                            ]
-                            (Annotation.namedWith [ "Elm" ] "Expression" [])
-                        ]
-                        (Annotation.namedWith [ "Elm", "Case" ] "Branch" [])
-                    )
-            }
-        )
-        [ Elm.list (List.map Elm.string thisModule)
-        , Elm.string name
-        , Elm.int count
-        , expFn
-        -- , Elm.functionAdvanced
-        --     [ ( "ar0", Type.list (Type.namedWith [ "Elm" ] "Expression" []) ) ]
-        --     (arg4
-        --         (Elm.valueWith
-        --             { importFrom = []
-        --             , name = "ar0"
-        --             , annotation =
-        --                 Just
-        --                     (Type.list
-        --                         (Type.namedWith [ "Elm" ] "Expression" [])
-        --                     )
-        --             }
-        --         )
-        --     )
-        ]
 
 
 
