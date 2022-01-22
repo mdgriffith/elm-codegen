@@ -1158,8 +1158,8 @@ type Field
 
 {-| -}
 field : String -> Expression -> Field
-field =
-    Field
+field name exp =
+    Field (Compiler.formatValue name) exp
 
 
 {-| A let block.
@@ -1270,23 +1270,26 @@ results in
 
 -}
 get : String -> Expression -> Expression
-get fieldName recordExpression =
+get unformattedFieldName recordExpression =
     Compiler.Expression <|
         \index ->
             let
+                fieldName =
+                    Compiler.formatValue unformattedFieldName
+
                 ( _, expr ) =
                     Compiler.toExpressionDetails index recordExpression
             in
             { expression =
                 Exp.RecordAccess
                     (Compiler.nodify expr.expression)
-                    (Compiler.nodify (Compiler.formatValue fieldName))
+                    (Compiler.nodify fieldName)
             , annotation =
                 case expr.annotation of
                     Ok recordAnn ->
                         case recordAnn.type_ of
                             Annotation.Record fields ->
-                                case getField (Compiler.formatValue fieldName) fields of
+                                case getField fieldName fields of
                                     Just ann ->
                                         Ok { type_ = ann, inferences = recordAnn.inferences }
 
@@ -1294,7 +1297,7 @@ get fieldName recordExpression =
                                         Err [ Compiler.CouldNotFindField fieldName ]
 
                             Annotation.GenericRecord name fields ->
-                                case getField (Compiler.formatValue fieldName) (Compiler.denode fields) of
+                                case getField fieldName (Compiler.denode fields) of
                                     Just ann ->
                                         Ok { type_ = ann, inferences = recordAnn.inferences }
 
