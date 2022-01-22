@@ -2,7 +2,8 @@ module Elm.Case exposing
     ( maybe, result, list
     , tuple, triple
     , custom
-    , Branch, otherwise, branch0, branch1, branch2, branch3, branch4, branchWith
+    , Branch, otherwise, branch0, branch1, branch2, branch3, branch4, branch5, branch6
+    , branchWith, listBranch
     )
 
 {-|
@@ -13,7 +14,9 @@ module Elm.Case exposing
 
 @docs custom
 
-@docs Branch, otherwise, branch0, branch1, branch2, branch3, branch4, branchWith
+@docs Branch, otherwise, branch0, branch1, branch2, branch3, branch4, branch5, branch6
+
+@docs branchWith, listBranch
 
 -}
 
@@ -575,7 +578,7 @@ branch2 moduleName name toExp =
                 ( twoIndex, twoName, twoExp ) =
                     Compiler.var oneIndex "two"
             in
-            ( oneIndex
+            ( twoIndex
             , Pattern.NamedPattern { moduleName = [], name = name }
                 [ Compiler.nodify (Pattern.VarPattern oneName)
                 , Compiler.nodify (Pattern.VarPattern twoName)
@@ -600,7 +603,7 @@ branch3 moduleName name toExp =
                 ( threeIndex, threeName, threeExp ) =
                     Compiler.var twoIndex "three"
             in
-            ( oneIndex
+            ( threeIndex
             , Pattern.NamedPattern { moduleName = moduleName, name = name }
                 [ Compiler.nodify (Pattern.VarPattern oneName)
                 , Compiler.nodify (Pattern.VarPattern twoName)
@@ -629,7 +632,7 @@ branch4 moduleName name toExp =
                 ( fourIndex, fourName, fourExp ) =
                     Compiler.var threeIndex "four"
             in
-            ( oneIndex
+            ( fourIndex
             , Pattern.NamedPattern { moduleName = moduleName, name = name }
                 [ Compiler.nodify (Pattern.VarPattern oneName)
                 , Compiler.nodify (Pattern.VarPattern twoName)
@@ -637,6 +640,101 @@ branch4 moduleName name toExp =
                 , Compiler.nodify (Pattern.VarPattern fourName)
                 ]
             , toExp oneExp twoExp threeExp fourExp
+            )
+        )
+
+
+{-| -}
+branch5 :
+    List String
+    -> String
+    ->
+        (Expression
+         -> Expression
+         -> Expression
+         -> Expression
+         -> Expression
+         -> Expression
+        )
+    -> Branch
+branch5 moduleName name toExp =
+    Branch
+        (\index ->
+            let
+                ( oneIndex, oneName, oneExp ) =
+                    Compiler.var index "one"
+
+                ( twoIndex, twoName, twoExp ) =
+                    Compiler.var oneIndex "two"
+
+                ( threeIndex, threeName, threeExp ) =
+                    Compiler.var twoIndex "three"
+
+                ( fourIndex, fourName, fourExp ) =
+                    Compiler.var threeIndex "four"
+
+                ( fiveIndex, fiveName, fiveExp ) =
+                    Compiler.var fourIndex "five"
+            in
+            ( fiveIndex
+            , Pattern.NamedPattern { moduleName = moduleName, name = name }
+                [ Compiler.nodify (Pattern.VarPattern oneName)
+                , Compiler.nodify (Pattern.VarPattern twoName)
+                , Compiler.nodify (Pattern.VarPattern threeName)
+                , Compiler.nodify (Pattern.VarPattern fourName)
+                , Compiler.nodify (Pattern.VarPattern fiveName)
+                ]
+            , toExp oneExp twoExp threeExp fourExp fiveExp
+            )
+        )
+
+
+{-| -}
+branch6 :
+    List String
+    -> String
+    ->
+        (Expression
+         -> Expression
+         -> Expression
+         -> Expression
+         -> Expression
+         -> Expression
+         -> Expression
+        )
+    -> Branch
+branch6 moduleName name toExp =
+    Branch
+        (\index ->
+            let
+                ( oneIndex, oneName, oneExp ) =
+                    Compiler.var index "one"
+
+                ( twoIndex, twoName, twoExp ) =
+                    Compiler.var oneIndex "two"
+
+                ( threeIndex, threeName, threeExp ) =
+                    Compiler.var twoIndex "three"
+
+                ( fourIndex, fourName, fourExp ) =
+                    Compiler.var threeIndex "four"
+
+                ( fiveIndex, fiveName, fiveExp ) =
+                    Compiler.var fourIndex "five"
+
+                ( sixIndex, sixName, sixExp ) =
+                    Compiler.var fiveIndex "six"
+            in
+            ( sixIndex
+            , Pattern.NamedPattern { moduleName = moduleName, name = name }
+                [ Compiler.nodify (Pattern.VarPattern oneName)
+                , Compiler.nodify (Pattern.VarPattern twoName)
+                , Compiler.nodify (Pattern.VarPattern threeName)
+                , Compiler.nodify (Pattern.VarPattern fourName)
+                , Compiler.nodify (Pattern.VarPattern fiveName)
+                , Compiler.nodify (Pattern.VarPattern sixName)
+                ]
+            , toExp oneExp twoExp threeExp fourExp fiveExp sixExp
             )
         )
 
@@ -664,5 +762,34 @@ branchWith moduleName name arity toExp =
             ( Compiler.next index
             , Pattern.NamedPattern { moduleName = moduleName, name = name } patterns
             , toExp args
+            )
+        )
+
+
+{-| -}
+listBranch : Int -> (List Expression -> Expression) -> Branch
+listBranch arity toExp =
+    Branch
+        (\index ->
+            let
+                ( pattern, args ) =
+                    List.foldl
+                        (\i ( listPattern, currentArgs ) ->
+                            let
+                                ( _, varName, varExp ) =
+                                    Compiler.var index <| "arg" ++ String.fromInt i
+                            in
+                            ( Compiler.nodify (Pattern.VarPattern varName) :: listPattern
+                            , varExp :: currentArgs
+                            )
+                        )
+                        ( []
+                        , []
+                        )
+                        (List.drop 1 (List.range 0 arity))
+            in
+            ( Compiler.next index
+            , Pattern.ListPattern (List.reverse pattern)
+            , toExp (List.reverse args)
             )
         )
