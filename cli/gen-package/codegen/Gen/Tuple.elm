@@ -1,7 +1,7 @@
-module Gen.Tuple exposing (first, mapBoth, mapFirst, mapSecond, moduleName_, pair, second, types_, values_)
+module Gen.Tuple exposing (call_, first, mapBoth, mapFirst, mapSecond, moduleName_, pair, second, types_, values_)
 
 {-| 
-@docs moduleName_, pair, first, second, mapFirst, mapSecond, mapBoth, types_, values_
+@docs moduleName_, pair, first, second, mapFirst, mapSecond, mapBoth, types_, values_, call_
 -}
 
 
@@ -298,6 +298,117 @@ values_ =
                         (Type.tuple (Type.var "x") (Type.var "y"))
                     )
             }
+    }
+
+
+{-| Every value/function in this module in case you need to refer to it directly. -}
+call_ :
+    { pair : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , first : Elm.Expression -> Elm.Expression
+    , second : Elm.Expression -> Elm.Expression
+    , mapFirst : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , mapSecond : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , mapBoth :
+        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+    }
+call_ =
+    { pair =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Tuple" ]
+                    , name = "pair"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.var "a", Type.var "b" ]
+                                (Type.tuple (Type.var "a") (Type.var "b"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , first =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Tuple" ]
+                    , name = "first"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.tuple (Type.var "a") (Type.var "b") ]
+                                (Type.var "a")
+                            )
+                    }
+                )
+                [ arg1_0 ]
+    , second =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Tuple" ]
+                    , name = "second"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.tuple (Type.var "a") (Type.var "b") ]
+                                (Type.var "b")
+                            )
+                    }
+                )
+                [ arg1_0 ]
+    , mapFirst =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Tuple" ]
+                    , name = "mapFirst"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function [ Type.var "a" ] (Type.var "x")
+                                , Type.tuple (Type.var "a") (Type.var "b")
+                                ]
+                                (Type.tuple (Type.var "x") (Type.var "b"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , mapSecond =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Tuple" ]
+                    , name = "mapSecond"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function [ Type.var "b" ] (Type.var "y")
+                                , Type.tuple (Type.var "a") (Type.var "b")
+                                ]
+                                (Type.tuple (Type.var "a") (Type.var "y"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , mapBoth =
+        \arg1_0 arg2_0 arg3_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Tuple" ]
+                    , name = "mapBoth"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function [ Type.var "a" ] (Type.var "x")
+                                , Type.function [ Type.var "b" ] (Type.var "y")
+                                , Type.tuple (Type.var "a") (Type.var "b")
+                                ]
+                                (Type.tuple (Type.var "x") (Type.var "y"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0, arg3_0 ]
     }
 
 

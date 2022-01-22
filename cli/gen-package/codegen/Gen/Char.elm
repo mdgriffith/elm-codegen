@@ -1,7 +1,7 @@
-module Gen.Char exposing (fromCode, isAlpha, isAlphaNum, isDigit, isHexDigit, isLower, isOctDigit, isUpper, moduleName_, toCode, toLocaleLower, toLocaleUpper, toLower, toUpper, types_, values_)
+module Gen.Char exposing (call_, fromCode, isAlpha, isAlphaNum, isDigit, isHexDigit, isLower, isOctDigit, isUpper, moduleName_, toCode, toLocaleLower, toLocaleUpper, toLower, toUpper, types_, values_)
 
 {-| 
-@docs moduleName_, isUpper, isLower, isAlpha, isAlphaNum, isDigit, isOctDigit, isHexDigit, toUpper, toLower, toLocaleUpper, toLocaleLower, toCode, fromCode, types_, values_
+@docs moduleName_, isUpper, isLower, isAlpha, isAlphaNum, isDigit, isOctDigit, isHexDigit, toUpper, toLower, toLocaleUpper, toLocaleLower, toCode, fromCode, types_, values_, call_
 -}
 
 
@@ -371,6 +371,156 @@ values_ =
             , name = "fromCode"
             , annotation = Just (Type.function [ Type.int ] Type.char)
             }
+    }
+
+
+{-| Every value/function in this module in case you need to refer to it directly. -}
+call_ :
+    { isUpper : Elm.Expression -> Elm.Expression
+    , isLower : Elm.Expression -> Elm.Expression
+    , isAlpha : Elm.Expression -> Elm.Expression
+    , isAlphaNum : Elm.Expression -> Elm.Expression
+    , isDigit : Elm.Expression -> Elm.Expression
+    , isOctDigit : Elm.Expression -> Elm.Expression
+    , isHexDigit : Elm.Expression -> Elm.Expression
+    , toUpper : Elm.Expression -> Elm.Expression
+    , toLower : Elm.Expression -> Elm.Expression
+    , toLocaleUpper : Elm.Expression -> Elm.Expression
+    , toLocaleLower : Elm.Expression -> Elm.Expression
+    , toCode : Elm.Expression -> Elm.Expression
+    , fromCode : Elm.Expression -> Elm.Expression
+    }
+call_ =
+    { isUpper =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Char" ]
+                    , name = "isUpper"
+                    , annotation = Just (Type.function [ Type.char ] Type.bool)
+                    }
+                )
+                [ arg1_0 ]
+    , isLower =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Char" ]
+                    , name = "isLower"
+                    , annotation = Just (Type.function [ Type.char ] Type.bool)
+                    }
+                )
+                [ arg1_0 ]
+    , isAlpha =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Char" ]
+                    , name = "isAlpha"
+                    , annotation = Just (Type.function [ Type.char ] Type.bool)
+                    }
+                )
+                [ arg1_0 ]
+    , isAlphaNum =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Char" ]
+                    , name = "isAlphaNum"
+                    , annotation = Just (Type.function [ Type.char ] Type.bool)
+                    }
+                )
+                [ arg1_0 ]
+    , isDigit =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Char" ]
+                    , name = "isDigit"
+                    , annotation = Just (Type.function [ Type.char ] Type.bool)
+                    }
+                )
+                [ arg1_0 ]
+    , isOctDigit =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Char" ]
+                    , name = "isOctDigit"
+                    , annotation = Just (Type.function [ Type.char ] Type.bool)
+                    }
+                )
+                [ arg1_0 ]
+    , isHexDigit =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Char" ]
+                    , name = "isHexDigit"
+                    , annotation = Just (Type.function [ Type.char ] Type.bool)
+                    }
+                )
+                [ arg1_0 ]
+    , toUpper =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Char" ]
+                    , name = "toUpper"
+                    , annotation = Just (Type.function [ Type.char ] Type.char)
+                    }
+                )
+                [ arg1_0 ]
+    , toLower =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Char" ]
+                    , name = "toLower"
+                    , annotation = Just (Type.function [ Type.char ] Type.char)
+                    }
+                )
+                [ arg1_0 ]
+    , toLocaleUpper =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Char" ]
+                    , name = "toLocaleUpper"
+                    , annotation = Just (Type.function [ Type.char ] Type.char)
+                    }
+                )
+                [ arg1_0 ]
+    , toLocaleLower =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Char" ]
+                    , name = "toLocaleLower"
+                    , annotation = Just (Type.function [ Type.char ] Type.char)
+                    }
+                )
+                [ arg1_0 ]
+    , toCode =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Char" ]
+                    , name = "toCode"
+                    , annotation = Just (Type.function [ Type.char ] Type.int)
+                    }
+                )
+                [ arg1_0 ]
+    , fromCode =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Char" ]
+                    , name = "fromCode"
+                    , annotation = Just (Type.function [ Type.int ] Type.char)
+                    }
+                )
+                [ arg1_0 ]
     }
 
 

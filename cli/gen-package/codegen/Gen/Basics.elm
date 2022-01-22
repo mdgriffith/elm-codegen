@@ -1,12 +1,13 @@
-module Gen.Basics exposing (abs, acos, always, asin, atan, atan2, ceiling, clamp, compare, cos, degrees, e, floor, fromPolar, identity, isInfinite, isNaN, logBase, max, min, modBy, moduleName_, negate, never, not, pi, radians, remainderBy, round, sin, sqrt, tan, toFloat, toPolar, truncate, turns, types_, values_, xor)
+module Gen.Basics exposing (abs, acos, always, asin, atan, atan2, call_, ceiling, clamp, compare, cos, degrees, e, floor, fromPolar, identity, isInfinite, isNaN, logBase, max, min, modBy, moduleName_, negate, never, not, pi, radians, remainderBy, round, sin, sqrt, tan, toFloat, toPolar, truncate, turns, types_, values_, xor)
 
 {-| 
-@docs moduleName_, toFloat, round, floor, ceiling, truncate, max, min, compare, not, xor, modBy, remainderBy, negate, abs, clamp, sqrt, logBase, e, degrees, radians, turns, pi, cos, sin, tan, acos, asin, atan, atan2, toPolar, fromPolar, isNaN, isInfinite, identity, always, never, types_, values_
+@docs moduleName_, toFloat, round, floor, ceiling, truncate, max, min, compare, not, xor, modBy, remainderBy, negate, abs, clamp, sqrt, logBase, e, degrees, radians, turns, pi, cos, sin, tan, acos, asin, atan, atan2, toPolar, fromPolar, isNaN, isInfinite, identity, always, never, types_, values_, call_
 -}
 
 
 import Elm
 import Elm.Annotation as Type
+import Elm.Case
 
 
 {-| The name of this module. -}
@@ -768,10 +769,18 @@ types_ :
         { annotation : Type.Annotation
         , create :
             { lt : Elm.Expression, eq : Elm.Expression, gt : Elm.Expression }
+        , caseOf :
+            Elm.Expression
+            -> { gt : Elm.Expression, eq : Elm.Expression, lt : Elm.Expression }
+            -> Elm.Expression
         }
     , bool :
         { annotation : Type.Annotation
         , create : { true : Elm.Expression, false : Elm.Expression }
+        , caseOf :
+            Elm.Expression
+            -> { false : Elm.Expression, true : Elm.Expression }
+            -> Elm.Expression
         }
     , never : { annotation : Type.Annotation }
     }
@@ -800,6 +809,14 @@ types_ =
                     , annotation = Just (Type.namedWith [] "Order" [])
                     }
             }
+        , caseOf =
+            \expresssion_2_0 tags_2_0 ->
+                Elm.Case.custom
+                    expresssion_2_0
+                    [ Elm.Case.branch0 [ "Basics" ] "LT" tags_2_0.lt
+                    , Elm.Case.branch0 [ "Basics" ] "EQ" tags_2_0.eq
+                    , Elm.Case.branch0 [ "Basics" ] "GT" tags_2_0.gt
+                    ]
         }
     , bool =
         { annotation = Type.namedWith moduleName_ "Bool" []
@@ -817,6 +834,13 @@ types_ =
                     , annotation = Just (Type.namedWith [] "Bool" [])
                     }
             }
+        , caseOf =
+            \expresssion_3_0 tags_3_0 ->
+                Elm.Case.custom
+                    expresssion_3_0
+                    [ Elm.Case.branch0 [ "Basics" ] "True" tags_3_0.true
+                    , Elm.Case.branch0 [ "Basics" ] "False" tags_3_0.false
+                    ]
         }
     , never = { annotation = Type.namedWith moduleName_ "Never" [] }
     }
@@ -1124,6 +1148,461 @@ values_ =
                         (Type.var "a")
                     )
             }
+    }
+
+
+{-| Every value/function in this module in case you need to refer to it directly. -}
+call_ :
+    { toFloat : Elm.Expression -> Elm.Expression
+    , round : Elm.Expression -> Elm.Expression
+    , floor : Elm.Expression -> Elm.Expression
+    , ceiling : Elm.Expression -> Elm.Expression
+    , truncate : Elm.Expression -> Elm.Expression
+    , max : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , min : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , compare : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , not : Elm.Expression -> Elm.Expression
+    , xor : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , modBy : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , remainderBy : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , negate : Elm.Expression -> Elm.Expression
+    , abs : Elm.Expression -> Elm.Expression
+    , clamp :
+        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+    , sqrt : Elm.Expression -> Elm.Expression
+    , logBase : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , degrees : Elm.Expression -> Elm.Expression
+    , radians : Elm.Expression -> Elm.Expression
+    , turns : Elm.Expression -> Elm.Expression
+    , cos : Elm.Expression -> Elm.Expression
+    , sin : Elm.Expression -> Elm.Expression
+    , tan : Elm.Expression -> Elm.Expression
+    , acos : Elm.Expression -> Elm.Expression
+    , asin : Elm.Expression -> Elm.Expression
+    , atan : Elm.Expression -> Elm.Expression
+    , atan2 : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , toPolar : Elm.Expression -> Elm.Expression
+    , fromPolar : Elm.Expression -> Elm.Expression
+    , isNaN : Elm.Expression -> Elm.Expression
+    , isInfinite : Elm.Expression -> Elm.Expression
+    , identity : Elm.Expression -> Elm.Expression
+    , always : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , never : Elm.Expression -> Elm.Expression
+    }
+call_ =
+    { toFloat =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "toFloat"
+                    , annotation = Just (Type.function [ Type.int ] Type.float)
+                    }
+                )
+                [ arg1_0 ]
+    , round =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "round"
+                    , annotation = Just (Type.function [ Type.float ] Type.int)
+                    }
+                )
+                [ arg1_0 ]
+    , floor =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "floor"
+                    , annotation = Just (Type.function [ Type.float ] Type.int)
+                    }
+                )
+                [ arg1_0 ]
+    , ceiling =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "ceiling"
+                    , annotation = Just (Type.function [ Type.float ] Type.int)
+                    }
+                )
+                [ arg1_0 ]
+    , truncate =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "truncate"
+                    , annotation = Just (Type.function [ Type.float ] Type.int)
+                    }
+                )
+                [ arg1_0 ]
+    , max =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "max"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.var "comparable", Type.var "comparable" ]
+                                (Type.var "comparable")
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , min =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "min"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.var "comparable", Type.var "comparable" ]
+                                (Type.var "comparable")
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , compare =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "compare"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.var "comparable", Type.var "comparable" ]
+                                (Type.namedWith [ "Basics" ] "Order" [])
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , not =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "not"
+                    , annotation = Just (Type.function [ Type.bool ] Type.bool)
+                    }
+                )
+                [ arg1_0 ]
+    , xor =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "xor"
+                    , annotation =
+                        Just (Type.function [ Type.bool, Type.bool ] Type.bool)
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , modBy =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "modBy"
+                    , annotation =
+                        Just (Type.function [ Type.int, Type.int ] Type.int)
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , remainderBy =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "remainderBy"
+                    , annotation =
+                        Just (Type.function [ Type.int, Type.int ] Type.int)
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , negate =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "negate"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.var "number" ]
+                                (Type.var "number")
+                            )
+                    }
+                )
+                [ arg1_0 ]
+    , abs =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "abs"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.var "number" ]
+                                (Type.var "number")
+                            )
+                    }
+                )
+                [ arg1_0 ]
+    , clamp =
+        \arg1_0 arg2_0 arg3_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "clamp"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.var "number"
+                                , Type.var "number"
+                                , Type.var "number"
+                                ]
+                                (Type.var "number")
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0, arg3_0 ]
+    , sqrt =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "sqrt"
+                    , annotation =
+                        Just (Type.function [ Type.float ] Type.float)
+                    }
+                )
+                [ arg1_0 ]
+    , logBase =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "logBase"
+                    , annotation =
+                        Just
+                            (Type.function [ Type.float, Type.float ] Type.float
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , degrees =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "degrees"
+                    , annotation =
+                        Just (Type.function [ Type.float ] Type.float)
+                    }
+                )
+                [ arg1_0 ]
+    , radians =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "radians"
+                    , annotation =
+                        Just (Type.function [ Type.float ] Type.float)
+                    }
+                )
+                [ arg1_0 ]
+    , turns =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "turns"
+                    , annotation =
+                        Just (Type.function [ Type.float ] Type.float)
+                    }
+                )
+                [ arg1_0 ]
+    , cos =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "cos"
+                    , annotation =
+                        Just (Type.function [ Type.float ] Type.float)
+                    }
+                )
+                [ arg1_0 ]
+    , sin =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "sin"
+                    , annotation =
+                        Just (Type.function [ Type.float ] Type.float)
+                    }
+                )
+                [ arg1_0 ]
+    , tan =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "tan"
+                    , annotation =
+                        Just (Type.function [ Type.float ] Type.float)
+                    }
+                )
+                [ arg1_0 ]
+    , acos =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "acos"
+                    , annotation =
+                        Just (Type.function [ Type.float ] Type.float)
+                    }
+                )
+                [ arg1_0 ]
+    , asin =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "asin"
+                    , annotation =
+                        Just (Type.function [ Type.float ] Type.float)
+                    }
+                )
+                [ arg1_0 ]
+    , atan =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "atan"
+                    , annotation =
+                        Just (Type.function [ Type.float ] Type.float)
+                    }
+                )
+                [ arg1_0 ]
+    , atan2 =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "atan2"
+                    , annotation =
+                        Just
+                            (Type.function [ Type.float, Type.float ] Type.float
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , toPolar =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "toPolar"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.tuple Type.float Type.float ]
+                                (Type.tuple Type.float Type.float)
+                            )
+                    }
+                )
+                [ arg1_0 ]
+    , fromPolar =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "fromPolar"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.tuple Type.float Type.float ]
+                                (Type.tuple Type.float Type.float)
+                            )
+                    }
+                )
+                [ arg1_0 ]
+    , isNaN =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "isNaN"
+                    , annotation = Just (Type.function [ Type.float ] Type.bool)
+                    }
+                )
+                [ arg1_0 ]
+    , isInfinite =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "isInfinite"
+                    , annotation = Just (Type.function [ Type.float ] Type.bool)
+                    }
+                )
+                [ arg1_0 ]
+    , identity =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "identity"
+                    , annotation =
+                        Just (Type.function [ Type.var "a" ] (Type.var "a"))
+                    }
+                )
+                [ arg1_0 ]
+    , always =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "always"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.var "a", Type.var "b" ]
+                                (Type.var "a")
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , never =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Basics" ]
+                    , name = "never"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.namedWith [ "Basics" ] "Never" [] ]
+                                (Type.var "a")
+                            )
+                    }
+                )
+                [ arg1_0 ]
     }
 
 

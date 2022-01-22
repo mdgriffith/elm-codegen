@@ -1,7 +1,7 @@
-module Gen.Error.Format exposing (block, cyan, green, grey, moduleName_, red, types_, values_, yellow)
+module Gen.Error.Format exposing (block, call_, cyan, green, grey, moduleName_, red, types_, values_, yellow)
 
 {-| 
-@docs moduleName_, block, cyan, yellow, green, red, grey, types_, values_
+@docs moduleName_, block, cyan, yellow, green, red, grey, types_, values_, call_
 -}
 
 
@@ -147,6 +147,87 @@ values_ =
             , name = "grey"
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
+    }
+
+
+{-| Every value/function in this module in case you need to refer to it directly. -}
+call_ :
+    { block : Elm.Expression -> Elm.Expression
+    , cyan : Elm.Expression -> Elm.Expression
+    , yellow : Elm.Expression -> Elm.Expression
+    , green : Elm.Expression -> Elm.Expression
+    , red : Elm.Expression -> Elm.Expression
+    , grey : Elm.Expression -> Elm.Expression
+    }
+call_ =
+    { block =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Error", "Format" ]
+                    , name = "block"
+                    , annotation =
+                        Just
+                            (Type.function [ Type.list Type.string ] Type.string
+                            )
+                    }
+                )
+                [ arg1_0 ]
+    , cyan =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Error", "Format" ]
+                    , name = "cyan"
+                    , annotation =
+                        Just (Type.function [ Type.string ] Type.string)
+                    }
+                )
+                [ arg1_0 ]
+    , yellow =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Error", "Format" ]
+                    , name = "yellow"
+                    , annotation =
+                        Just (Type.function [ Type.string ] Type.string)
+                    }
+                )
+                [ arg1_0 ]
+    , green =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Error", "Format" ]
+                    , name = "green"
+                    , annotation =
+                        Just (Type.function [ Type.string ] Type.string)
+                    }
+                )
+                [ arg1_0 ]
+    , red =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Error", "Format" ]
+                    , name = "red"
+                    , annotation =
+                        Just (Type.function [ Type.string ] Type.string)
+                    }
+                )
+                [ arg1_0 ]
+    , grey =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Error", "Format" ]
+                    , name = "grey"
+                    , annotation =
+                        Just (Type.function [ Type.string ] Type.string)
+                    }
+                )
+                [ arg1_0 ]
     }
 
 

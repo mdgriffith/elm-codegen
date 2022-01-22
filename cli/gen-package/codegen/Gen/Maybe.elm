@@ -1,12 +1,13 @@
-module Gen.Maybe exposing (andThen, map, map2, map3, map4, map5, moduleName_, types_, values_, withDefault)
+module Gen.Maybe exposing (andThen, call_, map, map2, map3, map4, map5, moduleName_, types_, values_, withDefault)
 
 {-| 
-@docs moduleName_, withDefault, map, map2, map3, map4, map5, andThen, types_, values_
+@docs moduleName_, withDefault, map, map2, map3, map4, map5, andThen, types_, values_, call_
 -}
 
 
 import Elm
 import Elm.Annotation as Type
+import Elm.Case
 
 
 {-| The name of this module. -}
@@ -430,6 +431,12 @@ types_ :
             { just : Elm.Expression -> Elm.Expression
             , nothing : Elm.Expression
             }
+        , caseOf :
+            Elm.Expression
+            -> { nothing : Elm.Expression
+            , just : Elm.Expression -> Elm.Expression
+            }
+            -> Elm.Expression
         }
     }
 types_ =
@@ -457,6 +464,13 @@ types_ =
                         Just (Type.namedWith [] "Maybe" [ Type.var "a" ])
                     }
             }
+        , caseOf =
+            \expresssion_0_0 tags_0_0 ->
+                Elm.Case.custom
+                    expresssion_0_0
+                    [ Elm.Case.branch1 [ "Maybe" ] "Just" tags_0_0.just
+                    , Elm.Case.branch0 [ "Maybe" ] "Nothing" tags_0_0.nothing
+                    ]
         }
     }
 
@@ -590,6 +604,185 @@ values_ =
                         (Type.maybe (Type.var "b"))
                     )
             }
+    }
+
+
+{-| Every value/function in this module in case you need to refer to it directly. -}
+call_ :
+    { withDefault : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , map : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , map2 :
+        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+    , map3 :
+        Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+    , map4 :
+        Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+    , map5 :
+        Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+    , andThen : Elm.Expression -> Elm.Expression -> Elm.Expression
+    }
+call_ =
+    { withDefault =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Maybe" ]
+                    , name = "withDefault"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.var "a", Type.maybe (Type.var "a") ]
+                                (Type.var "a")
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , map =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Maybe" ]
+                    , name = "map"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function [ Type.var "a" ] (Type.var "b")
+                                , Type.maybe (Type.var "a")
+                                ]
+                                (Type.maybe (Type.var "b"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , map2 =
+        \arg1_0 arg2_0 arg3_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Maybe" ]
+                    , name = "map2"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function
+                                    [ Type.var "a", Type.var "b" ]
+                                    (Type.var "value")
+                                , Type.maybe (Type.var "a")
+                                , Type.maybe (Type.var "b")
+                                ]
+                                (Type.maybe (Type.var "value"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0, arg3_0 ]
+    , map3 =
+        \arg1_0 arg2_0 arg3_0 arg4_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Maybe" ]
+                    , name = "map3"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function
+                                    [ Type.var "a", Type.var "b", Type.var "c" ]
+                                    (Type.var "value")
+                                , Type.maybe (Type.var "a")
+                                , Type.maybe (Type.var "b")
+                                , Type.maybe (Type.var "c")
+                                ]
+                                (Type.maybe (Type.var "value"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0, arg3_0, arg4_0 ]
+    , map4 =
+        \arg1_0 arg2_0 arg3_0 arg4_0 arg5_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Maybe" ]
+                    , name = "map4"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function
+                                    [ Type.var "a"
+                                    , Type.var "b"
+                                    , Type.var "c"
+                                    , Type.var "d"
+                                    ]
+                                    (Type.var "value")
+                                , Type.maybe (Type.var "a")
+                                , Type.maybe (Type.var "b")
+                                , Type.maybe (Type.var "c")
+                                , Type.maybe (Type.var "d")
+                                ]
+                                (Type.maybe (Type.var "value"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0, arg3_0, arg4_0, arg5_0 ]
+    , map5 =
+        \arg1_0 arg2_0 arg3_0 arg4_0 arg5_0 arg6_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Maybe" ]
+                    , name = "map5"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function
+                                    [ Type.var "a"
+                                    , Type.var "b"
+                                    , Type.var "c"
+                                    , Type.var "d"
+                                    , Type.var "e"
+                                    ]
+                                    (Type.var "value")
+                                , Type.maybe (Type.var "a")
+                                , Type.maybe (Type.var "b")
+                                , Type.maybe (Type.var "c")
+                                , Type.maybe (Type.var "d")
+                                , Type.maybe (Type.var "e")
+                                ]
+                                (Type.maybe (Type.var "value"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0, arg3_0, arg4_0, arg5_0, arg6_0 ]
+    , andThen =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Maybe" ]
+                    , name = "andThen"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function
+                                    [ Type.var "a" ]
+                                    (Type.maybe (Type.var "b"))
+                                , Type.maybe (Type.var "a")
+                                ]
+                                (Type.maybe (Type.var "b"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
     }
 
 

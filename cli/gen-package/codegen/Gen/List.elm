@@ -1,7 +1,7 @@
-module Gen.List exposing (all, any, append, concat, concatMap, drop, filter, filterMap, foldl, foldr, head, indexedMap, intersperse, isEmpty, length, map, map2, map3, map4, map5, maximum, member, minimum, moduleName_, partition, product, range, repeat, reverse, singleton, sort, sortBy, sortWith, sum, tail, take, types_, unzip, values_)
+module Gen.List exposing (all, any, append, call_, concat, concatMap, drop, filter, filterMap, foldl, foldr, head, indexedMap, intersperse, isEmpty, length, map, map2, map3, map4, map5, maximum, member, minimum, moduleName_, partition, product, range, repeat, reverse, singleton, sort, sortBy, sortWith, sum, tail, take, types_, unzip, values_)
 
 {-| 
-@docs moduleName_, singleton, repeat, range, map, indexedMap, foldl, foldr, filter, filterMap, length, reverse, member, all, any, maximum, minimum, sum, product, append, concat, concatMap, intersperse, map2, map3, map4, map5, sort, sortBy, sortWith, isEmpty, head, tail, take, drop, partition, unzip, types_, values_
+@docs moduleName_, singleton, repeat, range, map, indexedMap, foldl, foldr, filter, filterMap, length, reverse, member, all, any, maximum, minimum, sum, product, append, concat, concatMap, intersperse, map2, map3, map4, map5, sort, sortBy, sortWith, isEmpty, head, tail, take, drop, partition, unzip, types_, values_, call_
 -}
 
 
@@ -1754,6 +1754,693 @@ values_ =
                         )
                     )
             }
+    }
+
+
+{-| Every value/function in this module in case you need to refer to it directly. -}
+call_ :
+    { singleton : Elm.Expression -> Elm.Expression
+    , repeat : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , range : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , map : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , indexedMap : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , foldl :
+        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+    , foldr :
+        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+    , filter : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , filterMap : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , length : Elm.Expression -> Elm.Expression
+    , reverse : Elm.Expression -> Elm.Expression
+    , member : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , all : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , any : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , maximum : Elm.Expression -> Elm.Expression
+    , minimum : Elm.Expression -> Elm.Expression
+    , sum : Elm.Expression -> Elm.Expression
+    , product : Elm.Expression -> Elm.Expression
+    , append : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , concat : Elm.Expression -> Elm.Expression
+    , concatMap : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , intersperse : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , map2 :
+        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+    , map3 :
+        Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+    , map4 :
+        Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+    , map5 :
+        Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+    , sort : Elm.Expression -> Elm.Expression
+    , sortBy : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , sortWith : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , isEmpty : Elm.Expression -> Elm.Expression
+    , head : Elm.Expression -> Elm.Expression
+    , tail : Elm.Expression -> Elm.Expression
+    , take : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , drop : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , partition : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , unzip : Elm.Expression -> Elm.Expression
+    }
+call_ =
+    { singleton =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "singleton"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.var "a" ]
+                                (Type.list (Type.var "a"))
+                            )
+                    }
+                )
+                [ arg1_0 ]
+    , repeat =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "repeat"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.int, Type.var "a" ]
+                                (Type.list (Type.var "a"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , range =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "range"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.int, Type.int ]
+                                (Type.list Type.int)
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , map =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "map"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function [ Type.var "a" ] (Type.var "b")
+                                , Type.list (Type.var "a")
+                                ]
+                                (Type.list (Type.var "b"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , indexedMap =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "indexedMap"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function
+                                    [ Type.int, Type.var "a" ]
+                                    (Type.var "b")
+                                , Type.list (Type.var "a")
+                                ]
+                                (Type.list (Type.var "b"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , foldl =
+        \arg1_0 arg2_0 arg3_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "foldl"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function
+                                    [ Type.var "a", Type.var "b" ]
+                                    (Type.var "b")
+                                , Type.var "b"
+                                , Type.list (Type.var "a")
+                                ]
+                                (Type.var "b")
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0, arg3_0 ]
+    , foldr =
+        \arg1_0 arg2_0 arg3_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "foldr"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function
+                                    [ Type.var "a", Type.var "b" ]
+                                    (Type.var "b")
+                                , Type.var "b"
+                                , Type.list (Type.var "a")
+                                ]
+                                (Type.var "b")
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0, arg3_0 ]
+    , filter =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "filter"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function [ Type.var "a" ] Type.bool
+                                , Type.list (Type.var "a")
+                                ]
+                                (Type.list (Type.var "a"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , filterMap =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "filterMap"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function
+                                    [ Type.var "a" ]
+                                    (Type.maybe (Type.var "b"))
+                                , Type.list (Type.var "a")
+                                ]
+                                (Type.list (Type.var "b"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , length =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "length"
+                    , annotation =
+                        Just
+                            (Type.function [ Type.list (Type.var "a") ] Type.int
+                            )
+                    }
+                )
+                [ arg1_0 ]
+    , reverse =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "reverse"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.list (Type.var "a") ]
+                                (Type.list (Type.var "a"))
+                            )
+                    }
+                )
+                [ arg1_0 ]
+    , member =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "member"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.var "a", Type.list (Type.var "a") ]
+                                Type.bool
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , all =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "all"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function [ Type.var "a" ] Type.bool
+                                , Type.list (Type.var "a")
+                                ]
+                                Type.bool
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , any =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "any"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function [ Type.var "a" ] Type.bool
+                                , Type.list (Type.var "a")
+                                ]
+                                Type.bool
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , maximum =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "maximum"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.list (Type.var "comparable") ]
+                                (Type.maybe (Type.var "comparable"))
+                            )
+                    }
+                )
+                [ arg1_0 ]
+    , minimum =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "minimum"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.list (Type.var "comparable") ]
+                                (Type.maybe (Type.var "comparable"))
+                            )
+                    }
+                )
+                [ arg1_0 ]
+    , sum =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "sum"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.list (Type.var "number") ]
+                                (Type.var "number")
+                            )
+                    }
+                )
+                [ arg1_0 ]
+    , product =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "product"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.list (Type.var "number") ]
+                                (Type.var "number")
+                            )
+                    }
+                )
+                [ arg1_0 ]
+    , append =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "append"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.list (Type.var "a")
+                                , Type.list (Type.var "a")
+                                ]
+                                (Type.list (Type.var "a"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , concat =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "concat"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.list (Type.list (Type.var "a")) ]
+                                (Type.list (Type.var "a"))
+                            )
+                    }
+                )
+                [ arg1_0 ]
+    , concatMap =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "concatMap"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function
+                                    [ Type.var "a" ]
+                                    (Type.list (Type.var "b"))
+                                , Type.list (Type.var "a")
+                                ]
+                                (Type.list (Type.var "b"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , intersperse =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "intersperse"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.var "a", Type.list (Type.var "a") ]
+                                (Type.list (Type.var "a"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , map2 =
+        \arg1_0 arg2_0 arg3_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "map2"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function
+                                    [ Type.var "a", Type.var "b" ]
+                                    (Type.var "result")
+                                , Type.list (Type.var "a")
+                                , Type.list (Type.var "b")
+                                ]
+                                (Type.list (Type.var "result"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0, arg3_0 ]
+    , map3 =
+        \arg1_0 arg2_0 arg3_0 arg4_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "map3"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function
+                                    [ Type.var "a", Type.var "b", Type.var "c" ]
+                                    (Type.var "result")
+                                , Type.list (Type.var "a")
+                                , Type.list (Type.var "b")
+                                , Type.list (Type.var "c")
+                                ]
+                                (Type.list (Type.var "result"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0, arg3_0, arg4_0 ]
+    , map4 =
+        \arg1_0 arg2_0 arg3_0 arg4_0 arg5_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "map4"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function
+                                    [ Type.var "a"
+                                    , Type.var "b"
+                                    , Type.var "c"
+                                    , Type.var "d"
+                                    ]
+                                    (Type.var "result")
+                                , Type.list (Type.var "a")
+                                , Type.list (Type.var "b")
+                                , Type.list (Type.var "c")
+                                , Type.list (Type.var "d")
+                                ]
+                                (Type.list (Type.var "result"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0, arg3_0, arg4_0, arg5_0 ]
+    , map5 =
+        \arg1_0 arg2_0 arg3_0 arg4_0 arg5_0 arg6_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "map5"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function
+                                    [ Type.var "a"
+                                    , Type.var "b"
+                                    , Type.var "c"
+                                    , Type.var "d"
+                                    , Type.var "e"
+                                    ]
+                                    (Type.var "result")
+                                , Type.list (Type.var "a")
+                                , Type.list (Type.var "b")
+                                , Type.list (Type.var "c")
+                                , Type.list (Type.var "d")
+                                , Type.list (Type.var "e")
+                                ]
+                                (Type.list (Type.var "result"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0, arg3_0, arg4_0, arg5_0, arg6_0 ]
+    , sort =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "sort"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.list (Type.var "comparable") ]
+                                (Type.list (Type.var "comparable"))
+                            )
+                    }
+                )
+                [ arg1_0 ]
+    , sortBy =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "sortBy"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function
+                                    [ Type.var "a" ]
+                                    (Type.var "comparable")
+                                , Type.list (Type.var "a")
+                                ]
+                                (Type.list (Type.var "a"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , sortWith =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "sortWith"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function
+                                    [ Type.var "a", Type.var "a" ]
+                                    (Type.namedWith [ "Basics" ] "Order" [])
+                                , Type.list (Type.var "a")
+                                ]
+                                (Type.list (Type.var "a"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , isEmpty =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "isEmpty"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.list (Type.var "a") ]
+                                Type.bool
+                            )
+                    }
+                )
+                [ arg1_0 ]
+    , head =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "head"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.list (Type.var "a") ]
+                                (Type.maybe (Type.var "a"))
+                            )
+                    }
+                )
+                [ arg1_0 ]
+    , tail =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "tail"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.list (Type.var "a") ]
+                                (Type.maybe (Type.list (Type.var "a")))
+                            )
+                    }
+                )
+                [ arg1_0 ]
+    , take =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "take"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.int, Type.list (Type.var "a") ]
+                                (Type.list (Type.var "a"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , drop =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "drop"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.int, Type.list (Type.var "a") ]
+                                (Type.list (Type.var "a"))
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , partition =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "partition"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function [ Type.var "a" ] Type.bool
+                                , Type.list (Type.var "a")
+                                ]
+                                (Type.tuple
+                                    (Type.list (Type.var "a"))
+                                    (Type.list (Type.var "a"))
+                                )
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , unzip =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "List" ]
+                    , name = "unzip"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.list
+                                    (Type.tuple (Type.var "a") (Type.var "b"))
+                                ]
+                                (Type.tuple
+                                    (Type.list (Type.var "a"))
+                                    (Type.list (Type.var "b"))
+                                )
+                            )
+                    }
+                )
+                [ arg1_0 ]
     }
 
 

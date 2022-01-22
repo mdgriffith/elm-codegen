@@ -1,7 +1,7 @@
-module Gen.Platform.Cmd exposing (batch, map, moduleName_, none, types_, values_)
+module Gen.Platform.Cmd exposing (batch, call_, map, moduleName_, none, types_, values_)
 
 {-| 
-@docs moduleName_, none, batch, map, types_, values_
+@docs moduleName_, none, batch, map, types_, values_, call_
 -}
 
 
@@ -174,6 +174,66 @@ values_ =
                         )
                     )
             }
+    }
+
+
+{-| Every value/function in this module in case you need to refer to it directly. -}
+call_ :
+    { batch : Elm.Expression -> Elm.Expression
+    , map : Elm.Expression -> Elm.Expression -> Elm.Expression
+    }
+call_ =
+    { batch =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Platform", "Cmd" ]
+                    , name = "batch"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.list
+                                    (Type.namedWith
+                                        [ "Platform", "Cmd" ]
+                                        "Cmd"
+                                        [ Type.var "msg" ]
+                                    )
+                                ]
+                                (Type.namedWith
+                                    [ "Platform", "Cmd" ]
+                                    "Cmd"
+                                    [ Type.var "msg" ]
+                                )
+                            )
+                    }
+                )
+                [ arg1_0 ]
+    , map =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Platform", "Cmd" ]
+                    , name = "map"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.function
+                                    [ Type.var "a" ]
+                                    (Type.var "msg")
+                                , Type.namedWith
+                                    [ "Platform", "Cmd" ]
+                                    "Cmd"
+                                    [ Type.var "a" ]
+                                ]
+                                (Type.namedWith
+                                    [ "Platform", "Cmd" ]
+                                    "Cmd"
+                                    [ Type.var "msg" ]
+                                )
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
     }
 
 

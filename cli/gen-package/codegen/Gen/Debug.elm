@@ -1,7 +1,7 @@
-module Gen.Debug exposing (log, moduleName_, toString, todo, types_, values_)
+module Gen.Debug exposing (call_, log, moduleName_, toString, todo, types_, values_)
 
 {-| 
-@docs moduleName_, toString, log, todo, types_, values_
+@docs moduleName_, toString, log, todo, types_, values_, call_
 -}
 
 
@@ -147,6 +147,53 @@ values_ =
             , name = "todo"
             , annotation = Just (Type.function [ Type.string ] (Type.var "a"))
             }
+    }
+
+
+{-| Every value/function in this module in case you need to refer to it directly. -}
+call_ :
+    { toString : Elm.Expression -> Elm.Expression
+    , log : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , todo : Elm.Expression -> Elm.Expression
+    }
+call_ =
+    { toString =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Debug" ]
+                    , name = "toString"
+                    , annotation =
+                        Just (Type.function [ Type.var "a" ] Type.string)
+                    }
+                )
+                [ arg1_0 ]
+    , log =
+        \arg1_0 arg2_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Debug" ]
+                    , name = "log"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.string, Type.var "a" ]
+                                (Type.var "a")
+                            )
+                    }
+                )
+                [ arg1_0, arg2_0 ]
+    , todo =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.valueWith
+                    { importFrom = [ "Debug" ]
+                    , name = "todo"
+                    , annotation =
+                        Just (Type.function [ Type.string ] (Type.var "a"))
+                    }
+                )
+                [ arg1_0 ]
     }
 
 
