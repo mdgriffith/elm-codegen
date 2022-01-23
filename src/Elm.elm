@@ -2319,28 +2319,38 @@ declaration name (Compiler.Expression toBody) =
         body =
             toBody Compiler.startIndex
 
+        renderError err =
+            "-- ELM-CODEGEN ERROR --\n\n"
+                ++ (err
+                        |> List.map Compiler.inferenceErrorToString
+                        |> String.join "\n\n"
+                   )
+                ++ "\n\n"
+
         resolvedType =
             body.annotation
                 |> Result.mapError
-                    (List.map Compiler.inferenceErrorToString
-                        >> String.join "\n\n"
-                    )
+                    renderError
                 |> Result.andThen
                     (\sig -> Compiler.resolveVariables sig.inferences sig.type_)
     in
     { documentation =
-        Compiler.nodifyMaybe Nothing
+        Compiler.nodifyMaybe
+            (case resolvedType of
+                Ok sig ->
+                    case body.annotation of
+                        Ok inference ->
+                            -- Just (Internal.Write.writeInference inference)
+                            Nothing
 
-    -- (case resolvedType of
-    --     Ok sig ->
-    --         case body.annotation of
-    --             Ok inference ->
-    --                 Just (Internal.Write.writeInference inference)
-    --             Err err ->
-    --                 Nothing
-    --     Err err ->
-    --         Just err
-    -- )
+                        Err err ->
+                            Just
+                                (renderError err)
+
+                Err err ->
+                    Just
+                        err
+            )
     , signature =
         case body.annotation of
             Ok sig ->
