@@ -1,11 +1,11 @@
-lockfileVersion: 5.3
+lockfileVersion: 5.4
 
 specifiers:
   '@types/node': ^15.0.3
   '@types/node-fetch': ^2.5.10
   chalk: ^4.1.1
   chokidar: ^3.5.1
-  commander: ^7.2.0
+  commander: ^8.3.0
   elm-optimize-level-2: ^0.1.5
   node-elm-compiler: ^5.0.6
   node-fetch: ^2.6.1
@@ -15,7 +15,7 @@ dependencies:
   '@types/node': 15.14.9
   chalk: 4.1.2
   chokidar: 3.5.2
-  commander: 7.2.0
+  commander: 8.3.0
   elm-optimize-level-2: 0.1.5
   node-elm-compiler: 5.0.6
   node-fetch: 2.6.6
@@ -124,9 +124,9 @@ packages:
     engines: {node: '>= 6'}
     dev: false
 
-  /commander/7.2.0:
-    resolution: {integrity: sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==}
-    engines: {node: '>= 10'}
+  /commander/8.3.0:
+    resolution: {integrity: sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==}
+    engines: {node: '>= 12'}
     dev: false
 
   /concat-map/0.0.1:
