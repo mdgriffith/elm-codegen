@@ -24,7 +24,7 @@ module Elm exposing
     , parse, unsafe
     , toString, signature, expressionImports
     , declarationToString, declarationImports
-    , apply, value, valueFrom, valueWith
+    , apply, value
     )
 
 {-|
@@ -118,7 +118,7 @@ module Elm exposing
 
 # Low-level
 
-@docs apply, value, valueFrom, valueWith
+@docs apply, value
 
 -}
 
@@ -489,9 +489,14 @@ type alias FileDetails =
 
 
 {-| -}
-value : String -> Expression
+value :
+    { importFrom : List String
+    , name : String
+    , annotation : Maybe Elm.Annotation.Annotation
+    }
+    -> Expression
 value =
-    valueFrom []
+    valueWith
 
 
 {-| -}

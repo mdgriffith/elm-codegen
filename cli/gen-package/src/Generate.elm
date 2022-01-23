@@ -165,7 +165,7 @@ local =
 
 thisModuleName : Elm.Expression
 thisModuleName =
-    Elm.valueWith
+    Elm.value
         { importFrom = local
         , name = "moduleName_"
         , annotation =
@@ -175,7 +175,7 @@ thisModuleName =
 
 valueWith : List String -> Elm.Expression -> Elm.Type.Type -> Elm.Expression
 valueWith thisModule name annotation =
-    ElmGen.valueWith
+    ElmGen.value
         { importFrom = List.map Elm.string thisModule
         , name = name
         , annotation =
@@ -220,18 +220,20 @@ annotationNamed name tags =
 localType : String -> List Elm.Expression -> Elm.Expression
 localType name args =
     Elm.apply
-        (Elm.valueFrom
-            [ "Elm", "Annotation" ]
-            "namedWith"
-            |> Elm.withType
-                (Annotation.function
-                    [ Annotation.list Annotation.string
-                    , Annotation.string
-                    , Annotation.list
+        (Elm.value
+            { importFrom =  [ "Elm", "Annotation" ]
+            , name = "namedWith"
+            , annotation =
+                Just
+                    (Annotation.function
+                        [ Annotation.list Annotation.string
+                        , Annotation.string
+                        , Annotation.list
+                            (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                        ]
                         (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                    ]
-                    (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                )
+                    )
+            }
         )
         [ thisModuleName
         , Elm.string name
@@ -278,7 +280,7 @@ blockToCall thisModule block =
                             List.drop 1 captured.arguments
                                 |> List.foldl
                                     (\(name, _) args ->
-                                        Elm.valueWith
+                                        Elm.value
                                             { importFrom = []
                                             , name = name
                                             , annotation =
@@ -292,7 +294,7 @@ blockToCall thisModule block =
                     Elm.function arguments
                         (
                             ElmGen.apply
-                                (ElmGen.valueWith
+                                (ElmGen.value
                                     { importFrom = List.map Elm.string thisModule
                                     , name = Elm.string value.name
                                     , annotation =
@@ -646,7 +648,7 @@ generateBlocks thisModule block =
                         ( (List.reverse (List.drop 1 captured.arguments)))
                         (\vars ->
                             (ElmGen.apply
-                                (ElmGen.valueWith
+                                (ElmGen.value
                                     { importFrom = List.map Elm.string thisModule
                                     , name = Elm.string value.name
                                     , annotation =
@@ -810,7 +812,7 @@ asArgumentTypeHelperForLambdas tipe =
 asValue : String -> Int -> Elm.Type.Type -> Elm.Expression
 asValue baseName index tipe =
     getArgumentUnpacker baseName 0 tipe <|
-        (Elm.valueWith
+        (Elm.value
             { importFrom = []
             , name = (argName index)
             , annotation =
@@ -881,7 +883,7 @@ getArgumentUnpacker baseName freshCount tipe value =
                 ( Elm.apply value
                     (List.indexedMap
                         (\i argType ->
-                            ElmGen.valueWith
+                            ElmGen.value
                                 { importFrom = []
                                 , name = Elm.string (baseName ++ "Arg" ++ String.fromInt freshCount ++ "_" ++ String.fromInt i)
                                 , annotation =
@@ -903,7 +905,7 @@ getArgumentUnpacker baseName freshCount tipe value =
                 unpackedInner =
                     if needsUnpacking inner then
                         Elm.apply
-                            (Elm.valueWith
+                            (Elm.value
                                 { importFrom = [ "List" ]
                                 , name = "map"
                                 , annotation =
@@ -1130,8 +1132,11 @@ typeToExpression thisModule elmType =
 
                 _ ->
                     -- this should never happen :/
-                    Elm.valueFrom elmAnnotation "unit"
-                        |> Elm.withType annotationType
+                    Elm.value
+                        { importFrom = elmAnnotation
+                        , name = "unit"
+                        , annotation = Just annotationType
+                        }
 
         Elm.Type.Type name types ->
             namedWithType thisModule name types
