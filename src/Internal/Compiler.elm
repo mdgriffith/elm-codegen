@@ -218,11 +218,11 @@ inferenceErrorToString inf =
 
         MismatchedList one two ->
             "There are multiple different types in a list!: \n\n"
-                ++ "\n\n"
+                ++ "    "
                 ++ (Elm.Writer.writeTypeAnnotation (nodify one)
                         |> Elm.Writer.write
                    )
-                ++ "\n\n"
+                ++ "\n\n    "
                 ++ (Elm.Writer.writeTypeAnnotation (nodify two)
                         |> Elm.Writer.write
                    )
@@ -234,7 +234,20 @@ inferenceErrorToString inf =
             "Case statement is empty"
 
         FunctionAppliedToTooManyArgs fn args ->
-            "A function is applied to too many arguments"
+            "The following is being called as a function\n\n    "
+                ++ (Elm.Writer.writeTypeAnnotation (nodify fn)
+                        |> Elm.Writer.write
+                   )
+                ++ "\n\nwith these arguments:\n\n    "
+                ++ (List.map
+                        (\arg ->
+                            Elm.Writer.writeTypeAnnotation (nodify arg)
+                                |> Elm.Writer.write
+                        )
+                        args
+                        |> String.join " -> "
+                   )
+                ++ "\n\nbut that's wrong, right?"
 
         DuplicateFieldInRecord fieldName ->
             "There is a duplicate field in a record: " ++ fieldName
@@ -261,17 +274,17 @@ inferenceErrorToString inf =
                 ++ " is not appendable.  Only Strings and Lists are appendable"
 
         UnableToUnify one two ->
-            "I found\n    "
+            "I found\n\n    "
                 ++ (Elm.Writer.writeTypeAnnotation (nodify one)
                         |> Elm.Writer.write
                    )
-                ++ "\nBut I was expecting:\n     "
+                ++ "\n\nBut I was expecting:\n\n    "
                 ++ (Elm.Writer.writeTypeAnnotation (nodify two)
                         |> Elm.Writer.write
                    )
 
         MismatchedTypeVariables ->
-            "Different list sof type variables"
+            "Different lists of type variables"
 
 
 getGenerics : Annotation -> List (Node String)
