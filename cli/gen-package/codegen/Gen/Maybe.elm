@@ -34,7 +34,7 @@ that a [custom type][ct] will clean your code up quite a bit!
 withDefault : Elm.Expression -> Elm.Expression -> Elm.Expression
 withDefault arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Maybe" ]
             , name = "withDefault"
             , annotation =
@@ -60,7 +60,7 @@ withDefault arg1 arg2 =
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 map arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Maybe" ]
             , name = "map"
             , annotation =
@@ -76,7 +76,7 @@ map arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "mapArg0_0", Type.var "a" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mapArg0_0"
                     , annotation = Just (Type.var "a")
@@ -104,7 +104,7 @@ map2 :
     -> Elm.Expression
 map2 arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Maybe" ]
             , name = "map2"
             , annotation =
@@ -123,13 +123,13 @@ map2 arg1 arg2 arg3 =
         [ Elm.functionAdvanced
             [ ( "map2Arg0_0", Type.var "a" ), ( "map2Arg0_1", Type.var "b" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map2Arg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map2Arg0_1"
                     , annotation = Just (Type.var "b")
@@ -150,7 +150,7 @@ map3 :
     -> Elm.Expression
 map3 arg1 arg2 arg3 arg4 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Maybe" ]
             , name = "map3"
             , annotation =
@@ -173,19 +173,19 @@ map3 arg1 arg2 arg3 arg4 =
             , ( "map3Arg0_2", Type.var "c" )
             ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map3Arg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map3Arg0_1"
                     , annotation = Just (Type.var "b")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map3Arg0_2"
                     , annotation = Just (Type.var "c")
@@ -212,7 +212,7 @@ map4 :
     -> Elm.Expression
 map4 arg1 arg2 arg3 arg4 arg5 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Maybe" ]
             , name = "map4"
             , annotation =
@@ -241,25 +241,25 @@ map4 arg1 arg2 arg3 arg4 arg5 =
             , ( "map4Arg0_3", Type.var "d" )
             ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map4Arg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map4Arg0_1"
                     , annotation = Just (Type.var "b")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map4Arg0_2"
                     , annotation = Just (Type.var "c")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map4Arg0_3"
                     , annotation = Just (Type.var "d")
@@ -289,7 +289,7 @@ map5 :
     -> Elm.Expression
 map5 arg1 arg2 arg3 arg4 arg5 arg6 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Maybe" ]
             , name = "map5"
             , annotation =
@@ -321,31 +321,31 @@ map5 arg1 arg2 arg3 arg4 arg5 arg6 =
             , ( "map5Arg0_4", Type.var "e" )
             ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map5Arg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map5Arg0_1"
                     , annotation = Just (Type.var "b")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map5Arg0_2"
                     , annotation = Just (Type.var "c")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map5Arg0_3"
                     , annotation = Just (Type.var "d")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map5Arg0_4"
                     , annotation = Just (Type.var "e")
@@ -395,7 +395,7 @@ again the chain of computations will result in `Nothing`.
 andThen : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 andThen arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Maybe" ]
             , name = "andThen"
             , annotation =
@@ -413,7 +413,7 @@ andThen arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "andThenArg0_0", Type.var "a" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "andThenArg0_0"
                     , annotation = Just (Type.var "a")
@@ -447,7 +447,7 @@ types_ =
             { just =
                 \ar0_1_0_0 ->
                     Elm.apply
-                        (Elm.valueWith
+                        (Elm.value
                             { importFrom = [ "Maybe" ]
                             , name = "Just"
                             , annotation =
@@ -457,7 +457,7 @@ types_ =
                         )
                         [ ar0_1_0_0 ]
             , nothing =
-                Elm.valueWith
+                Elm.value
                     { importFrom = [ "Maybe" ]
                     , name = "Nothing"
                     , annotation =
@@ -487,7 +487,7 @@ values_ :
     }
 values_ =
     { withDefault =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Maybe" ]
             , name = "withDefault"
             , annotation =
@@ -498,7 +498,7 @@ values_ =
                     )
             }
     , map =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Maybe" ]
             , name = "map"
             , annotation =
@@ -511,7 +511,7 @@ values_ =
                     )
             }
     , map2 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Maybe" ]
             , name = "map2"
             , annotation =
@@ -527,7 +527,7 @@ values_ =
                     )
             }
     , map3 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Maybe" ]
             , name = "map3"
             , annotation =
@@ -544,7 +544,7 @@ values_ =
                     )
             }
     , map4 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Maybe" ]
             , name = "map4"
             , annotation =
@@ -566,7 +566,7 @@ values_ =
                     )
             }
     , map5 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Maybe" ]
             , name = "map5"
             , annotation =
@@ -590,7 +590,7 @@ values_ =
                     )
             }
     , andThen =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Maybe" ]
             , name = "andThen"
             , annotation =
@@ -640,7 +640,7 @@ call_ =
     { withDefault =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Maybe" ]
                     , name = "withDefault"
                     , annotation =
@@ -655,7 +655,7 @@ call_ =
     , map =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Maybe" ]
                     , name = "map"
                     , annotation =
@@ -672,7 +672,7 @@ call_ =
     , map2 =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Maybe" ]
                     , name = "map2"
                     , annotation =
@@ -692,7 +692,7 @@ call_ =
     , map3 =
         \arg1_0 arg2_0 arg3_0 arg4_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Maybe" ]
                     , name = "map3"
                     , annotation =
@@ -713,7 +713,7 @@ call_ =
     , map4 =
         \arg1_0 arg2_0 arg3_0 arg4_0 arg5_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Maybe" ]
                     , name = "map4"
                     , annotation =
@@ -739,7 +739,7 @@ call_ =
     , map5 =
         \arg1_0 arg2_0 arg3_0 arg4_0 arg5_0 arg6_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Maybe" ]
                     , name = "map5"
                     , annotation =
@@ -767,7 +767,7 @@ call_ =
     , andThen =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Maybe" ]
                     , name = "andThen"
                     , annotation =

@@ -40,7 +40,7 @@ delicious lasagna and give it to my `update` function as a `Msg` value."
 perform : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 perform arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Task" ]
             , name = "perform"
             , annotation =
@@ -65,7 +65,7 @@ perform arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "performArg0_0", Type.var "a" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "performArg0_0"
                     , annotation = Just (Type.var "a")
@@ -103,7 +103,7 @@ feeling for how commands fit into The Elm Architecture.
 attempt : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 attempt arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Task" ]
             , name = "attempt"
             , annotation =
@@ -138,7 +138,7 @@ attempt arg1 arg2 =
               )
             ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "attemptArg0_0"
                     , annotation =
@@ -173,7 +173,7 @@ First the process sleeps for an hour **and then** it tells us what time it is.
 andThen : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 andThen arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Task" ]
             , name = "andThen"
             , annotation =
@@ -202,7 +202,7 @@ andThen arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "andThenArg0_0", Type.var "a" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "andThenArg0_0"
                     , annotation = Just (Type.var "a")
@@ -227,7 +227,7 @@ andThen arg1 arg2 =
 succeed : Elm.Expression -> Elm.Expression
 succeed arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Task" ]
             , name = "succeed"
             , annotation =
@@ -257,7 +257,7 @@ used with `andThen` to check on the outcome of another task.
 fail : Elm.Expression -> Elm.Expression
 fail arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Task" ]
             , name = "fail"
             , annotation =
@@ -285,7 +285,7 @@ sequence fails.
 sequence : List Elm.Expression -> Elm.Expression
 sequence arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Task" ]
             , name = "sequence"
             , annotation =
@@ -328,7 +328,7 @@ out what time it will be in one hour:
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 map arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Task" ]
             , name = "map"
             , annotation =
@@ -351,7 +351,7 @@ map arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "mapArg0_0", Type.var "a" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mapArg0_0"
                     , annotation = Just (Type.var "a")
@@ -385,7 +385,7 @@ map2 :
     -> Elm.Expression
 map2 arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Task" ]
             , name = "map2"
             , annotation =
@@ -414,13 +414,13 @@ map2 arg1 arg2 arg3 =
         [ Elm.functionAdvanced
             [ ( "map2Arg0_0", Type.var "a" ), ( "map2Arg0_1", Type.var "b" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map2Arg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map2Arg0_1"
                     , annotation = Just (Type.var "b")
@@ -441,7 +441,7 @@ map3 :
     -> Elm.Expression
 map3 arg1 arg2 arg3 arg4 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Task" ]
             , name = "map3"
             , annotation =
@@ -477,19 +477,19 @@ map3 arg1 arg2 arg3 arg4 =
             , ( "map3Arg0_2", Type.var "c" )
             ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map3Arg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map3Arg0_1"
                     , annotation = Just (Type.var "b")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map3Arg0_2"
                     , annotation = Just (Type.var "c")
@@ -516,7 +516,7 @@ map4 :
     -> Elm.Expression
 map4 arg1 arg2 arg3 arg4 arg5 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Task" ]
             , name = "map4"
             , annotation =
@@ -561,25 +561,25 @@ map4 arg1 arg2 arg3 arg4 arg5 =
             , ( "map4Arg0_3", Type.var "d" )
             ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map4Arg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map4Arg0_1"
                     , annotation = Just (Type.var "b")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map4Arg0_2"
                     , annotation = Just (Type.var "c")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map4Arg0_3"
                     , annotation = Just (Type.var "d")
@@ -609,7 +609,7 @@ map5 :
     -> Elm.Expression
 map5 arg1 arg2 arg3 arg4 arg5 arg6 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Task" ]
             , name = "map5"
             , annotation =
@@ -660,31 +660,31 @@ map5 arg1 arg2 arg3 arg4 arg5 arg6 =
             , ( "map5Arg0_4", Type.var "e" )
             ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map5Arg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map5Arg0_1"
                     , annotation = Just (Type.var "b")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map5Arg0_2"
                     , annotation = Just (Type.var "c")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map5Arg0_3"
                     , annotation = Just (Type.var "d")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map5Arg0_4"
                     , annotation = Just (Type.var "e")
@@ -713,7 +713,7 @@ callback to recover.
 onError : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 onError arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Task" ]
             , name = "onError"
             , annotation =
@@ -742,7 +742,7 @@ onError arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "onErrorArg0_0", Type.var "x" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "onErrorArg0_0"
                     , annotation = Just (Type.var "x")
@@ -771,7 +771,7 @@ mapError :
     (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 mapError arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Task" ]
             , name = "mapError"
             , annotation =
@@ -794,7 +794,7 @@ mapError arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "mapErrorArg0_0", Type.var "x" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mapErrorArg0_0"
                     , annotation = Just (Type.var "x")
@@ -836,7 +836,7 @@ values_ :
     }
 values_ =
     { perform =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Task" ]
             , name = "perform"
             , annotation =
@@ -858,7 +858,7 @@ values_ =
                     )
             }
     , attempt =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Task" ]
             , name = "attempt"
             , annotation =
@@ -884,7 +884,7 @@ values_ =
                     )
             }
     , andThen =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Task" ]
             , name = "andThen"
             , annotation =
@@ -910,7 +910,7 @@ values_ =
                     )
             }
     , succeed =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Task" ]
             , name = "succeed"
             , annotation =
@@ -925,7 +925,7 @@ values_ =
                     )
             }
     , fail =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Task" ]
             , name = "fail"
             , annotation =
@@ -940,7 +940,7 @@ values_ =
                     )
             }
     , sequence =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Task" ]
             , name = "sequence"
             , annotation =
@@ -961,7 +961,7 @@ values_ =
                     )
             }
     , map =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Task" ]
             , name = "map"
             , annotation =
@@ -981,7 +981,7 @@ values_ =
                     )
             }
     , map2 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Task" ]
             , name = "map2"
             , annotation =
@@ -1007,7 +1007,7 @@ values_ =
                     )
             }
     , map3 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Task" ]
             , name = "map3"
             , annotation =
@@ -1037,7 +1037,7 @@ values_ =
                     )
             }
     , map4 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Task" ]
             , name = "map4"
             , annotation =
@@ -1075,7 +1075,7 @@ values_ =
                     )
             }
     , map5 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Task" ]
             , name = "map5"
             , annotation =
@@ -1118,7 +1118,7 @@ values_ =
                     )
             }
     , onError =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Task" ]
             , name = "onError"
             , annotation =
@@ -1144,7 +1144,7 @@ values_ =
                     )
             }
     , mapError =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Task" ]
             , name = "mapError"
             , annotation =
@@ -1205,7 +1205,7 @@ call_ =
     { perform =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Task" ]
                     , name = "perform"
                     , annotation =
@@ -1233,7 +1233,7 @@ call_ =
     , attempt =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Task" ]
                     , name = "attempt"
                     , annotation =
@@ -1263,7 +1263,7 @@ call_ =
     , andThen =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Task" ]
                     , name = "andThen"
                     , annotation =
@@ -1293,7 +1293,7 @@ call_ =
     , succeed =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Task" ]
                     , name = "succeed"
                     , annotation =
@@ -1312,7 +1312,7 @@ call_ =
     , fail =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Task" ]
                     , name = "fail"
                     , annotation =
@@ -1331,7 +1331,7 @@ call_ =
     , sequence =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Task" ]
                     , name = "sequence"
                     , annotation =
@@ -1356,7 +1356,7 @@ call_ =
     , map =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Task" ]
                     , name = "map"
                     , annotation =
@@ -1380,7 +1380,7 @@ call_ =
     , map2 =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Task" ]
                     , name = "map2"
                     , annotation =
@@ -1410,7 +1410,7 @@ call_ =
     , map3 =
         \arg1_0 arg2_0 arg3_0 arg4_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Task" ]
                     , name = "map3"
                     , annotation =
@@ -1444,7 +1444,7 @@ call_ =
     , map4 =
         \arg1_0 arg2_0 arg3_0 arg4_0 arg5_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Task" ]
                     , name = "map4"
                     , annotation =
@@ -1486,7 +1486,7 @@ call_ =
     , map5 =
         \arg1_0 arg2_0 arg3_0 arg4_0 arg5_0 arg6_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Task" ]
                     , name = "map5"
                     , annotation =
@@ -1533,7 +1533,7 @@ call_ =
     , onError =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Task" ]
                     , name = "onError"
                     , annotation =
@@ -1563,7 +1563,7 @@ call_ =
     , mapError =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Task" ]
                     , name = "mapError"
                     , annotation =

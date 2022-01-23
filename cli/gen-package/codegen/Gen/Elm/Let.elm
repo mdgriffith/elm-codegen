@@ -19,7 +19,7 @@ moduleName_ =
 letIn : Elm.Expression -> Elm.Expression
 letIn arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Elm", "Let" ]
             , name = "letIn"
             , annotation =
@@ -37,7 +37,7 @@ letIn arg1 =
 value : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 value arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Elm", "Let" ]
             , name = "value"
             , annotation =
@@ -69,7 +69,7 @@ tuple :
     -> Elm.Expression
 tuple arg1 arg2 arg3 arg4 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Elm", "Let" ]
             , name = "tuple"
             , annotation =
@@ -101,7 +101,7 @@ record :
     List Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 record arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Elm", "Let" ]
             , name = "record"
             , annotation =
@@ -130,7 +130,7 @@ record arg1 arg2 arg3 =
 toExpression : Elm.Expression -> Elm.Expression
 toExpression arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Elm", "Let" ]
             , name = "toExpression"
             , annotation =
@@ -163,7 +163,7 @@ values_ :
     }
 values_ =
     { letIn =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Elm", "Let" ]
             , name = "letIn"
             , annotation =
@@ -174,7 +174,7 @@ values_ =
                     )
             }
     , value =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Elm", "Let" ]
             , name = "value"
             , annotation =
@@ -194,7 +194,7 @@ values_ =
                     )
             }
     , tuple =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Elm", "Let" ]
             , name = "tuple"
             , annotation =
@@ -218,7 +218,7 @@ values_ =
                     )
             }
     , record =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Elm", "Let" ]
             , name = "record"
             , annotation =
@@ -240,7 +240,7 @@ values_ =
                     )
             }
     , toExpression =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Elm", "Let" ]
             , name = "toExpression"
             , annotation =
@@ -276,7 +276,7 @@ call_ =
     { letIn =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Elm", "Let" ]
                     , name = "letIn"
                     , annotation =
@@ -295,7 +295,7 @@ call_ =
     , value =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Elm", "Let" ]
                     , name = "value"
                     , annotation =
@@ -327,7 +327,7 @@ call_ =
     , tuple =
         \arg1_0 arg2_0 arg3_0 arg4_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Elm", "Let" ]
                     , name = "tuple"
                     , annotation =
@@ -367,7 +367,7 @@ call_ =
     , record =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Elm", "Let" ]
                     , name = "record"
                     , annotation =
@@ -401,7 +401,7 @@ call_ =
     , toExpression =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Elm", "Let" ]
                     , name = "toExpression"
                     , annotation =

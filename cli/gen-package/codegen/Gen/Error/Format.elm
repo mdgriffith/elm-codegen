@@ -20,7 +20,7 @@ moduleName_ =
 block : List Elm.Expression -> Elm.Expression
 block arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Error", "Format" ]
             , name = "block"
             , annotation =
@@ -34,7 +34,7 @@ block arg1 =
 cyan : Elm.Expression -> Elm.Expression
 cyan arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Error", "Format" ]
             , name = "cyan"
             , annotation = Just (Type.function [ Type.string ] Type.string)
@@ -47,7 +47,7 @@ cyan arg1 =
 yellow : Elm.Expression -> Elm.Expression
 yellow arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Error", "Format" ]
             , name = "yellow"
             , annotation = Just (Type.function [ Type.string ] Type.string)
@@ -60,7 +60,7 @@ yellow arg1 =
 green : Elm.Expression -> Elm.Expression
 green arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Error", "Format" ]
             , name = "green"
             , annotation = Just (Type.function [ Type.string ] Type.string)
@@ -73,7 +73,7 @@ green arg1 =
 red : Elm.Expression -> Elm.Expression
 red arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Error", "Format" ]
             , name = "red"
             , annotation = Just (Type.function [ Type.string ] Type.string)
@@ -86,7 +86,7 @@ red arg1 =
 grey : Elm.Expression -> Elm.Expression
 grey arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Error", "Format" ]
             , name = "grey"
             , annotation = Just (Type.function [ Type.string ] Type.string)
@@ -111,38 +111,38 @@ values_ :
     }
 values_ =
     { block =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Error", "Format" ]
             , name = "block"
             , annotation =
                 Just (Type.function [ Type.list Type.string ] Type.string)
             }
     , cyan =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Error", "Format" ]
             , name = "cyan"
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
     , yellow =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Error", "Format" ]
             , name = "yellow"
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
     , green =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Error", "Format" ]
             , name = "green"
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
     , red =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Error", "Format" ]
             , name = "red"
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
     , grey =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Error", "Format" ]
             , name = "grey"
             , annotation = Just (Type.function [ Type.string ] Type.string)
@@ -163,7 +163,7 @@ call_ =
     { block =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Error", "Format" ]
                     , name = "block"
                     , annotation =
@@ -176,7 +176,7 @@ call_ =
     , cyan =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Error", "Format" ]
                     , name = "cyan"
                     , annotation =
@@ -187,7 +187,7 @@ call_ =
     , yellow =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Error", "Format" ]
                     , name = "yellow"
                     , annotation =
@@ -198,7 +198,7 @@ call_ =
     , green =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Error", "Format" ]
                     , name = "green"
                     , annotation =
@@ -209,7 +209,7 @@ call_ =
     , red =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Error", "Format" ]
                     , name = "red"
                     , annotation =
@@ -220,7 +220,7 @@ call_ =
     , grey =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Error", "Format" ]
                     , name = "grey"
                     , annotation =

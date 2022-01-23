@@ -35,7 +35,7 @@ use `toString` because they may be used in `--optimize` mode.
 toString : Elm.Expression -> Elm.Expression
 toString arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Debug" ]
             , name = "toString"
             , annotation = Just (Type.function [ Type.var "a" ] Type.string)
@@ -65,7 +65,7 @@ applications are the primary focus of platform development for now.
 log : Elm.Expression -> Elm.Expression -> Elm.Expression
 log arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Debug" ]
             , name = "log"
             , annotation =
@@ -109,7 +109,7 @@ goes unhandled!
 todo : Elm.Expression -> Elm.Expression
 todo arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Debug" ]
             , name = "todo"
             , annotation = Just (Type.function [ Type.string ] (Type.var "a"))
@@ -128,13 +128,13 @@ values_ :
     { toString : Elm.Expression, log : Elm.Expression, todo : Elm.Expression }
 values_ =
     { toString =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Debug" ]
             , name = "toString"
             , annotation = Just (Type.function [ Type.var "a" ] Type.string)
             }
     , log =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Debug" ]
             , name = "log"
             , annotation =
@@ -142,7 +142,7 @@ values_ =
                     (Type.function [ Type.string, Type.var "a" ] (Type.var "a"))
             }
     , todo =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Debug" ]
             , name = "todo"
             , annotation = Just (Type.function [ Type.string ] (Type.var "a"))
@@ -160,7 +160,7 @@ call_ =
     { toString =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Debug" ]
                     , name = "toString"
                     , annotation =
@@ -171,7 +171,7 @@ call_ =
     , log =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Debug" ]
                     , name = "log"
                     , annotation =
@@ -186,7 +186,7 @@ call_ =
     , todo =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Debug" ]
                     , name = "todo"
                     , annotation =

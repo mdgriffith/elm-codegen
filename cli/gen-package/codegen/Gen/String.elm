@@ -23,7 +23,7 @@ moduleName_ =
 isEmpty : Elm.Expression -> Elm.Expression
 isEmpty arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "isEmpty"
             , annotation = Just (Type.function [ Type.string ] Type.bool)
@@ -41,7 +41,7 @@ isEmpty arg1 =
 length : Elm.Expression -> Elm.Expression
 length arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "length"
             , annotation = Just (Type.function [ Type.string ] Type.int)
@@ -57,7 +57,7 @@ length arg1 =
 reverse : Elm.Expression -> Elm.Expression
 reverse arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "reverse"
             , annotation = Just (Type.function [ Type.string ] Type.string)
@@ -73,7 +73,7 @@ reverse arg1 =
 repeat : Elm.Expression -> Elm.Expression -> Elm.Expression
 repeat arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "repeat"
             , annotation =
@@ -97,7 +97,7 @@ repeat arg1 arg2 =
 replace : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 replace arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "replace"
             , annotation =
@@ -119,7 +119,7 @@ to do this.
 append : Elm.Expression -> Elm.Expression -> Elm.Expression
 append arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "append"
             , annotation =
@@ -136,7 +136,7 @@ append arg1 arg2 =
 concat : List Elm.Expression -> Elm.Expression
 concat arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "concat"
             , annotation =
@@ -155,7 +155,7 @@ concat arg1 =
 split : Elm.Expression -> Elm.Expression -> Elm.Expression
 split arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "split"
             , annotation =
@@ -178,7 +178,7 @@ split arg1 arg2 =
 join : Elm.Expression -> List Elm.Expression -> Elm.Expression
 join arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "join"
             , annotation =
@@ -199,7 +199,7 @@ join arg1 arg2 =
 words : Elm.Expression -> Elm.Expression
 words arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "words"
             , annotation =
@@ -216,7 +216,7 @@ words arg1 =
 lines : Elm.Expression -> Elm.Expression
 lines arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "lines"
             , annotation =
@@ -237,7 +237,7 @@ are taken starting from the *end* of the list.
 slice : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 slice arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "slice"
             , annotation =
@@ -258,7 +258,7 @@ slice arg1 arg2 arg3 =
 left : Elm.Expression -> Elm.Expression -> Elm.Expression
 left arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "left"
             , annotation =
@@ -275,7 +275,7 @@ left arg1 arg2 =
 right : Elm.Expression -> Elm.Expression -> Elm.Expression
 right arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "right"
             , annotation =
@@ -292,7 +292,7 @@ right arg1 arg2 =
 dropLeft : Elm.Expression -> Elm.Expression -> Elm.Expression
 dropLeft arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "dropLeft"
             , annotation =
@@ -309,7 +309,7 @@ dropLeft arg1 arg2 =
 dropRight : Elm.Expression -> Elm.Expression -> Elm.Expression
 dropRight arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "dropRight"
             , annotation =
@@ -329,7 +329,7 @@ dropRight arg1 arg2 =
 contains : Elm.Expression -> Elm.Expression -> Elm.Expression
 contains arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "contains"
             , annotation =
@@ -347,7 +347,7 @@ contains arg1 arg2 =
 startsWith : Elm.Expression -> Elm.Expression -> Elm.Expression
 startsWith arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "startsWith"
             , annotation =
@@ -365,7 +365,7 @@ startsWith arg1 arg2 =
 endsWith : Elm.Expression -> Elm.Expression -> Elm.Expression
 endsWith arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "endsWith"
             , annotation =
@@ -384,7 +384,7 @@ endsWith arg1 arg2 =
 indexes : Elm.Expression -> Elm.Expression -> Elm.Expression
 indexes arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "indexes"
             , annotation =
@@ -402,7 +402,7 @@ indexes arg1 arg2 =
 indices : Elm.Expression -> Elm.Expression -> Elm.Expression
 indices arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "indices"
             , annotation =
@@ -432,7 +432,7 @@ want to use [`Maybe.withDefault`](Maybe#withDefault) to handle bad data:
 toInt : Elm.Expression -> Elm.Expression
 toInt arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "toInt"
             , annotation =
@@ -453,7 +453,7 @@ for debugging purposes.
 fromInt : Elm.Expression -> Elm.Expression
 fromInt arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "fromInt"
             , annotation = Just (Type.function [ Type.int ] Type.string)
@@ -478,7 +478,7 @@ want to use [`Maybe.withDefault`](Maybe#withDefault) to handle bad data:
 toFloat : Elm.Expression -> Elm.Expression
 toFloat arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "toFloat"
             , annotation =
@@ -500,7 +500,7 @@ for debugging purposes.
 fromFloat : Elm.Expression -> Elm.Expression
 fromFloat arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "fromFloat"
             , annotation = Just (Type.function [ Type.float ] Type.string)
@@ -516,7 +516,7 @@ fromFloat arg1 =
 fromChar : Elm.Expression -> Elm.Expression
 fromChar arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "fromChar"
             , annotation = Just (Type.function [ Type.char ] Type.string)
@@ -532,7 +532,7 @@ fromChar arg1 =
 cons : Elm.Expression -> Elm.Expression -> Elm.Expression
 cons arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "cons"
             , annotation =
@@ -551,7 +551,7 @@ pattern match on strings exactly as you would with lists.
 uncons : Elm.Expression -> Elm.Expression
 uncons arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "uncons"
             , annotation =
@@ -573,7 +573,7 @@ uncons arg1 =
 toList : Elm.Expression -> Elm.Expression
 toList arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "toList"
             , annotation =
@@ -593,7 +593,7 @@ something.
 fromList : List Elm.Expression -> Elm.Expression
 fromList arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "fromList"
             , annotation =
@@ -611,7 +611,7 @@ and VIRTUAL YELLING.
 toUpper : Elm.Expression -> Elm.Expression
 toUpper arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "toUpper"
             , annotation = Just (Type.function [ Type.string ] Type.string)
@@ -627,7 +627,7 @@ toUpper arg1 =
 toLower : Elm.Expression -> Elm.Expression
 toLower arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "toLower"
             , annotation = Just (Type.function [ Type.string ] Type.string)
@@ -645,7 +645,7 @@ toLower arg1 =
 pad : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 pad arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "pad"
             , annotation =
@@ -668,7 +668,7 @@ pad arg1 arg2 arg3 =
 padLeft : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 padLeft arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "padLeft"
             , annotation =
@@ -691,7 +691,7 @@ padLeft arg1 arg2 arg3 =
 padRight : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 padRight arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "padRight"
             , annotation =
@@ -712,7 +712,7 @@ padRight arg1 arg2 arg3 =
 trim : Elm.Expression -> Elm.Expression
 trim arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "trim"
             , annotation = Just (Type.function [ Type.string ] Type.string)
@@ -728,7 +728,7 @@ trim arg1 =
 trimLeft : Elm.Expression -> Elm.Expression
 trimLeft arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "trimLeft"
             , annotation = Just (Type.function [ Type.string ] Type.string)
@@ -744,7 +744,7 @@ trimLeft arg1 =
 trimRight : Elm.Expression -> Elm.Expression
 trimRight arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "trimRight"
             , annotation = Just (Type.function [ Type.string ] Type.string)
@@ -760,7 +760,7 @@ trimRight arg1 =
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 map arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "map"
             , annotation =
@@ -774,7 +774,7 @@ map arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "mapArg0_0", Type.char ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mapArg0_0"
                     , annotation = Just Type.char
@@ -792,7 +792,7 @@ map arg1 arg2 =
 filter : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 filter arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "filter"
             , annotation =
@@ -806,7 +806,7 @@ filter arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "filterArg0_0", Type.char ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "filterArg0_0"
                     , annotation = Just Type.char
@@ -828,7 +828,7 @@ foldl :
     -> Elm.Expression
 foldl arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "foldl"
             , annotation =
@@ -847,13 +847,13 @@ foldl arg1 arg2 arg3 =
         [ Elm.functionAdvanced
             [ ( "foldlArg0_0", Type.char ), ( "foldlArg0_1", Type.var "b" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldlArg0_0"
                     , annotation = Just Type.char
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldlArg0_1"
                     , annotation = Just (Type.var "b")
@@ -876,7 +876,7 @@ foldr :
     -> Elm.Expression
 foldr arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "foldr"
             , annotation =
@@ -895,13 +895,13 @@ foldr arg1 arg2 arg3 =
         [ Elm.functionAdvanced
             [ ( "foldrArg0_0", Type.char ), ( "foldrArg0_1", Type.var "b" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldrArg0_0"
                     , annotation = Just Type.char
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldrArg0_1"
                     , annotation = Just (Type.var "b")
@@ -922,7 +922,7 @@ foldr arg1 arg2 arg3 =
 any : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 any arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "any"
             , annotation =
@@ -936,7 +936,7 @@ any arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "anyArg0_0", Type.char ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "anyArg0_0"
                     , annotation = Just Type.char
@@ -956,7 +956,7 @@ any arg1 arg2 =
 all : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 all arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "String" ]
             , name = "all"
             , annotation =
@@ -970,7 +970,7 @@ all arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "allArg0_0", Type.char ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "allArg0_0"
                     , annotation = Just Type.char
@@ -1035,32 +1035,32 @@ values_ :
     }
 values_ =
     { isEmpty =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "isEmpty"
             , annotation = Just (Type.function [ Type.string ] Type.bool)
             }
     , length =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "length"
             , annotation = Just (Type.function [ Type.string ] Type.int)
             }
     , reverse =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "reverse"
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
     , repeat =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "repeat"
             , annotation =
                 Just (Type.function [ Type.int, Type.string ] Type.string)
             }
     , replace =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "replace"
             , annotation =
@@ -1071,21 +1071,21 @@ values_ =
                     )
             }
     , append =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "append"
             , annotation =
                 Just (Type.function [ Type.string, Type.string ] Type.string)
             }
     , concat =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "concat"
             , annotation =
                 Just (Type.function [ Type.list Type.string ] Type.string)
             }
     , split =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "split"
             , annotation =
@@ -1096,7 +1096,7 @@ values_ =
                     )
             }
     , join =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "join"
             , annotation =
@@ -1107,21 +1107,21 @@ values_ =
                     )
             }
     , words =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "words"
             , annotation =
                 Just (Type.function [ Type.string ] (Type.list Type.string))
             }
     , lines =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "lines"
             , annotation =
                 Just (Type.function [ Type.string ] (Type.list Type.string))
             }
     , slice =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "slice"
             , annotation =
@@ -1132,56 +1132,56 @@ values_ =
                     )
             }
     , left =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "left"
             , annotation =
                 Just (Type.function [ Type.int, Type.string ] Type.string)
             }
     , right =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "right"
             , annotation =
                 Just (Type.function [ Type.int, Type.string ] Type.string)
             }
     , dropLeft =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "dropLeft"
             , annotation =
                 Just (Type.function [ Type.int, Type.string ] Type.string)
             }
     , dropRight =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "dropRight"
             , annotation =
                 Just (Type.function [ Type.int, Type.string ] Type.string)
             }
     , contains =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "contains"
             , annotation =
                 Just (Type.function [ Type.string, Type.string ] Type.bool)
             }
     , startsWith =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "startsWith"
             , annotation =
                 Just (Type.function [ Type.string, Type.string ] Type.bool)
             }
     , endsWith =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "endsWith"
             , annotation =
                 Just (Type.function [ Type.string, Type.string ] Type.bool)
             }
     , indexes =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "indexes"
             , annotation =
@@ -1192,7 +1192,7 @@ values_ =
                     )
             }
     , indices =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "indices"
             , annotation =
@@ -1203,46 +1203,46 @@ values_ =
                     )
             }
     , toInt =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "toInt"
             , annotation =
                 Just (Type.function [ Type.string ] (Type.maybe Type.int))
             }
     , fromInt =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "fromInt"
             , annotation = Just (Type.function [ Type.int ] Type.string)
             }
     , toFloat =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "toFloat"
             , annotation =
                 Just (Type.function [ Type.string ] (Type.maybe Type.float))
             }
     , fromFloat =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "fromFloat"
             , annotation = Just (Type.function [ Type.float ] Type.string)
             }
     , fromChar =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "fromChar"
             , annotation = Just (Type.function [ Type.char ] Type.string)
             }
     , cons =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "cons"
             , annotation =
                 Just (Type.function [ Type.char, Type.string ] Type.string)
             }
     , uncons =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "uncons"
             , annotation =
@@ -1253,33 +1253,33 @@ values_ =
                     )
             }
     , toList =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "toList"
             , annotation =
                 Just (Type.function [ Type.string ] (Type.list Type.char))
             }
     , fromList =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "fromList"
             , annotation =
                 Just (Type.function [ Type.list Type.char ] Type.string)
             }
     , toUpper =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "toUpper"
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
     , toLower =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "toLower"
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
     , pad =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "pad"
             , annotation =
@@ -1290,7 +1290,7 @@ values_ =
                     )
             }
     , padLeft =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "padLeft"
             , annotation =
@@ -1301,7 +1301,7 @@ values_ =
                     )
             }
     , padRight =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "padRight"
             , annotation =
@@ -1312,25 +1312,25 @@ values_ =
                     )
             }
     , trim =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "trim"
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
     , trimLeft =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "trimLeft"
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
     , trimRight =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "trimRight"
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
     , map =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "map"
             , annotation =
@@ -1341,7 +1341,7 @@ values_ =
                     )
             }
     , filter =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "filter"
             , annotation =
@@ -1352,7 +1352,7 @@ values_ =
                     )
             }
     , foldl =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "foldl"
             , annotation =
@@ -1368,7 +1368,7 @@ values_ =
                     )
             }
     , foldr =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "foldr"
             , annotation =
@@ -1384,7 +1384,7 @@ values_ =
                     )
             }
     , any =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "any"
             , annotation =
@@ -1395,7 +1395,7 @@ values_ =
                     )
             }
     , all =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "String" ]
             , name = "all"
             , annotation =
@@ -1465,7 +1465,7 @@ call_ =
     { isEmpty =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "isEmpty"
                     , annotation =
@@ -1476,7 +1476,7 @@ call_ =
     , length =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "length"
                     , annotation = Just (Type.function [ Type.string ] Type.int)
@@ -1486,7 +1486,7 @@ call_ =
     , reverse =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "reverse"
                     , annotation =
@@ -1497,7 +1497,7 @@ call_ =
     , repeat =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "repeat"
                     , annotation =
@@ -1510,7 +1510,7 @@ call_ =
     , replace =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "replace"
                     , annotation =
@@ -1525,7 +1525,7 @@ call_ =
     , append =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "append"
                     , annotation =
@@ -1540,7 +1540,7 @@ call_ =
     , concat =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "concat"
                     , annotation =
@@ -1553,7 +1553,7 @@ call_ =
     , split =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "split"
                     , annotation =
@@ -1568,7 +1568,7 @@ call_ =
     , join =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "join"
                     , annotation =
@@ -1583,7 +1583,7 @@ call_ =
     , words =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "words"
                     , annotation =
@@ -1598,7 +1598,7 @@ call_ =
     , lines =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "lines"
                     , annotation =
@@ -1613,7 +1613,7 @@ call_ =
     , slice =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "slice"
                     , annotation =
@@ -1628,7 +1628,7 @@ call_ =
     , left =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "left"
                     , annotation =
@@ -1641,7 +1641,7 @@ call_ =
     , right =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "right"
                     , annotation =
@@ -1654,7 +1654,7 @@ call_ =
     , dropLeft =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "dropLeft"
                     , annotation =
@@ -1667,7 +1667,7 @@ call_ =
     , dropRight =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "dropRight"
                     , annotation =
@@ -1680,7 +1680,7 @@ call_ =
     , contains =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "contains"
                     , annotation =
@@ -1695,7 +1695,7 @@ call_ =
     , startsWith =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "startsWith"
                     , annotation =
@@ -1710,7 +1710,7 @@ call_ =
     , endsWith =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "endsWith"
                     , annotation =
@@ -1725,7 +1725,7 @@ call_ =
     , indexes =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "indexes"
                     , annotation =
@@ -1740,7 +1740,7 @@ call_ =
     , indices =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "indices"
                     , annotation =
@@ -1755,7 +1755,7 @@ call_ =
     , toInt =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "toInt"
                     , annotation =
@@ -1768,7 +1768,7 @@ call_ =
     , fromInt =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "fromInt"
                     , annotation = Just (Type.function [ Type.int ] Type.string)
@@ -1778,7 +1778,7 @@ call_ =
     , toFloat =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "toFloat"
                     , annotation =
@@ -1793,7 +1793,7 @@ call_ =
     , fromFloat =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "fromFloat"
                     , annotation =
@@ -1804,7 +1804,7 @@ call_ =
     , fromChar =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "fromChar"
                     , annotation =
@@ -1815,7 +1815,7 @@ call_ =
     , cons =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "cons"
                     , annotation =
@@ -1830,7 +1830,7 @@ call_ =
     , uncons =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "uncons"
                     , annotation =
@@ -1845,7 +1845,7 @@ call_ =
     , toList =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "toList"
                     , annotation =
@@ -1858,7 +1858,7 @@ call_ =
     , fromList =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "fromList"
                     , annotation =
@@ -1869,7 +1869,7 @@ call_ =
     , toUpper =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "toUpper"
                     , annotation =
@@ -1880,7 +1880,7 @@ call_ =
     , toLower =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "toLower"
                     , annotation =
@@ -1891,7 +1891,7 @@ call_ =
     , pad =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "pad"
                     , annotation =
@@ -1906,7 +1906,7 @@ call_ =
     , padLeft =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "padLeft"
                     , annotation =
@@ -1921,7 +1921,7 @@ call_ =
     , padRight =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "padRight"
                     , annotation =
@@ -1936,7 +1936,7 @@ call_ =
     , trim =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "trim"
                     , annotation =
@@ -1947,7 +1947,7 @@ call_ =
     , trimLeft =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "trimLeft"
                     , annotation =
@@ -1958,7 +1958,7 @@ call_ =
     , trimRight =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "trimRight"
                     , annotation =
@@ -1969,7 +1969,7 @@ call_ =
     , map =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "map"
                     , annotation =
@@ -1986,7 +1986,7 @@ call_ =
     , filter =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "filter"
                     , annotation =
@@ -2003,7 +2003,7 @@ call_ =
     , foldl =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "foldl"
                     , annotation =
@@ -2023,7 +2023,7 @@ call_ =
     , foldr =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "foldr"
                     , annotation =
@@ -2043,7 +2043,7 @@ call_ =
     , any =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "any"
                     , annotation =
@@ -2060,7 +2060,7 @@ call_ =
     , all =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "String" ]
                     , name = "all"
                     , annotation =

@@ -18,7 +18,7 @@ moduleName_ =
 {-| Create an empty dictionary. -}
 empty : Elm.Expression
 empty =
-    Elm.valueWith
+    Elm.value
         { importFrom = [ "Dict" ]
         , name = "empty"
         , annotation =
@@ -32,7 +32,7 @@ empty =
 singleton : Elm.Expression -> Elm.Expression -> Elm.Expression
 singleton arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Dict" ]
             , name = "singleton"
             , annotation =
@@ -55,7 +55,7 @@ a collision. -}
 insert : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 insert arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Dict" ]
             , name = "insert"
             , annotation =
@@ -87,7 +87,7 @@ update :
     -> Elm.Expression
 update arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Dict" ]
             , name = "update"
             , annotation =
@@ -114,7 +114,7 @@ update arg1 arg2 arg3 =
         , Elm.functionAdvanced
             [ ( "updateArg0_0", Type.maybe (Type.var "v") ) ]
             (arg2
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "updateArg0_0"
                     , annotation = Just (Type.maybe (Type.var "v"))
@@ -130,7 +130,7 @@ no changes are made. -}
 remove : Elm.Expression -> Elm.Expression -> Elm.Expression
 remove arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Dict" ]
             , name = "remove"
             , annotation =
@@ -160,7 +160,7 @@ remove arg1 arg2 =
 isEmpty : Elm.Expression -> Elm.Expression
 isEmpty arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Dict" ]
             , name = "isEmpty"
             , annotation =
@@ -182,7 +182,7 @@ isEmpty arg1 =
 member : Elm.Expression -> Elm.Expression -> Elm.Expression
 member arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Dict" ]
             , name = "member"
             , annotation =
@@ -215,7 +215,7 @@ dictionary.
 get : Elm.Expression -> Elm.Expression -> Elm.Expression
 get arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Dict" ]
             , name = "get"
             , annotation =
@@ -238,7 +238,7 @@ get arg1 arg2 =
 size : Elm.Expression -> Elm.Expression
 size arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Dict" ]
             , name = "size"
             , annotation =
@@ -263,7 +263,7 @@ size arg1 =
 keys : Elm.Expression -> Elm.Expression
 keys arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Dict" ]
             , name = "keys"
             , annotation =
@@ -288,7 +288,7 @@ keys arg1 =
 values : Elm.Expression -> Elm.Expression
 values arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Dict" ]
             , name = "values"
             , annotation =
@@ -310,7 +310,7 @@ values arg1 =
 toList : Elm.Expression -> Elm.Expression
 toList arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Dict" ]
             , name = "toList"
             , annotation =
@@ -332,7 +332,7 @@ toList arg1 =
 fromList : List Elm.Expression -> Elm.Expression
 fromList arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Dict" ]
             , name = "fromList"
             , annotation =
@@ -360,7 +360,7 @@ map :
     -> Elm.Expression
 map arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Dict" ]
             , name = "map"
             , annotation =
@@ -385,13 +385,13 @@ map arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "mapArg0_0", Type.var "k" ), ( "mapArg0_1", Type.var "a" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mapArg0_0"
                     , annotation = Just (Type.var "k")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mapArg0_1"
                     , annotation = Just (Type.var "a")
@@ -423,7 +423,7 @@ foldl :
     -> Elm.Expression
 foldl arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Dict" ]
             , name = "foldl"
             , annotation =
@@ -448,19 +448,19 @@ foldl arg1 arg2 arg3 =
             , ( "foldlArg0_2", Type.var "b" )
             ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldlArg0_0"
                     , annotation = Just (Type.var "k")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldlArg0_1"
                     , annotation = Just (Type.var "v")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldlArg0_2"
                     , annotation = Just (Type.var "b")
@@ -493,7 +493,7 @@ foldr :
     -> Elm.Expression
 foldr arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Dict" ]
             , name = "foldr"
             , annotation =
@@ -518,19 +518,19 @@ foldr arg1 arg2 arg3 =
             , ( "foldrArg0_2", Type.var "b" )
             ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldrArg0_0"
                     , annotation = Just (Type.var "k")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldrArg0_1"
                     , annotation = Just (Type.var "v")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldrArg0_2"
                     , annotation = Just (Type.var "b")
@@ -549,7 +549,7 @@ filter :
     -> Elm.Expression
 filter arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Dict" ]
             , name = "filter"
             , annotation =
@@ -576,13 +576,13 @@ filter arg1 arg2 =
             , ( "filterArg0_1", Type.var "v" )
             ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "filterArg0_0"
                     , annotation = Just (Type.var "comparable")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "filterArg0_1"
                     , annotation = Just (Type.var "v")
@@ -603,7 +603,7 @@ partition :
     -> Elm.Expression
 partition arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Dict" ]
             , name = "partition"
             , annotation =
@@ -637,13 +637,13 @@ partition arg1 arg2 =
             , ( "partitionArg0_1", Type.var "v" )
             ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "partitionArg0_0"
                     , annotation = Just (Type.var "comparable")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "partitionArg0_1"
                     , annotation = Just (Type.var "v")
@@ -660,7 +660,7 @@ to the first dictionary.
 union : Elm.Expression -> Elm.Expression -> Elm.Expression
 union arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Dict" ]
             , name = "union"
             , annotation =
@@ -692,7 +692,7 @@ Preference is given to values in the first dictionary.
 intersect : Elm.Expression -> Elm.Expression -> Elm.Expression
 intersect arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Dict" ]
             , name = "intersect"
             , annotation =
@@ -723,7 +723,7 @@ intersect arg1 arg2 =
 diff : Elm.Expression -> Elm.Expression -> Elm.Expression
 diff arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Dict" ]
             , name = "diff"
             , annotation =
@@ -773,7 +773,7 @@ merge :
     -> Elm.Expression
 merge arg1 arg2 arg3 arg4 arg5 arg6 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Dict" ]
             , name = "merge"
             , annotation =
@@ -818,19 +818,19 @@ merge arg1 arg2 arg3 arg4 arg5 arg6 =
             , ( "mergeArg0_2", Type.var "result" )
             ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mergeArg0_0"
                     , annotation = Just (Type.var "comparable")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mergeArg0_1"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mergeArg0_2"
                     , annotation = Just (Type.var "result")
@@ -844,25 +844,25 @@ merge arg1 arg2 arg3 arg4 arg5 arg6 =
             , ( "mergeArg0_3", Type.var "result" )
             ]
             (arg2
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mergeArg0_0"
                     , annotation = Just (Type.var "comparable")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mergeArg0_1"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mergeArg0_2"
                     , annotation = Just (Type.var "b")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mergeArg0_3"
                     , annotation = Just (Type.var "result")
@@ -875,19 +875,19 @@ merge arg1 arg2 arg3 arg4 arg5 arg6 =
             , ( "mergeArg0_2", Type.var "result" )
             ]
             (arg3
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mergeArg0_0"
                     , annotation = Just (Type.var "comparable")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mergeArg0_1"
                     , annotation = Just (Type.var "b")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mergeArg0_2"
                     , annotation = Just (Type.var "result")
@@ -940,7 +940,7 @@ values_ :
     }
 values_ =
     { empty =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "empty"
             , annotation =
@@ -952,7 +952,7 @@ values_ =
                     )
             }
     , singleton =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "singleton"
             , annotation =
@@ -967,7 +967,7 @@ values_ =
                     )
             }
     , insert =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "insert"
             , annotation =
@@ -988,7 +988,7 @@ values_ =
                     )
             }
     , update =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "update"
             , annotation =
@@ -1011,7 +1011,7 @@ values_ =
                     )
             }
     , remove =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "remove"
             , annotation =
@@ -1031,7 +1031,7 @@ values_ =
                     )
             }
     , isEmpty =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "isEmpty"
             , annotation =
@@ -1046,7 +1046,7 @@ values_ =
                     )
             }
     , member =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "member"
             , annotation =
@@ -1062,7 +1062,7 @@ values_ =
                     )
             }
     , get =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "get"
             , annotation =
@@ -1078,7 +1078,7 @@ values_ =
                     )
             }
     , size =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "size"
             , annotation =
@@ -1093,7 +1093,7 @@ values_ =
                     )
             }
     , keys =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "keys"
             , annotation =
@@ -1108,7 +1108,7 @@ values_ =
                     )
             }
     , values =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "values"
             , annotation =
@@ -1123,7 +1123,7 @@ values_ =
                     )
             }
     , toList =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "toList"
             , annotation =
@@ -1138,7 +1138,7 @@ values_ =
                     )
             }
     , fromList =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "fromList"
             , annotation =
@@ -1155,7 +1155,7 @@ values_ =
                     )
             }
     , map =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "map"
             , annotation =
@@ -1177,7 +1177,7 @@ values_ =
                     )
             }
     , foldl =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "foldl"
             , annotation =
@@ -1196,7 +1196,7 @@ values_ =
                     )
             }
     , foldr =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "foldr"
             , annotation =
@@ -1215,7 +1215,7 @@ values_ =
                     )
             }
     , filter =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "filter"
             , annotation =
@@ -1237,7 +1237,7 @@ values_ =
                     )
             }
     , partition =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "partition"
             , annotation =
@@ -1266,7 +1266,7 @@ values_ =
                     )
             }
     , union =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "union"
             , annotation =
@@ -1289,7 +1289,7 @@ values_ =
                     )
             }
     , intersect =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "intersect"
             , annotation =
@@ -1312,7 +1312,7 @@ values_ =
                     )
             }
     , diff =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "diff"
             , annotation =
@@ -1335,7 +1335,7 @@ values_ =
                     )
             }
     , merge =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Dict" ]
             , name = "merge"
             , annotation =
@@ -1415,7 +1415,7 @@ call_ =
     { singleton =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Dict" ]
                     , name = "singleton"
                     , annotation =
@@ -1434,7 +1434,7 @@ call_ =
     , insert =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Dict" ]
                     , name = "insert"
                     , annotation =
@@ -1459,7 +1459,7 @@ call_ =
     , update =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Dict" ]
                     , name = "update"
                     , annotation =
@@ -1486,7 +1486,7 @@ call_ =
     , remove =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Dict" ]
                     , name = "remove"
                     , annotation =
@@ -1510,7 +1510,7 @@ call_ =
     , isEmpty =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Dict" ]
                     , name = "isEmpty"
                     , annotation =
@@ -1529,7 +1529,7 @@ call_ =
     , member =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Dict" ]
                     , name = "member"
                     , annotation =
@@ -1549,7 +1549,7 @@ call_ =
     , get =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Dict" ]
                     , name = "get"
                     , annotation =
@@ -1569,7 +1569,7 @@ call_ =
     , size =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Dict" ]
                     , name = "size"
                     , annotation =
@@ -1588,7 +1588,7 @@ call_ =
     , keys =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Dict" ]
                     , name = "keys"
                     , annotation =
@@ -1607,7 +1607,7 @@ call_ =
     , values =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Dict" ]
                     , name = "values"
                     , annotation =
@@ -1626,7 +1626,7 @@ call_ =
     , toList =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Dict" ]
                     , name = "toList"
                     , annotation =
@@ -1647,7 +1647,7 @@ call_ =
     , fromList =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Dict" ]
                     , name = "fromList"
                     , annotation =
@@ -1671,7 +1671,7 @@ call_ =
     , map =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Dict" ]
                     , name = "map"
                     , annotation =
@@ -1697,7 +1697,7 @@ call_ =
     , foldl =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Dict" ]
                     , name = "foldl"
                     , annotation =
@@ -1720,7 +1720,7 @@ call_ =
     , foldr =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Dict" ]
                     , name = "foldr"
                     , annotation =
@@ -1743,7 +1743,7 @@ call_ =
     , filter =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Dict" ]
                     , name = "filter"
                     , annotation =
@@ -1769,7 +1769,7 @@ call_ =
     , partition =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Dict" ]
                     , name = "partition"
                     , annotation =
@@ -1802,7 +1802,7 @@ call_ =
     , union =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Dict" ]
                     , name = "union"
                     , annotation =
@@ -1829,7 +1829,7 @@ call_ =
     , intersect =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Dict" ]
                     , name = "intersect"
                     , annotation =
@@ -1856,7 +1856,7 @@ call_ =
     , diff =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Dict" ]
                     , name = "diff"
                     , annotation =
@@ -1883,7 +1883,7 @@ call_ =
     , merge =
         \arg1_0 arg2_0 arg3_0 arg4_0 arg5_0 arg6_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Dict" ]
                     , name = "merge"
                     , annotation =

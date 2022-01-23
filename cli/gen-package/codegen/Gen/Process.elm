@@ -30,7 +30,7 @@ come in a later release!
 spawn : Elm.Expression -> Elm.Expression
 spawn arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Process" ]
             , name = "spawn"
             , annotation =
@@ -63,7 +63,7 @@ delay work until later.
 sleep : Elm.Expression -> Elm.Expression
 sleep arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Process" ]
             , name = "sleep"
             , annotation =
@@ -89,7 +89,7 @@ flight, it will also abort the request.
 kill : Elm.Expression -> Elm.Expression
 kill arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Process" ]
             , name = "kill"
             , annotation =
@@ -117,7 +117,7 @@ values_ :
     { spawn : Elm.Expression, sleep : Elm.Expression, kill : Elm.Expression }
 values_ =
     { spawn =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Process" ]
             , name = "spawn"
             , annotation =
@@ -138,7 +138,7 @@ values_ =
                     )
             }
     , sleep =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Process" ]
             , name = "sleep"
             , annotation =
@@ -153,7 +153,7 @@ values_ =
                     )
             }
     , kill =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Process" ]
             , name = "kill"
             , annotation =
@@ -180,7 +180,7 @@ call_ =
     { spawn =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Process" ]
                     , name = "spawn"
                     , annotation =
@@ -205,7 +205,7 @@ call_ =
     , sleep =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Process" ]
                     , name = "sleep"
                     , annotation =
@@ -224,7 +224,7 @@ call_ =
     , kill =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Process" ]
                     , name = "kill"
                     , annotation =

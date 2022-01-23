@@ -25,7 +25,7 @@ If the result is an `Err`, the same error value will propagate through.
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 map arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Result" ]
             , name = "map"
             , annotation =
@@ -48,7 +48,7 @@ map arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "mapArg0_0", Type.var "a" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mapArg0_0"
                     , annotation = Just (Type.var "a")
@@ -77,7 +77,7 @@ map2 :
     -> Elm.Expression
 map2 arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Result" ]
             , name = "map2"
             , annotation =
@@ -106,13 +106,13 @@ map2 arg1 arg2 arg3 =
         [ Elm.functionAdvanced
             [ ( "map2Arg0_0", Type.var "a" ), ( "map2Arg0_1", Type.var "b" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map2Arg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map2Arg0_1"
                     , annotation = Just (Type.var "b")
@@ -133,7 +133,7 @@ map3 :
     -> Elm.Expression
 map3 arg1 arg2 arg3 arg4 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Result" ]
             , name = "map3"
             , annotation =
@@ -169,19 +169,19 @@ map3 arg1 arg2 arg3 arg4 =
             , ( "map3Arg0_2", Type.var "c" )
             ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map3Arg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map3Arg0_1"
                     , annotation = Just (Type.var "b")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map3Arg0_2"
                     , annotation = Just (Type.var "c")
@@ -208,7 +208,7 @@ map4 :
     -> Elm.Expression
 map4 arg1 arg2 arg3 arg4 arg5 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Result" ]
             , name = "map4"
             , annotation =
@@ -253,25 +253,25 @@ map4 arg1 arg2 arg3 arg4 arg5 =
             , ( "map4Arg0_3", Type.var "d" )
             ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map4Arg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map4Arg0_1"
                     , annotation = Just (Type.var "b")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map4Arg0_2"
                     , annotation = Just (Type.var "c")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map4Arg0_3"
                     , annotation = Just (Type.var "d")
@@ -301,7 +301,7 @@ map5 :
     -> Elm.Expression
 map5 arg1 arg2 arg3 arg4 arg5 arg6 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Result" ]
             , name = "map5"
             , annotation =
@@ -352,31 +352,31 @@ map5 arg1 arg2 arg3 arg4 arg5 arg6 =
             , ( "map5Arg0_4", Type.var "e" )
             ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map5Arg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map5Arg0_1"
                     , annotation = Just (Type.var "b")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map5Arg0_2"
                     , annotation = Just (Type.var "c")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map5Arg0_3"
                     , annotation = Just (Type.var "d")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map5Arg0_4"
                     , annotation = Just (Type.var "e")
@@ -428,7 +428,7 @@ code.
 andThen : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 andThen arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Result" ]
             , name = "andThen"
             , annotation =
@@ -457,7 +457,7 @@ andThen arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "andThenArg0_0", Type.var "a" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "andThenArg0_0"
                     , annotation = Just (Type.var "a")
@@ -477,7 +477,7 @@ return a given default value. The following examples try to parse integers.
 withDefault : Elm.Expression -> Elm.Expression -> Elm.Expression
 withDefault arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Result" ]
             , name = "withDefault"
             , annotation =
@@ -508,7 +508,7 @@ you need to interact with some code that primarily uses maybes.
 toMaybe : Elm.Expression -> Elm.Expression
 toMaybe arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Result" ]
             , name = "toMaybe"
             , annotation =
@@ -538,7 +538,7 @@ uses `Results`.
 fromMaybe : Elm.Expression -> Elm.Expression -> Elm.Expression
 fromMaybe arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Result" ]
             , name = "fromMaybe"
             , annotation =
@@ -574,7 +574,7 @@ mapError :
     (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 mapError arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Result" ]
             , name = "mapError"
             , annotation =
@@ -597,7 +597,7 @@ mapError arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "mapErrorArg0_0", Type.var "x" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mapErrorArg0_0"
                     , annotation = Just (Type.var "x")
@@ -632,7 +632,7 @@ types_ =
             { ok =
                 \ar0_1_0_0 ->
                     Elm.apply
-                        (Elm.valueWith
+                        (Elm.value
                             { importFrom = [ "Result" ]
                             , name = "Ok"
                             , annotation =
@@ -648,7 +648,7 @@ types_ =
             , err =
                 \ar0_1_0_0 ->
                     Elm.apply
-                        (Elm.valueWith
+                        (Elm.value
                             { importFrom = [ "Result" ]
                             , name = "Err"
                             , annotation =
@@ -688,7 +688,7 @@ values_ :
     }
 values_ =
     { map =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Result" ]
             , name = "map"
             , annotation =
@@ -708,7 +708,7 @@ values_ =
                     )
             }
     , map2 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Result" ]
             , name = "map2"
             , annotation =
@@ -734,7 +734,7 @@ values_ =
                     )
             }
     , map3 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Result" ]
             , name = "map3"
             , annotation =
@@ -764,7 +764,7 @@ values_ =
                     )
             }
     , map4 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Result" ]
             , name = "map4"
             , annotation =
@@ -802,7 +802,7 @@ values_ =
                     )
             }
     , map5 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Result" ]
             , name = "map5"
             , annotation =
@@ -845,7 +845,7 @@ values_ =
                     )
             }
     , andThen =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Result" ]
             , name = "andThen"
             , annotation =
@@ -871,7 +871,7 @@ values_ =
                     )
             }
     , withDefault =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Result" ]
             , name = "withDefault"
             , annotation =
@@ -887,7 +887,7 @@ values_ =
                     )
             }
     , toMaybe =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Result" ]
             , name = "toMaybe"
             , annotation =
@@ -902,7 +902,7 @@ values_ =
                     )
             }
     , fromMaybe =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Result" ]
             , name = "fromMaybe"
             , annotation =
@@ -917,7 +917,7 @@ values_ =
                     )
             }
     , mapError =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Result" ]
             , name = "mapError"
             , annotation =
@@ -975,7 +975,7 @@ call_ =
     { map =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Result" ]
                     , name = "map"
                     , annotation =
@@ -1001,7 +1001,7 @@ call_ =
     , map2 =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Result" ]
                     , name = "map2"
                     , annotation =
@@ -1031,7 +1031,7 @@ call_ =
     , map3 =
         \arg1_0 arg2_0 arg3_0 arg4_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Result" ]
                     , name = "map3"
                     , annotation =
@@ -1065,7 +1065,7 @@ call_ =
     , map4 =
         \arg1_0 arg2_0 arg3_0 arg4_0 arg5_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Result" ]
                     , name = "map4"
                     , annotation =
@@ -1107,7 +1107,7 @@ call_ =
     , map5 =
         \arg1_0 arg2_0 arg3_0 arg4_0 arg5_0 arg6_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Result" ]
                     , name = "map5"
                     , annotation =
@@ -1154,7 +1154,7 @@ call_ =
     , andThen =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Result" ]
                     , name = "andThen"
                     , annotation =
@@ -1184,7 +1184,7 @@ call_ =
     , withDefault =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Result" ]
                     , name = "withDefault"
                     , annotation =
@@ -1204,7 +1204,7 @@ call_ =
     , toMaybe =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Result" ]
                     , name = "toMaybe"
                     , annotation =
@@ -1223,7 +1223,7 @@ call_ =
     , fromMaybe =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Result" ]
                     , name = "fromMaybe"
                     , annotation =
@@ -1242,7 +1242,7 @@ call_ =
     , mapError =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Result" ]
                     , name = "mapError"
                     , annotation =

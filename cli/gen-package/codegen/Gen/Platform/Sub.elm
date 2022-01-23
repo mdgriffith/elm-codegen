@@ -19,7 +19,7 @@ moduleName_ =
 -}
 none : Elm.Expression
 none =
-    Elm.valueWith
+    Elm.value
         { importFrom = [ "Platform", "Sub" ]
         , name = "none"
         , annotation =
@@ -36,7 +36,7 @@ subscriptions.
 batch : List Elm.Expression -> Elm.Expression
 batch arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Platform", "Sub" ]
             , name = "batch"
             , annotation =
@@ -71,7 +71,7 @@ section on [structure][] in the guide before reaching for this!
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 map arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Platform", "Sub" ]
             , name = "map"
             , annotation =
@@ -94,7 +94,7 @@ map arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "mapArg0_0", Type.var "a" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mapArg0_0"
                     , annotation = Just (Type.var "a")
@@ -119,7 +119,7 @@ values_ :
     { none : Elm.Expression, batch : Elm.Expression, map : Elm.Expression }
 values_ =
     { none =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Platform", "Sub" ]
             , name = "none"
             , annotation =
@@ -131,7 +131,7 @@ values_ =
                     )
             }
     , batch =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Platform", "Sub" ]
             , name = "batch"
             , annotation =
@@ -152,7 +152,7 @@ values_ =
                     )
             }
     , map =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Platform", "Sub" ]
             , name = "map"
             , annotation =
@@ -183,7 +183,7 @@ call_ =
     { batch =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Platform", "Sub" ]
                     , name = "batch"
                     , annotation =
@@ -208,7 +208,7 @@ call_ =
     , map =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Platform", "Sub" ]
                     , name = "map"
                     , annotation =

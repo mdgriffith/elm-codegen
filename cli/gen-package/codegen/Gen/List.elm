@@ -23,7 +23,7 @@ moduleName_ =
 singleton : Elm.Expression -> Elm.Expression
 singleton arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "singleton"
             , annotation =
@@ -40,7 +40,7 @@ singleton arg1 =
 repeat : Elm.Expression -> Elm.Expression -> Elm.Expression
 repeat arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "repeat"
             , annotation =
@@ -64,7 +64,7 @@ You give the lowest and highest number that should be in the list.
 range : Elm.Expression -> Elm.Expression -> Elm.Expression
 range arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "range"
             , annotation =
@@ -86,7 +86,7 @@ map :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
 map arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "map"
             , annotation =
@@ -102,7 +102,7 @@ map arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "mapArg0_0", Type.var "a" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mapArg0_0"
                     , annotation = Just (Type.var "a")
@@ -124,7 +124,7 @@ indexedMap :
     -> Elm.Expression
 indexedMap arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "indexedMap"
             , annotation =
@@ -144,13 +144,13 @@ indexedMap arg1 arg2 =
             , ( "indexedMapArg0_1", Type.var "a" )
             ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "indexedMapArg0_0"
                     , annotation = Just Type.int
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "indexedMapArg0_1"
                     , annotation = Just (Type.var "a")
@@ -180,7 +180,7 @@ foldl :
     -> Elm.Expression
 foldl arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "foldl"
             , annotation =
@@ -199,13 +199,13 @@ foldl arg1 arg2 arg3 =
         [ Elm.functionAdvanced
             [ ( "foldlArg0_0", Type.var "a" ), ( "foldlArg0_1", Type.var "b" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldlArg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldlArg0_1"
                     , annotation = Just (Type.var "b")
@@ -236,7 +236,7 @@ foldr :
     -> Elm.Expression
 foldr arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "foldr"
             , annotation =
@@ -255,13 +255,13 @@ foldr arg1 arg2 arg3 =
         [ Elm.functionAdvanced
             [ ( "foldrArg0_0", Type.var "a" ), ( "foldrArg0_1", Type.var "b" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldrArg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldrArg0_1"
                     , annotation = Just (Type.var "b")
@@ -281,7 +281,7 @@ filter :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
 filter arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "filter"
             , annotation =
@@ -297,7 +297,7 @@ filter arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "filterArg0_0", Type.var "a" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "filterArg0_0"
                     , annotation = Just (Type.var "a")
@@ -322,7 +322,7 @@ filterMap :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
 filterMap arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "filterMap"
             , annotation =
@@ -340,7 +340,7 @@ filterMap arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "filterMapArg0_0", Type.var "a" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "filterMapArg0_0"
                     , annotation = Just (Type.var "a")
@@ -358,7 +358,7 @@ filterMap arg1 arg2 =
 length : List Elm.Expression -> Elm.Expression
 length arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "length"
             , annotation =
@@ -375,7 +375,7 @@ length arg1 =
 reverse : List Elm.Expression -> Elm.Expression
 reverse arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "reverse"
             , annotation =
@@ -397,7 +397,7 @@ reverse arg1 =
 member : Elm.Expression -> List Elm.Expression -> Elm.Expression
 member arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "member"
             , annotation =
@@ -421,7 +421,7 @@ all :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
 all arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "all"
             , annotation =
@@ -437,7 +437,7 @@ all arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "allArg0_0", Type.var "a" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "allArg0_0"
                     , annotation = Just (Type.var "a")
@@ -458,7 +458,7 @@ any :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
 any arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "any"
             , annotation =
@@ -474,7 +474,7 @@ any arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "anyArg0_0", Type.var "a" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "anyArg0_0"
                     , annotation = Just (Type.var "a")
@@ -493,7 +493,7 @@ any arg1 arg2 =
 maximum : List Elm.Expression -> Elm.Expression
 maximum arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "maximum"
             , annotation =
@@ -515,7 +515,7 @@ maximum arg1 =
 minimum : List Elm.Expression -> Elm.Expression
 minimum arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "minimum"
             , annotation =
@@ -539,7 +539,7 @@ minimum arg1 =
 sum : List Elm.Expression -> Elm.Expression
 sum arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "sum"
             , annotation =
@@ -563,7 +563,7 @@ sum arg1 =
 product : List Elm.Expression -> Elm.Expression
 product arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "product"
             , annotation =
@@ -587,7 +587,7 @@ You can also use [the `(++)` operator](Basics#++) to append lists.
 append : List Elm.Expression -> List Elm.Expression -> Elm.Expression
 append arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "append"
             , annotation =
@@ -608,7 +608,7 @@ append arg1 arg2 =
 concat : List (List Elm.Expression) -> Elm.Expression
 concat arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "concat"
             , annotation =
@@ -630,7 +630,7 @@ concatMap :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
 concatMap arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "concatMap"
             , annotation =
@@ -648,7 +648,7 @@ concatMap arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "concatMapArg0_0", Type.var "a" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "concatMapArg0_0"
                     , annotation = Just (Type.var "a")
@@ -666,7 +666,7 @@ concatMap arg1 arg2 =
 intersperse : Elm.Expression -> List Elm.Expression -> Elm.Expression
 intersperse arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "intersperse"
             , annotation =
@@ -704,7 +704,7 @@ map2 :
     -> Elm.Expression
 map2 arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "map2"
             , annotation =
@@ -723,13 +723,13 @@ map2 arg1 arg2 arg3 =
         [ Elm.functionAdvanced
             [ ( "map2Arg0_0", Type.var "a" ), ( "map2Arg0_1", Type.var "b" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map2Arg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map2Arg0_1"
                     , annotation = Just (Type.var "b")
@@ -750,7 +750,7 @@ map3 :
     -> Elm.Expression
 map3 arg1 arg2 arg3 arg4 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "map3"
             , annotation =
@@ -773,19 +773,19 @@ map3 arg1 arg2 arg3 arg4 =
             , ( "map3Arg0_2", Type.var "c" )
             ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map3Arg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map3Arg0_1"
                     , annotation = Just (Type.var "b")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map3Arg0_2"
                     , annotation = Just (Type.var "c")
@@ -812,7 +812,7 @@ map4 :
     -> Elm.Expression
 map4 arg1 arg2 arg3 arg4 arg5 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "map4"
             , annotation =
@@ -841,25 +841,25 @@ map4 arg1 arg2 arg3 arg4 arg5 =
             , ( "map4Arg0_3", Type.var "d" )
             ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map4Arg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map4Arg0_1"
                     , annotation = Just (Type.var "b")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map4Arg0_2"
                     , annotation = Just (Type.var "c")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map4Arg0_3"
                     , annotation = Just (Type.var "d")
@@ -889,7 +889,7 @@ map5 :
     -> Elm.Expression
 map5 arg1 arg2 arg3 arg4 arg5 arg6 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "map5"
             , annotation =
@@ -921,31 +921,31 @@ map5 arg1 arg2 arg3 arg4 arg5 arg6 =
             , ( "map5Arg0_4", Type.var "e" )
             ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map5Arg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map5Arg0_1"
                     , annotation = Just (Type.var "b")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map5Arg0_2"
                     , annotation = Just (Type.var "c")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map5Arg0_3"
                     , annotation = Just (Type.var "d")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "map5Arg0_4"
                     , annotation = Just (Type.var "e")
@@ -967,7 +967,7 @@ map5 arg1 arg2 arg3 arg4 arg5 arg6 =
 sort : List Elm.Expression -> Elm.Expression
 sort arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "sort"
             , annotation =
@@ -996,7 +996,7 @@ sortBy :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
 sortBy arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "sortBy"
             , annotation =
@@ -1012,7 +1012,7 @@ sortBy arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "sortByArg0_0", Type.var "a" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "sortByArg0_0"
                     , annotation = Just (Type.var "a")
@@ -1042,7 +1042,7 @@ sortWith :
     -> Elm.Expression
 sortWith arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "sortWith"
             , annotation =
@@ -1062,13 +1062,13 @@ sortWith arg1 arg2 =
             , ( "sortWithArg0_1", Type.var "a" )
             ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "sortWithArg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "sortWithArg0_1"
                     , annotation = Just (Type.var "a")
@@ -1089,7 +1089,7 @@ forget to handle the `(x :: xs)` case as well!
 isEmpty : List Elm.Expression -> Elm.Expression
 isEmpty arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "isEmpty"
             , annotation =
@@ -1110,7 +1110,7 @@ because it gives you `(x :: xs)` and you can work with both subparts.
 head : List Elm.Expression -> Elm.Expression
 head arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "head"
             , annotation =
@@ -1135,7 +1135,7 @@ because it gives you `(x :: xs)` and you can work with both subparts.
 tail : List Elm.Expression -> Elm.Expression
 tail arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "tail"
             , annotation =
@@ -1156,7 +1156,7 @@ tail arg1 =
 take : Elm.Expression -> List Elm.Expression -> Elm.Expression
 take arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "take"
             , annotation =
@@ -1177,7 +1177,7 @@ take arg1 arg2 =
 drop : Elm.Expression -> List Elm.Expression -> Elm.Expression
 drop arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "drop"
             , annotation =
@@ -1201,7 +1201,7 @@ partition :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
 partition arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "partition"
             , annotation =
@@ -1220,7 +1220,7 @@ partition arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "partitionArg0_0", Type.var "a" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "partitionArg0_0"
                     , annotation = Just (Type.var "a")
@@ -1238,7 +1238,7 @@ partition arg1 arg2 =
 unzip : List Elm.Expression -> Elm.Expression
 unzip arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "unzip"
             , annotation =
@@ -1301,14 +1301,14 @@ values_ :
     }
 values_ =
     { singleton =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "singleton"
             , annotation =
                 Just (Type.function [ Type.var "a" ] (Type.list (Type.var "a")))
             }
     , repeat =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "repeat"
             , annotation =
@@ -1319,14 +1319,14 @@ values_ =
                     )
             }
     , range =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "range"
             , annotation =
                 Just (Type.function [ Type.int, Type.int ] (Type.list Type.int))
             }
     , map =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "map"
             , annotation =
@@ -1339,7 +1339,7 @@ values_ =
                     )
             }
     , indexedMap =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "indexedMap"
             , annotation =
@@ -1354,7 +1354,7 @@ values_ =
                     )
             }
     , foldl =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "foldl"
             , annotation =
@@ -1370,7 +1370,7 @@ values_ =
                     )
             }
     , foldr =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "foldr"
             , annotation =
@@ -1386,7 +1386,7 @@ values_ =
                     )
             }
     , filter =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "filter"
             , annotation =
@@ -1399,7 +1399,7 @@ values_ =
                     )
             }
     , filterMap =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "filterMap"
             , annotation =
@@ -1414,14 +1414,14 @@ values_ =
                     )
             }
     , length =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "length"
             , annotation =
                 Just (Type.function [ Type.list (Type.var "a") ] Type.int)
             }
     , reverse =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "reverse"
             , annotation =
@@ -1432,7 +1432,7 @@ values_ =
                     )
             }
     , member =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "member"
             , annotation =
@@ -1443,7 +1443,7 @@ values_ =
                     )
             }
     , all =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "all"
             , annotation =
@@ -1456,7 +1456,7 @@ values_ =
                     )
             }
     , any =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "any"
             , annotation =
@@ -1469,7 +1469,7 @@ values_ =
                     )
             }
     , maximum =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "maximum"
             , annotation =
@@ -1480,7 +1480,7 @@ values_ =
                     )
             }
     , minimum =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "minimum"
             , annotation =
@@ -1491,7 +1491,7 @@ values_ =
                     )
             }
     , sum =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "sum"
             , annotation =
@@ -1502,7 +1502,7 @@ values_ =
                     )
             }
     , product =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "product"
             , annotation =
@@ -1513,7 +1513,7 @@ values_ =
                     )
             }
     , append =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "append"
             , annotation =
@@ -1524,7 +1524,7 @@ values_ =
                     )
             }
     , concat =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "concat"
             , annotation =
@@ -1535,7 +1535,7 @@ values_ =
                     )
             }
     , concatMap =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "concatMap"
             , annotation =
@@ -1550,7 +1550,7 @@ values_ =
                     )
             }
     , intersperse =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "intersperse"
             , annotation =
@@ -1561,7 +1561,7 @@ values_ =
                     )
             }
     , map2 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "map2"
             , annotation =
@@ -1577,7 +1577,7 @@ values_ =
                     )
             }
     , map3 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "map3"
             , annotation =
@@ -1594,7 +1594,7 @@ values_ =
                     )
             }
     , map4 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "map4"
             , annotation =
@@ -1616,7 +1616,7 @@ values_ =
                     )
             }
     , map5 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "map5"
             , annotation =
@@ -1640,7 +1640,7 @@ values_ =
                     )
             }
     , sort =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "sort"
             , annotation =
@@ -1651,7 +1651,7 @@ values_ =
                     )
             }
     , sortBy =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "sortBy"
             , annotation =
@@ -1664,7 +1664,7 @@ values_ =
                     )
             }
     , sortWith =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "sortWith"
             , annotation =
@@ -1679,14 +1679,14 @@ values_ =
                     )
             }
     , isEmpty =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "isEmpty"
             , annotation =
                 Just (Type.function [ Type.list (Type.var "a") ] Type.bool)
             }
     , head =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "head"
             , annotation =
@@ -1697,7 +1697,7 @@ values_ =
                     )
             }
     , tail =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "tail"
             , annotation =
@@ -1708,7 +1708,7 @@ values_ =
                     )
             }
     , take =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "take"
             , annotation =
@@ -1719,7 +1719,7 @@ values_ =
                     )
             }
     , drop =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "drop"
             , annotation =
@@ -1730,7 +1730,7 @@ values_ =
                     )
             }
     , partition =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "partition"
             , annotation =
@@ -1746,7 +1746,7 @@ values_ =
                     )
             }
     , unzip =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "List" ]
             , name = "unzip"
             , annotation =
@@ -1826,7 +1826,7 @@ call_ =
     { singleton =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "singleton"
                     , annotation =
@@ -1841,7 +1841,7 @@ call_ =
     , repeat =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "repeat"
                     , annotation =
@@ -1856,7 +1856,7 @@ call_ =
     , range =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "range"
                     , annotation =
@@ -1871,7 +1871,7 @@ call_ =
     , map =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "map"
                     , annotation =
@@ -1888,7 +1888,7 @@ call_ =
     , indexedMap =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "indexedMap"
                     , annotation =
@@ -1907,7 +1907,7 @@ call_ =
     , foldl =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "foldl"
                     , annotation =
@@ -1927,7 +1927,7 @@ call_ =
     , foldr =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "foldr"
                     , annotation =
@@ -1947,7 +1947,7 @@ call_ =
     , filter =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "filter"
                     , annotation =
@@ -1964,7 +1964,7 @@ call_ =
     , filterMap =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "filterMap"
                     , annotation =
@@ -1983,7 +1983,7 @@ call_ =
     , length =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "length"
                     , annotation =
@@ -1996,7 +1996,7 @@ call_ =
     , reverse =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "reverse"
                     , annotation =
@@ -2011,7 +2011,7 @@ call_ =
     , member =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "member"
                     , annotation =
@@ -2026,7 +2026,7 @@ call_ =
     , all =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "all"
                     , annotation =
@@ -2043,7 +2043,7 @@ call_ =
     , any =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "any"
                     , annotation =
@@ -2060,7 +2060,7 @@ call_ =
     , maximum =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "maximum"
                     , annotation =
@@ -2075,7 +2075,7 @@ call_ =
     , minimum =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "minimum"
                     , annotation =
@@ -2090,7 +2090,7 @@ call_ =
     , sum =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "sum"
                     , annotation =
@@ -2105,7 +2105,7 @@ call_ =
     , product =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "product"
                     , annotation =
@@ -2120,7 +2120,7 @@ call_ =
     , append =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "append"
                     , annotation =
@@ -2137,7 +2137,7 @@ call_ =
     , concat =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "concat"
                     , annotation =
@@ -2152,7 +2152,7 @@ call_ =
     , concatMap =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "concatMap"
                     , annotation =
@@ -2171,7 +2171,7 @@ call_ =
     , intersperse =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "intersperse"
                     , annotation =
@@ -2186,7 +2186,7 @@ call_ =
     , map2 =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "map2"
                     , annotation =
@@ -2206,7 +2206,7 @@ call_ =
     , map3 =
         \arg1_0 arg2_0 arg3_0 arg4_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "map3"
                     , annotation =
@@ -2227,7 +2227,7 @@ call_ =
     , map4 =
         \arg1_0 arg2_0 arg3_0 arg4_0 arg5_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "map4"
                     , annotation =
@@ -2253,7 +2253,7 @@ call_ =
     , map5 =
         \arg1_0 arg2_0 arg3_0 arg4_0 arg5_0 arg6_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "map5"
                     , annotation =
@@ -2281,7 +2281,7 @@ call_ =
     , sort =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "sort"
                     , annotation =
@@ -2296,7 +2296,7 @@ call_ =
     , sortBy =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "sortBy"
                     , annotation =
@@ -2315,7 +2315,7 @@ call_ =
     , sortWith =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "sortWith"
                     , annotation =
@@ -2334,7 +2334,7 @@ call_ =
     , isEmpty =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "isEmpty"
                     , annotation =
@@ -2349,7 +2349,7 @@ call_ =
     , head =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "head"
                     , annotation =
@@ -2364,7 +2364,7 @@ call_ =
     , tail =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "tail"
                     , annotation =
@@ -2379,7 +2379,7 @@ call_ =
     , take =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "take"
                     , annotation =
@@ -2394,7 +2394,7 @@ call_ =
     , drop =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "drop"
                     , annotation =
@@ -2409,7 +2409,7 @@ call_ =
     , partition =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "partition"
                     , annotation =
@@ -2429,7 +2429,7 @@ call_ =
     , unzip =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "List" ]
                     , name = "unzip"
                     , annotation =

@@ -19,7 +19,7 @@ moduleName_ =
 -}
 empty : Elm.Expression
 empty =
-    Elm.valueWith
+    Elm.value
         { importFrom = [ "Set" ]
         , name = "empty"
         , annotation = Just (Type.namedWith [ "Set" ] "Set" [ Type.var "a" ])
@@ -31,7 +31,7 @@ empty =
 singleton : Elm.Expression -> Elm.Expression
 singleton arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Set" ]
             , name = "singleton"
             , annotation =
@@ -54,7 +54,7 @@ singleton arg1 =
 insert : Elm.Expression -> Elm.Expression -> Elm.Expression
 insert arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Set" ]
             , name = "insert"
             , annotation =
@@ -82,7 +82,7 @@ insert arg1 arg2 =
 remove : Elm.Expression -> Elm.Expression -> Elm.Expression
 remove arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Set" ]
             , name = "remove"
             , annotation =
@@ -110,7 +110,7 @@ remove arg1 arg2 =
 isEmpty : Elm.Expression -> Elm.Expression
 isEmpty arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Set" ]
             , name = "isEmpty"
             , annotation =
@@ -129,7 +129,7 @@ isEmpty arg1 =
 member : Elm.Expression -> Elm.Expression -> Elm.Expression
 member arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Set" ]
             , name = "member"
             , annotation =
@@ -153,7 +153,7 @@ member arg1 arg2 =
 size : Elm.Expression -> Elm.Expression
 size arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Set" ]
             , name = "size"
             , annotation =
@@ -172,7 +172,7 @@ size arg1 =
 union : Elm.Expression -> Elm.Expression -> Elm.Expression
 union arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Set" ]
             , name = "union"
             , annotation =
@@ -203,7 +203,7 @@ union arg1 arg2 =
 intersect : Elm.Expression -> Elm.Expression -> Elm.Expression
 intersect arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Set" ]
             , name = "intersect"
             , annotation =
@@ -235,7 +235,7 @@ that do not appear in the second set.
 diff : Elm.Expression -> Elm.Expression -> Elm.Expression
 diff arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Set" ]
             , name = "diff"
             , annotation =
@@ -266,7 +266,7 @@ diff arg1 arg2 =
 toList : Elm.Expression -> Elm.Expression
 toList arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Set" ]
             , name = "toList"
             , annotation =
@@ -285,7 +285,7 @@ toList arg1 =
 fromList : List Elm.Expression -> Elm.Expression
 fromList arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Set" ]
             , name = "fromList"
             , annotation =
@@ -308,7 +308,7 @@ fromList arg1 =
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 map arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Set" ]
             , name = "map"
             , annotation =
@@ -333,7 +333,7 @@ map arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "mapArg0_0", Type.var "comparable" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mapArg0_0"
                     , annotation = Just (Type.var "comparable")
@@ -353,7 +353,7 @@ foldl :
     -> Elm.Expression
 foldl arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Set" ]
             , name = "foldl"
             , annotation =
@@ -372,13 +372,13 @@ foldl arg1 arg2 arg3 =
         [ Elm.functionAdvanced
             [ ( "foldlArg0_0", Type.var "a" ), ( "foldlArg0_1", Type.var "b" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldlArg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldlArg0_1"
                     , annotation = Just (Type.var "b")
@@ -399,7 +399,7 @@ foldr :
     -> Elm.Expression
 foldr arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Set" ]
             , name = "foldr"
             , annotation =
@@ -418,13 +418,13 @@ foldr arg1 arg2 arg3 =
         [ Elm.functionAdvanced
             [ ( "foldrArg0_0", Type.var "a" ), ( "foldrArg0_1", Type.var "b" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldrArg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldrArg0_1"
                     , annotation = Just (Type.var "b")
@@ -453,7 +453,7 @@ foldr arg1 arg2 arg3 =
 filter : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 filter arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Set" ]
             , name = "filter"
             , annotation =
@@ -476,7 +476,7 @@ filter arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "filterArg0_0", Type.var "comparable" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "filterArg0_0"
                     , annotation = Just (Type.var "comparable")
@@ -494,7 +494,7 @@ partition :
     (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 partition arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Set" ]
             , name = "partition"
             , annotation =
@@ -524,7 +524,7 @@ partition arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "partitionArg0_0", Type.var "comparable" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "partitionArg0_0"
                     , annotation = Just (Type.var "comparable")
@@ -566,14 +566,14 @@ values_ :
     }
 values_ =
     { empty =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Set" ]
             , name = "empty"
             , annotation =
                 Just (Type.namedWith [ "Set" ] "Set" [ Type.var "a" ])
             }
     , singleton =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Set" ]
             , name = "singleton"
             , annotation =
@@ -588,7 +588,7 @@ values_ =
                     )
             }
     , insert =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Set" ]
             , name = "insert"
             , annotation =
@@ -608,7 +608,7 @@ values_ =
                     )
             }
     , remove =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Set" ]
             , name = "remove"
             , annotation =
@@ -628,7 +628,7 @@ values_ =
                     )
             }
     , isEmpty =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Set" ]
             , name = "isEmpty"
             , annotation =
@@ -639,7 +639,7 @@ values_ =
                     )
             }
     , member =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Set" ]
             , name = "member"
             , annotation =
@@ -655,7 +655,7 @@ values_ =
                     )
             }
     , size =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Set" ]
             , name = "size"
             , annotation =
@@ -666,7 +666,7 @@ values_ =
                     )
             }
     , union =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Set" ]
             , name = "union"
             , annotation =
@@ -689,7 +689,7 @@ values_ =
                     )
             }
     , intersect =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Set" ]
             , name = "intersect"
             , annotation =
@@ -712,7 +712,7 @@ values_ =
                     )
             }
     , diff =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Set" ]
             , name = "diff"
             , annotation =
@@ -735,7 +735,7 @@ values_ =
                     )
             }
     , toList =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Set" ]
             , name = "toList"
             , annotation =
@@ -746,7 +746,7 @@ values_ =
                     )
             }
     , fromList =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Set" ]
             , name = "fromList"
             , annotation =
@@ -761,7 +761,7 @@ values_ =
                     )
             }
     , map =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Set" ]
             , name = "map"
             , annotation =
@@ -783,7 +783,7 @@ values_ =
                     )
             }
     , foldl =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Set" ]
             , name = "foldl"
             , annotation =
@@ -799,7 +799,7 @@ values_ =
                     )
             }
     , foldr =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Set" ]
             , name = "foldr"
             , annotation =
@@ -815,7 +815,7 @@ values_ =
                     )
             }
     , filter =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Set" ]
             , name = "filter"
             , annotation =
@@ -835,7 +835,7 @@ values_ =
                     )
             }
     , partition =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Set" ]
             , name = "partition"
             , annotation =
@@ -889,7 +889,7 @@ call_ =
     { singleton =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Set" ]
                     , name = "singleton"
                     , annotation =
@@ -908,7 +908,7 @@ call_ =
     , insert =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Set" ]
                     , name = "insert"
                     , annotation =
@@ -932,7 +932,7 @@ call_ =
     , remove =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Set" ]
                     , name = "remove"
                     , annotation =
@@ -956,7 +956,7 @@ call_ =
     , isEmpty =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Set" ]
                     , name = "isEmpty"
                     , annotation =
@@ -975,7 +975,7 @@ call_ =
     , member =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Set" ]
                     , name = "member"
                     , annotation =
@@ -995,7 +995,7 @@ call_ =
     , size =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Set" ]
                     , name = "size"
                     , annotation =
@@ -1014,7 +1014,7 @@ call_ =
     , union =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Set" ]
                     , name = "union"
                     , annotation =
@@ -1041,7 +1041,7 @@ call_ =
     , intersect =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Set" ]
                     , name = "intersect"
                     , annotation =
@@ -1068,7 +1068,7 @@ call_ =
     , diff =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Set" ]
                     , name = "diff"
                     , annotation =
@@ -1095,7 +1095,7 @@ call_ =
     , toList =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Set" ]
                     , name = "toList"
                     , annotation =
@@ -1114,7 +1114,7 @@ call_ =
     , fromList =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Set" ]
                     , name = "fromList"
                     , annotation =
@@ -1133,7 +1133,7 @@ call_ =
     , map =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Set" ]
                     , name = "map"
                     , annotation =
@@ -1159,7 +1159,7 @@ call_ =
     , foldl =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Set" ]
                     , name = "foldl"
                     , annotation =
@@ -1182,7 +1182,7 @@ call_ =
     , foldr =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Set" ]
                     , name = "foldr"
                     , annotation =
@@ -1205,7 +1205,7 @@ call_ =
     , filter =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Set" ]
                     , name = "filter"
                     , annotation =
@@ -1231,7 +1231,7 @@ call_ =
     , partition =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Set" ]
                     , name = "partition"
                     , annotation =

@@ -43,7 +43,7 @@ maybe :
     -> Elm.Expression
 maybe arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "maybe"
             , annotation =
@@ -76,7 +76,7 @@ maybe arg1 arg2 =
                       )
                     ]
                     (arg2.just
-                        (Elm.valueWith
+                        (Elm.value
                             { importFrom = []
                             , name = "maybeArg0_0"
                             , annotation =
@@ -121,7 +121,7 @@ result :
     -> Elm.Expression
 result arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "result"
             , annotation =
@@ -155,7 +155,7 @@ result arg1 arg2 =
                       )
                     ]
                     (arg2.err
-                        (Elm.valueWith
+                        (Elm.value
                             { importFrom = []
                             , name = "resultArg0_0"
                             , annotation =
@@ -172,7 +172,7 @@ result arg1 arg2 =
                       )
                     ]
                     (arg2.ok
-                        (Elm.valueWith
+                        (Elm.value
                             { importFrom = []
                             , name = "resultArg0_0"
                             , annotation =
@@ -215,7 +215,7 @@ list :
     -> Elm.Expression
 list arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "list"
             , annotation =
@@ -249,14 +249,14 @@ list arg1 arg2 =
                     , ( "listArg0_1", Type.namedWith [ "Elm" ] "Expression" [] )
                     ]
                     (arg2.nonEmpty
-                        (Elm.valueWith
+                        (Elm.value
                             { importFrom = []
                             , name = "listArg0_0"
                             , annotation =
                                 Just (Type.namedWith [ "Elm" ] "Expression" [])
                             }
                         )
-                        (Elm.valueWith
+                        (Elm.value
                             { importFrom = []
                             , name = "listArg0_1"
                             , annotation =
@@ -294,7 +294,7 @@ tuple :
     -> Elm.Expression
 tuple arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "tuple"
             , annotation =
@@ -317,14 +317,14 @@ tuple arg1 arg2 =
             , ( "tupleArg0_1", Type.namedWith [ "Elm" ] "Expression" [] )
             ]
             (arg2
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "tupleArg0_0"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "tupleArg0_1"
                     , annotation =
@@ -360,7 +360,7 @@ triple :
     -> Elm.Expression
 triple arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "triple"
             , annotation =
@@ -385,21 +385,21 @@ triple arg1 arg2 =
             , ( "tripleArg0_2", Type.namedWith [ "Elm" ] "Expression" [] )
             ]
             (arg2
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "tripleArg0_0"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "tripleArg0_1"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "tripleArg0_2"
                     , annotation =
@@ -437,7 +437,7 @@ Generates
 custom : Elm.Expression -> List Elm.Expression -> Elm.Expression
 custom arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "custom"
             , annotation =
@@ -459,7 +459,7 @@ custom arg1 arg2 =
 otherwise : (Elm.Expression -> Elm.Expression) -> Elm.Expression
 otherwise arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "otherwise"
             , annotation =
@@ -476,7 +476,7 @@ otherwise arg1 =
         [ Elm.functionAdvanced
             [ ( "otherwiseArg0_0", Type.namedWith [ "Elm" ] "Expression" [] ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "otherwiseArg0_0"
                     , annotation =
@@ -492,7 +492,7 @@ branch0 :
     List Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 branch0 arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "branch0"
             , annotation =
@@ -517,7 +517,7 @@ branch1 :
     -> Elm.Expression
 branch1 arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "branch1"
             , annotation =
@@ -538,7 +538,7 @@ branch1 arg1 arg2 arg3 =
         , Elm.functionAdvanced
             [ ( "branch1Arg0_0", Type.namedWith [ "Elm" ] "Expression" [] ) ]
             (arg3
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branch1Arg0_0"
                     , annotation =
@@ -557,7 +557,7 @@ branch2 :
     -> Elm.Expression
 branch2 arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "branch2"
             , annotation =
@@ -582,14 +582,14 @@ branch2 arg1 arg2 arg3 =
             , ( "branch2Arg0_1", Type.namedWith [ "Elm" ] "Expression" [] )
             ]
             (arg3
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branch2Arg0_0"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branch2Arg0_1"
                     , annotation =
@@ -608,7 +608,7 @@ branch3 :
     -> Elm.Expression
 branch3 arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "branch3"
             , annotation =
@@ -635,21 +635,21 @@ branch3 arg1 arg2 arg3 =
             , ( "branch3Arg0_2", Type.namedWith [ "Elm" ] "Expression" [] )
             ]
             (arg3
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branch3Arg0_0"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branch3Arg0_1"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branch3Arg0_2"
                     , annotation =
@@ -672,7 +672,7 @@ branch4 :
     -> Elm.Expression
 branch4 arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "branch4"
             , annotation =
@@ -701,28 +701,28 @@ branch4 arg1 arg2 arg3 =
             , ( "branch4Arg0_3", Type.namedWith [ "Elm" ] "Expression" [] )
             ]
             (arg3
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branch4Arg0_0"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branch4Arg0_1"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branch4Arg0_2"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branch4Arg0_3"
                     , annotation =
@@ -746,7 +746,7 @@ branch5 :
     -> Elm.Expression
 branch5 arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "branch5"
             , annotation =
@@ -777,35 +777,35 @@ branch5 arg1 arg2 arg3 =
             , ( "branch5Arg0_4", Type.namedWith [ "Elm" ] "Expression" [] )
             ]
             (arg3
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branch5Arg0_0"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branch5Arg0_1"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branch5Arg0_2"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branch5Arg0_3"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branch5Arg0_4"
                     , annotation =
@@ -830,7 +830,7 @@ branch6 :
     -> Elm.Expression
 branch6 arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "branch6"
             , annotation =
@@ -863,42 +863,42 @@ branch6 arg1 arg2 arg3 =
             , ( "branch6Arg0_5", Type.namedWith [ "Elm" ] "Expression" [] )
             ]
             (arg3
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branch6Arg0_0"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branch6Arg0_1"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branch6Arg0_2"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branch6Arg0_3"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branch6Arg0_4"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branch6Arg0_5"
                     , annotation =
@@ -918,7 +918,7 @@ branchWith :
     -> Elm.Expression
 branchWith arg1 arg2 arg3 arg4 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "branchWith"
             , annotation =
@@ -946,7 +946,7 @@ branchWith arg1 arg2 arg3 arg4 =
               )
             ]
             (arg4
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "branchWithArg0_0"
                     , annotation =
@@ -965,7 +965,7 @@ listBranch :
     Elm.Expression -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
 listBranch arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "listBranch"
             , annotation =
@@ -989,7 +989,7 @@ listBranch arg1 arg2 =
               )
             ]
             (arg2
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "listBranchArg0_0"
                     , annotation =
@@ -1029,7 +1029,7 @@ values_ :
     }
 values_ =
     { maybe =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "maybe"
             , annotation =
@@ -1051,7 +1051,7 @@ values_ =
                     )
             }
     , result =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "result"
             , annotation =
@@ -1075,7 +1075,7 @@ values_ =
                     )
             }
     , list =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "list"
             , annotation =
@@ -1099,7 +1099,7 @@ values_ =
                     )
             }
     , tuple =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "tuple"
             , annotation =
@@ -1116,7 +1116,7 @@ values_ =
                     )
             }
     , triple =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "triple"
             , annotation =
@@ -1134,7 +1134,7 @@ values_ =
                     )
             }
     , custom =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "custom"
             , annotation =
@@ -1148,7 +1148,7 @@ values_ =
                     )
             }
     , otherwise =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "otherwise"
             , annotation =
@@ -1162,7 +1162,7 @@ values_ =
                     )
             }
     , branch0 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "branch0"
             , annotation =
@@ -1176,7 +1176,7 @@ values_ =
                     )
             }
     , branch1 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "branch1"
             , annotation =
@@ -1192,7 +1192,7 @@ values_ =
                     )
             }
     , branch2 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "branch2"
             , annotation =
@@ -1210,7 +1210,7 @@ values_ =
                     )
             }
     , branch3 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "branch3"
             , annotation =
@@ -1229,7 +1229,7 @@ values_ =
                     )
             }
     , branch4 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "branch4"
             , annotation =
@@ -1249,7 +1249,7 @@ values_ =
                     )
             }
     , branch5 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "branch5"
             , annotation =
@@ -1270,7 +1270,7 @@ values_ =
                     )
             }
     , branch6 =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "branch6"
             , annotation =
@@ -1292,7 +1292,7 @@ values_ =
                     )
             }
     , branchWith =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "branchWith"
             , annotation =
@@ -1311,7 +1311,7 @@ values_ =
                     )
             }
     , listBranch =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Elm", "Case" ]
             , name = "listBranch"
             , annotation =
@@ -1365,7 +1365,7 @@ call_ =
     { maybe =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Elm", "Case" ]
                     , name = "maybe"
                     , annotation =
@@ -1399,7 +1399,7 @@ call_ =
     , result =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Elm", "Case" ]
                     , name = "result"
                     , annotation =
@@ -1443,7 +1443,7 @@ call_ =
     , list =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Elm", "Case" ]
                     , name = "list"
                     , annotation =
@@ -1481,7 +1481,7 @@ call_ =
     , tuple =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Elm", "Case" ]
                     , name = "tuple"
                     , annotation =
@@ -1502,7 +1502,7 @@ call_ =
     , triple =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Elm", "Case" ]
                     , name = "triple"
                     , annotation =
@@ -1524,7 +1524,7 @@ call_ =
     , custom =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Elm", "Case" ]
                     , name = "custom"
                     , annotation =
@@ -1546,7 +1546,7 @@ call_ =
     , otherwise =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Elm", "Case" ]
                     , name = "otherwise"
                     , annotation =
@@ -1564,7 +1564,7 @@ call_ =
     , branch0 =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Elm", "Case" ]
                     , name = "branch0"
                     , annotation =
@@ -1582,7 +1582,7 @@ call_ =
     , branch1 =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Elm", "Case" ]
                     , name = "branch1"
                     , annotation =
@@ -1602,7 +1602,7 @@ call_ =
     , branch2 =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Elm", "Case" ]
                     , name = "branch2"
                     , annotation =
@@ -1624,7 +1624,7 @@ call_ =
     , branch3 =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Elm", "Case" ]
                     , name = "branch3"
                     , annotation =
@@ -1647,7 +1647,7 @@ call_ =
     , branch4 =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Elm", "Case" ]
                     , name = "branch4"
                     , annotation =
@@ -1671,7 +1671,7 @@ call_ =
     , branch5 =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Elm", "Case" ]
                     , name = "branch5"
                     , annotation =
@@ -1696,7 +1696,7 @@ call_ =
     , branch6 =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Elm", "Case" ]
                     , name = "branch6"
                     , annotation =
@@ -1722,7 +1722,7 @@ call_ =
     , branchWith =
         \arg1_0 arg2_0 arg3_0 arg4_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Elm", "Case" ]
                     , name = "branchWith"
                     , annotation =
@@ -1749,7 +1749,7 @@ call_ =
     , listBranch =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Elm", "Case" ]
                     , name = "listBranch"
                     , annotation =

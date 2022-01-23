@@ -26,7 +26,7 @@ moduleName_ =
 pair : Elm.Expression -> Elm.Expression -> Elm.Expression
 pair arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Tuple" ]
             , name = "pair"
             , annotation =
@@ -48,7 +48,7 @@ pair arg1 arg2 =
 first : Elm.Expression -> Elm.Expression
 first arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Tuple" ]
             , name = "first"
             , annotation =
@@ -70,7 +70,7 @@ first arg1 =
 second : Elm.Expression -> Elm.Expression
 second arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Tuple" ]
             , name = "second"
             , annotation =
@@ -95,7 +95,7 @@ mapFirst :
     (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 mapFirst arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Tuple" ]
             , name = "mapFirst"
             , annotation =
@@ -111,7 +111,7 @@ mapFirst arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "mapFirstArg0_0", Type.var "a" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mapFirstArg0_0"
                     , annotation = Just (Type.var "a")
@@ -131,7 +131,7 @@ mapSecond :
     (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 mapSecond arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Tuple" ]
             , name = "mapSecond"
             , annotation =
@@ -147,7 +147,7 @@ mapSecond arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "mapSecondArg0_0", Type.var "b" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mapSecondArg0_0"
                     , annotation = Just (Type.var "b")
@@ -172,7 +172,7 @@ mapBoth :
     -> Elm.Expression
 mapBoth arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Tuple" ]
             , name = "mapBoth"
             , annotation =
@@ -189,7 +189,7 @@ mapBoth arg1 arg2 arg3 =
         [ Elm.functionAdvanced
             [ ( "mapBothArg0_0", Type.var "a" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mapBothArg0_0"
                     , annotation = Just (Type.var "a")
@@ -199,7 +199,7 @@ mapBoth arg1 arg2 arg3 =
         , Elm.functionAdvanced
             [ ( "mapBothArg0_0", Type.var "b" ) ]
             (arg2
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mapBothArg0_0"
                     , annotation = Just (Type.var "b")
@@ -226,7 +226,7 @@ values_ :
     }
 values_ =
     { pair =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Tuple" ]
             , name = "pair"
             , annotation =
@@ -237,7 +237,7 @@ values_ =
                     )
             }
     , first =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Tuple" ]
             , name = "first"
             , annotation =
@@ -248,7 +248,7 @@ values_ =
                     )
             }
     , second =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Tuple" ]
             , name = "second"
             , annotation =
@@ -259,7 +259,7 @@ values_ =
                     )
             }
     , mapFirst =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Tuple" ]
             , name = "mapFirst"
             , annotation =
@@ -272,7 +272,7 @@ values_ =
                     )
             }
     , mapSecond =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Tuple" ]
             , name = "mapSecond"
             , annotation =
@@ -285,7 +285,7 @@ values_ =
                     )
             }
     , mapBoth =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Tuple" ]
             , name = "mapBoth"
             , annotation =
@@ -315,7 +315,7 @@ call_ =
     { pair =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Tuple" ]
                     , name = "pair"
                     , annotation =
@@ -330,7 +330,7 @@ call_ =
     , first =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Tuple" ]
                     , name = "first"
                     , annotation =
@@ -345,7 +345,7 @@ call_ =
     , second =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Tuple" ]
                     , name = "second"
                     , annotation =
@@ -360,7 +360,7 @@ call_ =
     , mapFirst =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Tuple" ]
                     , name = "mapFirst"
                     , annotation =
@@ -377,7 +377,7 @@ call_ =
     , mapSecond =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Tuple" ]
                     , name = "mapSecond"
                     , annotation =
@@ -394,7 +394,7 @@ call_ =
     , mapBoth =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Tuple" ]
                     , name = "mapBoth"
                     , annotation =

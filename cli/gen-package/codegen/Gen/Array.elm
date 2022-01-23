@@ -21,7 +21,7 @@ moduleName_ =
 -}
 empty : Elm.Expression
 empty =
-    Elm.valueWith
+    Elm.value
         { importFrom = [ "Array" ]
         , name = "empty"
         , annotation =
@@ -40,7 +40,7 @@ initialize :
     Elm.Expression -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
 initialize arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Array" ]
             , name = "initialize"
             , annotation =
@@ -55,7 +55,7 @@ initialize arg1 arg2 =
         , Elm.functionAdvanced
             [ ( "initializeArg0_0", Type.int ) ]
             (arg2
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "initializeArg0_0"
                     , annotation = Just Type.int
@@ -75,7 +75,7 @@ Notice that `repeat 3 x` is the same as `initialize 3 (always x)`.
 repeat : Elm.Expression -> Elm.Expression -> Elm.Expression
 repeat arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Array" ]
             , name = "repeat"
             , annotation =
@@ -94,7 +94,7 @@ repeat arg1 arg2 =
 fromList : List Elm.Expression -> Elm.Expression
 fromList arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Array" ]
             , name = "fromList"
             , annotation =
@@ -115,7 +115,7 @@ fromList arg1 =
 isEmpty : Elm.Expression -> Elm.Expression
 isEmpty arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Array" ]
             , name = "isEmpty"
             , annotation =
@@ -136,7 +136,7 @@ isEmpty arg1 =
 length : Elm.Expression -> Elm.Expression
 length arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Array" ]
             , name = "length"
             , annotation =
@@ -161,7 +161,7 @@ range.
 get : Elm.Expression -> Elm.Expression -> Elm.Expression
 get arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Array" ]
             , name = "get"
             , annotation =
@@ -185,7 +185,7 @@ If the index is out of range, the array is unaltered.
 set : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 set arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Array" ]
             , name = "set"
             , annotation =
@@ -209,7 +209,7 @@ set arg1 arg2 arg3 =
 push : Elm.Expression -> Elm.Expression -> Elm.Expression
 push arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Array" ]
             , name = "push"
             , annotation =
@@ -232,7 +232,7 @@ push arg1 arg2 =
 append : Elm.Expression -> Elm.Expression -> Elm.Expression
 append arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Array" ]
             , name = "append"
             , annotation =
@@ -268,7 +268,7 @@ This makes it pretty easy to `pop` the last element off of an array:
 slice : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 slice arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Array" ]
             , name = "slice"
             , annotation =
@@ -292,7 +292,7 @@ slice arg1 arg2 arg3 =
 toList : Elm.Expression -> Elm.Expression
 toList arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Array" ]
             , name = "toList"
             , annotation =
@@ -314,7 +314,7 @@ paired with its index.
 toIndexedList : Elm.Expression -> Elm.Expression
 toIndexedList arg1 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Array" ]
             , name = "toIndexedList"
             , annotation =
@@ -335,7 +335,7 @@ toIndexedList arg1 =
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 map arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Array" ]
             , name = "map"
             , annotation =
@@ -351,7 +351,7 @@ map arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "mapArg0_0", Type.var "a" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "mapArg0_0"
                     , annotation = Just (Type.var "a")
@@ -372,7 +372,7 @@ indexedMap :
     -> Elm.Expression
 indexedMap arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Array" ]
             , name = "indexedMap"
             , annotation =
@@ -392,13 +392,13 @@ indexedMap arg1 arg2 =
             , ( "indexedMapArg0_1", Type.var "a" )
             ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "indexedMapArg0_0"
                     , annotation = Just Type.int
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "indexedMapArg0_1"
                     , annotation = Just (Type.var "a")
@@ -420,7 +420,7 @@ foldl :
     -> Elm.Expression
 foldl arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Array" ]
             , name = "foldl"
             , annotation =
@@ -439,13 +439,13 @@ foldl arg1 arg2 arg3 =
         [ Elm.functionAdvanced
             [ ( "foldlArg0_0", Type.var "a" ), ( "foldlArg0_1", Type.var "b" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldlArg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldlArg0_1"
                     , annotation = Just (Type.var "b")
@@ -468,7 +468,7 @@ foldr :
     -> Elm.Expression
 foldr arg1 arg2 arg3 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Array" ]
             , name = "foldr"
             , annotation =
@@ -487,13 +487,13 @@ foldr arg1 arg2 arg3 =
         [ Elm.functionAdvanced
             [ ( "foldrArg0_0", Type.var "a" ), ( "foldrArg0_1", Type.var "b" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldrArg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "foldrArg0_1"
                     , annotation = Just (Type.var "b")
@@ -512,7 +512,7 @@ foldr arg1 arg2 arg3 =
 filter : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 filter arg1 arg2 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "Array" ]
             , name = "filter"
             , annotation =
@@ -528,7 +528,7 @@ filter arg1 arg2 =
         [ Elm.functionAdvanced
             [ ( "filterArg0_0", Type.var "a" ) ]
             (arg1
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = []
                     , name = "filterArg0_0"
                     , annotation = Just (Type.var "a")
@@ -571,14 +571,14 @@ values_ :
     }
 values_ =
     { empty =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Array" ]
             , name = "empty"
             , annotation =
                 Just (Type.namedWith [ "Array" ] "Array" [ Type.var "a" ])
             }
     , initialize =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Array" ]
             , name = "initialize"
             , annotation =
@@ -589,7 +589,7 @@ values_ =
                     )
             }
     , repeat =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Array" ]
             , name = "repeat"
             , annotation =
@@ -600,7 +600,7 @@ values_ =
                     )
             }
     , fromList =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Array" ]
             , name = "fromList"
             , annotation =
@@ -611,7 +611,7 @@ values_ =
                     )
             }
     , isEmpty =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Array" ]
             , name = "isEmpty"
             , annotation =
@@ -622,7 +622,7 @@ values_ =
                     )
             }
     , length =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Array" ]
             , name = "length"
             , annotation =
@@ -633,7 +633,7 @@ values_ =
                     )
             }
     , get =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Array" ]
             , name = "get"
             , annotation =
@@ -646,7 +646,7 @@ values_ =
                     )
             }
     , set =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Array" ]
             , name = "set"
             , annotation =
@@ -660,7 +660,7 @@ values_ =
                     )
             }
     , push =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Array" ]
             , name = "push"
             , annotation =
@@ -673,7 +673,7 @@ values_ =
                     )
             }
     , append =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Array" ]
             , name = "append"
             , annotation =
@@ -686,7 +686,7 @@ values_ =
                     )
             }
     , slice =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Array" ]
             , name = "slice"
             , annotation =
@@ -700,7 +700,7 @@ values_ =
                     )
             }
     , toList =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Array" ]
             , name = "toList"
             , annotation =
@@ -711,7 +711,7 @@ values_ =
                     )
             }
     , toIndexedList =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Array" ]
             , name = "toIndexedList"
             , annotation =
@@ -722,7 +722,7 @@ values_ =
                     )
             }
     , map =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Array" ]
             , name = "map"
             , annotation =
@@ -735,7 +735,7 @@ values_ =
                     )
             }
     , indexedMap =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Array" ]
             , name = "indexedMap"
             , annotation =
@@ -750,7 +750,7 @@ values_ =
                     )
             }
     , foldl =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Array" ]
             , name = "foldl"
             , annotation =
@@ -766,7 +766,7 @@ values_ =
                     )
             }
     , foldr =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Array" ]
             , name = "foldr"
             , annotation =
@@ -782,7 +782,7 @@ values_ =
                     )
             }
     , filter =
-        Elm.valueWith
+        Elm.value
             { importFrom = [ "Array" ]
             , name = "filter"
             , annotation =
@@ -824,7 +824,7 @@ call_ =
     { initialize =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Array" ]
                     , name = "initialize"
                     , annotation =
@@ -845,7 +845,7 @@ call_ =
     , repeat =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Array" ]
                     , name = "repeat"
                     , annotation =
@@ -864,7 +864,7 @@ call_ =
     , fromList =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Array" ]
                     , name = "fromList"
                     , annotation =
@@ -883,7 +883,7 @@ call_ =
     , isEmpty =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Array" ]
                     , name = "isEmpty"
                     , annotation =
@@ -902,7 +902,7 @@ call_ =
     , length =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Array" ]
                     , name = "length"
                     , annotation =
@@ -921,7 +921,7 @@ call_ =
     , get =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Array" ]
                     , name = "get"
                     , annotation =
@@ -941,7 +941,7 @@ call_ =
     , set =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Array" ]
                     , name = "set"
                     , annotation =
@@ -966,7 +966,7 @@ call_ =
     , push =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Array" ]
                     , name = "push"
                     , annotation =
@@ -990,7 +990,7 @@ call_ =
     , append =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Array" ]
                     , name = "append"
                     , annotation =
@@ -1017,7 +1017,7 @@ call_ =
     , slice =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Array" ]
                     , name = "slice"
                     , annotation =
@@ -1042,7 +1042,7 @@ call_ =
     , toList =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Array" ]
                     , name = "toList"
                     , annotation =
@@ -1061,7 +1061,7 @@ call_ =
     , toIndexedList =
         \arg1_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Array" ]
                     , name = "toIndexedList"
                     , annotation =
@@ -1080,7 +1080,7 @@ call_ =
     , map =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Array" ]
                     , name = "map"
                     , annotation =
@@ -1104,7 +1104,7 @@ call_ =
     , indexedMap =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Array" ]
                     , name = "indexedMap"
                     , annotation =
@@ -1130,7 +1130,7 @@ call_ =
     , foldl =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Array" ]
                     , name = "foldl"
                     , annotation =
@@ -1153,7 +1153,7 @@ call_ =
     , foldr =
         \arg1_0 arg2_0 arg3_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Array" ]
                     , name = "foldr"
                     , annotation =
@@ -1176,7 +1176,7 @@ call_ =
     , filter =
         \arg1_0 arg2_0 ->
             Elm.apply
-                (Elm.valueWith
+                (Elm.value
                     { importFrom = [ "Array" ]
                     , name = "filter"
                     , annotation =
