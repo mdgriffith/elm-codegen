@@ -112,11 +112,11 @@ update arg1 arg2 arg3 =
         )
         [ arg1
         , Elm.functionAdvanced
-            [ ( "ar0", Type.maybe (Type.var "v") ) ]
+            [ ( "updateArg0_0", Type.maybe (Type.var "v") ) ]
             (arg2
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "updateArg0_0"
                     , annotation = Just (Type.maybe (Type.var "v"))
                     }
                 )
@@ -383,17 +383,17 @@ map arg1 arg2 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.var "k" ), ( "ar1", Type.var "a" ) ]
+            [ ( "mapArg0_0", Type.var "k" ), ( "mapArg0_1", Type.var "a" ) ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "mapArg0_0"
                     , annotation = Just (Type.var "k")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar1"
+                    , name = "mapArg0_1"
                     , annotation = Just (Type.var "a")
                     }
                 )
@@ -443,26 +443,26 @@ foldl arg1 arg2 arg3 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.var "k" )
-            , ( "ar1", Type.var "v" )
-            , ( "ar2", Type.var "b" )
+            [ ( "foldlArg0_0", Type.var "k" )
+            , ( "foldlArg0_1", Type.var "v" )
+            , ( "foldlArg0_2", Type.var "b" )
             ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "foldlArg0_0"
                     , annotation = Just (Type.var "k")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar1"
+                    , name = "foldlArg0_1"
                     , annotation = Just (Type.var "v")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar2"
+                    , name = "foldlArg0_2"
                     , annotation = Just (Type.var "b")
                     }
                 )
@@ -513,26 +513,26 @@ foldr arg1 arg2 arg3 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.var "k" )
-            , ( "ar1", Type.var "v" )
-            , ( "ar2", Type.var "b" )
+            [ ( "foldrArg0_0", Type.var "k" )
+            , ( "foldrArg0_1", Type.var "v" )
+            , ( "foldrArg0_2", Type.var "b" )
             ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "foldrArg0_0"
                     , annotation = Just (Type.var "k")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar1"
+                    , name = "foldrArg0_1"
                     , annotation = Just (Type.var "v")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar2"
+                    , name = "foldrArg0_2"
                     , annotation = Just (Type.var "b")
                     }
                 )
@@ -572,17 +572,19 @@ filter arg1 arg2 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.var "comparable" ), ( "ar1", Type.var "v" ) ]
+            [ ( "filterArg0_0", Type.var "comparable" )
+            , ( "filterArg0_1", Type.var "v" )
+            ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "filterArg0_0"
                     , annotation = Just (Type.var "comparable")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar1"
+                    , name = "filterArg0_1"
                     , annotation = Just (Type.var "v")
                     }
                 )
@@ -631,17 +633,19 @@ partition arg1 arg2 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.var "comparable" ), ( "ar1", Type.var "v" ) ]
+            [ ( "partitionArg0_0", Type.var "comparable" )
+            , ( "partitionArg0_1", Type.var "v" )
+            ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "partitionArg0_0"
                     , annotation = Just (Type.var "comparable")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar1"
+                    , name = "partitionArg0_1"
                     , annotation = Just (Type.var "v")
                     }
                 )
@@ -809,83 +813,83 @@ merge arg1 arg2 arg3 arg4 arg5 arg6 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.var "comparable" )
-            , ( "ar1", Type.var "a" )
-            , ( "ar2", Type.var "result" )
+            [ ( "mergeArg0_0", Type.var "comparable" )
+            , ( "mergeArg0_1", Type.var "a" )
+            , ( "mergeArg0_2", Type.var "result" )
             ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "mergeArg0_0"
                     , annotation = Just (Type.var "comparable")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar1"
+                    , name = "mergeArg0_1"
                     , annotation = Just (Type.var "a")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar2"
+                    , name = "mergeArg0_2"
                     , annotation = Just (Type.var "result")
                     }
                 )
             )
         , Elm.functionAdvanced
-            [ ( "ar0", Type.var "comparable" )
-            , ( "ar1", Type.var "a" )
-            , ( "ar2", Type.var "b" )
-            , ( "ar3", Type.var "result" )
+            [ ( "mergeArg0_0", Type.var "comparable" )
+            , ( "mergeArg0_1", Type.var "a" )
+            , ( "mergeArg0_2", Type.var "b" )
+            , ( "mergeArg0_3", Type.var "result" )
             ]
             (arg2
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "mergeArg0_0"
                     , annotation = Just (Type.var "comparable")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar1"
+                    , name = "mergeArg0_1"
                     , annotation = Just (Type.var "a")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar2"
+                    , name = "mergeArg0_2"
                     , annotation = Just (Type.var "b")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar3"
+                    , name = "mergeArg0_3"
                     , annotation = Just (Type.var "result")
                     }
                 )
             )
         , Elm.functionAdvanced
-            [ ( "ar0", Type.var "comparable" )
-            , ( "ar1", Type.var "b" )
-            , ( "ar2", Type.var "result" )
+            [ ( "mergeArg0_0", Type.var "comparable" )
+            , ( "mergeArg0_1", Type.var "b" )
+            , ( "mergeArg0_2", Type.var "result" )
             ]
             (arg3
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "mergeArg0_0"
                     , annotation = Just (Type.var "comparable")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar1"
+                    , name = "mergeArg0_1"
                     , annotation = Just (Type.var "b")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar2"
+                    , name = "mergeArg0_2"
                     , annotation = Just (Type.var "result")
                     }
                 )

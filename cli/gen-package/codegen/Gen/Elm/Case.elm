@@ -71,11 +71,14 @@ maybe arg1 arg2 =
             , Elm.field
                 "just"
                 (Elm.functionAdvanced
-                    [ ( "ar0", Type.namedWith [ "Elm" ] "Expression" [] ) ]
+                    [ ( "maybeArg0_0"
+                      , Type.namedWith [ "Elm" ] "Expression" []
+                      )
+                    ]
                     (arg2.just
                         (Elm.valueWith
                             { importFrom = []
-                            , name = "ar0"
+                            , name = "maybeArg0_0"
                             , annotation =
                                 Just (Type.namedWith [ "Elm" ] "Expression" [])
                             }
@@ -147,11 +150,14 @@ result arg1 arg2 =
             [ Elm.field
                 "err"
                 (Elm.functionAdvanced
-                    [ ( "ar0", Type.namedWith [ "Elm" ] "Expression" [] ) ]
+                    [ ( "resultArg0_0"
+                      , Type.namedWith [ "Elm" ] "Expression" []
+                      )
+                    ]
                     (arg2.err
                         (Elm.valueWith
                             { importFrom = []
-                            , name = "ar0"
+                            , name = "resultArg0_0"
                             , annotation =
                                 Just (Type.namedWith [ "Elm" ] "Expression" [])
                             }
@@ -161,11 +167,14 @@ result arg1 arg2 =
             , Elm.field
                 "ok"
                 (Elm.functionAdvanced
-                    [ ( "ar0", Type.namedWith [ "Elm" ] "Expression" [] ) ]
+                    [ ( "resultArg0_0"
+                      , Type.namedWith [ "Elm" ] "Expression" []
+                      )
+                    ]
                     (arg2.ok
                         (Elm.valueWith
                             { importFrom = []
-                            , name = "ar0"
+                            , name = "resultArg0_0"
                             , annotation =
                                 Just (Type.namedWith [ "Elm" ] "Expression" [])
                             }
@@ -236,20 +245,20 @@ list arg1 arg2 =
             , Elm.field
                 "nonEmpty"
                 (Elm.functionAdvanced
-                    [ ( "ar0", Type.namedWith [ "Elm" ] "Expression" [] )
-                    , ( "ar1", Type.namedWith [ "Elm" ] "Expression" [] )
+                    [ ( "listArg0_0", Type.namedWith [ "Elm" ] "Expression" [] )
+                    , ( "listArg0_1", Type.namedWith [ "Elm" ] "Expression" [] )
                     ]
                     (arg2.nonEmpty
                         (Elm.valueWith
                             { importFrom = []
-                            , name = "ar0"
+                            , name = "listArg0_0"
                             , annotation =
                                 Just (Type.namedWith [ "Elm" ] "Expression" [])
                             }
                         )
                         (Elm.valueWith
                             { importFrom = []
-                            , name = "ar1"
+                            , name = "listArg0_1"
                             , annotation =
                                 Just (Type.namedWith [ "Elm" ] "Expression" [])
                             }
@@ -304,20 +313,20 @@ tuple arg1 arg2 =
         )
         [ arg1
         , Elm.functionAdvanced
-            [ ( "ar0", Type.namedWith [ "Elm" ] "Expression" [] )
-            , ( "ar1", Type.namedWith [ "Elm" ] "Expression" [] )
+            [ ( "tupleArg0_0", Type.namedWith [ "Elm" ] "Expression" [] )
+            , ( "tupleArg0_1", Type.namedWith [ "Elm" ] "Expression" [] )
             ]
             (arg2
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "tupleArg0_0"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar1"
+                    , name = "tupleArg0_1"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
@@ -371,28 +380,28 @@ triple arg1 arg2 =
         )
         [ arg1
         , Elm.functionAdvanced
-            [ ( "ar0", Type.namedWith [ "Elm" ] "Expression" [] )
-            , ( "ar1", Type.namedWith [ "Elm" ] "Expression" [] )
-            , ( "ar2", Type.namedWith [ "Elm" ] "Expression" [] )
+            [ ( "tripleArg0_0", Type.namedWith [ "Elm" ] "Expression" [] )
+            , ( "tripleArg0_1", Type.namedWith [ "Elm" ] "Expression" [] )
+            , ( "tripleArg0_2", Type.namedWith [ "Elm" ] "Expression" [] )
             ]
             (arg2
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "tripleArg0_0"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar1"
+                    , name = "tripleArg0_1"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar2"
+                    , name = "tripleArg0_2"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
@@ -465,11 +474,11 @@ otherwise arg1 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.namedWith [ "Elm" ] "Expression" [] ) ]
+            [ ( "otherwiseArg0_0", Type.namedWith [ "Elm" ] "Expression" [] ) ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "otherwiseArg0_0"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
@@ -527,11 +536,11 @@ branch1 arg1 arg2 arg3 =
         [ Elm.list arg1
         , arg2
         , Elm.functionAdvanced
-            [ ( "ar0", Type.namedWith [ "Elm" ] "Expression" [] ) ]
+            [ ( "branch1Arg0_0", Type.namedWith [ "Elm" ] "Expression" [] ) ]
             (arg3
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "branch1Arg0_0"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
@@ -569,20 +578,20 @@ branch2 arg1 arg2 arg3 =
         [ Elm.list arg1
         , arg2
         , Elm.functionAdvanced
-            [ ( "ar0", Type.namedWith [ "Elm" ] "Expression" [] )
-            , ( "ar1", Type.namedWith [ "Elm" ] "Expression" [] )
+            [ ( "branch2Arg0_0", Type.namedWith [ "Elm" ] "Expression" [] )
+            , ( "branch2Arg0_1", Type.namedWith [ "Elm" ] "Expression" [] )
             ]
             (arg3
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "branch2Arg0_0"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar1"
+                    , name = "branch2Arg0_1"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
@@ -621,28 +630,28 @@ branch3 arg1 arg2 arg3 =
         [ Elm.list arg1
         , arg2
         , Elm.functionAdvanced
-            [ ( "ar0", Type.namedWith [ "Elm" ] "Expression" [] )
-            , ( "ar1", Type.namedWith [ "Elm" ] "Expression" [] )
-            , ( "ar2", Type.namedWith [ "Elm" ] "Expression" [] )
+            [ ( "branch3Arg0_0", Type.namedWith [ "Elm" ] "Expression" [] )
+            , ( "branch3Arg0_1", Type.namedWith [ "Elm" ] "Expression" [] )
+            , ( "branch3Arg0_2", Type.namedWith [ "Elm" ] "Expression" [] )
             ]
             (arg3
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "branch3Arg0_0"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar1"
+                    , name = "branch3Arg0_1"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar2"
+                    , name = "branch3Arg0_2"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
@@ -686,36 +695,36 @@ branch4 arg1 arg2 arg3 =
         [ Elm.list arg1
         , arg2
         , Elm.functionAdvanced
-            [ ( "ar0", Type.namedWith [ "Elm" ] "Expression" [] )
-            , ( "ar1", Type.namedWith [ "Elm" ] "Expression" [] )
-            , ( "ar2", Type.namedWith [ "Elm" ] "Expression" [] )
-            , ( "ar3", Type.namedWith [ "Elm" ] "Expression" [] )
+            [ ( "branch4Arg0_0", Type.namedWith [ "Elm" ] "Expression" [] )
+            , ( "branch4Arg0_1", Type.namedWith [ "Elm" ] "Expression" [] )
+            , ( "branch4Arg0_2", Type.namedWith [ "Elm" ] "Expression" [] )
+            , ( "branch4Arg0_3", Type.namedWith [ "Elm" ] "Expression" [] )
             ]
             (arg3
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "branch4Arg0_0"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar1"
+                    , name = "branch4Arg0_1"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar2"
+                    , name = "branch4Arg0_2"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar3"
+                    , name = "branch4Arg0_3"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
@@ -761,44 +770,44 @@ branch5 arg1 arg2 arg3 =
         [ Elm.list arg1
         , arg2
         , Elm.functionAdvanced
-            [ ( "ar0", Type.namedWith [ "Elm" ] "Expression" [] )
-            , ( "ar1", Type.namedWith [ "Elm" ] "Expression" [] )
-            , ( "ar2", Type.namedWith [ "Elm" ] "Expression" [] )
-            , ( "ar3", Type.namedWith [ "Elm" ] "Expression" [] )
-            , ( "ar4", Type.namedWith [ "Elm" ] "Expression" [] )
+            [ ( "branch5Arg0_0", Type.namedWith [ "Elm" ] "Expression" [] )
+            , ( "branch5Arg0_1", Type.namedWith [ "Elm" ] "Expression" [] )
+            , ( "branch5Arg0_2", Type.namedWith [ "Elm" ] "Expression" [] )
+            , ( "branch5Arg0_3", Type.namedWith [ "Elm" ] "Expression" [] )
+            , ( "branch5Arg0_4", Type.namedWith [ "Elm" ] "Expression" [] )
             ]
             (arg3
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "branch5Arg0_0"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar1"
+                    , name = "branch5Arg0_1"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar2"
+                    , name = "branch5Arg0_2"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar3"
+                    , name = "branch5Arg0_3"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar4"
+                    , name = "branch5Arg0_4"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
@@ -846,52 +855,52 @@ branch6 arg1 arg2 arg3 =
         [ Elm.list arg1
         , arg2
         , Elm.functionAdvanced
-            [ ( "ar0", Type.namedWith [ "Elm" ] "Expression" [] )
-            , ( "ar1", Type.namedWith [ "Elm" ] "Expression" [] )
-            , ( "ar2", Type.namedWith [ "Elm" ] "Expression" [] )
-            , ( "ar3", Type.namedWith [ "Elm" ] "Expression" [] )
-            , ( "ar4", Type.namedWith [ "Elm" ] "Expression" [] )
-            , ( "ar5", Type.namedWith [ "Elm" ] "Expression" [] )
+            [ ( "branch6Arg0_0", Type.namedWith [ "Elm" ] "Expression" [] )
+            , ( "branch6Arg0_1", Type.namedWith [ "Elm" ] "Expression" [] )
+            , ( "branch6Arg0_2", Type.namedWith [ "Elm" ] "Expression" [] )
+            , ( "branch6Arg0_3", Type.namedWith [ "Elm" ] "Expression" [] )
+            , ( "branch6Arg0_4", Type.namedWith [ "Elm" ] "Expression" [] )
+            , ( "branch6Arg0_5", Type.namedWith [ "Elm" ] "Expression" [] )
             ]
             (arg3
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "branch6Arg0_0"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar1"
+                    , name = "branch6Arg0_1"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar2"
+                    , name = "branch6Arg0_2"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar3"
+                    , name = "branch6Arg0_3"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar4"
+                    , name = "branch6Arg0_4"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar5"
+                    , name = "branch6Arg0_5"
                     , annotation =
                         Just (Type.namedWith [ "Elm" ] "Expression" [])
                     }
@@ -932,11 +941,14 @@ branchWith arg1 arg2 arg3 arg4 =
         , arg2
         , arg3
         , Elm.functionAdvanced
-            [ ( "ar0", Type.list (Type.namedWith [ "Elm" ] "Expression" []) ) ]
+            [ ( "branchWithArg0_0"
+              , Type.list (Type.namedWith [ "Elm" ] "Expression" [])
+              )
+            ]
             (arg4
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "branchWithArg0_0"
                     , annotation =
                         Just
                             (Type.list
@@ -972,11 +984,14 @@ listBranch arg1 arg2 =
         )
         [ arg1
         , Elm.functionAdvanced
-            [ ( "ar0", Type.list (Type.namedWith [ "Elm" ] "Expression" []) ) ]
+            [ ( "listBranchArg0_0"
+              , Type.list (Type.namedWith [ "Elm" ] "Expression" [])
+              )
+            ]
             (arg2
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "listBranchArg0_0"
                     , annotation =
                         Just
                             (Type.list

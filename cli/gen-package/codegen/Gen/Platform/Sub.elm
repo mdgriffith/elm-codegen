@@ -92,11 +92,11 @@ map arg1 arg2 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.var "a" ) ]
+            [ ( "mapArg0_0", Type.var "a" ) ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "mapArg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )

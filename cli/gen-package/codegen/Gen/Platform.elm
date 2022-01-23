@@ -100,11 +100,11 @@ worker arg1 =
             [ Elm.field
                 "init"
                 (Elm.functionAdvanced
-                    [ ( "ar0", Type.var "flags" ) ]
+                    [ ( "workerArg0_0", Type.var "flags" ) ]
                     (arg1.init
                         (Elm.valueWith
                             { importFrom = []
-                            , name = "ar0"
+                            , name = "workerArg0_0"
                             , annotation = Just (Type.var "flags")
                             }
                         )
@@ -113,17 +113,19 @@ worker arg1 =
             , Elm.field
                 "update"
                 (Elm.functionAdvanced
-                    [ ( "ar0", Type.var "msg" ), ( "ar1", Type.var "model" ) ]
+                    [ ( "workerArg0_0", Type.var "msg" )
+                    , ( "workerArg0_1", Type.var "model" )
+                    ]
                     (arg1.update
                         (Elm.valueWith
                             { importFrom = []
-                            , name = "ar0"
+                            , name = "workerArg0_0"
                             , annotation = Just (Type.var "msg")
                             }
                         )
                         (Elm.valueWith
                             { importFrom = []
-                            , name = "ar1"
+                            , name = "workerArg0_1"
                             , annotation = Just (Type.var "model")
                             }
                         )
@@ -132,11 +134,11 @@ worker arg1 =
             , Elm.field
                 "subscriptions"
                 (Elm.functionAdvanced
-                    [ ( "ar0", Type.var "model" ) ]
+                    [ ( "workerArg0_0", Type.var "model" ) ]
                     (arg1.subscriptions
                         (Elm.valueWith
                             { importFrom = []
-                            , name = "ar0"
+                            , name = "workerArg0_0"
                             , annotation = Just (Type.var "model")
                             }
                         )

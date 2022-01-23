@@ -772,11 +772,11 @@ map arg1 arg2 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.char ) ]
+            [ ( "mapArg0_0", Type.char ) ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "mapArg0_0"
                     , annotation = Just Type.char
                     }
                 )
@@ -804,11 +804,11 @@ filter arg1 arg2 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.char ) ]
+            [ ( "filterArg0_0", Type.char ) ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "filterArg0_0"
                     , annotation = Just Type.char
                     }
                 )
@@ -845,17 +845,17 @@ foldl arg1 arg2 arg3 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.char ), ( "ar1", Type.var "b" ) ]
+            [ ( "foldlArg0_0", Type.char ), ( "foldlArg0_1", Type.var "b" ) ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "foldlArg0_0"
                     , annotation = Just Type.char
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar1"
+                    , name = "foldlArg0_1"
                     , annotation = Just (Type.var "b")
                     }
                 )
@@ -893,17 +893,17 @@ foldr arg1 arg2 arg3 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.char ), ( "ar1", Type.var "b" ) ]
+            [ ( "foldrArg0_0", Type.char ), ( "foldrArg0_1", Type.var "b" ) ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "foldrArg0_0"
                     , annotation = Just Type.char
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar1"
+                    , name = "foldrArg0_1"
                     , annotation = Just (Type.var "b")
                     }
                 )
@@ -934,11 +934,11 @@ any arg1 arg2 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.char ) ]
+            [ ( "anyArg0_0", Type.char ) ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "anyArg0_0"
                     , annotation = Just Type.char
                     }
                 )
@@ -968,11 +968,11 @@ all arg1 arg2 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.char ) ]
+            [ ( "allArg0_0", Type.char ) ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "allArg0_0"
                     , annotation = Just Type.char
                     }
                 )

@@ -63,11 +63,11 @@ perform arg1 arg2 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.var "a" ) ]
+            [ ( "performArg0_0", Type.var "a" ) ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "performArg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
@@ -130,7 +130,7 @@ attempt arg1 arg2 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0"
+            [ ( "attemptArg0_0"
               , Type.namedWith
                     [ "Result" ]
                     "Result"
@@ -140,7 +140,7 @@ attempt arg1 arg2 =
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "attemptArg0_0"
                     , annotation =
                         Just
                             (Type.namedWith
@@ -200,11 +200,11 @@ andThen arg1 arg2 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.var "a" ) ]
+            [ ( "andThenArg0_0", Type.var "a" ) ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "andThenArg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
@@ -349,11 +349,11 @@ map arg1 arg2 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.var "a" ) ]
+            [ ( "mapArg0_0", Type.var "a" ) ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "mapArg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
@@ -412,17 +412,17 @@ map2 arg1 arg2 arg3 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.var "a" ), ( "ar1", Type.var "b" ) ]
+            [ ( "map2Arg0_0", Type.var "a" ), ( "map2Arg0_1", Type.var "b" ) ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "map2Arg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar1"
+                    , name = "map2Arg0_1"
                     , annotation = Just (Type.var "b")
                     }
                 )
@@ -472,26 +472,26 @@ map3 arg1 arg2 arg3 arg4 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.var "a" )
-            , ( "ar1", Type.var "b" )
-            , ( "ar2", Type.var "c" )
+            [ ( "map3Arg0_0", Type.var "a" )
+            , ( "map3Arg0_1", Type.var "b" )
+            , ( "map3Arg0_2", Type.var "c" )
             ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "map3Arg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar1"
+                    , name = "map3Arg0_1"
                     , annotation = Just (Type.var "b")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar2"
+                    , name = "map3Arg0_2"
                     , annotation = Just (Type.var "c")
                     }
                 )
@@ -555,33 +555,33 @@ map4 arg1 arg2 arg3 arg4 arg5 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.var "a" )
-            , ( "ar1", Type.var "b" )
-            , ( "ar2", Type.var "c" )
-            , ( "ar3", Type.var "d" )
+            [ ( "map4Arg0_0", Type.var "a" )
+            , ( "map4Arg0_1", Type.var "b" )
+            , ( "map4Arg0_2", Type.var "c" )
+            , ( "map4Arg0_3", Type.var "d" )
             ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "map4Arg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar1"
+                    , name = "map4Arg0_1"
                     , annotation = Just (Type.var "b")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar2"
+                    , name = "map4Arg0_2"
                     , annotation = Just (Type.var "c")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar3"
+                    , name = "map4Arg0_3"
                     , annotation = Just (Type.var "d")
                     }
                 )
@@ -653,40 +653,40 @@ map5 arg1 arg2 arg3 arg4 arg5 arg6 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.var "a" )
-            , ( "ar1", Type.var "b" )
-            , ( "ar2", Type.var "c" )
-            , ( "ar3", Type.var "d" )
-            , ( "ar4", Type.var "e" )
+            [ ( "map5Arg0_0", Type.var "a" )
+            , ( "map5Arg0_1", Type.var "b" )
+            , ( "map5Arg0_2", Type.var "c" )
+            , ( "map5Arg0_3", Type.var "d" )
+            , ( "map5Arg0_4", Type.var "e" )
             ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "map5Arg0_0"
                     , annotation = Just (Type.var "a")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar1"
+                    , name = "map5Arg0_1"
                     , annotation = Just (Type.var "b")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar2"
+                    , name = "map5Arg0_2"
                     , annotation = Just (Type.var "c")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar3"
+                    , name = "map5Arg0_3"
                     , annotation = Just (Type.var "d")
                     }
                 )
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar4"
+                    , name = "map5Arg0_4"
                     , annotation = Just (Type.var "e")
                     }
                 )
@@ -740,11 +740,11 @@ onError arg1 arg2 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.var "x" ) ]
+            [ ( "onErrorArg0_0", Type.var "x" ) ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "onErrorArg0_0"
                     , annotation = Just (Type.var "x")
                     }
                 )
@@ -792,11 +792,11 @@ mapError arg1 arg2 =
             }
         )
         [ Elm.functionAdvanced
-            [ ( "ar0", Type.var "x" ) ]
+            [ ( "mapErrorArg0_0", Type.var "x" ) ]
             (arg1
                 (Elm.valueWith
                     { importFrom = []
-                    , name = "ar0"
+                    , name = "mapErrorArg0_0"
                     , annotation = Just (Type.var "x")
                     }
                 )
