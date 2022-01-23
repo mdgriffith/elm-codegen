@@ -646,9 +646,14 @@ generateBlocks thisModule block =
                         ( (List.reverse (List.drop 1 captured.arguments)))
                         (\vars ->
                             (ElmGen.apply
-                                (valueWith thisModule
-                                    (Elm.string value.name)
-                                    value.tipe
+                                (ElmGen.valueWith
+                                    { importFrom = List.map Elm.string thisModule
+                                    , name = Elm.string value.name
+                                    , annotation =
+                                        typeToExpression thisModule  value.tipe
+                                            |> Just
+                                            |> Elm.maybe
+                                    }
                                 )
                                 (List.reverse (List.drop 1 captured.values))
                             )
@@ -753,6 +758,9 @@ asArgumentTypeHelper tipe =
         Elm.Type.Type "List.List" [ inner ] ->
             Annotation.list <| asArgumentTypeHelper inner
 
+        Elm.Type.Type modAndName typeVars ->
+            expressionType
+
         Elm.Type.Record fields Nothing ->
             Annotation.record <|
                 List.map
@@ -765,8 +773,24 @@ asArgumentTypeHelper tipe =
                     )
                     fields
 
-        _ ->
+        Elm.Type.Record fields (Just genName) ->
+            Annotation.extensible genName <|
+                List.map
+                    (\( fieldName, fieldType ) ->
+                        let
+                            fieldAnnotation =
+                                asArgumentTypeHelper fieldType
+                        in
+                        ( fieldName, fieldAnnotation )
+                    )
+                    fields
+
+        Elm.Type.Tuple tuples ->
             expressionType
+
+        Elm.Type.Var name ->
+            expressionType
+
 
 
 asArgumentTypeHelperForLambdas : Elm.Type.Type -> Annotation.Annotation
@@ -918,7 +942,20 @@ getArgumentUnpacker freshCount tipe value =
 
                 unpackedInner =
                     if needsUnpacking inner then
-                        Elm.apply (Elm.valueFrom [ "List" ] "map")
+                        Elm.apply
+                            (Elm.valueWith
+                                { importFrom = [ "List" ]
+                                , name = "map"
+                                , annotation =
+                                    Just
+                                        (Annotation.function
+                                            [ Annotation.function [ Annotation.var "thing" ] (Annotation.var "b")
+                                            , Annotation.list (Annotation.var "thing")
+                                            ]
+                                            (Annotation.list (Annotation.var "b"))
+                                        )
+                                }
+                            )
                             [ Elm.functionReduced varName
                                 (typeToAnnotation inner)
                                 (getArgumentUnpacker (freshCount + 1) inner)
@@ -986,6 +1023,15 @@ typeToAnnotation elmType =
                     -- this should never happen :/
                     Annotation.unit
 
+        Elm.Type.Type "List.List" types ->
+            case types of
+                [innerName] ->
+                    Annotation.list (typeToAnnotation innerName)
+
+                _ ->
+                    Annotation.list Annotation.unit
+
+
         Elm.Type.Type name types ->
             case List.reverse (String.split "." name) of
                 [] ->
@@ -1033,25 +1079,13 @@ typeToGeneratedAnnotation elmType =
 
         Elm.Type.Lambda one two ->
             Annotation.function
-                [ --typeToGeneratedAnnotation one
-                 Annotation.namedWith [ "Elm" ] "Expression" []
+                [ Annotation.namedWith [ "Elm" ] "Expression" []
                 ]
                 (typeToGeneratedAnnotationExpression two)
 
         Elm.Type.Tuple types ->
-            -- case types of
-            --     [] ->
-            --         Annotation.namedWith [ "Elm" ] "Expression" []
 
-            --     [ one, two ] ->
-            --         Annotation.tuple (typeToGeneratedAnnotation one) (typeToGeneratedAnnotation two)
-
-            --     [ one, two, three ] ->
-            --         Annotation.triple (typeToGeneratedAnnotation one) (typeToGeneratedAnnotation two) (typeToGeneratedAnnotation three)
-
-            --     _ ->
-                    -- this should never happen :/
-                    Annotation.namedWith [ "Elm" ] "Expression" []
+            Annotation.namedWith [ "Elm" ] "Expression" []
 
         Elm.Type.Type "List.List" [ inner ] ->
             Annotation.list (typeToGeneratedAnnotation inner)
@@ -1072,7 +1106,6 @@ typeToGeneratedAnnotationExpression : Elm.Type.Type -> Annotation.Annotation
 typeToGeneratedAnnotationExpression elmType =
     case elmType of
         Elm.Type.Var string ->
-
             Annotation.namedWith [ "Elm" ] "Expression" []
 
         Elm.Type.Lambda one two ->
@@ -1084,7 +1117,6 @@ typeToGeneratedAnnotationExpression elmType =
             Annotation.namedWith [ "Elm" ] "Expression" []
 
         Elm.Type.Type "List.List" [ inner ] ->
-            -- Annotation.list (typeToGeneratedAnnotation inner)
              Annotation.namedWith [ "Elm" ] "Expression" []
 
         Elm.Type.Type name types ->

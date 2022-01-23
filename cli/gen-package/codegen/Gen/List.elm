@@ -603,6 +603,7 @@ append arg1 arg2 =
 
     concat [[1,2],[3],[4,5]] == [1,2,3,4,5]
 -}
+concat : List (List Elm.Expression) -> Elm.Expression
 concat arg1 =
     Elm.apply
         (Elm.valueWith
