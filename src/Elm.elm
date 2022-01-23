@@ -2400,45 +2400,50 @@ This is for when:
 -}
 functionAdvanced : List ( String, Elm.Annotation.Annotation ) -> Expression -> Expression
 functionAdvanced args fullExpression =
-    Compiler.Expression <|
-        \index ->
-            let
-                childIndex =
-                    Compiler.dive index
+    case args of
+        [] ->
+            fullExpression
 
-                expr =
-                    case fullExpression of
-                        Compiler.Expression toExpr ->
-                            toExpr childIndex
-            in
-            { expression =
-                Exp.LambdaExpression
-                    { args =
-                        List.map
-                            (\( name, ann ) -> Compiler.nodify (Pattern.VarPattern name))
-                            args
-                    , expression = Compiler.nodify expr.expression
-                    }
-            , annotation =
-                case expr.annotation of
-                    Err err ->
-                        Err err
+        _ ->
+            Compiler.Expression <|
+                \index ->
+                    let
+                        childIndex =
+                            Compiler.dive index
 
-                    Ok return ->
-                        Ok
-                            { type_ =
-                                List.foldr
-                                    (\( name, Compiler.Annotation ann ) fnbody ->
-                                        Annotation.FunctionTypeAnnotation
-                                            (Compiler.nodify ann.annotation)
-                                            (Compiler.nodify fnbody)
-                                    )
-                                    return.type_
+                        expr =
+                            case fullExpression of
+                                Compiler.Expression toExpr ->
+                                    toExpr childIndex
+                    in
+                    { expression =
+                        Exp.LambdaExpression
+                            { args =
+                                List.map
+                                    (\( name, ann ) -> Compiler.nodify (Pattern.VarPattern name))
                                     args
-                            , inferences = return.inferences
+                            , expression = Compiler.nodify expr.expression
                             }
-            , imports = expr.imports
-            }
+                    , annotation =
+                        case expr.annotation of
+                            Err err ->
+                                Err err
+
+                            Ok return ->
+                                Ok
+                                    { type_ =
+                                        List.foldr
+                                            (\( name, Compiler.Annotation ann ) fnbody ->
+                                                Annotation.FunctionTypeAnnotation
+                                                    (Compiler.nodify ann.annotation)
+                                                    (Compiler.nodify fnbody)
+                                            )
+                                            return.type_
+                                            args
+                                    , inferences = return.inferences
+                                    }
+                    , imports = expr.imports
+                    }
 
 
 {-| You may run into situations where you don't know the number of arguments for a function at compile-time.
@@ -2453,89 +2458,94 @@ Provide it with —
 -}
 function : List ( String, Maybe Elm.Annotation.Annotation ) -> (List Expression -> Expression) -> Expression
 function initialArgList toFullExpression =
-    Compiler.Expression <|
-        \index ->
-            let
-                childIndex =
-                    Compiler.dive index
+    case initialArgList of
+        [] ->
+            toFullExpression []
 
-                args =
-                    List.foldl
-                        (\( nameBase, maybeType ) found ->
-                            let
-                                name =
-                                    nameBase ++ Compiler.indexToString found.index
+        _ ->
+            Compiler.Expression <|
+                \index ->
+                    let
+                        childIndex =
+                            Compiler.dive index
 
-                                argType =
-                                    Maybe.withDefault
-                                        (Compiler.Annotation
-                                            { imports = []
-                                            , annotation =
-                                                Annotation.GenericType
-                                                    (Compiler.formatValue
-                                                        (name ++ Compiler.indexToString found.index)
-                                                    )
-                                            }
-                                        )
-                                        maybeType
-
-                                arg =
-                                    valueWithHelper []
-                                        name
-                                        argType
-                            in
-                            { index = Compiler.next found.index
-                            , args = arg :: found.args
-                            , names = name :: found.names
-                            , types = Compiler.getInnerAnnotation argType :: found.types
-                            }
-                        )
-                        { args = []
-                        , index = index
-                        , names = []
-                        , types = []
-                        }
-                        initialArgList
-
-                fullExpression =
-                    toFullExpression (List.reverse args.args)
-
-                expr =
-                    case fullExpression of
-                        Compiler.Expression toExpr ->
-                            toExpr childIndex
-            in
-            { expression =
-                Exp.LambdaExpression
-                    { args =
-                        -- doing this to reverse things while building the patternlist
-                        List.foldl
-                            (\n names -> Compiler.nodify (Pattern.VarPattern n) :: names)
-                            []
-                            args.names
-                    , expression = Compiler.nodify expr.expression
-                    }
-            , annotation =
-                case expr.annotation of
-                    Err err ->
-                        Err err
-
-                    Ok return ->
-                        -- args.types is already backwards, so this should work out ok
-                        { type_ =
+                        args =
                             List.foldl
-                                (\ann fnbody ->
-                                    Annotation.FunctionTypeAnnotation
-                                        (Compiler.nodify ann)
-                                        (Compiler.nodify fnbody)
+                                (\( nameBase, maybeType ) found ->
+                                    let
+                                        name =
+                                            nameBase ++ Compiler.indexToString found.index
+
+                                        argType =
+                                            Maybe.withDefault
+                                                (Compiler.Annotation
+                                                    { imports = []
+                                                    , annotation =
+                                                        Annotation.GenericType
+                                                            (Compiler.formatValue
+                                                                (name ++ Compiler.indexToString found.index)
+                                                            )
+                                                    }
+                                                )
+                                                maybeType
+
+                                        arg =
+                                            valueWithHelper []
+                                                name
+                                                argType
+                                    in
+                                    { index = Compiler.next found.index
+                                    , args = arg :: found.args
+                                    , names = name :: found.names
+                                    , types = Compiler.getInnerAnnotation argType :: found.types
+                                    }
                                 )
-                                return.type_
-                                args.types
-                        , inferences = return.inferences
-                        }
-                            |> Ok
-            , imports = expr.imports
-            }
+                                { args = []
+                                , index = index
+                                , names = []
+                                , types = []
+                                }
+                                initialArgList
+
+                        fullExpression =
+                            toFullExpression (List.reverse args.args)
+
+                        expr =
+                            case fullExpression of
+                                Compiler.Expression toExpr ->
+                                    toExpr childIndex
+                    in
+                    { expression =
+                        Exp.LambdaExpression
+                            { args =
+                                -- doing this to reverse things while building the patternlist
+                                List.foldl
+                                    (\n names -> Compiler.nodify (Pattern.VarPattern n) :: names)
+                                    []
+                                    args.names
+                            , expression = Compiler.nodify expr.expression
+                            }
+                    , annotation =
+                        case expr.annotation of
+                            Err err ->
+                                Err err
+
+                            Ok return ->
+                                -- args.types is already backwards, so this should work out ok
+                                { type_ =
+                                    List.foldl
+                                        (\ann fnbody ->
+                                            Annotation.FunctionTypeAnnotation
+                                                (Compiler.nodify ann)
+                                                (Compiler.nodify fnbody)
+                                        )
+                                        return.type_
+                                        args.types
+                                , inferences = return.inferences
+                                }
+                                    |> Ok
+                    , imports = expr.imports
+                    }
 
 
 {-| Add a documentation comment to a declaration!
