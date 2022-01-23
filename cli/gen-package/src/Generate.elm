@@ -256,13 +256,13 @@ blockToCall thisModule block =
                 Elm.Type.Lambda one two ->
                     let
                         captured =
-                            captureFunction two
+                            captureFunction value.name two
                                 { index = 2
                                 , arguments =
                                     [ asArgument 1 one
                                     ]
                                 , values =
-                                    [ asValue 1 one
+                                    [ asValue value.name 1 one
                                     ]
                                 }
 
@@ -631,13 +631,13 @@ generateBlocks thisModule block =
                 Elm.Type.Lambda one two ->
                     let
                         captured =
-                            captureFunction two
+                            captureFunction value.name two
                                 { index = 2
                                 , arguments =
                                     [ asArgument 1 one
                                     ]
                                 , values =
-                                    [ asValue 1 one
+                                    [ asValue value.name 1 one
                                     ]
                                 }
 
@@ -706,7 +706,7 @@ generateBlocks thisModule block =
     }
 
 -}
-captureFunction :
+captureFunction : String ->
     Elm.Type.Type
     ->
         { index : Int
@@ -718,19 +718,19 @@ captureFunction :
         , arguments : List ( String, Maybe Annotation.Annotation )
         , values : List Elm.Expression
         }
-captureFunction tipe captured =
+captureFunction baseName tipe captured =
     case tipe of
         Elm.Type.Lambda one two ->
-            captureFunction two
+            captureFunction baseName two
                 { index = captured.index + 1
                 , arguments = asArgument captured.index one :: captured.arguments
-                , values = asValue captured.index one :: captured.values
+                , values = asValue baseName captured.index one :: captured.values
                 }
 
         _ ->
             { index = captured.index + 1
             , arguments = asArgument captured.index tipe :: captured.arguments
-            , values = asValue captured.index tipe :: captured.values
+            , values = asValue baseName captured.index tipe :: captured.values
             }
 
 
@@ -807,9 +807,9 @@ asArgumentTypeHelperForLambdas tipe =
 
 
 {-| -}
-asValue : Int -> Elm.Type.Type -> Elm.Expression
-asValue index tipe =
-    getArgumentUnpacker 0 tipe <|
+asValue : String -> Int -> Elm.Type.Type -> Elm.Expression
+asValue baseName index tipe =
+    getArgumentUnpacker baseName 0 tipe <|
         (Elm.valueWith
             { importFrom = []
             , name = (argName index)
@@ -858,8 +858,8 @@ functionArgTypes fnType args =
 
 
 
-getArgumentUnpacker : Int -> Elm.Type.Type -> Elm.Expression -> Elm.Expression
-getArgumentUnpacker freshCount tipe value =
+getArgumentUnpacker : String -> Int -> Elm.Type.Type -> Elm.Expression -> Elm.Expression
+getArgumentUnpacker baseName freshCount tipe value =
     case tipe of
         Elm.Type.Lambda one two ->
             let
@@ -869,63 +869,23 @@ getArgumentUnpacker freshCount tipe value =
                 args = functionArgTypes tipe []
             in
             ElmGen.functionAdvanced
-            --     (List.map
-            --         (\i ->
-                        -- Elm.tuple
-                        --     (Elm.string ("ar" ++ String.fromInt i))
-                        --     (GenType.named
-                        --         [ Elm.string "Elm" ]
-                        --             (Elm.string "Expression")
-                        --     )
-            --         )
-            --         (List.range 1 argCount)
-            --     )
                 (List.indexedMap
                     (\i argType ->
                         Elm.tuple
-                            (Elm.string ("ar" ++ String.fromInt i))
-                            -- (GenType.named
-                            --     [ Elm.string "Elm" ]
-                            --         (Elm.string "Expression")
-                            -- )
+                            (Elm.string (baseName ++ "Arg" ++ String.fromInt freshCount ++ "_" ++ String.fromInt i))
                             (typeToExpression [] argType)
-                            -- (typeToGeneratedAnnotation argType)
                     )
                     args.args
 
                 )
                 ( Elm.apply value
-                    -- (List.map
-                    --     (\i ->
-                    --         ElmGen.valueWith
-                    --             { importFrom = []
-                    --             , name = (Elm.string ("ar" ++ String.fromInt i))
-                    --             , annotation =
-                    --                 Elm.maybe
-                    --                     (Just
-                    --                         (GenType.named
-                    --                             [ Elm.string "Elm" ]
-                    --                             (Elm.string "Expression")
-                    --                         )
-                    --                     )
-
-                    --             }
-                    --     )
-                    --     (List.range 1 argCount)
-                    -- )
                     (List.indexedMap
                         (\i argType ->
                             ElmGen.valueWith
                                 { importFrom = []
-                                , name = (Elm.string ("ar" ++ String.fromInt i))
+                                , name = Elm.string (baseName ++ "Arg" ++ String.fromInt freshCount ++ "_" ++ String.fromInt i)
                                 , annotation =
                                     Elm.maybe
-                                        -- (Just
-                                        --     (GenType.named
-                                        --         [ Elm.string "Elm" ]
-                                        --         (Elm.string "Expression")
-                                        --     )
-                                        -- )
                                         (Just (typeToExpression [] argType))
 
                                 }
@@ -958,7 +918,7 @@ getArgumentUnpacker freshCount tipe value =
                             )
                             [ Elm.functionReduced varName
                                 (typeToAnnotation inner)
-                                (getArgumentUnpacker (freshCount + 1) inner)
+                                (getArgumentUnpacker baseName (freshCount + 1) inner)
                             , value
                             ]
 
@@ -976,7 +936,7 @@ getArgumentUnpacker freshCount tipe value =
                     (\( fieldName, fieldType ) ->
                         ElmGen.field
                             (Elm.string fieldName)
-                            (getArgumentUnpacker freshCount fieldType <|
+                            (getArgumentUnpacker baseName freshCount fieldType <|
                                 Elm.get fieldName value
                             )
                     )
