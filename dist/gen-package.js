@@ -10581,91 +10581,95 @@ var $author$project$Generate$captureFunction = F2(
 	});
 var $author$project$Elm$function = F2(
 	function (initialArgList, toFullExpression) {
-		return function (index) {
-			var childIndex = $author$project$Internal$Compiler$dive(index);
-			var args = A3(
-				$elm$core$List$foldl,
-				F2(
-					function (_v2, found) {
-						var nameBase = _v2.a;
-						var maybeType = _v2.b;
-						var name = _Utils_ap(
-							nameBase,
-							$author$project$Internal$Compiler$indexToString(found.u));
-						var argType = A2(
-							$elm$core$Maybe$withDefault,
-							{
-								c: $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$GenericType(
-									$author$project$Internal$Compiler$formatValue(
-										_Utils_ap(
-											name,
-											$author$project$Internal$Compiler$indexToString(found.u)))),
-								b: _List_Nil
-							},
-							maybeType);
-						var arg = A3($author$project$Elm$valueWithHelper, _List_Nil, name, argType);
-						return {
-							aQ: A2($elm$core$List$cons, arg, found.aQ),
-							u: $author$project$Internal$Compiler$next(found.u),
-							aa: A2($elm$core$List$cons, name, found.aa),
-							ad: A2(
-								$elm$core$List$cons,
-								$author$project$Internal$Compiler$getInnerAnnotation(argType),
-								found.ad)
-						};
-					}),
-				{aQ: _List_Nil, u: index, aa: _List_Nil, ad: _List_Nil},
-				initialArgList);
-			var fullExpression = toFullExpression(
-				$elm$core$List$reverse(args.aQ));
-			var expr = function () {
-				var toExpr = fullExpression;
-				return toExpr(childIndex);
-			}();
-			return {
-				c: function () {
-					var _v0 = expr.c;
-					if (_v0.$ === 1) {
-						var err = _v0.a;
-						return $elm$core$Result$Err(err);
-					} else {
-						var _return = _v0.a;
-						return $elm$core$Result$Ok(
-							{
-								g: _return.g,
-								f: A3(
-									$elm$core$List$foldl,
-									F2(
-										function (ann, fnbody) {
-											return A2(
-												$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$FunctionTypeAnnotation,
-												$author$project$Internal$Compiler$nodify(ann),
-												$author$project$Internal$Compiler$nodify(fnbody));
-										}),
-									_return.f,
-									args.ad)
-							});
-					}
-				}(),
-				a: $stil4m$elm_syntax$Elm$Syntax$Expression$LambdaExpression(
-					{
-						aQ: A3(
-							$elm$core$List$foldl,
-							F2(
-								function (n, names) {
-									return A2(
-										$elm$core$List$cons,
-										$author$project$Internal$Compiler$nodify(
-											$stil4m$elm_syntax$Elm$Syntax$Pattern$VarPattern(n)),
-										names);
-								}),
-							_List_Nil,
-							args.aa),
-						a: $author$project$Internal$Compiler$nodify(expr.a)
-					}),
-				b: expr.b
+		if (!initialArgList.b) {
+			return toFullExpression(_List_Nil);
+		} else {
+			return function (index) {
+				var childIndex = $author$project$Internal$Compiler$dive(index);
+				var args = A3(
+					$elm$core$List$foldl,
+					F2(
+						function (_v3, found) {
+							var nameBase = _v3.a;
+							var maybeType = _v3.b;
+							var name = _Utils_ap(
+								nameBase,
+								$author$project$Internal$Compiler$indexToString(found.u));
+							var argType = A2(
+								$elm$core$Maybe$withDefault,
+								{
+									c: $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$GenericType(
+										$author$project$Internal$Compiler$formatValue(
+											_Utils_ap(
+												name,
+												$author$project$Internal$Compiler$indexToString(found.u)))),
+									b: _List_Nil
+								},
+								maybeType);
+							var arg = A3($author$project$Elm$valueWithHelper, _List_Nil, name, argType);
+							return {
+								aQ: A2($elm$core$List$cons, arg, found.aQ),
+								u: $author$project$Internal$Compiler$next(found.u),
+								aa: A2($elm$core$List$cons, name, found.aa),
+								ad: A2(
+									$elm$core$List$cons,
+									$author$project$Internal$Compiler$getInnerAnnotation(argType),
+									found.ad)
+							};
+						}),
+					{aQ: _List_Nil, u: index, aa: _List_Nil, ad: _List_Nil},
+					initialArgList);
+				var fullExpression = toFullExpression(
+					$elm$core$List$reverse(args.aQ));
+				var expr = function () {
+					var toExpr = fullExpression;
+					return toExpr(childIndex);
+				}();
+				return {
+					c: function () {
+						var _v1 = expr.c;
+						if (_v1.$ === 1) {
+							var err = _v1.a;
+							return $elm$core$Result$Err(err);
+						} else {
+							var _return = _v1.a;
+							return $elm$core$Result$Ok(
+								{
+									g: _return.g,
+									f: A3(
+										$elm$core$List$foldl,
+										F2(
+											function (ann, fnbody) {
+												return A2(
+													$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$FunctionTypeAnnotation,
+													$author$project$Internal$Compiler$nodify(ann),
+													$author$project$Internal$Compiler$nodify(fnbody));
+											}),
+										_return.f,
+										args.ad)
+								});
+						}
+					}(),
+					a: $stil4m$elm_syntax$Elm$Syntax$Expression$LambdaExpression(
+						{
+							aQ: A3(
+								$elm$core$List$foldl,
+								F2(
+									function (n, names) {
+										return A2(
+											$elm$core$List$cons,
+											$author$project$Internal$Compiler$nodify(
+												$stil4m$elm_syntax$Elm$Syntax$Pattern$VarPattern(n)),
+											names);
+									}),
+								_List_Nil,
+								args.aa),
+							a: $author$project$Internal$Compiler$nodify(expr.a)
+						}),
+					b: expr.b
+				};
 			};
-		};
+		}
 	});
 var $author$project$Generate$blockToCall = F2(
 	function (thisModule, block) {
