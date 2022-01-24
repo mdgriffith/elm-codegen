@@ -136,7 +136,10 @@ var index name =
             , annotation =
                 Ok
                     { type_ =
-                        Annotation.GenericType protectedName
+                        Annotation.GenericType
+                            (formatValue
+                                (name ++ indexToString existingIndex_)
+                            )
                     , inferences = Dict.empty
                     }
             , imports =
@@ -345,9 +348,9 @@ getInnerAnnotation (Annotation details) =
     details.annotation
 
 
-getInnerInference : Annotation -> Inference
-getInnerInference (Annotation details) =
-    { type_ = details.annotation
+getInnerInference : Index -> Annotation -> Inference
+getInnerInference index (Annotation details) =
+    { type_ = protectAnnotation index details.annotation
     , inferences = Dict.empty
     }
 
@@ -1909,3 +1912,49 @@ unifiableLists vars one two unified =
 
         _ ->
             ( vars, Err MismatchedTypeVariables )
+
+
+protectAnnotation index ann =
+    case ann of
+        Annotation.GenericType str ->
+            -- if String.contains "_" str then
+            --     Annotation.GenericType str
+            -- else
+            Annotation.GenericType
+                (str ++ indexToString index)
+
+        -- str
+        Annotation.Typed modName anns ->
+            Annotation.Typed modName
+                (List.map (mapNode (protectAnnotation index))
+                    anns
+                )
+
+        Annotation.Unit ->
+            Annotation.Unit
+
+        Annotation.Tupled tupled ->
+            Annotation.Tupled (List.map (mapNode (protectAnnotation index)) tupled)
+
+        Annotation.Record recordDefinition ->
+            Annotation.Record
+                (List.map (protectField index) recordDefinition)
+
+        Annotation.GenericRecord recordName (Node.Node recordRange recordDefinition) ->
+            Annotation.GenericRecord
+                (mapNode (\n -> n ++ indexToString index) recordName)
+                (Node.Node recordRange
+                    (List.map (protectField index) recordDefinition)
+                )
+
+        Annotation.FunctionTypeAnnotation one two ->
+            Annotation.FunctionTypeAnnotation
+                (mapNode (protectAnnotation index) one)
+                (mapNode (protectAnnotation index) two)
+
+
+protectField index (Node.Node nodeRange ( nodedName, nodedType )) =
+    Node.Node nodeRange
+        ( nodedName
+        , mapNode (protectAnnotation index) nodedType
+        )
