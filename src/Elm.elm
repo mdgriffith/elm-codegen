@@ -495,65 +495,7 @@ value :
     , annotation : Maybe Elm.Annotation.Annotation
     }
     -> Expression
-value =
-    valueWith
-
-
-{-| -}
-valueFrom : List String -> String -> Expression
-valueFrom mod name =
-    Compiler.Expression <|
-        \index ->
-            { expression =
-                Exp.FunctionOrValue mod
-                    (Compiler.sanitize name)
-            , annotation =
-                Ok
-                    { type_ =
-                        Annotation.GenericType
-                            (Compiler.formatValue
-                                (name ++ Compiler.indexToString index)
-                            )
-                    , inferences = Dict.empty
-                    }
-            , imports = [ mod ]
-            }
-
-
-
---{-| Add an annotation to a value.
---
---**Note** this may not _literally_ add an annotation to the code, but will inform `elm-codegen`s type inference so that top level values can be auto-annotated.
---
---So, for example, if we have.
---
---    Elm.list
---        [ Elm.valueWith myModule "myString" Elm.Annotation.string
---        , Elm.valueWith myModule "myOtherString" Elm.Annotation.string
---        ]
---
---Then, when that list is generated, it will automatically have the type signature `List String`
---
----}
-
-
-valueWithHelper : List String -> String -> Elm.Annotation.Annotation -> Expression
-valueWithHelper mod name ann =
-    valueWith
-        { importFrom = mod
-        , name = name
-        , annotation = Just ann
-        }
-
-
-{-| -}
-valueWith :
-    { importFrom : List String
-    , name : String
-    , annotation : Maybe Elm.Annotation.Annotation
-    }
-    -> Expression
-valueWith details =
+value details =
     case details.importFrom of
         [] ->
             Compiler.Expression <|
@@ -574,7 +516,7 @@ valueWith details =
                                     }
 
                             Just ann ->
-                                Ok (Compiler.getInnerInference ann)
+                                Ok (Compiler.getInnerInference index ann)
                     , imports =
                         case details.annotation of
                             Nothing ->
@@ -587,7 +529,9 @@ valueWith details =
         _ ->
             Compiler.Expression <|
                 \index ->
-                    { expression = Exp.FunctionOrValue details.importFrom (Compiler.sanitize details.name)
+                    { expression =
+                        Exp.FunctionOrValue details.importFrom
+                            (Compiler.sanitize details.name)
                     , annotation =
                         case details.annotation of
                             Nothing ->
@@ -601,7 +545,7 @@ valueWith details =
                                     }
 
                             Just ann ->
-                                Ok (Compiler.getInnerInference ann)
+                                Ok (Compiler.getInnerInference index ann)
                     , imports =
                         case details.annotation of
                             Nothing ->
@@ -610,6 +554,15 @@ valueWith details =
                             Just ann ->
                                 details.importFrom :: Compiler.getAnnotationImports ann
                     }
+
+
+valueWithHelper : List String -> String -> Elm.Annotation.Annotation -> Expression
+valueWithHelper mod name ann =
+    value
+        { importFrom = mod
+        , name = name
+        , annotation = Just ann
+        }
 
 
 {-| Sometimes you may need to add a manual type annotation.
@@ -843,7 +796,7 @@ maybe maybeContent =
                             "Nothing"
                     , annotation =
                         Ok
-                            (Compiler.getInnerInference
+                            (Compiler.getInnerInference Compiler.startIndex
                                 (Elm.Annotation.maybe (Elm.Annotation.var "a"))
                             )
                     , imports =
