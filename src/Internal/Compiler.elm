@@ -350,7 +350,11 @@ getInnerAnnotation (Annotation details) =
 
 getInnerInference : Index -> Annotation -> Inference
 getInnerInference index (Annotation details) =
-    { type_ = protectAnnotation index details.annotation
+    { type_ = details.annotation
+
+    -- running protectAnnotation will cause the typechecking to fail :/
+    -- So, there's a bug to debug
+    -- protectAnnotation index details.annotation
     , inferences = Dict.empty
     }
 
