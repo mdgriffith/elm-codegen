@@ -2448,9 +2448,11 @@ function initialArgList toFullExpression =
                                                 maybeType
 
                                         arg =
-                                            valueWithHelper []
-                                                name
-                                                argType
+                                            value
+                                                { importFrom = []
+                                                , name = name
+                                                , annotation = Just argType
+                                                }
                                     in
                                     { index = Compiler.next found.index
                                     , args = arg :: found.args
