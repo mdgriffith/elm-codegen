@@ -2,7 +2,8 @@ module Elm exposing
     ( File, file
     , Expression
     , bool, int, float, char, string, hex, unit
-    , maybe, list, tuple, triple
+    , maybe, just, nothing
+    , list, tuple, triple
     , withType
     , record, field, Field, get, updateRecord
     , letIn, ifThen
@@ -38,7 +39,9 @@ module Elm exposing
 
 @docs bool, int, float, char, string, hex, unit
 
-@docs maybe, list, tuple, triple
+@docs maybe, just, nothing
+
+@docs list, tuple, triple
 
 @docs withType
 
@@ -496,64 +499,43 @@ value :
     }
     -> Expression
 value details =
-    case details.importFrom of
-        [] ->
-            Compiler.Expression <|
-                \index ->
-                    { expression =
-                        Exp.FunctionOrValue details.importFrom
-                            (Compiler.sanitize details.name)
-                    , annotation =
-                        case details.annotation of
-                            Nothing ->
-                                Ok
-                                    { type_ =
-                                        Annotation.GenericType
-                                            (Compiler.formatValue
-                                                (details.name ++ Compiler.indexToString index)
-                                            )
-                                    , inferences = Dict.empty
-                                    }
+    Compiler.Expression <|
+        \index ->
+            { expression =
+                Exp.FunctionOrValue details.importFrom
+                    (Compiler.sanitize details.name)
+            , annotation =
+                case details.annotation of
+                    Nothing ->
+                        Ok
+                            { type_ =
+                                Annotation.GenericType
+                                    (Compiler.formatValue
+                                        (details.name ++ Compiler.indexToString index)
+                                    )
+                            , inferences = Dict.empty
+                            }
 
-                            Just ann ->
-                                Ok (Compiler.getInnerInference index ann)
-                    , imports =
-                        case details.annotation of
-                            Nothing ->
+                    Just ann ->
+                        Ok (Compiler.getInnerInference index ann)
+            , imports =
+                case details.annotation of
+                    Nothing ->
+                        case details.importFrom of
+                            [] ->
                                 []
 
-                            Just ann ->
-                                Compiler.getAnnotationImports ann
-                    }
-
-        _ ->
-            Compiler.Expression <|
-                \index ->
-                    { expression =
-                        Exp.FunctionOrValue details.importFrom
-                            (Compiler.sanitize details.name)
-                    , annotation =
-                        case details.annotation of
-                            Nothing ->
-                                Ok
-                                    { type_ =
-                                        Annotation.GenericType
-                                            (Compiler.formatValue
-                                                (details.name ++ Compiler.indexToString index)
-                                            )
-                                    , inferences = Dict.empty
-                                    }
-
-                            Just ann ->
-                                Ok (Compiler.getInnerInference index ann)
-                    , imports =
-                        case details.annotation of
-                            Nothing ->
+                            _ ->
                                 [ details.importFrom ]
 
-                            Just ann ->
+                    Just ann ->
+                        case details.importFrom of
+                            [] ->
+                                Compiler.getAnnotationImports ann
+
+                            _ ->
                                 details.importFrom :: Compiler.getAnnotationImports ann
-                    }
+            }
 
 
 valueWithHelper : List String -> String -> Elm.Annotation.Annotation -> Expression
@@ -785,6 +767,18 @@ triple oneExp twoExp threeExp =
 
 
 {-| -}
+just : Expression -> Expression
+just content =
+    maybe (Just content)
+
+
+{-| -}
+nothing : Expression
+nothing =
+    maybe Nothing
+
+
+{-| -}
 maybe : Maybe Expression -> Expression
 maybe maybeContent =
     Compiler.Expression <|
@@ -796,7 +790,7 @@ maybe maybeContent =
                             "Nothing"
                     , annotation =
                         Ok
-                            (Compiler.getInnerInference Compiler.startIndex
+                            (Compiler.getInnerInference index
                                 (Elm.Annotation.maybe (Elm.Annotation.var "a"))
                             )
                     , imports =
@@ -1686,9 +1680,11 @@ fn arg1BaseName toExpression =
                     Elm.Annotation.var arg1Name
 
                 arg1 =
-                    valueWithHelper []
-                        arg1Name
-                        arg1Type
+                    value
+                        { importFrom = []
+                        , name = arg1Name
+                        , annotation = Just arg1Type
+                        }
 
                 (Compiler.Expression toExpr) =
                     toExpression arg1
@@ -1703,10 +1699,23 @@ fn arg1BaseName toExpression =
                     }
             , annotation =
                 fnTypeApply expr.annotation
-                    [ arg1Type
+                    [ extractAnnotation arg1Type expr
                     ]
             , imports = expr.imports
             }
+
+
+extractAnnotation : Compiler.Annotation -> Compiler.ExpressionDetails -> Compiler.Annotation
+extractAnnotation ann expr =
+    case expr.annotation of
+        Err _ ->
+            ann
+
+        Ok inference ->
+            Compiler.Annotation
+                { imports = []
+                , annotation = inference.type_
+                }
 
 
 {-| This is a special case of function declaration which will _reduce_ itself if possible.
