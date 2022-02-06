@@ -96,7 +96,6 @@ moduleToFile docs =
     let
         blocks =
             Elm.Docs.toBlocks docs
-                |> Debug.log "BLOCKS!"
 
         sourceModName =
             String.split "." docs.name
