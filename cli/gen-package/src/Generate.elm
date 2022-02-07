@@ -660,8 +660,9 @@ typeCreation thisModule block =
                             fields
                                 |> List.map (\( fieldName, _ ) -> ( fieldName, expressionType ))
                                 |> Annotation.record
-
-                        lambdaValue val =
+                    in
+                    [ Elm.fn "arg"
+                        (\val ->
                             let
                                 arg =
                                     val
@@ -674,8 +675,7 @@ typeCreation thisModule block =
                                             (Elm.get fieldName arg)
                                     )
                                 |> ElmGen.record
-                    in
-                    [ Elm.fn "arg" lambdaValue
+                        )
                         |> Elm.field alias.name
                     ]
 
@@ -1006,39 +1006,36 @@ functionArgTypes fnType args =
             }
 
 
+unpackFunction : String -> Int -> Elm.Expression -> Elm.Type.Type -> Elm.Expression
+unpackFunction baseName freshCount renderer tipe =
+    case tipe of
+        Elm.Type.Lambda one two ->
+            callElmFn (Elm.string (baseName ++ String.fromInt freshCount))
+                (\val ->
+                    let
+                        full =
+                            val
+                                |> Elm.withType (typeToGeneratedAnnotation one)
+                    in
+                    unpackFunction baseName (freshCount + 1) (Elm.apply renderer [ full ]) two
+                )
+
+        _ ->
+            renderer
+
+
 getArgumentUnpacker : String -> Int -> Elm.Type.Type -> Elm.Expression -> Elm.Expression
 getArgumentUnpacker baseName freshCount tipe value =
     case tipe of
         Elm.Type.Lambda one two ->
-            let
-                argCount =
-                    getArity 1 two
-
-                args =
-                    functionArgTypes tipe []
-            in
-            ElmGen.functionAdvanced
-                (List.indexedMap
-                    (\i argType ->
-                        Elm.tuple
-                            (Elm.string (baseName ++ "Arg" ++ String.fromInt freshCount ++ "_" ++ String.fromInt i))
-                            (typeToExpression [] argType)
-                    )
-                    args.args
-                )
-                (Elm.apply value
-                    (List.indexedMap
-                        (\i argType ->
-                            ElmGen.value
-                                { importFrom = []
-                                , name = Elm.string (baseName ++ "Arg" ++ String.fromInt freshCount ++ "_" ++ String.fromInt i)
-                                , annotation =
-                                    Elm.maybe
-                                        (Just (typeToExpression [] argType))
-                                }
-                        )
-                        args.args
-                    )
+            callElmFn (Elm.string (baseName ++ String.fromInt freshCount))
+                (\val ->
+                    let
+                        full =
+                            val
+                                |> Elm.withType (typeToGeneratedAnnotation one)
+                    in
+                    unpackFunction baseName (freshCount + 1) (Elm.apply value [ full ]) two
                 )
 
         Elm.Type.Type "List.List" [ inner ] ->
@@ -1089,6 +1086,27 @@ getArgumentUnpacker baseName freshCount tipe value =
 
         _ ->
             value
+
+
+callElmFn : Elm.Expression -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
+callElmFn arg1 arg2 =
+    Elm.apply
+        (Elm.value
+            { importFrom = [ "Elm" ]
+            , name = "fn"
+            , annotation =
+                Just
+                    (Annotation.function
+                        [ Annotation.string
+                        , Annotation.function
+                            [ Annotation.namedWith [ "Elm" ] "Expression" [] ]
+                            (Annotation.namedWith [ "Elm" ] "Expression" [])
+                        ]
+                        (Annotation.namedWith [ "Elm" ] "Expression" [])
+                    )
+            }
+        )
+        [ arg1, Elm.fn "fn0" (\fnArg0_0 -> arg2 fnArg0_0) ]
 
 
 {-|
