@@ -1699,7 +1699,7 @@ fn arg1BaseName toExpression =
                     }
             , annotation =
                 fnTypeApply expr.annotation
-                    [ extractAnnotation arg1Type expr
+                    [ arg1Type
                     ]
             , imports = expr.imports
             }
