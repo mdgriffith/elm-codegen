@@ -1,7 +1,7 @@
-module Gen.Process exposing (call_, kill, moduleName_, sleep, spawn, types_, values_)
+module Gen.Process exposing (annotation_, call_, kill, moduleName_, sleep, spawn, values_)
 
 {-| 
-@docs moduleName_, spawn, sleep, kill, types_, values_, call_
+@docs moduleName_, spawn, sleep, kill, annotation_, call_, values_
 -}
 
 
@@ -107,70 +107,11 @@ kill arg1 =
         [ arg1 ]
 
 
-types_ : { id : { annotation : Type.Annotation } }
-types_ =
-    { id = { annotation = Type.namedWith moduleName_ "Id" [] } }
+annotation_ : { id : Type.Annotation }
+annotation_ =
+    { id = Type.namedWith moduleName_ "Id" [] }
 
 
-{-| Every value/function in this module in case you need to refer to it directly. -}
-values_ :
-    { spawn : Elm.Expression, sleep : Elm.Expression, kill : Elm.Expression }
-values_ =
-    { spawn =
-        Elm.value
-            { importFrom = [ "Process" ]
-            , name = "spawn"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.var "a" ]
-                        ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "y"
-                            , Type.namedWith [ "Process" ] "Id" []
-                            ]
-                        )
-                    )
-            }
-    , sleep =
-        Elm.value
-            { importFrom = [ "Process" ]
-            , name = "sleep"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.float ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.unit ]
-                        )
-                    )
-            }
-    , kill =
-        Elm.value
-            { importFrom = [ "Process" ]
-            , name = "kill"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Process" ] "Id" [] ]
-                        (Type.namedWith
-                            [ "Task" ]
-                            "Task"
-                            [ Type.var "x", Type.unit ]
-                        )
-                    )
-            }
-    }
-
-
-{-| Every value/function in this module in case you need to refer to it directly. -}
 call_ :
     { spawn : Elm.Expression -> Elm.Expression
     , sleep : Elm.Expression -> Elm.Expression
@@ -240,6 +181,63 @@ call_ =
                     }
                 )
                 [ arg1_0 ]
+    }
+
+
+values_ :
+    { spawn : Elm.Expression, sleep : Elm.Expression, kill : Elm.Expression }
+values_ =
+    { spawn =
+        Elm.value
+            { importFrom = [ "Process" ]
+            , name = "spawn"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.namedWith
+                            [ "Task" ]
+                            "Task"
+                            [ Type.var "x", Type.var "a" ]
+                        ]
+                        (Type.namedWith
+                            [ "Task" ]
+                            "Task"
+                            [ Type.var "y"
+                            , Type.namedWith [ "Process" ] "Id" []
+                            ]
+                        )
+                    )
+            }
+    , sleep =
+        Elm.value
+            { importFrom = [ "Process" ]
+            , name = "sleep"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.float ]
+                        (Type.namedWith
+                            [ "Task" ]
+                            "Task"
+                            [ Type.var "x", Type.unit ]
+                        )
+                    )
+            }
+    , kill =
+        Elm.value
+            { importFrom = [ "Process" ]
+            , name = "kill"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.namedWith [ "Process" ] "Id" [] ]
+                        (Type.namedWith
+                            [ "Task" ]
+                            "Task"
+                            [ Type.var "x", Type.unit ]
+                        )
+                    )
+            }
     }
 
 

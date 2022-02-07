@@ -1,7 +1,7 @@
-module Gen.Basics exposing (abs, acos, always, asin, atan, atan2, call_, ceiling, clamp, compare, cos, degrees, e, floor, fromPolar, identity, isInfinite, isNaN, logBase, max, min, modBy, moduleName_, negate, never, not, pi, radians, remainderBy, round, sin, sqrt, tan, toFloat, toPolar, truncate, turns, types_, values_, xor)
+module Gen.Basics exposing (abs, acos, always, annotation_, asin, atan, atan2, call_, caseOf_, ceiling, clamp, compare, cos, degrees, e, floor, fromPolar, identity, isInfinite, isNaN, logBase, make_, max, min, modBy, moduleName_, negate, never, not, pi, radians, remainderBy, round, sin, sqrt, tan, toFloat, toPolar, truncate, turns, values_, xor)
 
 {-| 
-@docs moduleName_, toFloat, round, floor, ceiling, truncate, max, min, compare, not, xor, modBy, remainderBy, negate, abs, clamp, sqrt, logBase, e, degrees, radians, turns, pi, cos, sin, tan, acos, asin, atan, atan2, toPolar, fromPolar, isNaN, isInfinite, identity, always, never, types_, values_, call_
+@docs moduleName_, toFloat, round, floor, ceiling, truncate, max, min, compare, not, xor, modBy, remainderBy, negate, abs, clamp, sqrt, logBase, e, degrees, radians, turns, pi, cos, sin, tan, acos, asin, atan, atan2, toPolar, fromPolar, isNaN, isInfinite, identity, always, never, annotation_, make_, caseOf_, call_, values_
 -}
 
 
@@ -762,396 +762,102 @@ never arg1 =
         [ arg1 ]
 
 
-types_ :
-    { int : { annotation : Type.Annotation }
-    , float : { annotation : Type.Annotation }
-    , order :
-        { annotation : Type.Annotation
-        , create :
-            { lt : Elm.Expression, eq : Elm.Expression, gt : Elm.Expression }
-        , caseOf :
-            Elm.Expression
-            -> { gt : Elm.Expression, eq : Elm.Expression, lt : Elm.Expression }
-            -> Elm.Expression
+annotation_ :
+    { int : Type.Annotation
+    , float : Type.Annotation
+    , order : Type.Annotation
+    , bool : Type.Annotation
+    , never : Type.Annotation
+    }
+annotation_ =
+    { int = Type.namedWith moduleName_ "Int" []
+    , float = Type.namedWith moduleName_ "Float" []
+    , order = Type.namedWith moduleName_ "Order" []
+    , bool = Type.namedWith moduleName_ "Bool" []
+    , never = Type.namedWith moduleName_ "Never" []
+    }
+
+
+make_ :
+    { lt : Elm.Expression
+    , eq : Elm.Expression
+    , gt : Elm.Expression
+    , true : Elm.Expression
+    , false : Elm.Expression
+    }
+make_ =
+    { lt =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "LT"
+            , annotation = Just (Type.namedWith [] "Order" [])
+            }
+    , eq =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "EQ"
+            , annotation = Just (Type.namedWith [] "Order" [])
+            }
+    , gt =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "GT"
+            , annotation = Just (Type.namedWith [] "Order" [])
+            }
+    , true =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "True"
+            , annotation = Just (Type.namedWith [] "Bool" [])
+            }
+    , false =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "False"
+            , annotation = Just (Type.namedWith [] "Bool" [])
+            }
+    }
+
+
+caseOf_ :
+    { order :
+        Elm.Expression
+        -> { false : Elm.Expression
+        , true : Elm.Expression
+        , gt : Elm.Expression
+        , eq : Elm.Expression
+        , lt : Elm.Expression
         }
+        -> Elm.Expression
     , bool :
-        { annotation : Type.Annotation
-        , create : { true : Elm.Expression, false : Elm.Expression }
-        , caseOf :
-            Elm.Expression
-            -> { false : Elm.Expression, true : Elm.Expression }
-            -> Elm.Expression
+        Elm.Expression
+        -> { false : Elm.Expression
+        , true : Elm.Expression
+        , gt : Elm.Expression
+        , eq : Elm.Expression
+        , lt : Elm.Expression
         }
-    , never : { annotation : Type.Annotation }
+        -> Elm.Expression
     }
-types_ =
-    { int = { annotation = Type.namedWith moduleName_ "Int" [] }
-    , float = { annotation = Type.namedWith moduleName_ "Float" [] }
-    , order =
-        { annotation = Type.namedWith moduleName_ "Order" []
-        , create =
-            { lt =
-                Elm.value
-                    { importFrom = [ "Basics" ]
-                    , name = "LT"
-                    , annotation = Just (Type.namedWith [] "Order" [])
-                    }
-            , eq =
-                Elm.value
-                    { importFrom = [ "Basics" ]
-                    , name = "EQ"
-                    , annotation = Just (Type.namedWith [] "Order" [])
-                    }
-            , gt =
-                Elm.value
-                    { importFrom = [ "Basics" ]
-                    , name = "GT"
-                    , annotation = Just (Type.namedWith [] "Order" [])
-                    }
-            }
-        , caseOf =
-            \expresssion_2_0 tags_2_0 ->
-                Elm.Case.custom
-                    expresssion_2_0
-                    [ Elm.Case.branch0 [ "Basics" ] "LT" tags_2_0.lt
-                    , Elm.Case.branch0 [ "Basics" ] "EQ" tags_2_0.eq
-                    , Elm.Case.branch0 [ "Basics" ] "GT" tags_2_0.gt
-                    ]
-        }
+caseOf_ =
+    { order =
+        \expresssion_0 tags_0 ->
+            Elm.Case.custom
+                expresssion_0
+                [ Elm.Case.branch0 [ "Basics" ] "LT" tags_0.lt
+                , Elm.Case.branch0 [ "Basics" ] "EQ" tags_0.eq
+                , Elm.Case.branch0 [ "Basics" ] "GT" tags_0.gt
+                ]
     , bool =
-        { annotation = Type.namedWith moduleName_ "Bool" []
-        , create =
-            { true =
-                Elm.value
-                    { importFrom = [ "Basics" ]
-                    , name = "True"
-                    , annotation = Just (Type.namedWith [] "Bool" [])
-                    }
-            , false =
-                Elm.value
-                    { importFrom = [ "Basics" ]
-                    , name = "False"
-                    , annotation = Just (Type.namedWith [] "Bool" [])
-                    }
-            }
-        , caseOf =
-            \expresssion_3_0 tags_3_0 ->
-                Elm.Case.custom
-                    expresssion_3_0
-                    [ Elm.Case.branch0 [ "Basics" ] "True" tags_3_0.true
-                    , Elm.Case.branch0 [ "Basics" ] "False" tags_3_0.false
-                    ]
-        }
-    , never = { annotation = Type.namedWith moduleName_ "Never" [] }
+        \expresssion_0 tags_0 ->
+            Elm.Case.custom
+                expresssion_0
+                [ Elm.Case.branch0 [ "Basics" ] "True" tags_0.true
+                , Elm.Case.branch0 [ "Basics" ] "False" tags_0.false
+                ]
     }
 
 
-{-| Every value/function in this module in case you need to refer to it directly. -}
-values_ :
-    { toFloat : Elm.Expression
-    , round : Elm.Expression
-    , floor : Elm.Expression
-    , ceiling : Elm.Expression
-    , truncate : Elm.Expression
-    , max : Elm.Expression
-    , min : Elm.Expression
-    , compare : Elm.Expression
-    , not : Elm.Expression
-    , xor : Elm.Expression
-    , modBy : Elm.Expression
-    , remainderBy : Elm.Expression
-    , negate : Elm.Expression
-    , abs : Elm.Expression
-    , clamp : Elm.Expression
-    , sqrt : Elm.Expression
-    , logBase : Elm.Expression
-    , e : Elm.Expression
-    , degrees : Elm.Expression
-    , radians : Elm.Expression
-    , turns : Elm.Expression
-    , pi : Elm.Expression
-    , cos : Elm.Expression
-    , sin : Elm.Expression
-    , tan : Elm.Expression
-    , acos : Elm.Expression
-    , asin : Elm.Expression
-    , atan : Elm.Expression
-    , atan2 : Elm.Expression
-    , toPolar : Elm.Expression
-    , fromPolar : Elm.Expression
-    , isNaN : Elm.Expression
-    , isInfinite : Elm.Expression
-    , identity : Elm.Expression
-    , always : Elm.Expression
-    , never : Elm.Expression
-    }
-values_ =
-    { toFloat =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "toFloat"
-            , annotation = Just (Type.function [ Type.int ] Type.float)
-            }
-    , round =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "round"
-            , annotation = Just (Type.function [ Type.float ] Type.int)
-            }
-    , floor =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "floor"
-            , annotation = Just (Type.function [ Type.float ] Type.int)
-            }
-    , ceiling =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "ceiling"
-            , annotation = Just (Type.function [ Type.float ] Type.int)
-            }
-    , truncate =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "truncate"
-            , annotation = Just (Type.function [ Type.float ] Type.int)
-            }
-    , max =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "max"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.var "comparable", Type.var "comparable" ]
-                        (Type.var "comparable")
-                    )
-            }
-    , min =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "min"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.var "comparable", Type.var "comparable" ]
-                        (Type.var "comparable")
-                    )
-            }
-    , compare =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "compare"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.var "comparable", Type.var "comparable" ]
-                        (Type.namedWith [ "Basics" ] "Order" [])
-                    )
-            }
-    , not =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "not"
-            , annotation = Just (Type.function [ Type.bool ] Type.bool)
-            }
-    , xor =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "xor"
-            , annotation =
-                Just (Type.function [ Type.bool, Type.bool ] Type.bool)
-            }
-    , modBy =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "modBy"
-            , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
-            }
-    , remainderBy =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "remainderBy"
-            , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
-            }
-    , negate =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "negate"
-            , annotation =
-                Just (Type.function [ Type.var "number" ] (Type.var "number"))
-            }
-    , abs =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "abs"
-            , annotation =
-                Just (Type.function [ Type.var "number" ] (Type.var "number"))
-            }
-    , clamp =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "clamp"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.var "number"
-                        , Type.var "number"
-                        , Type.var "number"
-                        ]
-                        (Type.var "number")
-                    )
-            }
-    , sqrt =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "sqrt"
-            , annotation = Just (Type.function [ Type.float ] Type.float)
-            }
-    , logBase =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "logBase"
-            , annotation =
-                Just (Type.function [ Type.float, Type.float ] Type.float)
-            }
-    , e =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "e"
-            , annotation = Just Type.float
-            }
-    , degrees =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "degrees"
-            , annotation = Just (Type.function [ Type.float ] Type.float)
-            }
-    , radians =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "radians"
-            , annotation = Just (Type.function [ Type.float ] Type.float)
-            }
-    , turns =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "turns"
-            , annotation = Just (Type.function [ Type.float ] Type.float)
-            }
-    , pi =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "pi"
-            , annotation = Just Type.float
-            }
-    , cos =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "cos"
-            , annotation = Just (Type.function [ Type.float ] Type.float)
-            }
-    , sin =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "sin"
-            , annotation = Just (Type.function [ Type.float ] Type.float)
-            }
-    , tan =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "tan"
-            , annotation = Just (Type.function [ Type.float ] Type.float)
-            }
-    , acos =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "acos"
-            , annotation = Just (Type.function [ Type.float ] Type.float)
-            }
-    , asin =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "asin"
-            , annotation = Just (Type.function [ Type.float ] Type.float)
-            }
-    , atan =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "atan"
-            , annotation = Just (Type.function [ Type.float ] Type.float)
-            }
-    , atan2 =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "atan2"
-            , annotation =
-                Just (Type.function [ Type.float, Type.float ] Type.float)
-            }
-    , toPolar =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "toPolar"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.tuple Type.float Type.float ]
-                        (Type.tuple Type.float Type.float)
-                    )
-            }
-    , fromPolar =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "fromPolar"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.tuple Type.float Type.float ]
-                        (Type.tuple Type.float Type.float)
-                    )
-            }
-    , isNaN =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "isNaN"
-            , annotation = Just (Type.function [ Type.float ] Type.bool)
-            }
-    , isInfinite =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "isInfinite"
-            , annotation = Just (Type.function [ Type.float ] Type.bool)
-            }
-    , identity =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "identity"
-            , annotation = Just (Type.function [ Type.var "a" ] (Type.var "a"))
-            }
-    , always =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "always"
-            , annotation =
-                Just
-                    (Type.function [ Type.var "a", Type.var "b" ] (Type.var "a")
-                    )
-            }
-    , never =
-        Elm.value
-            { importFrom = [ "Basics" ]
-            , name = "never"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Basics" ] "Never" [] ]
-                        (Type.var "a")
-                    )
-            }
-    }
-
-
-{-| Every value/function in this module in case you need to refer to it directly. -}
 call_ :
     { toFloat : Elm.Expression -> Elm.Expression
     , round : Elm.Expression -> Elm.Expression
@@ -1603,6 +1309,310 @@ call_ =
                     }
                 )
                 [ arg1_0 ]
+    }
+
+
+values_ :
+    { toFloat : Elm.Expression
+    , round : Elm.Expression
+    , floor : Elm.Expression
+    , ceiling : Elm.Expression
+    , truncate : Elm.Expression
+    , max : Elm.Expression
+    , min : Elm.Expression
+    , compare : Elm.Expression
+    , not : Elm.Expression
+    , xor : Elm.Expression
+    , modBy : Elm.Expression
+    , remainderBy : Elm.Expression
+    , negate : Elm.Expression
+    , abs : Elm.Expression
+    , clamp : Elm.Expression
+    , sqrt : Elm.Expression
+    , logBase : Elm.Expression
+    , e : Elm.Expression
+    , degrees : Elm.Expression
+    , radians : Elm.Expression
+    , turns : Elm.Expression
+    , pi : Elm.Expression
+    , cos : Elm.Expression
+    , sin : Elm.Expression
+    , tan : Elm.Expression
+    , acos : Elm.Expression
+    , asin : Elm.Expression
+    , atan : Elm.Expression
+    , atan2 : Elm.Expression
+    , toPolar : Elm.Expression
+    , fromPolar : Elm.Expression
+    , isNaN : Elm.Expression
+    , isInfinite : Elm.Expression
+    , identity : Elm.Expression
+    , always : Elm.Expression
+    , never : Elm.Expression
+    }
+values_ =
+    { toFloat =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "toFloat"
+            , annotation = Just (Type.function [ Type.int ] Type.float)
+            }
+    , round =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "round"
+            , annotation = Just (Type.function [ Type.float ] Type.int)
+            }
+    , floor =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "floor"
+            , annotation = Just (Type.function [ Type.float ] Type.int)
+            }
+    , ceiling =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "ceiling"
+            , annotation = Just (Type.function [ Type.float ] Type.int)
+            }
+    , truncate =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "truncate"
+            , annotation = Just (Type.function [ Type.float ] Type.int)
+            }
+    , max =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "max"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.var "comparable", Type.var "comparable" ]
+                        (Type.var "comparable")
+                    )
+            }
+    , min =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "min"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.var "comparable", Type.var "comparable" ]
+                        (Type.var "comparable")
+                    )
+            }
+    , compare =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "compare"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.var "comparable", Type.var "comparable" ]
+                        (Type.namedWith [ "Basics" ] "Order" [])
+                    )
+            }
+    , not =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "not"
+            , annotation = Just (Type.function [ Type.bool ] Type.bool)
+            }
+    , xor =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "xor"
+            , annotation =
+                Just (Type.function [ Type.bool, Type.bool ] Type.bool)
+            }
+    , modBy =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "modBy"
+            , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
+            }
+    , remainderBy =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "remainderBy"
+            , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
+            }
+    , negate =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "negate"
+            , annotation =
+                Just (Type.function [ Type.var "number" ] (Type.var "number"))
+            }
+    , abs =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "abs"
+            , annotation =
+                Just (Type.function [ Type.var "number" ] (Type.var "number"))
+            }
+    , clamp =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "clamp"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.var "number"
+                        , Type.var "number"
+                        , Type.var "number"
+                        ]
+                        (Type.var "number")
+                    )
+            }
+    , sqrt =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "sqrt"
+            , annotation = Just (Type.function [ Type.float ] Type.float)
+            }
+    , logBase =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "logBase"
+            , annotation =
+                Just (Type.function [ Type.float, Type.float ] Type.float)
+            }
+    , e =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "e"
+            , annotation = Just Type.float
+            }
+    , degrees =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "degrees"
+            , annotation = Just (Type.function [ Type.float ] Type.float)
+            }
+    , radians =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "radians"
+            , annotation = Just (Type.function [ Type.float ] Type.float)
+            }
+    , turns =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "turns"
+            , annotation = Just (Type.function [ Type.float ] Type.float)
+            }
+    , pi =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "pi"
+            , annotation = Just Type.float
+            }
+    , cos =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "cos"
+            , annotation = Just (Type.function [ Type.float ] Type.float)
+            }
+    , sin =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "sin"
+            , annotation = Just (Type.function [ Type.float ] Type.float)
+            }
+    , tan =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "tan"
+            , annotation = Just (Type.function [ Type.float ] Type.float)
+            }
+    , acos =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "acos"
+            , annotation = Just (Type.function [ Type.float ] Type.float)
+            }
+    , asin =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "asin"
+            , annotation = Just (Type.function [ Type.float ] Type.float)
+            }
+    , atan =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "atan"
+            , annotation = Just (Type.function [ Type.float ] Type.float)
+            }
+    , atan2 =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "atan2"
+            , annotation =
+                Just (Type.function [ Type.float, Type.float ] Type.float)
+            }
+    , toPolar =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "toPolar"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.tuple Type.float Type.float ]
+                        (Type.tuple Type.float Type.float)
+                    )
+            }
+    , fromPolar =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "fromPolar"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.tuple Type.float Type.float ]
+                        (Type.tuple Type.float Type.float)
+                    )
+            }
+    , isNaN =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "isNaN"
+            , annotation = Just (Type.function [ Type.float ] Type.bool)
+            }
+    , isInfinite =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "isInfinite"
+            , annotation = Just (Type.function [ Type.float ] Type.bool)
+            }
+    , identity =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "identity"
+            , annotation = Just (Type.function [ Type.var "a" ] (Type.var "a"))
+            }
+    , always =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "always"
+            , annotation =
+                Just
+                    (Type.function [ Type.var "a", Type.var "b" ] (Type.var "a")
+                    )
+            }
+    , never =
+        Elm.value
+            { importFrom = [ "Basics" ]
+            , name = "never"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.namedWith [ "Basics" ] "Never" [] ]
+                        (Type.var "a")
+                    )
+            }
     }
 
 

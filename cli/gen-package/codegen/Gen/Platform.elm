@@ -1,7 +1,7 @@
-module Gen.Platform exposing (call_, moduleName_, sendToApp, sendToSelf, types_, values_, worker)
+module Gen.Platform exposing (annotation_, call_, moduleName_, sendToApp, sendToSelf, values_, worker)
 
 {-| 
-@docs moduleName_, worker, sendToApp, sendToSelf, types_, values_, call_
+@docs moduleName_, worker, sendToApp, sendToSelf, annotation_, call_, values_
 -}
 
 
@@ -99,51 +99,20 @@ worker arg1 =
         [ Elm.record
             [ Elm.field
                 "init"
-                (Elm.functionAdvanced
-                    [ ( "workerArg0_0", Type.var "flags" ) ]
-                    (arg1.init
-                        (Elm.value
-                            { importFrom = []
-                            , name = "workerArg0_0"
-                            , annotation = Just (Type.var "flags")
-                            }
-                        )
-                    )
-                )
+                (Elm.fn "worker0" (\fn0_1_2_0 -> arg1.init fn0_1_2_0))
             , Elm.field
                 "update"
-                (Elm.functionAdvanced
-                    [ ( "workerArg0_0", Type.var "msg" )
-                    , ( "workerArg0_1", Type.var "model" )
-                    ]
-                    (arg1.update
-                        (Elm.value
-                            { importFrom = []
-                            , name = "workerArg0_0"
-                            , annotation = Just (Type.var "msg")
-                            }
-                        )
-                        (Elm.value
-                            { importFrom = []
-                            , name = "workerArg0_1"
-                            , annotation = Just (Type.var "model")
-                            }
-                        )
+                (Elm.fn
+                    "worker0"
+                    (\fn0_1_2_0 ->
+                        Elm.fn
+                            "worker1"
+                            (\fn0_5_1_2_0 -> arg1.update fn0_1_2_0 fn0_5_1_2_0)
                     )
                 )
             , Elm.field
                 "subscriptions"
-                (Elm.functionAdvanced
-                    [ ( "workerArg0_0", Type.var "model" ) ]
-                    (arg1.subscriptions
-                        (Elm.value
-                            { importFrom = []
-                            , name = "workerArg0_0"
-                            , annotation = Just (Type.var "model")
-                            }
-                        )
-                    )
-                )
+                (Elm.fn "worker0" (\fn0_1_2_0 -> arg1.subscriptions fn0_1_2_0))
             ]
         ]
 
@@ -209,147 +178,25 @@ sendToSelf arg1 arg2 =
         [ arg1, arg2 ]
 
 
-types_ :
+annotation_ :
     { program :
-        { annotation :
-            Type.Annotation
-            -> Type.Annotation
-            -> Type.Annotation
-            -> Type.Annotation
-        }
-    , task :
-        { annotation : Type.Annotation -> Type.Annotation -> Type.Annotation }
-    , processId : { annotation : Type.Annotation }
-    , router :
-        { annotation : Type.Annotation -> Type.Annotation -> Type.Annotation }
+        Type.Annotation -> Type.Annotation -> Type.Annotation -> Type.Annotation
+    , task : Type.Annotation -> Type.Annotation -> Type.Annotation
+    , processId : Type.Annotation
+    , router : Type.Annotation -> Type.Annotation -> Type.Annotation
     }
-types_ =
+annotation_ =
     { program =
-        { annotation =
-            \arg0_0_0 arg1_0_0 arg2_0_0 ->
-                Type.namedWith
-                    moduleName_
-                    "Program"
-                    [ arg0_0_0, arg1_0_0, arg2_0_0 ]
-        }
+        \arg0_0 arg1_0 arg2_0 ->
+            Type.namedWith moduleName_ "Program" [ arg0_0, arg1_0, arg2_0 ]
     , task =
-        { annotation =
-            \arg0_1_0 arg1_1_0 ->
-                Type.namedWith moduleName_ "Task" [ arg0_1_0, arg1_1_0 ]
-        }
-    , processId = { annotation = Type.namedWith moduleName_ "ProcessId" [] }
+        \arg0_0 arg1_0 -> Type.namedWith moduleName_ "Task" [ arg0_0, arg1_0 ]
+    , processId = Type.namedWith moduleName_ "ProcessId" []
     , router =
-        { annotation =
-            \arg0_3_0 arg1_3_0 ->
-                Type.namedWith moduleName_ "Router" [ arg0_3_0, arg1_3_0 ]
-        }
+        \arg0_0 arg1_0 -> Type.namedWith moduleName_ "Router" [ arg0_0, arg1_0 ]
     }
 
 
-{-| Every value/function in this module in case you need to refer to it directly. -}
-values_ :
-    { worker : Elm.Expression
-    , sendToApp : Elm.Expression
-    , sendToSelf : Elm.Expression
-    }
-values_ =
-    { worker =
-        Elm.value
-            { importFrom = [ "Platform" ]
-            , name = "worker"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.record
-                            [ ( "init"
-                              , Type.function
-                                    [ Type.var "flags" ]
-                                    (Type.tuple
-                                        (Type.var "model")
-                                        (Type.namedWith
-                                            [ "Platform", "Cmd" ]
-                                            "Cmd"
-                                            [ Type.var "msg" ]
-                                        )
-                                    )
-                              )
-                            , ( "update"
-                              , Type.function
-                                    [ Type.var "msg", Type.var "model" ]
-                                    (Type.tuple
-                                        (Type.var "model")
-                                        (Type.namedWith
-                                            [ "Platform", "Cmd" ]
-                                            "Cmd"
-                                            [ Type.var "msg" ]
-                                        )
-                                    )
-                              )
-                            , ( "subscriptions"
-                              , Type.function
-                                    [ Type.var "model" ]
-                                    (Type.namedWith
-                                        [ "Platform", "Sub" ]
-                                        "Sub"
-                                        [ Type.var "msg" ]
-                                    )
-                              )
-                            ]
-                        ]
-                        (Type.namedWith
-                            [ "Platform" ]
-                            "Program"
-                            [ Type.var "flags"
-                            , Type.var "model"
-                            , Type.var "msg"
-                            ]
-                        )
-                    )
-            }
-    , sendToApp =
-        Elm.value
-            { importFrom = [ "Platform" ]
-            , name = "sendToApp"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith
-                            [ "Platform" ]
-                            "Router"
-                            [ Type.var "msg", Type.var "a" ]
-                        , Type.var "msg"
-                        ]
-                        (Type.namedWith
-                            [ "Platform" ]
-                            "Task"
-                            [ Type.var "x", Type.unit ]
-                        )
-                    )
-            }
-    , sendToSelf =
-        Elm.value
-            { importFrom = [ "Platform" ]
-            , name = "sendToSelf"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith
-                            [ "Platform" ]
-                            "Router"
-                            [ Type.var "a", Type.var "msg" ]
-                        , Type.var "msg"
-                        ]
-                        (Type.namedWith
-                            [ "Platform" ]
-                            "Task"
-                            [ Type.var "x", Type.unit ]
-                        )
-                    )
-            }
-    }
-
-
-{-| Every value/function in this module in case you need to refer to it directly. -}
 call_ :
     { worker : Elm.Expression -> Elm.Expression
     , sendToApp : Elm.Expression -> Elm.Expression -> Elm.Expression
@@ -461,6 +308,108 @@ call_ =
                     }
                 )
                 [ arg1_0, arg2_0 ]
+    }
+
+
+values_ :
+    { worker : Elm.Expression
+    , sendToApp : Elm.Expression
+    , sendToSelf : Elm.Expression
+    }
+values_ =
+    { worker =
+        Elm.value
+            { importFrom = [ "Platform" ]
+            , name = "worker"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.record
+                            [ ( "init"
+                              , Type.function
+                                    [ Type.var "flags" ]
+                                    (Type.tuple
+                                        (Type.var "model")
+                                        (Type.namedWith
+                                            [ "Platform", "Cmd" ]
+                                            "Cmd"
+                                            [ Type.var "msg" ]
+                                        )
+                                    )
+                              )
+                            , ( "update"
+                              , Type.function
+                                    [ Type.var "msg", Type.var "model" ]
+                                    (Type.tuple
+                                        (Type.var "model")
+                                        (Type.namedWith
+                                            [ "Platform", "Cmd" ]
+                                            "Cmd"
+                                            [ Type.var "msg" ]
+                                        )
+                                    )
+                              )
+                            , ( "subscriptions"
+                              , Type.function
+                                    [ Type.var "model" ]
+                                    (Type.namedWith
+                                        [ "Platform", "Sub" ]
+                                        "Sub"
+                                        [ Type.var "msg" ]
+                                    )
+                              )
+                            ]
+                        ]
+                        (Type.namedWith
+                            [ "Platform" ]
+                            "Program"
+                            [ Type.var "flags"
+                            , Type.var "model"
+                            , Type.var "msg"
+                            ]
+                        )
+                    )
+            }
+    , sendToApp =
+        Elm.value
+            { importFrom = [ "Platform" ]
+            , name = "sendToApp"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.namedWith
+                            [ "Platform" ]
+                            "Router"
+                            [ Type.var "msg", Type.var "a" ]
+                        , Type.var "msg"
+                        ]
+                        (Type.namedWith
+                            [ "Platform" ]
+                            "Task"
+                            [ Type.var "x", Type.unit ]
+                        )
+                    )
+            }
+    , sendToSelf =
+        Elm.value
+            { importFrom = [ "Platform" ]
+            , name = "sendToSelf"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.namedWith
+                            [ "Platform" ]
+                            "Router"
+                            [ Type.var "a", Type.var "msg" ]
+                        , Type.var "msg"
+                        ]
+                        (Type.namedWith
+                            [ "Platform" ]
+                            "Task"
+                            [ Type.var "x", Type.unit ]
+                        )
+                    )
+            }
     }
 
 

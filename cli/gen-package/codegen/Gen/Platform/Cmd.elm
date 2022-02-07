@@ -1,7 +1,7 @@
-module Gen.Platform.Cmd exposing (batch, call_, map, moduleName_, none, types_, values_)
+module Gen.Platform.Cmd exposing (annotation_, batch, call_, map, moduleName_, none, values_)
 
 {-| 
-@docs moduleName_, none, batch, map, types_, values_, call_
+@docs moduleName_, none, batch, map, annotation_, call_, values_
 -}
 
 
@@ -94,90 +94,14 @@ map arg1 arg2 =
                     )
             }
         )
-        [ Elm.functionAdvanced
-            [ ( "mapArg0_0", Type.var "a" ) ]
-            (arg1
-                (Elm.value
-                    { importFrom = []
-                    , name = "mapArg0_0"
-                    , annotation = Just (Type.var "a")
-                    }
-                )
-            )
-        , arg2
-        ]
+        [ Elm.fn "map0" (\fn0_2_0 -> arg1 fn0_2_0), arg2 ]
 
 
-types_ : { cmd : { annotation : Type.Annotation -> Type.Annotation } }
-types_ =
-    { cmd =
-        { annotation =
-            \arg0_0_0 -> Type.namedWith moduleName_ "Cmd" [ arg0_0_0 ]
-        }
-    }
+annotation_ : { cmd : Type.Annotation -> Type.Annotation }
+annotation_ =
+    { cmd = \arg0_0 -> Type.namedWith moduleName_ "Cmd" [ arg0_0 ] }
 
 
-{-| Every value/function in this module in case you need to refer to it directly. -}
-values_ :
-    { none : Elm.Expression, batch : Elm.Expression, map : Elm.Expression }
-values_ =
-    { none =
-        Elm.value
-            { importFrom = [ "Platform", "Cmd" ]
-            , name = "none"
-            , annotation =
-                Just
-                    (Type.namedWith
-                        [ "Platform", "Cmd" ]
-                        "Cmd"
-                        [ Type.var "msg" ]
-                    )
-            }
-    , batch =
-        Elm.value
-            { importFrom = [ "Platform", "Cmd" ]
-            , name = "batch"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.list
-                            (Type.namedWith
-                                [ "Platform", "Cmd" ]
-                                "Cmd"
-                                [ Type.var "msg" ]
-                            )
-                        ]
-                        (Type.namedWith
-                            [ "Platform", "Cmd" ]
-                            "Cmd"
-                            [ Type.var "msg" ]
-                        )
-                    )
-            }
-    , map =
-        Elm.value
-            { importFrom = [ "Platform", "Cmd" ]
-            , name = "map"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function [ Type.var "a" ] (Type.var "msg")
-                        , Type.namedWith
-                            [ "Platform", "Cmd" ]
-                            "Cmd"
-                            [ Type.var "a" ]
-                        ]
-                        (Type.namedWith
-                            [ "Platform", "Cmd" ]
-                            "Cmd"
-                            [ Type.var "msg" ]
-                        )
-                    )
-            }
-    }
-
-
-{-| Every value/function in this module in case you need to refer to it directly. -}
 call_ :
     { batch : Elm.Expression -> Elm.Expression
     , map : Elm.Expression -> Elm.Expression -> Elm.Expression
@@ -234,6 +158,65 @@ call_ =
                     }
                 )
                 [ arg1_0, arg2_0 ]
+    }
+
+
+values_ :
+    { none : Elm.Expression, batch : Elm.Expression, map : Elm.Expression }
+values_ =
+    { none =
+        Elm.value
+            { importFrom = [ "Platform", "Cmd" ]
+            , name = "none"
+            , annotation =
+                Just
+                    (Type.namedWith
+                        [ "Platform", "Cmd" ]
+                        "Cmd"
+                        [ Type.var "msg" ]
+                    )
+            }
+    , batch =
+        Elm.value
+            { importFrom = [ "Platform", "Cmd" ]
+            , name = "batch"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.list
+                            (Type.namedWith
+                                [ "Platform", "Cmd" ]
+                                "Cmd"
+                                [ Type.var "msg" ]
+                            )
+                        ]
+                        (Type.namedWith
+                            [ "Platform", "Cmd" ]
+                            "Cmd"
+                            [ Type.var "msg" ]
+                        )
+                    )
+            }
+    , map =
+        Elm.value
+            { importFrom = [ "Platform", "Cmd" ]
+            , name = "map"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.function [ Type.var "a" ] (Type.var "msg")
+                        , Type.namedWith
+                            [ "Platform", "Cmd" ]
+                            "Cmd"
+                            [ Type.var "a" ]
+                        ]
+                        (Type.namedWith
+                            [ "Platform", "Cmd" ]
+                            "Cmd"
+                            [ Type.var "msg" ]
+                        )
+                    )
+            }
     }
 
 

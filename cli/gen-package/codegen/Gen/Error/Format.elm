@@ -1,7 +1,7 @@
-module Gen.Error.Format exposing (block, call_, cyan, green, grey, moduleName_, red, types_, values_, yellow)
+module Gen.Error.Format exposing (block, call_, cyan, green, grey, moduleName_, red, values_, yellow)
 
 {-| 
-@docs moduleName_, block, cyan, yellow, green, red, grey, types_, values_, call_
+@docs moduleName_, block, cyan, yellow, green, red, grey, call_, values_
 -}
 
 
@@ -95,62 +95,6 @@ grey arg1 =
         [ arg1 ]
 
 
-types_ : {}
-types_ =
-    {}
-
-
-{-| Every value/function in this module in case you need to refer to it directly. -}
-values_ :
-    { block : Elm.Expression
-    , cyan : Elm.Expression
-    , yellow : Elm.Expression
-    , green : Elm.Expression
-    , red : Elm.Expression
-    , grey : Elm.Expression
-    }
-values_ =
-    { block =
-        Elm.value
-            { importFrom = [ "Error", "Format" ]
-            , name = "block"
-            , annotation =
-                Just (Type.function [ Type.list Type.string ] Type.string)
-            }
-    , cyan =
-        Elm.value
-            { importFrom = [ "Error", "Format" ]
-            , name = "cyan"
-            , annotation = Just (Type.function [ Type.string ] Type.string)
-            }
-    , yellow =
-        Elm.value
-            { importFrom = [ "Error", "Format" ]
-            , name = "yellow"
-            , annotation = Just (Type.function [ Type.string ] Type.string)
-            }
-    , green =
-        Elm.value
-            { importFrom = [ "Error", "Format" ]
-            , name = "green"
-            , annotation = Just (Type.function [ Type.string ] Type.string)
-            }
-    , red =
-        Elm.value
-            { importFrom = [ "Error", "Format" ]
-            , name = "red"
-            , annotation = Just (Type.function [ Type.string ] Type.string)
-            }
-    , grey =
-        Elm.value
-            { importFrom = [ "Error", "Format" ]
-            , name = "grey"
-            , annotation = Just (Type.function [ Type.string ] Type.string)
-            }
-    }
-
-
-{-| Every value/function in this module in case you need to refer to it directly. -}
 call_ :
     { block : Elm.Expression -> Elm.Expression
     , cyan : Elm.Expression -> Elm.Expression
@@ -228,6 +172,55 @@ call_ =
                     }
                 )
                 [ arg1_0 ]
+    }
+
+
+values_ :
+    { block : Elm.Expression
+    , cyan : Elm.Expression
+    , yellow : Elm.Expression
+    , green : Elm.Expression
+    , red : Elm.Expression
+    , grey : Elm.Expression
+    }
+values_ =
+    { block =
+        Elm.value
+            { importFrom = [ "Error", "Format" ]
+            , name = "block"
+            , annotation =
+                Just (Type.function [ Type.list Type.string ] Type.string)
+            }
+    , cyan =
+        Elm.value
+            { importFrom = [ "Error", "Format" ]
+            , name = "cyan"
+            , annotation = Just (Type.function [ Type.string ] Type.string)
+            }
+    , yellow =
+        Elm.value
+            { importFrom = [ "Error", "Format" ]
+            , name = "yellow"
+            , annotation = Just (Type.function [ Type.string ] Type.string)
+            }
+    , green =
+        Elm.value
+            { importFrom = [ "Error", "Format" ]
+            , name = "green"
+            , annotation = Just (Type.function [ Type.string ] Type.string)
+            }
+    , red =
+        Elm.value
+            { importFrom = [ "Error", "Format" ]
+            , name = "red"
+            , annotation = Just (Type.function [ Type.string ] Type.string)
+            }
+    , grey =
+        Elm.value
+            { importFrom = [ "Error", "Format" ]
+            , name = "grey"
+            , annotation = Just (Type.function [ Type.string ] Type.string)
+            }
     }
 
 

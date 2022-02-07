@@ -1,7 +1,7 @@
-module Gen.Char exposing (call_, fromCode, isAlpha, isAlphaNum, isDigit, isHexDigit, isLower, isOctDigit, isUpper, moduleName_, toCode, toLocaleLower, toLocaleUpper, toLower, toUpper, types_, values_)
+module Gen.Char exposing (annotation_, call_, fromCode, isAlpha, isAlphaNum, isDigit, isHexDigit, isLower, isOctDigit, isUpper, moduleName_, toCode, toLocaleLower, toLocaleUpper, toLower, toUpper, values_)
 
 {-| 
-@docs moduleName_, isUpper, isLower, isAlpha, isAlphaNum, isDigit, isOctDigit, isHexDigit, toUpper, toLower, toLocaleUpper, toLocaleLower, toCode, fromCode, types_, values_, call_
+@docs moduleName_, isUpper, isLower, isAlpha, isAlphaNum, isDigit, isOctDigit, isHexDigit, toUpper, toLower, toLocaleUpper, toLocaleLower, toCode, fromCode, annotation_, call_, values_
 -}
 
 
@@ -271,110 +271,11 @@ fromCode arg1 =
         [ arg1 ]
 
 
-types_ : { char : { annotation : Type.Annotation } }
-types_ =
-    { char = { annotation = Type.namedWith moduleName_ "Char" [] } }
+annotation_ : { char : Type.Annotation }
+annotation_ =
+    { char = Type.namedWith moduleName_ "Char" [] }
 
 
-{-| Every value/function in this module in case you need to refer to it directly. -}
-values_ :
-    { isUpper : Elm.Expression
-    , isLower : Elm.Expression
-    , isAlpha : Elm.Expression
-    , isAlphaNum : Elm.Expression
-    , isDigit : Elm.Expression
-    , isOctDigit : Elm.Expression
-    , isHexDigit : Elm.Expression
-    , toUpper : Elm.Expression
-    , toLower : Elm.Expression
-    , toLocaleUpper : Elm.Expression
-    , toLocaleLower : Elm.Expression
-    , toCode : Elm.Expression
-    , fromCode : Elm.Expression
-    }
-values_ =
-    { isUpper =
-        Elm.value
-            { importFrom = [ "Char" ]
-            , name = "isUpper"
-            , annotation = Just (Type.function [ Type.char ] Type.bool)
-            }
-    , isLower =
-        Elm.value
-            { importFrom = [ "Char" ]
-            , name = "isLower"
-            , annotation = Just (Type.function [ Type.char ] Type.bool)
-            }
-    , isAlpha =
-        Elm.value
-            { importFrom = [ "Char" ]
-            , name = "isAlpha"
-            , annotation = Just (Type.function [ Type.char ] Type.bool)
-            }
-    , isAlphaNum =
-        Elm.value
-            { importFrom = [ "Char" ]
-            , name = "isAlphaNum"
-            , annotation = Just (Type.function [ Type.char ] Type.bool)
-            }
-    , isDigit =
-        Elm.value
-            { importFrom = [ "Char" ]
-            , name = "isDigit"
-            , annotation = Just (Type.function [ Type.char ] Type.bool)
-            }
-    , isOctDigit =
-        Elm.value
-            { importFrom = [ "Char" ]
-            , name = "isOctDigit"
-            , annotation = Just (Type.function [ Type.char ] Type.bool)
-            }
-    , isHexDigit =
-        Elm.value
-            { importFrom = [ "Char" ]
-            , name = "isHexDigit"
-            , annotation = Just (Type.function [ Type.char ] Type.bool)
-            }
-    , toUpper =
-        Elm.value
-            { importFrom = [ "Char" ]
-            , name = "toUpper"
-            , annotation = Just (Type.function [ Type.char ] Type.char)
-            }
-    , toLower =
-        Elm.value
-            { importFrom = [ "Char" ]
-            , name = "toLower"
-            , annotation = Just (Type.function [ Type.char ] Type.char)
-            }
-    , toLocaleUpper =
-        Elm.value
-            { importFrom = [ "Char" ]
-            , name = "toLocaleUpper"
-            , annotation = Just (Type.function [ Type.char ] Type.char)
-            }
-    , toLocaleLower =
-        Elm.value
-            { importFrom = [ "Char" ]
-            , name = "toLocaleLower"
-            , annotation = Just (Type.function [ Type.char ] Type.char)
-            }
-    , toCode =
-        Elm.value
-            { importFrom = [ "Char" ]
-            , name = "toCode"
-            , annotation = Just (Type.function [ Type.char ] Type.int)
-            }
-    , fromCode =
-        Elm.value
-            { importFrom = [ "Char" ]
-            , name = "fromCode"
-            , annotation = Just (Type.function [ Type.int ] Type.char)
-            }
-    }
-
-
-{-| Every value/function in this module in case you need to refer to it directly. -}
 call_ :
     { isUpper : Elm.Expression -> Elm.Expression
     , isLower : Elm.Expression -> Elm.Expression
@@ -521,6 +422,103 @@ call_ =
                     }
                 )
                 [ arg1_0 ]
+    }
+
+
+values_ :
+    { isUpper : Elm.Expression
+    , isLower : Elm.Expression
+    , isAlpha : Elm.Expression
+    , isAlphaNum : Elm.Expression
+    , isDigit : Elm.Expression
+    , isOctDigit : Elm.Expression
+    , isHexDigit : Elm.Expression
+    , toUpper : Elm.Expression
+    , toLower : Elm.Expression
+    , toLocaleUpper : Elm.Expression
+    , toLocaleLower : Elm.Expression
+    , toCode : Elm.Expression
+    , fromCode : Elm.Expression
+    }
+values_ =
+    { isUpper =
+        Elm.value
+            { importFrom = [ "Char" ]
+            , name = "isUpper"
+            , annotation = Just (Type.function [ Type.char ] Type.bool)
+            }
+    , isLower =
+        Elm.value
+            { importFrom = [ "Char" ]
+            , name = "isLower"
+            , annotation = Just (Type.function [ Type.char ] Type.bool)
+            }
+    , isAlpha =
+        Elm.value
+            { importFrom = [ "Char" ]
+            , name = "isAlpha"
+            , annotation = Just (Type.function [ Type.char ] Type.bool)
+            }
+    , isAlphaNum =
+        Elm.value
+            { importFrom = [ "Char" ]
+            , name = "isAlphaNum"
+            , annotation = Just (Type.function [ Type.char ] Type.bool)
+            }
+    , isDigit =
+        Elm.value
+            { importFrom = [ "Char" ]
+            , name = "isDigit"
+            , annotation = Just (Type.function [ Type.char ] Type.bool)
+            }
+    , isOctDigit =
+        Elm.value
+            { importFrom = [ "Char" ]
+            , name = "isOctDigit"
+            , annotation = Just (Type.function [ Type.char ] Type.bool)
+            }
+    , isHexDigit =
+        Elm.value
+            { importFrom = [ "Char" ]
+            , name = "isHexDigit"
+            , annotation = Just (Type.function [ Type.char ] Type.bool)
+            }
+    , toUpper =
+        Elm.value
+            { importFrom = [ "Char" ]
+            , name = "toUpper"
+            , annotation = Just (Type.function [ Type.char ] Type.char)
+            }
+    , toLower =
+        Elm.value
+            { importFrom = [ "Char" ]
+            , name = "toLower"
+            , annotation = Just (Type.function [ Type.char ] Type.char)
+            }
+    , toLocaleUpper =
+        Elm.value
+            { importFrom = [ "Char" ]
+            , name = "toLocaleUpper"
+            , annotation = Just (Type.function [ Type.char ] Type.char)
+            }
+    , toLocaleLower =
+        Elm.value
+            { importFrom = [ "Char" ]
+            , name = "toLocaleLower"
+            , annotation = Just (Type.function [ Type.char ] Type.char)
+            }
+    , toCode =
+        Elm.value
+            { importFrom = [ "Char" ]
+            , name = "toCode"
+            , annotation = Just (Type.function [ Type.char ] Type.int)
+            }
+    , fromCode =
+        Elm.value
+            { importFrom = [ "Char" ]
+            , name = "fromCode"
+            , annotation = Just (Type.function [ Type.int ] Type.char)
+            }
     }
 
 

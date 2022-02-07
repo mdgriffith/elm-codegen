@@ -1,7 +1,7 @@
-module Gen.Debug exposing (call_, log, moduleName_, toString, todo, types_, values_)
+module Gen.Debug exposing (call_, log, moduleName_, toString, todo, values_)
 
 {-| 
-@docs moduleName_, toString, log, todo, types_, values_, call_
+@docs moduleName_, toString, log, todo, call_, values_
 -}
 
 
@@ -118,39 +118,6 @@ todo arg1 =
         [ arg1 ]
 
 
-types_ : {}
-types_ =
-    {}
-
-
-{-| Every value/function in this module in case you need to refer to it directly. -}
-values_ :
-    { toString : Elm.Expression, log : Elm.Expression, todo : Elm.Expression }
-values_ =
-    { toString =
-        Elm.value
-            { importFrom = [ "Debug" ]
-            , name = "toString"
-            , annotation = Just (Type.function [ Type.var "a" ] Type.string)
-            }
-    , log =
-        Elm.value
-            { importFrom = [ "Debug" ]
-            , name = "log"
-            , annotation =
-                Just
-                    (Type.function [ Type.string, Type.var "a" ] (Type.var "a"))
-            }
-    , todo =
-        Elm.value
-            { importFrom = [ "Debug" ]
-            , name = "todo"
-            , annotation = Just (Type.function [ Type.string ] (Type.var "a"))
-            }
-    }
-
-
-{-| Every value/function in this module in case you need to refer to it directly. -}
 call_ :
     { toString : Elm.Expression -> Elm.Expression
     , log : Elm.Expression -> Elm.Expression -> Elm.Expression
@@ -194,6 +161,32 @@ call_ =
                     }
                 )
                 [ arg1_0 ]
+    }
+
+
+values_ :
+    { toString : Elm.Expression, log : Elm.Expression, todo : Elm.Expression }
+values_ =
+    { toString =
+        Elm.value
+            { importFrom = [ "Debug" ]
+            , name = "toString"
+            , annotation = Just (Type.function [ Type.var "a" ] Type.string)
+            }
+    , log =
+        Elm.value
+            { importFrom = [ "Debug" ]
+            , name = "log"
+            , annotation =
+                Just
+                    (Type.function [ Type.string, Type.var "a" ] (Type.var "a"))
+            }
+    , todo =
+        Elm.value
+            { importFrom = [ "Debug" ]
+            , name = "todo"
+            , annotation = Just (Type.function [ Type.string ] (Type.var "a"))
+            }
     }
 
 

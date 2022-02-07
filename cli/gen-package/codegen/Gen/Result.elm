@@ -1,7 +1,7 @@
-module Gen.Result exposing (andThen, call_, fromMaybe, map, map2, map3, map4, map5, mapError, moduleName_, toMaybe, types_, values_, withDefault)
+module Gen.Result exposing (andThen, annotation_, call_, caseOf_, fromMaybe, make_, map, map2, map3, map4, map5, mapError, moduleName_, toMaybe, values_, withDefault)
 
 {-| 
-@docs moduleName_, map, map2, map3, map4, map5, andThen, withDefault, toMaybe, fromMaybe, mapError, types_, values_, call_
+@docs moduleName_, map, map2, map3, map4, map5, andThen, withDefault, toMaybe, fromMaybe, mapError, annotation_, make_, caseOf_, call_, values_
 -}
 
 
@@ -45,18 +45,7 @@ map arg1 arg2 =
                     )
             }
         )
-        [ Elm.functionAdvanced
-            [ ( "mapArg0_0", Type.var "a" ) ]
-            (arg1
-                (Elm.value
-                    { importFrom = []
-                    , name = "mapArg0_0"
-                    , annotation = Just (Type.var "a")
-                    }
-                )
-            )
-        , arg2
-        ]
+        [ Elm.fn "map0" (\fn0_2_0 -> arg1 fn0_2_0), arg2 ]
 
 
 {-| Apply a function if both results are `Ok`. If not, the first `Err` will
@@ -103,22 +92,9 @@ map2 arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.functionAdvanced
-            [ ( "map2Arg0_0", Type.var "a" ), ( "map2Arg0_1", Type.var "b" ) ]
-            (arg1
-                (Elm.value
-                    { importFrom = []
-                    , name = "map2Arg0_0"
-                    , annotation = Just (Type.var "a")
-                    }
-                )
-                (Elm.value
-                    { importFrom = []
-                    , name = "map2Arg0_1"
-                    , annotation = Just (Type.var "b")
-                    }
-                )
-            )
+        [ Elm.fn
+            "map20"
+            (\fn0_2_0 -> Elm.fn "map21" (\fn0_2_2_0 -> arg1 fn0_2_0 fn0_2_2_0))
         , arg2
         , arg3
         ]
@@ -163,30 +139,16 @@ map3 arg1 arg2 arg3 arg4 =
                     )
             }
         )
-        [ Elm.functionAdvanced
-            [ ( "map3Arg0_0", Type.var "a" )
-            , ( "map3Arg0_1", Type.var "b" )
-            , ( "map3Arg0_2", Type.var "c" )
-            ]
-            (arg1
-                (Elm.value
-                    { importFrom = []
-                    , name = "map3Arg0_0"
-                    , annotation = Just (Type.var "a")
-                    }
-                )
-                (Elm.value
-                    { importFrom = []
-                    , name = "map3Arg0_1"
-                    , annotation = Just (Type.var "b")
-                    }
-                )
-                (Elm.value
-                    { importFrom = []
-                    , name = "map3Arg0_2"
-                    , annotation = Just (Type.var "c")
-                    }
-                )
+        [ Elm.fn
+            "map30"
+            (\fn0_2_0 ->
+                Elm.fn
+                    "map31"
+                    (\fn0_2_2_0 ->
+                        Elm.fn
+                            "map32"
+                            (\fn0_2_2_2_0 -> arg1 fn0_2_0 fn0_2_2_0 fn0_2_2_2_0)
+                    )
             )
         , arg2
         , arg3
@@ -246,37 +208,23 @@ map4 arg1 arg2 arg3 arg4 arg5 =
                     )
             }
         )
-        [ Elm.functionAdvanced
-            [ ( "map4Arg0_0", Type.var "a" )
-            , ( "map4Arg0_1", Type.var "b" )
-            , ( "map4Arg0_2", Type.var "c" )
-            , ( "map4Arg0_3", Type.var "d" )
-            ]
-            (arg1
-                (Elm.value
-                    { importFrom = []
-                    , name = "map4Arg0_0"
-                    , annotation = Just (Type.var "a")
-                    }
-                )
-                (Elm.value
-                    { importFrom = []
-                    , name = "map4Arg0_1"
-                    , annotation = Just (Type.var "b")
-                    }
-                )
-                (Elm.value
-                    { importFrom = []
-                    , name = "map4Arg0_2"
-                    , annotation = Just (Type.var "c")
-                    }
-                )
-                (Elm.value
-                    { importFrom = []
-                    , name = "map4Arg0_3"
-                    , annotation = Just (Type.var "d")
-                    }
-                )
+        [ Elm.fn
+            "map40"
+            (\fn0_2_0 ->
+                Elm.fn
+                    "map41"
+                    (\fn0_2_2_0 ->
+                        Elm.fn
+                            "map42"
+                            (\fn0_2_2_2_0 ->
+                                Elm.fn
+                                    "map43"
+                                    (\fn0_2_2_2_2_0 ->
+                                        arg1 fn0_2_0 fn0_2_2_0 fn0_2_2_2_0
+                                            fn0_2_2_2_2_0
+                                    )
+                            )
+                    )
             )
         , arg2
         , arg3
@@ -344,44 +292,29 @@ map5 arg1 arg2 arg3 arg4 arg5 arg6 =
                     )
             }
         )
-        [ Elm.functionAdvanced
-            [ ( "map5Arg0_0", Type.var "a" )
-            , ( "map5Arg0_1", Type.var "b" )
-            , ( "map5Arg0_2", Type.var "c" )
-            , ( "map5Arg0_3", Type.var "d" )
-            , ( "map5Arg0_4", Type.var "e" )
-            ]
-            (arg1
-                (Elm.value
-                    { importFrom = []
-                    , name = "map5Arg0_0"
-                    , annotation = Just (Type.var "a")
-                    }
-                )
-                (Elm.value
-                    { importFrom = []
-                    , name = "map5Arg0_1"
-                    , annotation = Just (Type.var "b")
-                    }
-                )
-                (Elm.value
-                    { importFrom = []
-                    , name = "map5Arg0_2"
-                    , annotation = Just (Type.var "c")
-                    }
-                )
-                (Elm.value
-                    { importFrom = []
-                    , name = "map5Arg0_3"
-                    , annotation = Just (Type.var "d")
-                    }
-                )
-                (Elm.value
-                    { importFrom = []
-                    , name = "map5Arg0_4"
-                    , annotation = Just (Type.var "e")
-                    }
-                )
+        [ Elm.fn
+            "map50"
+            (\fn0_2_0 ->
+                Elm.fn
+                    "map51"
+                    (\fn0_2_2_0 ->
+                        Elm.fn
+                            "map52"
+                            (\fn0_2_2_2_0 ->
+                                Elm.fn
+                                    "map53"
+                                    (\fn0_2_2_2_2_0 ->
+                                        Elm.fn
+                                            "map54"
+                                            (\fn0_2_2_2_2_2_0 ->
+                                                arg1 fn0_2_0 fn0_2_2_0
+                                                    fn0_2_2_2_0
+                                                    fn0_2_2_2_2_0
+                                                    fn0_2_2_2_2_2_0
+                                            )
+                                    )
+                            )
+                    )
             )
         , arg2
         , arg3
@@ -454,18 +387,7 @@ andThen arg1 arg2 =
                     )
             }
         )
-        [ Elm.functionAdvanced
-            [ ( "andThenArg0_0", Type.var "a" ) ]
-            (arg1
-                (Elm.value
-                    { importFrom = []
-                    , name = "andThenArg0_0"
-                    , annotation = Just (Type.var "a")
-                    }
-                )
-            )
-        , arg2
-        ]
+        [ Elm.fn "andThen0" (\fn0_2_0 -> arg1 fn0_2_0), arg2 ]
 
 
 {-| If the result is `Ok` return the value, but if the result is an `Err` then
@@ -594,352 +516,75 @@ mapError arg1 arg2 =
                     )
             }
         )
-        [ Elm.functionAdvanced
-            [ ( "mapErrorArg0_0", Type.var "x" ) ]
-            (arg1
+        [ Elm.fn "mapError0" (\fn0_2_0 -> arg1 fn0_2_0), arg2 ]
+
+
+annotation_ : { result : Type.Annotation -> Type.Annotation -> Type.Annotation }
+annotation_ =
+    { result =
+        \arg0_0 arg1_0 -> Type.namedWith moduleName_ "Result" [ arg0_0, arg1_0 ]
+    }
+
+
+make_ :
+    { ok : Elm.Expression -> Elm.Expression
+    , err : Elm.Expression -> Elm.Expression
+    }
+make_ =
+    { ok =
+        \ar0_0 ->
+            Elm.apply
                 (Elm.value
-                    { importFrom = []
-                    , name = "mapErrorArg0_0"
-                    , annotation = Just (Type.var "x")
+                    { importFrom = [ "Result" ]
+                    , name = "Ok"
+                    , annotation =
+                        Just
+                            (Type.namedWith
+                                []
+                                "Result"
+                                [ Type.var "error", Type.var "value" ]
+                            )
                     }
                 )
-            )
-        , arg2
-        ]
-
-
-types_ :
-    { result :
-        { annotation : Type.Annotation -> Type.Annotation -> Type.Annotation
-        , create :
-            { ok : Elm.Expression -> Elm.Expression
-            , err : Elm.Expression -> Elm.Expression
-            }
-        , caseOf :
-            Elm.Expression
-            -> { err : Elm.Expression -> Elm.Expression
-            , ok : Elm.Expression -> Elm.Expression
-            }
-            -> Elm.Expression
-        }
-    }
-types_ =
-    { result =
-        { annotation =
-            \arg0_0_0 arg1_0_0 ->
-                Type.namedWith moduleName_ "Result" [ arg0_0_0, arg1_0_0 ]
-        , create =
-            { ok =
-                \ar0_1_0_0 ->
-                    Elm.apply
-                        (Elm.value
-                            { importFrom = [ "Result" ]
-                            , name = "Ok"
-                            , annotation =
-                                Just
-                                    (Type.namedWith
-                                        []
-                                        "Result"
-                                        [ Type.var "error", Type.var "value" ]
-                                    )
-                            }
-                        )
-                        [ ar0_1_0_0 ]
-            , err =
-                \ar0_1_0_0 ->
-                    Elm.apply
-                        (Elm.value
-                            { importFrom = [ "Result" ]
-                            , name = "Err"
-                            , annotation =
-                                Just
-                                    (Type.namedWith
-                                        []
-                                        "Result"
-                                        [ Type.var "error", Type.var "value" ]
-                                    )
-                            }
-                        )
-                        [ ar0_1_0_0 ]
-            }
-        , caseOf =
-            \expresssion_0_0 tags_0_0 ->
-                Elm.Case.custom
-                    expresssion_0_0
-                    [ Elm.Case.branch1 [ "Result" ] "Ok" tags_0_0.ok
-                    , Elm.Case.branch1 [ "Result" ] "Err" tags_0_0.err
-                    ]
-        }
-    }
-
-
-{-| Every value/function in this module in case you need to refer to it directly. -}
-values_ :
-    { map : Elm.Expression
-    , map2 : Elm.Expression
-    , map3 : Elm.Expression
-    , map4 : Elm.Expression
-    , map5 : Elm.Expression
-    , andThen : Elm.Expression
-    , withDefault : Elm.Expression
-    , toMaybe : Elm.Expression
-    , fromMaybe : Elm.Expression
-    , mapError : Elm.Expression
-    }
-values_ =
-    { map =
-        Elm.value
-            { importFrom = [ "Result" ]
-            , name = "map"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function [ Type.var "a" ] (Type.var "value")
-                        , Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "a" ]
-                        ]
-                        (Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "value" ]
-                        )
-                    )
-            }
-    , map2 =
-        Elm.value
-            { importFrom = [ "Result" ]
-            , name = "map2"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "a", Type.var "b" ]
-                            (Type.var "value")
-                        , Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "a" ]
-                        , Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "b" ]
-                        ]
-                        (Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "value" ]
-                        )
-                    )
-            }
-    , map3 =
-        Elm.value
-            { importFrom = [ "Result" ]
-            , name = "map3"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "a", Type.var "b", Type.var "c" ]
-                            (Type.var "value")
-                        , Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "a" ]
-                        , Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "b" ]
-                        , Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "c" ]
-                        ]
-                        (Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "value" ]
-                        )
-                    )
-            }
-    , map4 =
-        Elm.value
-            { importFrom = [ "Result" ]
-            , name = "map4"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "a"
-                            , Type.var "b"
-                            , Type.var "c"
-                            , Type.var "d"
-                            ]
-                            (Type.var "value")
-                        , Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "a" ]
-                        , Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "b" ]
-                        , Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "c" ]
-                        , Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "d" ]
-                        ]
-                        (Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "value" ]
-                        )
-                    )
-            }
-    , map5 =
-        Elm.value
-            { importFrom = [ "Result" ]
-            , name = "map5"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "a"
-                            , Type.var "b"
-                            , Type.var "c"
-                            , Type.var "d"
-                            , Type.var "e"
-                            ]
-                            (Type.var "value")
-                        , Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "a" ]
-                        , Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "b" ]
-                        , Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "c" ]
-                        , Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "d" ]
-                        , Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "e" ]
-                        ]
-                        (Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "value" ]
-                        )
-                    )
-            }
-    , andThen =
-        Elm.value
-            { importFrom = [ "Result" ]
-            , name = "andThen"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "a" ]
+                [ ar0_0 ]
+    , err =
+        \ar0_0 ->
+            Elm.apply
+                (Elm.value
+                    { importFrom = [ "Result" ]
+                    , name = "Err"
+                    , annotation =
+                        Just
                             (Type.namedWith
-                                [ "Result" ]
+                                []
                                 "Result"
-                                [ Type.var "x", Type.var "b" ]
+                                [ Type.var "error", Type.var "value" ]
                             )
-                        , Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "a" ]
-                        ]
-                        (Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "b" ]
-                        )
-                    )
-            }
-    , withDefault =
-        Elm.value
-            { importFrom = [ "Result" ]
-            , name = "withDefault"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.var "a"
-                        , Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "a" ]
-                        ]
-                        (Type.var "a")
-                    )
-            }
-    , toMaybe =
-        Elm.value
-            { importFrom = [ "Result" ]
-            , name = "toMaybe"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "a" ]
-                        ]
-                        (Type.maybe (Type.var "a"))
-                    )
-            }
-    , fromMaybe =
-        Elm.value
-            { importFrom = [ "Result" ]
-            , name = "fromMaybe"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.var "x", Type.maybe (Type.var "a") ]
-                        (Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "a" ]
-                        )
-                    )
-            }
-    , mapError =
-        Elm.value
-            { importFrom = [ "Result" ]
-            , name = "mapError"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function [ Type.var "x" ] (Type.var "y")
-                        , Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "x", Type.var "a" ]
-                        ]
-                        (Type.namedWith
-                            [ "Result" ]
-                            "Result"
-                            [ Type.var "y", Type.var "a" ]
-                        )
-                    )
-            }
+                    }
+                )
+                [ ar0_0 ]
     }
 
 
-{-| Every value/function in this module in case you need to refer to it directly. -}
+caseOf_ :
+    { result :
+        Elm.Expression
+        -> { err : Elm.Expression -> Elm.Expression
+        , ok : Elm.Expression -> Elm.Expression
+        }
+        -> Elm.Expression
+    }
+caseOf_ =
+    { result =
+        \expresssion_0 tags_0 ->
+            Elm.Case.custom
+                expresssion_0
+                [ Elm.Case.branch1 [ "Result" ] "Ok" tags_0.ok
+                , Elm.Case.branch1 [ "Result" ] "Err" tags_0.err
+                ]
+    }
+
+
 call_ :
     { map : Elm.Expression -> Elm.Expression -> Elm.Expression
     , map2 :
@@ -1263,6 +908,271 @@ call_ =
                     }
                 )
                 [ arg1_0, arg2_0 ]
+    }
+
+
+values_ :
+    { map : Elm.Expression
+    , map2 : Elm.Expression
+    , map3 : Elm.Expression
+    , map4 : Elm.Expression
+    , map5 : Elm.Expression
+    , andThen : Elm.Expression
+    , withDefault : Elm.Expression
+    , toMaybe : Elm.Expression
+    , fromMaybe : Elm.Expression
+    , mapError : Elm.Expression
+    }
+values_ =
+    { map =
+        Elm.value
+            { importFrom = [ "Result" ]
+            , name = "map"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.function [ Type.var "a" ] (Type.var "value")
+                        , Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "a" ]
+                        ]
+                        (Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "value" ]
+                        )
+                    )
+            }
+    , map2 =
+        Elm.value
+            { importFrom = [ "Result" ]
+            , name = "map2"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.function
+                            [ Type.var "a", Type.var "b" ]
+                            (Type.var "value")
+                        , Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "a" ]
+                        , Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "b" ]
+                        ]
+                        (Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "value" ]
+                        )
+                    )
+            }
+    , map3 =
+        Elm.value
+            { importFrom = [ "Result" ]
+            , name = "map3"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.function
+                            [ Type.var "a", Type.var "b", Type.var "c" ]
+                            (Type.var "value")
+                        , Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "a" ]
+                        , Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "b" ]
+                        , Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "c" ]
+                        ]
+                        (Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "value" ]
+                        )
+                    )
+            }
+    , map4 =
+        Elm.value
+            { importFrom = [ "Result" ]
+            , name = "map4"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.function
+                            [ Type.var "a"
+                            , Type.var "b"
+                            , Type.var "c"
+                            , Type.var "d"
+                            ]
+                            (Type.var "value")
+                        , Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "a" ]
+                        , Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "b" ]
+                        , Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "c" ]
+                        , Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "d" ]
+                        ]
+                        (Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "value" ]
+                        )
+                    )
+            }
+    , map5 =
+        Elm.value
+            { importFrom = [ "Result" ]
+            , name = "map5"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.function
+                            [ Type.var "a"
+                            , Type.var "b"
+                            , Type.var "c"
+                            , Type.var "d"
+                            , Type.var "e"
+                            ]
+                            (Type.var "value")
+                        , Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "a" ]
+                        , Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "b" ]
+                        , Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "c" ]
+                        , Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "d" ]
+                        , Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "e" ]
+                        ]
+                        (Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "value" ]
+                        )
+                    )
+            }
+    , andThen =
+        Elm.value
+            { importFrom = [ "Result" ]
+            , name = "andThen"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.function
+                            [ Type.var "a" ]
+                            (Type.namedWith
+                                [ "Result" ]
+                                "Result"
+                                [ Type.var "x", Type.var "b" ]
+                            )
+                        , Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "a" ]
+                        ]
+                        (Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "b" ]
+                        )
+                    )
+            }
+    , withDefault =
+        Elm.value
+            { importFrom = [ "Result" ]
+            , name = "withDefault"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.var "a"
+                        , Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "a" ]
+                        ]
+                        (Type.var "a")
+                    )
+            }
+    , toMaybe =
+        Elm.value
+            { importFrom = [ "Result" ]
+            , name = "toMaybe"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "a" ]
+                        ]
+                        (Type.maybe (Type.var "a"))
+                    )
+            }
+    , fromMaybe =
+        Elm.value
+            { importFrom = [ "Result" ]
+            , name = "fromMaybe"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.var "x", Type.maybe (Type.var "a") ]
+                        (Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "a" ]
+                        )
+                    )
+            }
+    , mapError =
+        Elm.value
+            { importFrom = [ "Result" ]
+            , name = "mapError"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.function [ Type.var "x" ] (Type.var "y")
+                        , Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "x", Type.var "a" ]
+                        ]
+                        (Type.namedWith
+                            [ "Result" ]
+                            "Result"
+                            [ Type.var "y", Type.var "a" ]
+                        )
+                    )
+            }
     }
 
 

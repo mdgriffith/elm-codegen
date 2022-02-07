@@ -1,7 +1,7 @@
-module Gen.Set exposing (call_, diff, empty, filter, foldl, foldr, fromList, insert, intersect, isEmpty, map, member, moduleName_, partition, remove, singleton, size, toList, types_, union, values_)
+module Gen.Set exposing (annotation_, call_, diff, empty, filter, foldl, foldr, fromList, insert, intersect, isEmpty, map, member, moduleName_, partition, remove, singleton, size, toList, union, values_)
 
 {-| 
-@docs moduleName_, empty, singleton, insert, remove, isEmpty, member, size, union, intersect, diff, toList, fromList, map, foldl, foldr, filter, partition, types_, values_, call_
+@docs moduleName_, empty, singleton, insert, remove, isEmpty, member, size, union, intersect, diff, toList, fromList, map, foldl, foldr, filter, partition, annotation_, call_, values_
 -}
 
 
@@ -330,18 +330,7 @@ map arg1 arg2 =
                     )
             }
         )
-        [ Elm.functionAdvanced
-            [ ( "mapArg0_0", Type.var "comparable" ) ]
-            (arg1
-                (Elm.value
-                    { importFrom = []
-                    , name = "mapArg0_0"
-                    , annotation = Just (Type.var "comparable")
-                    }
-                )
-            )
-        , arg2
-        ]
+        [ Elm.fn "map0" (\fn0_2_0 -> arg1 fn0_2_0), arg2 ]
 
 
 {-| Fold over the values in a set, in order from lowest to highest.
@@ -369,22 +358,9 @@ foldl arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.functionAdvanced
-            [ ( "foldlArg0_0", Type.var "a" ), ( "foldlArg0_1", Type.var "b" ) ]
-            (arg1
-                (Elm.value
-                    { importFrom = []
-                    , name = "foldlArg0_0"
-                    , annotation = Just (Type.var "a")
-                    }
-                )
-                (Elm.value
-                    { importFrom = []
-                    , name = "foldlArg0_1"
-                    , annotation = Just (Type.var "b")
-                    }
-                )
-            )
+        [ Elm.fn
+            "foldl0"
+            (\fn0_2_0 -> Elm.fn "foldl1" (\fn0_2_2_0 -> arg1 fn0_2_0 fn0_2_2_0))
         , arg2
         , arg3
         ]
@@ -415,22 +391,9 @@ foldr arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.functionAdvanced
-            [ ( "foldrArg0_0", Type.var "a" ), ( "foldrArg0_1", Type.var "b" ) ]
-            (arg1
-                (Elm.value
-                    { importFrom = []
-                    , name = "foldrArg0_0"
-                    , annotation = Just (Type.var "a")
-                    }
-                )
-                (Elm.value
-                    { importFrom = []
-                    , name = "foldrArg0_1"
-                    , annotation = Just (Type.var "b")
-                    }
-                )
-            )
+        [ Elm.fn
+            "foldr0"
+            (\fn0_2_0 -> Elm.fn "foldr1" (\fn0_2_2_0 -> arg1 fn0_2_0 fn0_2_2_0))
         , arg2
         , arg3
         ]
@@ -473,18 +436,7 @@ filter arg1 arg2 =
                     )
             }
         )
-        [ Elm.functionAdvanced
-            [ ( "filterArg0_0", Type.var "comparable" ) ]
-            (arg1
-                (Elm.value
-                    { importFrom = []
-                    , name = "filterArg0_0"
-                    , annotation = Just (Type.var "comparable")
-                    }
-                )
-            )
-        , arg2
-        ]
+        [ Elm.fn "filter0" (\fn0_2_0 -> arg1 fn0_2_0), arg2 ]
 
 
 {-| Create two new sets. The first contains all the elements that passed the
@@ -521,350 +473,14 @@ partition arg1 arg2 =
                     )
             }
         )
-        [ Elm.functionAdvanced
-            [ ( "partitionArg0_0", Type.var "comparable" ) ]
-            (arg1
-                (Elm.value
-                    { importFrom = []
-                    , name = "partitionArg0_0"
-                    , annotation = Just (Type.var "comparable")
-                    }
-                )
-            )
-        , arg2
-        ]
+        [ Elm.fn "partition0" (\fn0_2_0 -> arg1 fn0_2_0), arg2 ]
 
 
-types_ : { set : { annotation : Type.Annotation -> Type.Annotation } }
-types_ =
-    { set =
-        { annotation =
-            \arg0_0_0 -> Type.namedWith moduleName_ "Set" [ arg0_0_0 ]
-        }
-    }
+annotation_ : { set : Type.Annotation -> Type.Annotation }
+annotation_ =
+    { set = \arg0_0 -> Type.namedWith moduleName_ "Set" [ arg0_0 ] }
 
 
-{-| Every value/function in this module in case you need to refer to it directly. -}
-values_ :
-    { empty : Elm.Expression
-    , singleton : Elm.Expression
-    , insert : Elm.Expression
-    , remove : Elm.Expression
-    , isEmpty : Elm.Expression
-    , member : Elm.Expression
-    , size : Elm.Expression
-    , union : Elm.Expression
-    , intersect : Elm.Expression
-    , diff : Elm.Expression
-    , toList : Elm.Expression
-    , fromList : Elm.Expression
-    , map : Elm.Expression
-    , foldl : Elm.Expression
-    , foldr : Elm.Expression
-    , filter : Elm.Expression
-    , partition : Elm.Expression
-    }
-values_ =
-    { empty =
-        Elm.value
-            { importFrom = [ "Set" ]
-            , name = "empty"
-            , annotation =
-                Just (Type.namedWith [ "Set" ] "Set" [ Type.var "a" ])
-            }
-    , singleton =
-        Elm.value
-            { importFrom = [ "Set" ]
-            , name = "singleton"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.var "comparable" ]
-                        (Type.namedWith
-                            [ "Set" ]
-                            "Set"
-                            [ Type.var "comparable" ]
-                        )
-                    )
-            }
-    , insert =
-        Elm.value
-            { importFrom = [ "Set" ]
-            , name = "insert"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.var "comparable"
-                        , Type.namedWith
-                            [ "Set" ]
-                            "Set"
-                            [ Type.var "comparable" ]
-                        ]
-                        (Type.namedWith
-                            [ "Set" ]
-                            "Set"
-                            [ Type.var "comparable" ]
-                        )
-                    )
-            }
-    , remove =
-        Elm.value
-            { importFrom = [ "Set" ]
-            , name = "remove"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.var "comparable"
-                        , Type.namedWith
-                            [ "Set" ]
-                            "Set"
-                            [ Type.var "comparable" ]
-                        ]
-                        (Type.namedWith
-                            [ "Set" ]
-                            "Set"
-                            [ Type.var "comparable" ]
-                        )
-                    )
-            }
-    , isEmpty =
-        Elm.value
-            { importFrom = [ "Set" ]
-            , name = "isEmpty"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Set" ] "Set" [ Type.var "a" ] ]
-                        Type.bool
-                    )
-            }
-    , member =
-        Elm.value
-            { importFrom = [ "Set" ]
-            , name = "member"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.var "comparable"
-                        , Type.namedWith
-                            [ "Set" ]
-                            "Set"
-                            [ Type.var "comparable" ]
-                        ]
-                        Type.bool
-                    )
-            }
-    , size =
-        Elm.value
-            { importFrom = [ "Set" ]
-            , name = "size"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Set" ] "Set" [ Type.var "a" ] ]
-                        Type.int
-                    )
-            }
-    , union =
-        Elm.value
-            { importFrom = [ "Set" ]
-            , name = "union"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith
-                            [ "Set" ]
-                            "Set"
-                            [ Type.var "comparable" ]
-                        , Type.namedWith
-                            [ "Set" ]
-                            "Set"
-                            [ Type.var "comparable" ]
-                        ]
-                        (Type.namedWith
-                            [ "Set" ]
-                            "Set"
-                            [ Type.var "comparable" ]
-                        )
-                    )
-            }
-    , intersect =
-        Elm.value
-            { importFrom = [ "Set" ]
-            , name = "intersect"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith
-                            [ "Set" ]
-                            "Set"
-                            [ Type.var "comparable" ]
-                        , Type.namedWith
-                            [ "Set" ]
-                            "Set"
-                            [ Type.var "comparable" ]
-                        ]
-                        (Type.namedWith
-                            [ "Set" ]
-                            "Set"
-                            [ Type.var "comparable" ]
-                        )
-                    )
-            }
-    , diff =
-        Elm.value
-            { importFrom = [ "Set" ]
-            , name = "diff"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith
-                            [ "Set" ]
-                            "Set"
-                            [ Type.var "comparable" ]
-                        , Type.namedWith
-                            [ "Set" ]
-                            "Set"
-                            [ Type.var "comparable" ]
-                        ]
-                        (Type.namedWith
-                            [ "Set" ]
-                            "Set"
-                            [ Type.var "comparable" ]
-                        )
-                    )
-            }
-    , toList =
-        Elm.value
-            { importFrom = [ "Set" ]
-            , name = "toList"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Set" ] "Set" [ Type.var "a" ] ]
-                        (Type.list (Type.var "a"))
-                    )
-            }
-    , fromList =
-        Elm.value
-            { importFrom = [ "Set" ]
-            , name = "fromList"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.list (Type.var "comparable") ]
-                        (Type.namedWith
-                            [ "Set" ]
-                            "Set"
-                            [ Type.var "comparable" ]
-                        )
-                    )
-            }
-    , map =
-        Elm.value
-            { importFrom = [ "Set" ]
-            , name = "map"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "comparable" ]
-                            (Type.var "comparable2")
-                        , Type.namedWith
-                            [ "Set" ]
-                            "Set"
-                            [ Type.var "comparable" ]
-                        ]
-                        (Type.namedWith
-                            [ "Set" ]
-                            "Set"
-                            [ Type.var "comparable2" ]
-                        )
-                    )
-            }
-    , foldl =
-        Elm.value
-            { importFrom = [ "Set" ]
-            , name = "foldl"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "a", Type.var "b" ]
-                            (Type.var "b")
-                        , Type.var "b"
-                        , Type.namedWith [ "Set" ] "Set" [ Type.var "a" ]
-                        ]
-                        (Type.var "b")
-                    )
-            }
-    , foldr =
-        Elm.value
-            { importFrom = [ "Set" ]
-            , name = "foldr"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function
-                            [ Type.var "a", Type.var "b" ]
-                            (Type.var "b")
-                        , Type.var "b"
-                        , Type.namedWith [ "Set" ] "Set" [ Type.var "a" ]
-                        ]
-                        (Type.var "b")
-                    )
-            }
-    , filter =
-        Elm.value
-            { importFrom = [ "Set" ]
-            , name = "filter"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function [ Type.var "comparable" ] Type.bool
-                        , Type.namedWith
-                            [ "Set" ]
-                            "Set"
-                            [ Type.var "comparable" ]
-                        ]
-                        (Type.namedWith
-                            [ "Set" ]
-                            "Set"
-                            [ Type.var "comparable" ]
-                        )
-                    )
-            }
-    , partition =
-        Elm.value
-            { importFrom = [ "Set" ]
-            , name = "partition"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.function [ Type.var "comparable" ] Type.bool
-                        , Type.namedWith
-                            [ "Set" ]
-                            "Set"
-                            [ Type.var "comparable" ]
-                        ]
-                        (Type.tuple
-                            (Type.namedWith
-                                [ "Set" ]
-                                "Set"
-                                [ Type.var "comparable" ]
-                            )
-                            (Type.namedWith
-                                [ "Set" ]
-                                "Set"
-                                [ Type.var "comparable" ]
-                            )
-                        )
-                    )
-            }
-    }
-
-
-{-| Every value/function in this module in case you need to refer to it directly. -}
 call_ :
     { singleton : Elm.Expression -> Elm.Expression
     , insert : Elm.Expression -> Elm.Expression -> Elm.Expression
@@ -1261,6 +877,325 @@ call_ =
                     }
                 )
                 [ arg1_0, arg2_0 ]
+    }
+
+
+values_ :
+    { empty : Elm.Expression
+    , singleton : Elm.Expression
+    , insert : Elm.Expression
+    , remove : Elm.Expression
+    , isEmpty : Elm.Expression
+    , member : Elm.Expression
+    , size : Elm.Expression
+    , union : Elm.Expression
+    , intersect : Elm.Expression
+    , diff : Elm.Expression
+    , toList : Elm.Expression
+    , fromList : Elm.Expression
+    , map : Elm.Expression
+    , foldl : Elm.Expression
+    , foldr : Elm.Expression
+    , filter : Elm.Expression
+    , partition : Elm.Expression
+    }
+values_ =
+    { empty =
+        Elm.value
+            { importFrom = [ "Set" ]
+            , name = "empty"
+            , annotation =
+                Just (Type.namedWith [ "Set" ] "Set" [ Type.var "a" ])
+            }
+    , singleton =
+        Elm.value
+            { importFrom = [ "Set" ]
+            , name = "singleton"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.var "comparable" ]
+                        (Type.namedWith
+                            [ "Set" ]
+                            "Set"
+                            [ Type.var "comparable" ]
+                        )
+                    )
+            }
+    , insert =
+        Elm.value
+            { importFrom = [ "Set" ]
+            , name = "insert"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.var "comparable"
+                        , Type.namedWith
+                            [ "Set" ]
+                            "Set"
+                            [ Type.var "comparable" ]
+                        ]
+                        (Type.namedWith
+                            [ "Set" ]
+                            "Set"
+                            [ Type.var "comparable" ]
+                        )
+                    )
+            }
+    , remove =
+        Elm.value
+            { importFrom = [ "Set" ]
+            , name = "remove"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.var "comparable"
+                        , Type.namedWith
+                            [ "Set" ]
+                            "Set"
+                            [ Type.var "comparable" ]
+                        ]
+                        (Type.namedWith
+                            [ "Set" ]
+                            "Set"
+                            [ Type.var "comparable" ]
+                        )
+                    )
+            }
+    , isEmpty =
+        Elm.value
+            { importFrom = [ "Set" ]
+            , name = "isEmpty"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.namedWith [ "Set" ] "Set" [ Type.var "a" ] ]
+                        Type.bool
+                    )
+            }
+    , member =
+        Elm.value
+            { importFrom = [ "Set" ]
+            , name = "member"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.var "comparable"
+                        , Type.namedWith
+                            [ "Set" ]
+                            "Set"
+                            [ Type.var "comparable" ]
+                        ]
+                        Type.bool
+                    )
+            }
+    , size =
+        Elm.value
+            { importFrom = [ "Set" ]
+            , name = "size"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.namedWith [ "Set" ] "Set" [ Type.var "a" ] ]
+                        Type.int
+                    )
+            }
+    , union =
+        Elm.value
+            { importFrom = [ "Set" ]
+            , name = "union"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.namedWith
+                            [ "Set" ]
+                            "Set"
+                            [ Type.var "comparable" ]
+                        , Type.namedWith
+                            [ "Set" ]
+                            "Set"
+                            [ Type.var "comparable" ]
+                        ]
+                        (Type.namedWith
+                            [ "Set" ]
+                            "Set"
+                            [ Type.var "comparable" ]
+                        )
+                    )
+            }
+    , intersect =
+        Elm.value
+            { importFrom = [ "Set" ]
+            , name = "intersect"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.namedWith
+                            [ "Set" ]
+                            "Set"
+                            [ Type.var "comparable" ]
+                        , Type.namedWith
+                            [ "Set" ]
+                            "Set"
+                            [ Type.var "comparable" ]
+                        ]
+                        (Type.namedWith
+                            [ "Set" ]
+                            "Set"
+                            [ Type.var "comparable" ]
+                        )
+                    )
+            }
+    , diff =
+        Elm.value
+            { importFrom = [ "Set" ]
+            , name = "diff"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.namedWith
+                            [ "Set" ]
+                            "Set"
+                            [ Type.var "comparable" ]
+                        , Type.namedWith
+                            [ "Set" ]
+                            "Set"
+                            [ Type.var "comparable" ]
+                        ]
+                        (Type.namedWith
+                            [ "Set" ]
+                            "Set"
+                            [ Type.var "comparable" ]
+                        )
+                    )
+            }
+    , toList =
+        Elm.value
+            { importFrom = [ "Set" ]
+            , name = "toList"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.namedWith [ "Set" ] "Set" [ Type.var "a" ] ]
+                        (Type.list (Type.var "a"))
+                    )
+            }
+    , fromList =
+        Elm.value
+            { importFrom = [ "Set" ]
+            , name = "fromList"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.list (Type.var "comparable") ]
+                        (Type.namedWith
+                            [ "Set" ]
+                            "Set"
+                            [ Type.var "comparable" ]
+                        )
+                    )
+            }
+    , map =
+        Elm.value
+            { importFrom = [ "Set" ]
+            , name = "map"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.function
+                            [ Type.var "comparable" ]
+                            (Type.var "comparable2")
+                        , Type.namedWith
+                            [ "Set" ]
+                            "Set"
+                            [ Type.var "comparable" ]
+                        ]
+                        (Type.namedWith
+                            [ "Set" ]
+                            "Set"
+                            [ Type.var "comparable2" ]
+                        )
+                    )
+            }
+    , foldl =
+        Elm.value
+            { importFrom = [ "Set" ]
+            , name = "foldl"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.function
+                            [ Type.var "a", Type.var "b" ]
+                            (Type.var "b")
+                        , Type.var "b"
+                        , Type.namedWith [ "Set" ] "Set" [ Type.var "a" ]
+                        ]
+                        (Type.var "b")
+                    )
+            }
+    , foldr =
+        Elm.value
+            { importFrom = [ "Set" ]
+            , name = "foldr"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.function
+                            [ Type.var "a", Type.var "b" ]
+                            (Type.var "b")
+                        , Type.var "b"
+                        , Type.namedWith [ "Set" ] "Set" [ Type.var "a" ]
+                        ]
+                        (Type.var "b")
+                    )
+            }
+    , filter =
+        Elm.value
+            { importFrom = [ "Set" ]
+            , name = "filter"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.function [ Type.var "comparable" ] Type.bool
+                        , Type.namedWith
+                            [ "Set" ]
+                            "Set"
+                            [ Type.var "comparable" ]
+                        ]
+                        (Type.namedWith
+                            [ "Set" ]
+                            "Set"
+                            [ Type.var "comparable" ]
+                        )
+                    )
+            }
+    , partition =
+        Elm.value
+            { importFrom = [ "Set" ]
+            , name = "partition"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.function [ Type.var "comparable" ] Type.bool
+                        , Type.namedWith
+                            [ "Set" ]
+                            "Set"
+                            [ Type.var "comparable" ]
+                        ]
+                        (Type.tuple
+                            (Type.namedWith
+                                [ "Set" ]
+                                "Set"
+                                [ Type.var "comparable" ]
+                            )
+                            (Type.namedWith
+                                [ "Set" ]
+                                "Set"
+                                [ Type.var "comparable" ]
+                            )
+                        )
+                    )
+            }
     }
 
 
