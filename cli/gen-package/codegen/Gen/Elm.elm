@@ -1,7 +1,7 @@
-module Gen.Elm exposing (alias, and, annotation_, append, apply, bool, call_, char, comment, cons, customType, declaration, declarationImports, declarationToString, divide, docs, equal, expose, exposeWith, expressionImports, field, file, fileWith, float, fn, fn2, fn3, fn4, fn5, fn6, function, functionAdvanced, functionReduced, get, gt, gte, hex, ifThen, int, intDivide, keep, letIn, list, lt, lte, make_, maybe, minus, moduleName_, multiply, notEqual, or, parse, plus, portIncoming, portOutgoing, power, query, record, signature, skip, slash, string, toString, triple, tuple, unit, unsafe, updateRecord, value, values_, variant, variantWith, withDocumentation, withType)
+module Gen.Elm exposing (alias, and, annotation_, append, apply, bool, call_, char, comment, cons, customType, declaration, declarationImports, declarationToString, divide, docs, equal, expose, exposeWith, expressionImports, field, file, fileWith, float, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, get, gt, gte, hex, ifThen, int, intDivide, just, keep, letIn, list, lt, lte, make_, maybe, minus, moduleName_, multiply, notEqual, nothing, or, parse, plus, portIncoming, portOutgoing, power, query, record, signature, skip, slash, string, toString, triple, tuple, unit, unsafe, updateRecord, value, values_, variant, variantWith, withDocumentation, withType)
 
 {-| 
-@docs moduleName_, file, bool, int, float, char, string, hex, unit, maybe, list, tuple, triple, withType, record, field, get, updateRecord, letIn, ifThen, comment, declaration, withDocumentation, expose, exposeWith, fileWith, docs, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, functionAdvanced, customType, variant, variantWith, alias, equal, notEqual, append, cons, plus, minus, multiply, divide, intDivide, power, lt, gt, lte, gte, and, or, keep, skip, slash, query, portIncoming, portOutgoing, parse, unsafe, toString, signature, expressionImports, declarationToString, declarationImports, apply, value, annotation_, make_, call_, values_
+@docs moduleName_, file, bool, int, float, char, string, hex, unit, maybe, just, nothing, list, tuple, triple, withType, record, field, get, updateRecord, letIn, ifThen, comment, declaration, withDocumentation, expose, exposeWith, fileWith, docs, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, customType, variant, variantWith, alias, equal, notEqual, append, cons, plus, minus, multiply, divide, intDivide, power, lt, gt, lte, gte, and, or, keep, skip, slash, query, portIncoming, portOutgoing, parse, unsafe, toString, signature, expressionImports, declarationToString, declarationImports, apply, value, annotation_, make_, call_, values_
 -}
 
 
@@ -177,6 +177,34 @@ maybe arg1 =
             }
         )
         [ arg1 ]
+
+
+{-| -}
+just : Elm.Expression -> Elm.Expression
+just arg1 =
+    Elm.apply
+        (Elm.value
+            { importFrom = [ "Elm" ]
+            , name = "just"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                        (Type.namedWith [ "Elm" ] "Expression" [])
+                    )
+            }
+        )
+        [ arg1 ]
+
+
+{-| -}
+nothing : Elm.Expression
+nothing =
+    Elm.value
+        { importFrom = [ "Elm" ]
+        , name = "nothing"
+        , annotation = Just (Type.namedWith [ "Elm" ] "Expression" [])
+        }
 
 
 {-| -}
@@ -1119,42 +1147,6 @@ functionReduced arg1 arg2 arg3 =
         [ arg1, arg2, Elm.fn "functionReduced0" (\fn0_2_0 -> arg3 fn0_2_0) ]
 
 
-{-| For when you want the most control over a function being generated.
-
-This is for when:
-
-1.  You want your variable names to be exactly as provided
-    (i.e. you don't want the variable name collision protection)
-2.  You know exactly what type each variable should be.
-
--}
-functionAdvanced : List Elm.Expression -> Elm.Expression -> Elm.Expression
-functionAdvanced arg1 arg2 =
-    Elm.apply
-        (Elm.value
-            { importFrom = [ "Elm" ]
-            , name = "functionAdvanced"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.list
-                            (Type.tuple
-                                Type.string
-                                (Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                )
-                            )
-                        , Type.namedWith [ "Elm" ] "Expression" []
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
-        )
-        [ Elm.list arg1, arg2 ]
-
-
 {-| A custom type declaration.
 
     Elm.customType "MyType"
@@ -2013,6 +2005,7 @@ call_ :
     , string : Elm.Expression -> Elm.Expression
     , hex : Elm.Expression -> Elm.Expression
     , maybe : Elm.Expression -> Elm.Expression
+    , just : Elm.Expression -> Elm.Expression
     , list : Elm.Expression -> Elm.Expression
     , tuple : Elm.Expression -> Elm.Expression -> Elm.Expression
     , triple :
@@ -2068,7 +2061,6 @@ call_ :
     , function : Elm.Expression -> Elm.Expression -> Elm.Expression
     , functionReduced :
         Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
-    , functionAdvanced : Elm.Expression -> Elm.Expression -> Elm.Expression
     , customType : Elm.Expression -> Elm.Expression -> Elm.Expression
     , variant : Elm.Expression -> Elm.Expression
     , variantWith : Elm.Expression -> Elm.Expression -> Elm.Expression
@@ -2226,6 +2218,21 @@ call_ =
                                 [ Type.maybe
                                     (Type.namedWith [ "Elm" ] "Expression" [])
                                 ]
+                                (Type.namedWith [ "Elm" ] "Expression" [])
+                            )
+                    }
+                )
+                [ arg1_0 ]
+    , just =
+        \arg1_0 ->
+            Elm.apply
+                (Elm.value
+                    { importFrom = [ "Elm" ]
+                    , name = "just"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.namedWith [ "Elm" ] "Expression" [] ]
                                 (Type.namedWith [ "Elm" ] "Expression" [])
                             )
                     }
@@ -2767,31 +2774,6 @@ call_ =
                     }
                 )
                 [ arg1_0, arg2_0, arg3_0 ]
-    , functionAdvanced =
-        \arg1_0 arg2_0 ->
-            Elm.apply
-                (Elm.value
-                    { importFrom = [ "Elm" ]
-                    , name = "functionAdvanced"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.list
-                                    (Type.tuple
-                                        Type.string
-                                        (Type.namedWith
-                                            [ "Elm", "Annotation" ]
-                                            "Annotation"
-                                            []
-                                        )
-                                    )
-                                , Type.namedWith [ "Elm" ] "Expression" []
-                                ]
-                                (Type.namedWith [ "Elm" ] "Expression" [])
-                            )
-                    }
-                )
-                [ arg1_0, arg2_0 ]
     , customType =
         \arg1_0 arg2_0 ->
             Elm.apply
@@ -3427,6 +3409,8 @@ values_ :
     , hex : Elm.Expression
     , unit : Elm.Expression
     , maybe : Elm.Expression
+    , just : Elm.Expression
+    , nothing : Elm.Expression
     , list : Elm.Expression
     , tuple : Elm.Expression
     , triple : Elm.Expression
@@ -3452,7 +3436,6 @@ values_ :
     , fn6 : Elm.Expression
     , function : Elm.Expression
     , functionReduced : Elm.Expression
-    , functionAdvanced : Elm.Expression
     , customType : Elm.Expression
     , variant : Elm.Expression
     , variantWith : Elm.Expression
@@ -3586,6 +3569,23 @@ values_ =
                         ]
                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
+            }
+    , just =
+        Elm.value
+            { importFrom = [ "Elm" ]
+            , name = "just"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.namedWith [ "Elm" ] "Expression" [] ]
+                        (Type.namedWith [ "Elm" ] "Expression" [])
+                    )
+            }
+    , nothing =
+        Elm.value
+            { importFrom = [ "Elm" ]
+            , name = "nothing"
+            , annotation = Just (Type.namedWith [ "Elm" ] "Expression" [])
             }
     , list =
         Elm.value
@@ -3999,27 +3999,6 @@ values_ =
                         , Type.function
                             [ Type.namedWith [ "Elm" ] "Expression" [] ]
                             (Type.namedWith [ "Elm" ] "Expression" [])
-                        ]
-                        (Type.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
-    , functionAdvanced =
-        Elm.value
-            { importFrom = [ "Elm" ]
-            , name = "functionAdvanced"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.list
-                            (Type.tuple
-                                Type.string
-                                (Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
-                                )
-                            )
-                        , Type.namedWith [ "Elm" ] "Expression" []
                         ]
                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )

@@ -12,7 +12,7 @@ module Elm exposing
     , withDocumentation
     , expose, exposeWith
     , fileWith, docs
-    , fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, functionAdvanced
+    , fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced
     , customType, Variant, variant, variantWith
     , alias
     , equal, notEqual
@@ -71,7 +71,7 @@ module Elm exposing
 
 ## Functions
 
-@docs fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, functionAdvanced
+@docs fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced
 
 
 ## Custom Types
