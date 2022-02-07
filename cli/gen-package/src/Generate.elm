@@ -1072,7 +1072,7 @@ getArgumentUnpacker baseName freshCount tipe value =
                 [ unpackedInner
                 ]
 
-        Elm.Type.Record fields Nothing ->
+        Elm.Type.Record fields _ ->
             fields
                 |> List.map
                     (\( fieldName, fieldType ) ->
