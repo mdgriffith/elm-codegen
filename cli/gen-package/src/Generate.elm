@@ -1015,7 +1015,7 @@ unpackFunction baseName freshCount renderer tipe =
                     let
                         full =
                             val
-                                |> Elm.withType (typeToGeneratedAnnotation one)
+                                |> Elm.withType (typeToGeneratedAnnotationExpression one)
                     in
                     unpackFunction baseName (freshCount + 1) (Elm.apply renderer [ full ]) two
                 )
@@ -1033,7 +1033,7 @@ getArgumentUnpacker baseName freshCount tipe value =
                     let
                         full =
                             val
-                                |> Elm.withType (typeToGeneratedAnnotation one)
+                                |> Elm.withType (typeToGeneratedAnnotationExpression one)
                     in
                     unpackFunction baseName (freshCount + 1) (Elm.apply value [ full ]) two
                 )
