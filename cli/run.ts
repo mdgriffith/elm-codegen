@@ -64,8 +64,14 @@ async function run_generator(base: string, moduleName: string, elm_source: strin
     })
     .catch((errors) => {
       let formatted = ""
-      for (const err of errors) {
-        formatted = formatted + format_title(err.title) + "\n\n" + err.description + "\n"
+
+      if (!!errors[Symbol.iterator]) {
+        for (const err of errors) {
+          formatted = formatted + format_title(err.title) + "\n\n" + err.description + "\n"
+        }
+      }
+      else {
+        formatted = `Error in ${moduleName}\n\n` + chalk.cyan(errors.message) + `\n\n\nAdd the ${chalk.cyan("--debug")} flag to see details.` // Assuming this is an Elm init error.
       }
       console.error(formatted)
     })
