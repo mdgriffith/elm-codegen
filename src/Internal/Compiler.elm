@@ -1321,14 +1321,12 @@ checkRestrictions restrictions type_ =
 
 {-| -}
 applyType :
-    Index
-    ->
-        Result
-            (List InferenceError)
-            Inference
+    Result
+        (List InferenceError)
+        Inference
     -> List ExpressionDetails
     -> Result (List InferenceError) Inference
-applyType index annotation args =
+applyType annotation args =
     case annotation of
         Err err ->
             Err err
@@ -1336,7 +1334,7 @@ applyType index annotation args =
         Ok topAnnotation ->
             case extractListAnnotation args [] topAnnotation.inferences of
                 Ok extracted ->
-                    applyTypeHelper index extracted.inferences topAnnotation.type_ extracted.types
+                    applyTypeHelper extracted.inferences topAnnotation.type_ extracted.types
 
                 Err err ->
                     Err err
@@ -1344,12 +1342,11 @@ applyType index annotation args =
 
 {-| -}
 applyTypeHelper :
-    Index
-    -> VariableCache
+    VariableCache
     -> Annotation.TypeAnnotation
     -> List Annotation.TypeAnnotation
     -> Result (List InferenceError) Inference
-applyTypeHelper index cache fn args =
+applyTypeHelper cache fn args =
     case fn of
         Annotation.FunctionTypeAnnotation one two ->
             case args of
@@ -1360,9 +1357,9 @@ applyTypeHelper index cache fn args =
                         }
 
                 top :: rest ->
-                    case unifiable index cache (denode one) top of
+                    case unifiable cache (denode one) top of
                         ( variableCache, Ok _ ) ->
-                            applyTypeHelper index
+                            applyTypeHelper
                                 variableCache
                                 (denode two)
                                 rest
@@ -1386,8 +1383,8 @@ applyTypeHelper index cache fn args =
                         ]
 
 
-unify : Index -> List ExpressionDetails -> Result (List InferenceError) Inference
-unify index exps =
+unify : List ExpressionDetails -> Result (List InferenceError) Inference
+unify exps =
     case exps of
         [] ->
             Ok
@@ -1398,18 +1395,17 @@ unify index exps =
         top :: remain ->
             case top.annotation of
                 Ok ann ->
-                    unifyHelper index remain ann
+                    unifyHelper remain ann
 
                 Err err ->
                     Err err
 
 
 unifyHelper :
-    Index
-    -> List ExpressionDetails
+    List ExpressionDetails
     -> Inference
     -> Result (List InferenceError) Inference
-unifyHelper index exps existing =
+unifyHelper exps existing =
     case exps of
         [] ->
             Ok existing
@@ -1417,14 +1413,14 @@ unifyHelper index exps existing =
         top :: remain ->
             case top.annotation of
                 Ok ann ->
-                    case unifiable index ann.inferences ann.type_ existing.type_ of
+                    case unifiable ann.inferences ann.type_ existing.type_ of
                         ( _, Err err ) ->
                             Err
                                 [ MismatchedList ann.type_ existing.type_
                                 ]
 
                         ( cache, Ok new ) ->
-                            unifyHelper index
+                            unifyHelper
                                 remain
                                 { type_ = new
                                 , inferences = mergeInferences existing.inferences cache
@@ -1435,8 +1431,7 @@ unifyHelper index exps existing =
 
 
 unifyOn :
-    Index
-    -> Annotation
+    Annotation
     ->
         Result
             (List InferenceError)
@@ -1445,7 +1440,7 @@ unifyOn :
         Result
             (List InferenceError)
             Inference
-unifyOn index (Annotation annDetails) res =
+unifyOn (Annotation annDetails) res =
     case res of
         Err _ ->
             res
@@ -1453,7 +1448,7 @@ unifyOn index (Annotation annDetails) res =
         Ok inf ->
             let
                 ( newInferences, finalResult ) =
-                    unifiable index inf.inferences annDetails.annotation inf.type_
+                    unifiable inf.inferences annDetails.annotation inf.type_
             in
             case finalResult of
                 Ok finalType ->
@@ -1480,22 +1475,20 @@ unifyOn index (Annotation annDetails) res =
 
 -}
 unifiable :
-    Index
-    -> VariableCache
+    VariableCache
     -> Annotation.TypeAnnotation
     -> Annotation.TypeAnnotation
     -> ( VariableCache, Result InferenceError Annotation.TypeAnnotation )
-unifiable index cache one two =
-    unifiableHelper index cache one two
+unifiable cache one two =
+    unifiableHelper cache one two
 
 
 unifiableHelper :
-    Index
-    -> VariableCache
+    VariableCache
     -> Annotation.TypeAnnotation
     -> Annotation.TypeAnnotation
     -> ( VariableCache, Result InferenceError Annotation.TypeAnnotation )
-unifiableHelper index vars one two =
+unifiableHelper vars one two =
     case one of
         Annotation.GenericType varName ->
             case Dict.get varName vars of
@@ -1525,16 +1518,16 @@ unifiableHelper index vars one two =
                                     )
 
                                 Just foundTwo ->
-                                    unifiableHelper index vars found foundTwo
+                                    unifiableHelper vars found foundTwo
 
                         _ ->
-                            unifiableHelper index vars found two
+                            unifiableHelper vars found two
 
         Annotation.Typed oneName oneContents ->
             case two of
                 Annotation.Typed twoName twoContents ->
                     if denode oneName == denode twoName then
-                        case unifiableLists index vars oneContents twoContents [] of
+                        case unifiableLists vars oneContents twoContents [] of
                             ( newVars, Ok unifiedContent ) ->
                                 ( newVars, Ok (Annotation.Typed twoName unifiedContent) )
 
@@ -1562,7 +1555,7 @@ unifiableHelper index vars one two =
                             )
 
                         Just foundTwo ->
-                            unifiableHelper index vars one foundTwo
+                            unifiableHelper vars one foundTwo
 
                 Annotation.Unit ->
                     ( vars, Ok Annotation.Unit )
@@ -1580,10 +1573,10 @@ unifiableHelper index vars one two =
                             )
 
                         Just foundTwo ->
-                            unifiableHelper index vars one foundTwo
+                            unifiableHelper vars one foundTwo
 
                 Annotation.Tupled valsB ->
-                    case unifiableLists index vars valsA valsB [] of
+                    case unifiableLists vars valsA valsB [] of
                         ( newVars, Ok unified ) ->
                             ( newVars
                             , Ok
@@ -1606,13 +1599,13 @@ unifiableHelper index vars one two =
                             )
 
                         Just foundTwo ->
-                            unifiableHelper index vars one foundTwo
+                            unifiableHelper vars one foundTwo
 
                 Annotation.GenericRecord twoRecName fieldsB ->
                     ( vars, Err (UnableToUnify one two) )
 
                 Annotation.Record fieldsB ->
-                    case unifiableFields index vars fieldsA fieldsB [] of
+                    case unifiableFields vars fieldsA fieldsB [] of
                         ( newVars, Ok unifiedFields ) ->
                             ( newVars
                             , Ok (Annotation.Record unifiedFields)
@@ -1634,13 +1627,13 @@ unifiableHelper index vars one two =
                             )
 
                         Just foundTwo ->
-                            unifiableHelper index vars one foundTwo
+                            unifiableHelper vars one foundTwo
 
                 Annotation.GenericRecord twoRecName fieldsB ->
                     ( vars, Err (UnableToUnify one two) )
 
                 Annotation.Record fieldsB ->
-                    case unifiableFields index vars fieldsA fieldsB [] of
+                    case unifiableFields vars fieldsA fieldsB [] of
                         ( newVars, Ok unifiedFields ) ->
                             ( newVars
                             , Ok (Annotation.Record unifiedFields)
@@ -1662,12 +1655,12 @@ unifiableHelper index vars one two =
                             )
 
                         Just foundTwo ->
-                            unifiableHelper index vars one foundTwo
+                            unifiableHelper vars one foundTwo
 
                 Annotation.FunctionTypeAnnotation twoA twoB ->
-                    case unifiableHelper index vars (denode oneA) (denode twoA) of
+                    case unifiableHelper vars (denode oneA) (denode twoA) of
                         ( aVars, Ok unifiedA ) ->
-                            case unifiableHelper index aVars (denode oneB) (denode twoB) of
+                            case unifiableHelper aVars (denode oneB) (denode twoB) of
                                 ( bVars, Ok unifiedB ) ->
                                     ( bVars
                                     , Ok
@@ -1688,8 +1681,7 @@ unifiableHelper index vars one two =
 
 
 unifiableFields :
-    Index
-    -> VariableCache
+    VariableCache
     -> List (Node ( Node String, Node Annotation.TypeAnnotation ))
     -> List (Node ( Node String, Node Annotation.TypeAnnotation ))
     -> List Annotation.RecordField
@@ -1697,7 +1689,7 @@ unifiableFields :
         ( VariableCache
         , Result InferenceError Annotation.RecordDefinition
         )
-unifiableFields index vars one two unified =
+unifiableFields vars one two unified =
     case ( one, two ) of
         ( [], [] ) ->
             ( vars, Ok (nodifyAll (List.reverse unified)) )
@@ -1717,11 +1709,14 @@ unifiableFields index vars one two unified =
                 Ok ( matchingFieldVal, remainingTwo ) ->
                     let
                         ( newVars, unifiedFieldResult ) =
-                            unifiableHelper index vars oneVal matchingFieldVal
+                            unifiableHelper vars oneVal matchingFieldVal
                     in
                     case unifiedFieldResult of
                         Ok unifiedField ->
-                            unifiableFields index newVars oneRemain remainingTwo (( nodify oneName, nodify unifiedField ) :: unified)
+                            unifiableFields newVars
+                                oneRemain
+                                remainingTwo
+                                (( nodify oneName, nodify unifiedField ) :: unified)
 
                         Err err ->
                             ( newVars, Err err )
@@ -1759,13 +1754,13 @@ getField name val fields captured =
                 getField name val remain (top :: captured)
 
 
-unifiableLists index vars one two unified =
+unifiableLists vars one two unified =
     case ( one, two ) of
         ( [], [] ) ->
             ( vars, Ok (nodifyAll (List.reverse unified)) )
 
         ( [ oneX ], [ twoX ] ) ->
-            case unifiableHelper index vars (denode oneX) (denode twoX) of
+            case unifiableHelper vars (denode oneX) (denode twoX) of
                 ( newVars, Ok un ) ->
                     ( newVars, Ok (nodifyAll (List.reverse (un :: unified))) )
 
@@ -1773,9 +1768,9 @@ unifiableLists index vars one two unified =
                     ( newVars, Err err )
 
         ( oneX :: oneRemain, twoX :: twoRemain ) ->
-            case unifiableHelper index vars (denode oneX) (denode twoX) of
+            case unifiableHelper vars (denode oneX) (denode twoX) of
                 ( newVars, Ok un ) ->
-                    unifiableLists index newVars oneRemain twoRemain (un :: unified)
+                    unifiableLists newVars oneRemain twoRemain (un :: unified)
 
                 ( newVars, Err err ) ->
                     ( vars, Err err )

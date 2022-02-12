@@ -5257,8 +5257,8 @@ var $author$project$Internal$Compiler$getField = F4(
 		}
 	});
 var $author$project$Internal$Compiler$nodifyAll = $elm$core$List$map($author$project$Internal$Compiler$nodify);
-var $author$project$Internal$Compiler$unifiableFields = F5(
-	function (index, vars, one, two, unified) {
+var $author$project$Internal$Compiler$unifiableFields = F4(
+	function (vars, one, two, unified) {
 		unifiableFields:
 		while (true) {
 			var _v30 = _Utils_Tuple2(one, two);
@@ -5289,13 +5289,12 @@ var $author$project$Internal$Compiler$unifiableFields = F5(
 					var _v34 = _v33.a;
 					var matchingFieldVal = _v34.a;
 					var remainingTwo = _v34.b;
-					var _v35 = A4($author$project$Internal$Compiler$unifiableHelper, index, vars, oneVal, matchingFieldVal);
+					var _v35 = A3($author$project$Internal$Compiler$unifiableHelper, vars, oneVal, matchingFieldVal);
 					var newVars = _v35.a;
 					var unifiedFieldResult = _v35.b;
 					if (!unifiedFieldResult.$) {
 						var unifiedField = unifiedFieldResult.a;
-						var $temp$index = index,
-							$temp$vars = newVars,
+						var $temp$vars = newVars,
 							$temp$one = oneRemain,
 							$temp$two = remainingTwo,
 							$temp$unified = A2(
@@ -5304,7 +5303,6 @@ var $author$project$Internal$Compiler$unifiableFields = F5(
 								$author$project$Internal$Compiler$nodify(oneName),
 								$author$project$Internal$Compiler$nodify(unifiedField)),
 							unified);
-						index = $temp$index;
 						vars = $temp$vars;
 						one = $temp$one;
 						two = $temp$two;
@@ -5325,8 +5323,8 @@ var $author$project$Internal$Compiler$unifiableFields = F5(
 			}
 		}
 	});
-var $author$project$Internal$Compiler$unifiableHelper = F4(
-	function (index, vars, one, two) {
+var $author$project$Internal$Compiler$unifiableHelper = F3(
+	function (vars, one, two) {
 		unifiableHelper:
 		while (true) {
 			switch (one.$) {
@@ -5357,22 +5355,18 @@ var $author$project$Internal$Compiler$unifiableHelper = F4(
 									$elm$core$Result$Ok(two));
 							} else {
 								var foundTwo = _v11.a;
-								var $temp$index = index,
-									$temp$vars = vars,
+								var $temp$vars = vars,
 									$temp$one = found,
 									$temp$two = foundTwo;
-								index = $temp$index;
 								vars = $temp$vars;
 								one = $temp$one;
 								two = $temp$two;
 								continue unifiableHelper;
 							}
 						} else {
-							var $temp$index = index,
-								$temp$vars = vars,
+							var $temp$vars = vars,
 								$temp$one = found,
 								$temp$two = two;
-							index = $temp$index;
 							vars = $temp$vars;
 							one = $temp$one;
 							two = $temp$two;
@@ -5389,7 +5383,7 @@ var $author$project$Internal$Compiler$unifiableHelper = F4(
 							if (_Utils_eq(
 								$author$project$Internal$Compiler$denode(oneName),
 								$author$project$Internal$Compiler$denode(twoName))) {
-								var _v13 = A5($author$project$Internal$Compiler$unifiableLists, index, vars, oneContents, twoContents, _List_Nil);
+								var _v13 = A4($author$project$Internal$Compiler$unifiableLists, vars, oneContents, twoContents, _List_Nil);
 								if (!_v13.b.$) {
 									var newVars = _v13.a;
 									var unifiedContent = _v13.b.a;
@@ -5432,11 +5426,9 @@ var $author$project$Internal$Compiler$unifiableHelper = F4(
 									$elm$core$Result$Ok(one));
 							} else {
 								var foundTwo = _v15.a;
-								var $temp$index = index,
-									$temp$vars = vars,
+								var $temp$vars = vars,
 									$temp$one = one,
 									$temp$two = foundTwo;
-								index = $temp$index;
 								vars = $temp$vars;
 								one = $temp$one;
 								two = $temp$two;
@@ -5464,11 +5456,9 @@ var $author$project$Internal$Compiler$unifiableHelper = F4(
 									$elm$core$Result$Ok(one));
 							} else {
 								var foundTwo = _v17.a;
-								var $temp$index = index,
-									$temp$vars = vars,
+								var $temp$vars = vars,
 									$temp$one = one,
 									$temp$two = foundTwo;
-								index = $temp$index;
 								vars = $temp$vars;
 								one = $temp$one;
 								two = $temp$two;
@@ -5476,7 +5466,7 @@ var $author$project$Internal$Compiler$unifiableHelper = F4(
 							}
 						case 3:
 							var valsB = two.a;
-							var _v18 = A5($author$project$Internal$Compiler$unifiableLists, index, vars, valsA, valsB, _List_Nil);
+							var _v18 = A4($author$project$Internal$Compiler$unifiableLists, vars, valsA, valsB, _List_Nil);
 							if (!_v18.b.$) {
 								var newVars = _v18.a;
 								var unified = _v18.b.a;
@@ -5509,11 +5499,9 @@ var $author$project$Internal$Compiler$unifiableHelper = F4(
 									$elm$core$Result$Ok(one));
 							} else {
 								var foundTwo = _v20.a;
-								var $temp$index = index,
-									$temp$vars = vars,
+								var $temp$vars = vars,
 									$temp$one = one,
 									$temp$two = foundTwo;
-								index = $temp$index;
 								vars = $temp$vars;
 								one = $temp$one;
 								two = $temp$two;
@@ -5528,7 +5516,7 @@ var $author$project$Internal$Compiler$unifiableHelper = F4(
 									A2($author$project$Internal$Compiler$UnableToUnify, one, two)));
 						case 4:
 							var fieldsB = two.a;
-							var _v21 = A5($author$project$Internal$Compiler$unifiableFields, index, vars, fieldsA, fieldsB, _List_Nil);
+							var _v21 = A4($author$project$Internal$Compiler$unifiableFields, vars, fieldsA, fieldsB, _List_Nil);
 							if (!_v21.b.$) {
 								var newVars = _v21.a;
 								var unifiedFields = _v21.b.a;
@@ -5564,11 +5552,9 @@ var $author$project$Internal$Compiler$unifiableHelper = F4(
 									$elm$core$Result$Ok(one));
 							} else {
 								var foundTwo = _v24.a;
-								var $temp$index = index,
-									$temp$vars = vars,
+								var $temp$vars = vars,
 									$temp$one = one,
 									$temp$two = foundTwo;
-								index = $temp$index;
 								vars = $temp$vars;
 								one = $temp$one;
 								two = $temp$two;
@@ -5583,7 +5569,7 @@ var $author$project$Internal$Compiler$unifiableHelper = F4(
 									A2($author$project$Internal$Compiler$UnableToUnify, one, two)));
 						case 4:
 							var fieldsB = two.a;
-							var _v25 = A5($author$project$Internal$Compiler$unifiableFields, index, vars, fieldsA, fieldsB, _List_Nil);
+							var _v25 = A4($author$project$Internal$Compiler$unifiableFields, vars, fieldsA, fieldsB, _List_Nil);
 							if (!_v25.b.$) {
 								var newVars = _v25.a;
 								var unifiedFields = _v25.b.a;
@@ -5617,11 +5603,9 @@ var $author$project$Internal$Compiler$unifiableHelper = F4(
 									$elm$core$Result$Ok(one));
 							} else {
 								var foundTwo = _v27.a;
-								var $temp$index = index,
-									$temp$vars = vars,
+								var $temp$vars = vars,
 									$temp$one = one,
 									$temp$two = foundTwo;
-								index = $temp$index;
 								vars = $temp$vars;
 								one = $temp$one;
 								two = $temp$two;
@@ -5630,18 +5614,16 @@ var $author$project$Internal$Compiler$unifiableHelper = F4(
 						case 6:
 							var twoA = two.a;
 							var twoB = two.b;
-							var _v28 = A4(
+							var _v28 = A3(
 								$author$project$Internal$Compiler$unifiableHelper,
-								index,
 								vars,
 								$author$project$Internal$Compiler$denode(oneA),
 								$author$project$Internal$Compiler$denode(twoA));
 							if (!_v28.b.$) {
 								var aVars = _v28.a;
 								var unifiedA = _v28.b.a;
-								var _v29 = A4(
+								var _v29 = A3(
 									$author$project$Internal$Compiler$unifiableHelper,
-									index,
 									aVars,
 									$author$project$Internal$Compiler$denode(oneB),
 									$author$project$Internal$Compiler$denode(twoB));
@@ -5672,8 +5654,8 @@ var $author$project$Internal$Compiler$unifiableHelper = F4(
 			}
 		}
 	});
-var $author$project$Internal$Compiler$unifiableLists = F5(
-	function (index, vars, one, two, unified) {
+var $author$project$Internal$Compiler$unifiableLists = F4(
+	function (vars, one, two, unified) {
 		unifiableLists:
 		while (true) {
 			var _v0 = _Utils_Tuple2(one, two);
@@ -5696,9 +5678,8 @@ var $author$project$Internal$Compiler$unifiableLists = F5(
 							var oneX = _v1.a;
 							var _v2 = _v0.b;
 							var twoX = _v2.a;
-							var _v3 = A4(
+							var _v3 = A3(
 								$author$project$Internal$Compiler$unifiableHelper,
-								index,
 								vars,
 								$author$project$Internal$Compiler$denode(oneX),
 								$author$project$Internal$Compiler$denode(twoX));
@@ -5725,21 +5706,18 @@ var $author$project$Internal$Compiler$unifiableLists = F5(
 							var _v5 = _v0.b;
 							var twoX = _v5.a;
 							var twoRemain = _v5.b;
-							var _v6 = A4(
+							var _v6 = A3(
 								$author$project$Internal$Compiler$unifiableHelper,
-								index,
 								vars,
 								$author$project$Internal$Compiler$denode(oneX),
 								$author$project$Internal$Compiler$denode(twoX));
 							if (!_v6.b.$) {
 								var newVars = _v6.a;
 								var un = _v6.b.a;
-								var $temp$index = index,
-									$temp$vars = newVars,
+								var $temp$vars = newVars,
 									$temp$one = oneRemain,
 									$temp$two = twoRemain,
 									$temp$unified = A2($elm$core$List$cons, un, unified);
-								index = $temp$index;
 								vars = $temp$vars;
 								one = $temp$one;
 								two = $temp$two;
@@ -5763,12 +5741,12 @@ var $author$project$Internal$Compiler$unifiableLists = F5(
 				$elm$core$Result$Err($author$project$Internal$Compiler$MismatchedTypeVariables));
 		}
 	});
-var $author$project$Internal$Compiler$unifiable = F4(
-	function (index, cache, one, two) {
-		return A4($author$project$Internal$Compiler$unifiableHelper, index, cache, one, two);
+var $author$project$Internal$Compiler$unifiable = F3(
+	function (cache, one, two) {
+		return A3($author$project$Internal$Compiler$unifiableHelper, cache, one, two);
 	});
-var $author$project$Internal$Compiler$applyTypeHelper = F4(
-	function (index, cache, fn, args) {
+var $author$project$Internal$Compiler$applyTypeHelper = F3(
+	function (cache, fn, args) {
 		applyTypeHelper:
 		while (true) {
 			if (fn.$ === 6) {
@@ -5780,19 +5758,16 @@ var $author$project$Internal$Compiler$applyTypeHelper = F4(
 				} else {
 					var top = args.a;
 					var rest = args.b;
-					var _v2 = A4(
+					var _v2 = A3(
 						$author$project$Internal$Compiler$unifiable,
-						index,
 						cache,
 						$author$project$Internal$Compiler$denode(one),
 						top);
 					if (!_v2.b.$) {
 						var variableCache = _v2.a;
-						var $temp$index = index,
-							$temp$cache = variableCache,
+						var $temp$cache = variableCache,
 							$temp$fn = $author$project$Internal$Compiler$denode(two),
 							$temp$args = rest;
-						index = $temp$index;
 						cache = $temp$cache;
 						fn = $temp$fn;
 						args = $temp$args;
@@ -5976,8 +5951,8 @@ var $author$project$Internal$Compiler$extractListAnnotation = F3(
 			}
 		}
 	});
-var $author$project$Internal$Compiler$applyType = F3(
-	function (index, annotation, args) {
+var $author$project$Internal$Compiler$applyType = F2(
+	function (annotation, args) {
 		if (annotation.$ === 1) {
 			var err = annotation.a;
 			return $elm$core$Result$Err(err);
@@ -5986,7 +5961,7 @@ var $author$project$Internal$Compiler$applyType = F3(
 			var _v1 = A3($author$project$Internal$Compiler$extractListAnnotation, args, _List_Nil, topAnnotation.g);
 			if (!_v1.$) {
 				var extracted = _v1.a;
-				return A4($author$project$Internal$Compiler$applyTypeHelper, index, extracted.g, topAnnotation.f, extracted.af);
+				return A3($author$project$Internal$Compiler$applyTypeHelper, extracted.g, topAnnotation.f, extracted.af);
 			} else {
 				var err = _v1.a;
 				return $elm$core$Result$Err(err);
@@ -6212,7 +6187,7 @@ var $author$project$Elm$apply = F2(
 			var args = A2($author$project$Internal$Compiler$thread, nextIndex, argExpressions);
 			var protectedAnnotation = A2($author$project$Internal$Compiler$protectInference, annotationIndex, exp.c);
 			return {
-				c: A3($author$project$Internal$Compiler$applyType, annotationIndex, protectedAnnotation, args),
+				c: A2($author$project$Internal$Compiler$applyType, protectedAnnotation, args),
 				a: $stil4m$elm_syntax$Elm$Syntax$Expression$Application(
 					$author$project$Internal$Compiler$nodifyAll(
 						A2(
@@ -6275,8 +6250,8 @@ var $author$project$Internal$Compiler$MismatchedList = F2(
 	function (a, b) {
 		return {$: 0, a: a, b: b};
 	});
-var $author$project$Internal$Compiler$unifyHelper = F3(
-	function (index, exps, existing) {
+var $author$project$Internal$Compiler$unifyHelper = F2(
+	function (exps, existing) {
 		unifyHelper:
 		while (true) {
 			if (!exps.b) {
@@ -6287,7 +6262,7 @@ var $author$project$Internal$Compiler$unifyHelper = F3(
 				var _v1 = top.c;
 				if (!_v1.$) {
 					var ann = _v1.a;
-					var _v2 = A4($author$project$Internal$Compiler$unifiable, index, ann.g, ann.f, existing.f);
+					var _v2 = A3($author$project$Internal$Compiler$unifiable, ann.g, ann.f, existing.f);
 					if (_v2.b.$ === 1) {
 						var err = _v2.b.a;
 						return $elm$core$Result$Err(
@@ -6298,13 +6273,11 @@ var $author$project$Internal$Compiler$unifyHelper = F3(
 					} else {
 						var cache = _v2.a;
 						var _new = _v2.b.a;
-						var $temp$index = index,
-							$temp$exps = remain,
+						var $temp$exps = remain,
 							$temp$existing = {
 							g: A2($author$project$Internal$Compiler$mergeInferences, existing.g, cache),
 							f: _new
 						};
-						index = $temp$index;
 						exps = $temp$exps;
 						existing = $temp$existing;
 						continue unifyHelper;
@@ -6316,27 +6289,26 @@ var $author$project$Internal$Compiler$unifyHelper = F3(
 			}
 		}
 	});
-var $author$project$Internal$Compiler$unify = F2(
-	function (index, exps) {
-		if (!exps.b) {
-			return $elm$core$Result$Ok(
-				{
-					g: $elm$core$Dict$empty,
-					f: $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$GenericType('a')
-				});
+var $author$project$Internal$Compiler$unify = function (exps) {
+	if (!exps.b) {
+		return $elm$core$Result$Ok(
+			{
+				g: $elm$core$Dict$empty,
+				f: $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$GenericType('a')
+			});
+	} else {
+		var top = exps.a;
+		var remain = exps.b;
+		var _v1 = top.c;
+		if (!_v1.$) {
+			var ann = _v1.a;
+			return A2($author$project$Internal$Compiler$unifyHelper, remain, ann);
 		} else {
-			var top = exps.a;
-			var remain = exps.b;
-			var _v1 = top.c;
-			if (!_v1.$) {
-				var ann = _v1.a;
-				return A3($author$project$Internal$Compiler$unifyHelper, index, remain, ann);
-			} else {
-				var err = _v1.a;
-				return $elm$core$Result$Err(err);
-			}
+			var err = _v1.a;
+			return $elm$core$Result$Err(err);
 		}
-	});
+	}
+};
 var $author$project$Elm$list = function (exprs) {
 	return function (sourceIndex) {
 		var index = $author$project$Internal$Compiler$dive(sourceIndex);
@@ -6357,7 +6329,7 @@ var $author$project$Elm$list = function (exprs) {
 								]))
 					};
 				},
-				A2($author$project$Internal$Compiler$unify, index, exprDetails)),
+				$author$project$Internal$Compiler$unify(exprDetails)),
 			a: $stil4m$elm_syntax$Elm$Syntax$Expression$ListExpr(
 				A2(
 					$elm$core$List$map,
@@ -7440,14 +7412,14 @@ var $author$project$Generate$typeToGeneratedAnnotationExpression = function (elm
 				_List_Nil);
 	}
 };
-var $author$project$Internal$Compiler$unifyOn = F3(
-	function (index, _v0, res) {
+var $author$project$Internal$Compiler$unifyOn = F2(
+	function (_v0, res) {
 		var annDetails = _v0;
 		if (res.$ === 1) {
 			return res;
 		} else {
 			var inf = res.a;
-			var _v2 = A4($author$project$Internal$Compiler$unifiable, index, inf.g, annDetails.c, inf.f);
+			var _v2 = A3($author$project$Internal$Compiler$unifiable, inf.g, annDetails.c, inf.f);
 			var newInferences = _v2.a;
 			var finalResult = _v2.b;
 			if (!finalResult.$) {
@@ -7470,7 +7442,7 @@ var $author$project$Elm$withType = F2(
 			return _Utils_update(
 				exp,
 				{
-					c: A3($author$project$Internal$Compiler$unifyOn, index, ann, exp.c),
+					c: A2($author$project$Internal$Compiler$unifyOn, ann, exp.c),
 					b: _Utils_ap(
 						exp.b,
 						$author$project$Internal$Compiler$getAnnotationImports(ann))

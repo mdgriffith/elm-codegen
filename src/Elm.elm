@@ -567,7 +567,7 @@ withType ann (Compiler.Expression toExp) =
             in
             { exp
                 | annotation =
-                    Compiler.unifyOn index ann exp.annotation
+                    Compiler.unifyOn ann exp.annotation
                 , imports = exp.imports ++ Compiler.getAnnotationImports ann
             }
 
@@ -842,7 +842,7 @@ list exprs =
             in
             { expression = Exp.ListExpr (List.map (.expression >> Compiler.nodify) exprDetails)
             , annotation =
-                Compiler.unify index exprDetails
+                Compiler.unify exprDetails
                     |> Result.map
                         (\inner ->
                             { type_ =
@@ -1533,7 +1533,7 @@ apply express argExpressions =
                         )
                     )
             , annotation =
-                Compiler.applyType annotationIndex protectedAnnotation args
+                Compiler.applyType protectedAnnotation args
             , imports = exp.imports ++ List.concatMap Compiler.getImports args
             }
         )
@@ -3093,7 +3093,7 @@ applyInfix2 (BinOp symbol dir _) infixAnnotation l r =
                     (Compiler.nodify left.expression)
                     (Compiler.nodify right.expression)
             , annotation =
-                Compiler.applyType annotationIndex
+                Compiler.applyType
                     (Ok
                         { type_ = infixAnnotation
                         , inferences = Dict.empty
@@ -3126,21 +3126,21 @@ applyNumber symbol dir l r =
                     (Compiler.nodify left.expression)
                     (Compiler.nodify right.expression)
             , annotation =
-                Compiler.applyType annotationIndex
+                Compiler.applyType
                     (Ok
                         { inferences = Dict.empty
                         , type_ =
                             Annotation.FunctionTypeAnnotation
                                 (Compiler.nodify
-                                    (Annotation.GenericType "number")
+                                    (Annotation.GenericType ("number" ++ Compiler.indexToString annotationIndex))
                                 )
                                 (Compiler.nodify
                                     (Annotation.FunctionTypeAnnotation
                                         (Compiler.nodify
-                                            (Annotation.GenericType "number")
+                                            (Annotation.GenericType ("number" ++ Compiler.indexToString annotationIndex))
                                         )
                                         (Compiler.nodify
-                                            (Annotation.GenericType "number")
+                                            (Annotation.GenericType ("number" ++ Compiler.indexToString annotationIndex))
                                         )
                                     )
                                 )
