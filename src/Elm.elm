@@ -2357,7 +2357,7 @@ declaration name (Compiler.Expression toBody) =
     in
     { documentation =
         Compiler.nodifyMaybe
-            (renderDebugDocumentation resolvedType body.annotation)
+            (renderDocumentation resolvedType body.annotation)
     , signature =
         case body.annotation of
             Ok sig ->
