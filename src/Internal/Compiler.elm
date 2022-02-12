@@ -93,30 +93,38 @@ dive (Index top tail) =
 
 indexToString : Index -> String
 indexToString (Index top tail) =
-    case tail of
-        [] ->
-            ""
+    (if top == 0 then
+        ""
 
-        one :: [] ->
-            "_" ++ String.fromInt one
+     else
+        "_"
+            ++ String.fromInt top
+    )
+        ++ (case tail of
+                [] ->
+                    ""
 
-        one :: two :: [] ->
-            "_"
-                ++ String.fromInt one
-                ++ "_"
-                ++ String.fromInt two
+                one :: [] ->
+                    "_" ++ String.fromInt one
 
-        one :: two :: three :: [] ->
-            "_"
-                ++ String.fromInt one
-                ++ "_"
-                ++ String.fromInt two
-                ++ "_"
-                ++ String.fromInt three
+                one :: two :: [] ->
+                    "_"
+                        ++ String.fromInt one
+                        ++ "_"
+                        ++ String.fromInt two
 
-        _ ->
-            "_"
-                ++ String.join "_" (List.map String.fromInt tail)
+                one :: two :: three :: [] ->
+                    "_"
+                        ++ String.fromInt one
+                        ++ "_"
+                        ++ String.fromInt two
+                        ++ "_"
+                        ++ String.fromInt three
+
+                _ ->
+                    "_"
+                        ++ String.join "_" (List.map String.fromInt tail)
+           )
 
 
 var : Index -> String -> ( Index, String, Expression )
@@ -350,11 +358,12 @@ getInnerAnnotation (Annotation details) =
 
 getInnerInference : Index -> Annotation -> Inference
 getInnerInference index (Annotation details) =
-    { type_ = details.annotation
+    { type_ =
+        details.annotation
 
     -- running protectAnnotation will cause the typechecking to fail :/
     -- So, there's a bug to debug
-    -- protectAnnotation index details.annotation
+    --protectAnnotation index details.annotation
     , inferences = Dict.empty
     }
 
@@ -929,13 +938,22 @@ type alias VariableCache =
     Dict.Dict String Annotation.TypeAnnotation
 
 
+resolve : VariableCache -> Annotation.TypeAnnotation -> Result String Annotation.TypeAnnotation
+resolve cache annotation =
+    let
+        restrictions =
+            getRestrictions annotation cache
+    in
+    case resolveVariables cache annotation of
+        Ok newAnnotation ->
+            checkRestrictions restrictions newAnnotation
+
+        Err err ->
+            Err err
+
+
 resolveVariables : VariableCache -> Annotation.TypeAnnotation -> Result String Annotation.TypeAnnotation
 resolveVariables cache annotation =
-    -- let
-    --     _ =
-    --         Debug.log "Resolve" "--"
-    -- in
-    -- Debug.log "    RETURN" <|
     case annotation of
         Annotation.FunctionTypeAnnotation (Node.Node oneCoords one) (Node.Node twoCoords two) ->
             Result.map2
@@ -948,7 +966,12 @@ resolveVariables cache annotation =
                 (resolveVariables cache two)
 
         Annotation.GenericType name ->
-            resolveName (getRestrictions name) name cache
+            case Dict.get name cache of
+                Nothing ->
+                    Ok annotation
+
+                Just newType ->
+                    resolveVariables cache newType
 
         Annotation.Typed nodedModuleName vars ->
             Result.map (Annotation.Typed nodedModuleName)
@@ -974,11 +997,21 @@ resolveVariables cache annotation =
                                         Err err
 
                                     Ok resolvedField ->
-                                        Ok
-                                            (Node fieldRange
-                                                ( name, Node fieldTypeRange resolvedField )
-                                                :: processedFields
-                                            )
+                                        let
+                                            restrictions =
+                                                getRestrictions annotation cache
+                                        in
+                                        case checkRestrictions restrictions resolvedField of
+                                            Ok _ ->
+                                                Ok
+                                                    (Node fieldRange
+                                                        ( name, Node fieldTypeRange resolvedField )
+                                                        :: processedFields
+                                                    )
+
+                                            Err err ->
+                                                -- Note, this error probably need
+                                                Err err
                     )
                     (Ok [])
                     fields
@@ -999,6 +1032,10 @@ resolveVariables cache annotation =
                                             Err err
 
                                         Ok resolvedField ->
+                                            let
+                                                restrictions =
+                                                    getRestrictions annotation cache
+                                            in
                                             Ok
                                                 (Node fieldRange
                                                     ( name, Node fieldTypeRange resolvedField )
@@ -1043,11 +1080,11 @@ type Restrictions
     | IsAppendable
     | IsComparable
     | IsAppendableComparable
-    | RecordWith (List (Node Annotation.RecordField))
+    | Overconstrainted (List Restrictions)
 
 
-getRestrictions : String -> Restrictions
-getRestrictions name =
+nameToRestrictions : String -> Restrictions
+nameToRestrictions name =
     if String.startsWith "number" name then
         IsNumber
 
@@ -1064,199 +1101,234 @@ getRestrictions name =
         NoRestrictions
 
 
-restrictFurther : Restrictions -> Restrictions -> Result String Restrictions
+restrictFurther : Restrictions -> Restrictions -> Restrictions
 restrictFurther restriction newRestriction =
     case restriction of
         NoRestrictions ->
-            Ok newRestriction
+            newRestriction
 
-        RecordWith fields ->
+        Overconstrainted constraints ->
             case newRestriction of
-                NoRestrictions ->
-                    Ok restriction
+                Overconstrainted newConstraints ->
+                    Overconstrainted (constraints ++ newConstraints)
 
-                RecordWith newFields ->
-                    Ok newRestriction
+                NoRestrictions ->
+                    restriction
 
                 _ ->
-                    Err ""
+                    Overconstrainted (newRestriction :: constraints)
 
         IsNumber ->
             case newRestriction of
                 IsNumber ->
-                    Ok newRestriction
+                    newRestriction
 
                 NoRestrictions ->
-                    Ok restriction
+                    restriction
+
+                Overconstrainted constraints ->
+                    Overconstrainted (restriction :: constraints)
 
                 _ ->
-                    Err ""
+                    Overconstrainted [ restriction, newRestriction ]
 
         IsComparable ->
             case newRestriction of
                 NoRestrictions ->
-                    Ok restriction
+                    restriction
 
                 IsAppendableComparable ->
-                    Ok newRestriction
+                    newRestriction
 
                 IsComparable ->
-                    Ok newRestriction
+                    newRestriction
+
+                Overconstrainted constraints ->
+                    Overconstrainted (restriction :: constraints)
 
                 _ ->
-                    Err ""
+                    Overconstrainted [ restriction, newRestriction ]
 
         IsAppendable ->
             case newRestriction of
                 NoRestrictions ->
-                    Ok restriction
+                    restriction
 
                 IsAppendableComparable ->
-                    Ok newRestriction
+                    newRestriction
 
                 IsComparable ->
-                    Ok newRestriction
+                    newRestriction
+
+                Overconstrainted constraints ->
+                    Overconstrainted (restriction :: constraints)
 
                 _ ->
-                    Err ""
+                    Overconstrainted [ restriction, newRestriction ]
 
         IsAppendableComparable ->
             case newRestriction of
                 NoRestrictions ->
-                    Ok restriction
+                    restriction
 
                 IsAppendableComparable ->
-                    Ok newRestriction
+                    newRestriction
 
                 IsComparable ->
-                    Ok newRestriction
+                    newRestriction
 
                 IsAppendable ->
-                    Ok newRestriction
+                    newRestriction
+
+                Overconstrainted constraints ->
+                    Overconstrainted (restriction :: constraints)
 
                 _ ->
-                    Err ""
+                    Overconstrainted [ restriction, newRestriction ]
 
 
-resolveName : Restrictions -> String -> Dict String Annotation.TypeAnnotation -> Result String Annotation.TypeAnnotation
-resolveName restrictions name cache =
-    -- let
-    --     _ =
-    --         Debug.log "\n   Resolve" name
-    -- in
-    -- Debug.log "   resed:" <|
-    case Dict.get name cache of
-        Just (Annotation.GenericType newName) ->
-            let
-                desiredRestriction =
-                    getRestrictions newName
-            in
-            case restrictFurther restrictions desiredRestriction of
-                Ok newRestriction ->
-                    resolveName newRestriction newName cache
+getRestrictions :
+    Annotation.TypeAnnotation
+    -> Dict String Annotation.TypeAnnotation
+    -> Restrictions
+getRestrictions notation cache =
+    getRestrictionsHelper NoRestrictions notation cache
 
-                Err err ->
-                    Err err
 
-        Just (Annotation.GenericRecord (Node.Node range recordName) (Node.Node fieldRange fields)) ->
-            let
-                result =
-                    List.foldl
-                        (\(Node.Node totalRange ( Node.Node fRange field, Node.Node vRange existingType )) existing ->
-                            case existing of
-                                Err _ ->
-                                    existing
+getRestrictionsHelper :
+    Restrictions
+    -> Annotation.TypeAnnotation
+    -> Dict String Annotation.TypeAnnotation
+    -> Restrictions
+getRestrictionsHelper existingRestrictions notation cache =
+    case notation of
+        Annotation.FunctionTypeAnnotation (Node.Node oneCoords one) (Node.Node twoCoords two) ->
+            existingRestrictions
 
-                                Ok existingFields ->
-                                    case resolveVariables cache existingType of
-                                        Ok newFieldType ->
-                                            Ok
-                                                (Node.Node totalRange
-                                                    ( Node.Node fRange field, Node.Node vRange newFieldType )
-                                                    :: existingFields
-                                                )
+        Annotation.GenericType name ->
+            getRestrictionsHelper
+                (restrictFurther existingRestrictions (nameToRestrictions name))
+                (Dict.get name cache
+                    |> Maybe.withDefault Annotation.Unit
+                )
+                cache
 
-                                        Err err ->
-                                            Err err
+        Annotation.Typed nodedModuleName vars ->
+            existingRestrictions
+
+        Annotation.Unit ->
+            existingRestrictions
+
+        Annotation.Tupled nodes ->
+            existingRestrictions
+
+        Annotation.Record fields ->
+            existingRestrictions
+
+        Annotation.GenericRecord baseName (Node recordNode fields) ->
+            existingRestrictions
+
+
+checkRestrictions : Restrictions -> Annotation.TypeAnnotation -> Result String Annotation.TypeAnnotation
+checkRestrictions restrictions type_ =
+    case restrictions of
+        NoRestrictions ->
+            Ok type_
+
+        Overconstrainted constraints ->
+            Err
+                ((Elm.Writer.writeTypeAnnotation (nodify type_)
+                    |> Elm.Writer.write
+                 )
+                    ++ " needs to be: "
+                    ++ String.join ", "
+                        (List.concatMap
+                            (\constraint ->
+                                case constraint of
+                                    NoRestrictions ->
+                                        []
+
+                                    Overconstrainted _ ->
+                                        []
+
+                                    IsNumber ->
+                                        [ "a number"
+                                        ]
+
+                                    IsComparable ->
+                                        [ "comparable"
+                                        ]
+
+                                    IsAppendable ->
+                                        [ "appendable" ]
+
+                                    IsAppendableComparable ->
+                                        [ "appendable and comparable" ]
+                            )
+                            constraints
                         )
-                        (Ok [])
-                        fields
-            in
-            case result of
-                Ok resolvedFields ->
-                    Ok (Annotation.Record resolvedFields)
+                    ++ "\n\nbut that's impossible!  Or Elm Codegen's s typechecker is off."
+                )
 
-                Err err ->
-                    Err err
+        IsNumber ->
+            if isNumber type_ then
+                Ok type_
 
-        Just newType ->
-            case restrictions of
-                NoRestrictions ->
-                    Ok newType
+            else
+                Err
+                    ((Elm.Writer.writeTypeAnnotation (nodify type_)
+                        |> Elm.Writer.write
+                     )
+                        ++ " is not a number"
+                    )
 
-                RecordWith fields ->
-                    Ok newType
+        IsComparable ->
+            if isComparable type_ then
+                Ok type_
 
-                IsNumber ->
-                    if isNumber newType then
-                        Ok newType
+            else
+                Err
+                    ((Elm.Writer.writeTypeAnnotation (nodify type_)
+                        |> Elm.Writer.write
+                     )
+                        ++ " is not comparable.  Only Ints, Floats, Chars, Strings and Lists and Tuples of those things are comparable."
+                    )
 
-                    else
-                        Err
-                            ((Elm.Writer.writeTypeAnnotation (nodify newType)
-                                |> Elm.Writer.write
-                             )
-                                ++ " is not a number"
-                            )
+        IsAppendable ->
+            if isAppendable type_ then
+                Ok type_
 
-                IsComparable ->
-                    if isComparable newType then
-                        Ok newType
+            else
+                Err
+                    ((Elm.Writer.writeTypeAnnotation (nodify type_)
+                        |> Elm.Writer.write
+                     )
+                        ++ " is not appendable.  Only Strings and Lists are appendable."
+                    )
 
-                    else
-                        Err
-                            ((Elm.Writer.writeTypeAnnotation (nodify newType)
-                                |> Elm.Writer.write
-                             )
-                                ++ " is not comparable.  Only Ints, Floats, Chars, Strings and Lists and Tuples of those things are comparable."
-                            )
+        IsAppendableComparable ->
+            if isComparable type_ || isAppendable type_ then
+                Ok type_
 
-                IsAppendable ->
-                    if isAppendable newType then
-                        Ok newType
-
-                    else
-                        Err
-                            ((Elm.Writer.writeTypeAnnotation (nodify newType)
-                                |> Elm.Writer.write
-                             )
-                                ++ " is not appendable.  Only Strings and Lists are appendable."
-                            )
-
-                IsAppendableComparable ->
-                    if isComparable newType || isAppendable newType then
-                        Ok newType
-
-                    else
-                        Err
-                            ((Elm.Writer.writeTypeAnnotation (nodify newType)
-                                |> Elm.Writer.write
-                             )
-                                ++ " is not appendable/comparable.  Only Strings and Lists are allowed here."
-                            )
-
-        Nothing ->
-            Ok (Annotation.GenericType name)
+            else
+                Err
+                    ((Elm.Writer.writeTypeAnnotation (nodify type_)
+                        |> Elm.Writer.write
+                     )
+                        ++ " is not appendable/comparable.  Only Strings and Lists are allowed here."
+                    )
 
 
 {-| -}
 applyType :
-    Result
-        (List InferenceError)
-        Inference
+    Index
+    ->
+        Result
+            (List InferenceError)
+            Inference
     -> List ExpressionDetails
     -> Result (List InferenceError) Inference
-applyType annotation args =
+applyType index annotation args =
     case annotation of
         Err err ->
             Err err
@@ -1264,7 +1336,7 @@ applyType annotation args =
         Ok topAnnotation ->
             case extractListAnnotation args [] topAnnotation.inferences of
                 Ok extracted ->
-                    applyTypeHelper extracted.inferences topAnnotation.type_ extracted.types
+                    applyTypeHelper index extracted.inferences topAnnotation.type_ extracted.types
 
                 Err err ->
                     Err err
@@ -1272,11 +1344,12 @@ applyType annotation args =
 
 {-| -}
 applyTypeHelper :
-    VariableCache
+    Index
+    -> VariableCache
     -> Annotation.TypeAnnotation
     -> List Annotation.TypeAnnotation
     -> Result (List InferenceError) Inference
-applyTypeHelper cache fn args =
+applyTypeHelper index cache fn args =
     case fn of
         Annotation.FunctionTypeAnnotation one two ->
             case args of
@@ -1287,9 +1360,10 @@ applyTypeHelper cache fn args =
                         }
 
                 top :: rest ->
-                    case unifiable cache (denode one) top of
+                    case unifiable index cache (denode one) top of
                         ( variableCache, Ok _ ) ->
-                            applyTypeHelper variableCache
+                            applyTypeHelper index
+                                variableCache
                                 (denode two)
                                 rest
 
@@ -1324,17 +1398,18 @@ unify index exps =
         top :: remain ->
             case top.annotation of
                 Ok ann ->
-                    unifyHelper remain ann
+                    unifyHelper index remain ann
 
                 Err err ->
                     Err err
 
 
 unifyHelper :
-    List ExpressionDetails
+    Index
+    -> List ExpressionDetails
     -> Inference
     -> Result (List InferenceError) Inference
-unifyHelper exps existing =
+unifyHelper index exps existing =
     case exps of
         [] ->
             Ok existing
@@ -1342,14 +1417,15 @@ unifyHelper exps existing =
         top :: remain ->
             case top.annotation of
                 Ok ann ->
-                    case unifiable ann.inferences ann.type_ existing.type_ of
+                    case unifiable index ann.inferences ann.type_ existing.type_ of
                         ( _, Err err ) ->
                             Err
                                 [ MismatchedList ann.type_ existing.type_
                                 ]
 
                         ( cache, Ok new ) ->
-                            unifyHelper remain
+                            unifyHelper index
+                                remain
                                 { type_ = new
                                 , inferences = mergeInferences existing.inferences cache
                                 }
@@ -1359,7 +1435,8 @@ unifyHelper exps existing =
 
 
 unifyOn :
-    Annotation
+    Index
+    -> Annotation
     ->
         Result
             (List InferenceError)
@@ -1368,7 +1445,7 @@ unifyOn :
         Result
             (List InferenceError)
             Inference
-unifyOn (Annotation annDetails) res =
+unifyOn index (Annotation annDetails) res =
     case res of
         Err _ ->
             res
@@ -1376,7 +1453,7 @@ unifyOn (Annotation annDetails) res =
         Ok inf ->
             let
                 ( newInferences, finalResult ) =
-                    unifiable inf.inferences annDetails.annotation inf.type_
+                    unifiable index inf.inferences annDetails.annotation inf.type_
             in
             case finalResult of
                 Ok finalType ->
@@ -1403,12 +1480,308 @@ unifyOn (Annotation annDetails) res =
 
 -}
 unifiable :
-    VariableCache
+    Index
+    -> VariableCache
     -> Annotation.TypeAnnotation
     -> Annotation.TypeAnnotation
     -> ( VariableCache, Result InferenceError Annotation.TypeAnnotation )
-unifiable cache one two =
-    unifiableHelper cache one two
+unifiable index cache one two =
+    unifiableHelper index cache one two
+
+
+unifiableHelper :
+    Index
+    -> VariableCache
+    -> Annotation.TypeAnnotation
+    -> Annotation.TypeAnnotation
+    -> ( VariableCache, Result InferenceError Annotation.TypeAnnotation )
+unifiableHelper index vars one two =
+    case one of
+        Annotation.GenericType varName ->
+            case Dict.get varName vars of
+                Nothing ->
+                    case two of
+                        Annotation.GenericType varNameB ->
+                            if varNameB == varName then
+                                ( vars, Ok one )
+
+                            else
+                                ( addInference varName two vars
+                                , Ok two
+                                )
+
+                        _ ->
+                            ( addInference varName two vars
+                            , Ok two
+                            )
+
+                Just found ->
+                    case two of
+                        Annotation.GenericType varNameB ->
+                            case Dict.get varNameB vars of
+                                Nothing ->
+                                    ( addInference varNameB found vars
+                                    , Ok two
+                                    )
+
+                                Just foundTwo ->
+                                    unifiableHelper index vars found foundTwo
+
+                        _ ->
+                            unifiableHelper index vars found two
+
+        Annotation.Typed oneName oneContents ->
+            case two of
+                Annotation.Typed twoName twoContents ->
+                    if denode oneName == denode twoName then
+                        case unifiableLists index vars oneContents twoContents [] of
+                            ( newVars, Ok unifiedContent ) ->
+                                ( newVars, Ok (Annotation.Typed twoName unifiedContent) )
+
+                            ( newVars, Err err ) ->
+                                ( newVars, Err err )
+
+                    else
+                        ( vars, Err (UnableToUnify one two) )
+
+                Annotation.GenericType b ->
+                    ( addInference b one vars
+                    , Ok one
+                    )
+
+                _ ->
+                    ( vars, Err (UnableToUnify one two) )
+
+        Annotation.Unit ->
+            case two of
+                Annotation.GenericType b ->
+                    case Dict.get b vars of
+                        Nothing ->
+                            ( addInference b one vars
+                            , Ok one
+                            )
+
+                        Just foundTwo ->
+                            unifiableHelper index vars one foundTwo
+
+                Annotation.Unit ->
+                    ( vars, Ok Annotation.Unit )
+
+                _ ->
+                    ( vars, Err (UnableToUnify one two) )
+
+        Annotation.Tupled valsA ->
+            case two of
+                Annotation.GenericType b ->
+                    case Dict.get b vars of
+                        Nothing ->
+                            ( addInference b one vars
+                            , Ok one
+                            )
+
+                        Just foundTwo ->
+                            unifiableHelper index vars one foundTwo
+
+                Annotation.Tupled valsB ->
+                    case unifiableLists index vars valsA valsB [] of
+                        ( newVars, Ok unified ) ->
+                            ( newVars
+                            , Ok
+                                (Annotation.Tupled unified)
+                            )
+
+                        ( newVars, Err err ) ->
+                            ( newVars, Err err )
+
+                _ ->
+                    ( vars, Err (UnableToUnify one two) )
+
+        Annotation.Record fieldsA ->
+            case two of
+                Annotation.GenericType b ->
+                    case Dict.get b vars of
+                        Nothing ->
+                            ( addInference b one vars
+                            , Ok one
+                            )
+
+                        Just foundTwo ->
+                            unifiableHelper index vars one foundTwo
+
+                Annotation.GenericRecord twoRecName fieldsB ->
+                    ( vars, Err (UnableToUnify one two) )
+
+                Annotation.Record fieldsB ->
+                    case unifiableFields index vars fieldsA fieldsB [] of
+                        ( newVars, Ok unifiedFields ) ->
+                            ( newVars
+                            , Ok (Annotation.Record unifiedFields)
+                            )
+
+                        ( newVars, Err err ) ->
+                            ( newVars, Err err )
+
+                _ ->
+                    ( vars, Err (UnableToUnify one two) )
+
+        Annotation.GenericRecord reVarName (Node.Node fieldsARange fieldsA) ->
+            case two of
+                Annotation.GenericType b ->
+                    case Dict.get b vars of
+                        Nothing ->
+                            ( addInference b one vars
+                            , Ok one
+                            )
+
+                        Just foundTwo ->
+                            unifiableHelper index vars one foundTwo
+
+                Annotation.GenericRecord twoRecName fieldsB ->
+                    ( vars, Err (UnableToUnify one two) )
+
+                Annotation.Record fieldsB ->
+                    case unifiableFields index vars fieldsA fieldsB [] of
+                        ( newVars, Ok unifiedFields ) ->
+                            ( newVars
+                            , Ok (Annotation.Record unifiedFields)
+                            )
+
+                        ( newVars, Err err ) ->
+                            ( newVars, Err err )
+
+                _ ->
+                    ( vars, Err (UnableToUnify one two) )
+
+        Annotation.FunctionTypeAnnotation oneA oneB ->
+            case two of
+                Annotation.GenericType b ->
+                    case Dict.get b vars of
+                        Nothing ->
+                            ( addInference b one vars
+                            , Ok one
+                            )
+
+                        Just foundTwo ->
+                            unifiableHelper index vars one foundTwo
+
+                Annotation.FunctionTypeAnnotation twoA twoB ->
+                    case unifiableHelper index vars (denode oneA) (denode twoA) of
+                        ( aVars, Ok unifiedA ) ->
+                            case unifiableHelper index aVars (denode oneB) (denode twoB) of
+                                ( bVars, Ok unifiedB ) ->
+                                    ( bVars
+                                    , Ok
+                                        (Annotation.FunctionTypeAnnotation
+                                            (nodify unifiedA)
+                                            (nodify unifiedB)
+                                        )
+                                    )
+
+                                otherwise ->
+                                    otherwise
+
+                        otherwise ->
+                            otherwise
+
+                _ ->
+                    ( vars, Err (UnableToUnify one two) )
+
+
+unifiableFields :
+    Index
+    -> VariableCache
+    -> List (Node ( Node String, Node Annotation.TypeAnnotation ))
+    -> List (Node ( Node String, Node Annotation.TypeAnnotation ))
+    -> List Annotation.RecordField
+    ->
+        ( VariableCache
+        , Result InferenceError Annotation.RecordDefinition
+        )
+unifiableFields index vars one two unified =
+    case ( one, two ) of
+        ( [], [] ) ->
+            ( vars, Ok (nodifyAll (List.reverse unified)) )
+
+        ( oneX :: oneRemain, twoFields ) ->
+            let
+                ( oneFieldName, oneFieldVal ) =
+                    denode oneX
+
+                oneName =
+                    denode oneFieldName
+
+                oneVal =
+                    denode oneFieldVal
+            in
+            case getField oneName oneVal twoFields [] of
+                Ok ( matchingFieldVal, remainingTwo ) ->
+                    let
+                        ( newVars, unifiedFieldResult ) =
+                            unifiableHelper index vars oneVal matchingFieldVal
+                    in
+                    case unifiedFieldResult of
+                        Ok unifiedField ->
+                            unifiableFields index newVars oneRemain remainingTwo (( nodify oneName, nodify unifiedField ) :: unified)
+
+                        Err err ->
+                            ( newVars, Err err )
+
+                Err notFound ->
+                    ( vars, Err notFound )
+
+        _ ->
+            ( vars, Err MismatchedTypeVariables )
+
+
+getField name val fields captured =
+    case fields of
+        [] ->
+            Err (CouldNotFindField name)
+
+        top :: remain ->
+            let
+                ( topFieldName, topFieldVal ) =
+                    denode top
+
+                topName =
+                    denode topFieldName
+
+                topVal =
+                    denode topFieldVal
+            in
+            if topName == name then
+                Ok
+                    ( topVal
+                    , captured ++ remain
+                    )
+
+            else
+                getField name val remain (top :: captured)
+
+
+unifiableLists index vars one two unified =
+    case ( one, two ) of
+        ( [], [] ) ->
+            ( vars, Ok (nodifyAll (List.reverse unified)) )
+
+        ( [ oneX ], [ twoX ] ) ->
+            case unifiableHelper index vars (denode oneX) (denode twoX) of
+                ( newVars, Ok un ) ->
+                    ( newVars, Ok (nodifyAll (List.reverse (un :: unified))) )
+
+                ( newVars, Err err ) ->
+                    ( newVars, Err err )
+
+        ( oneX :: oneRemain, twoX :: twoRemain ) ->
+            case unifiableHelper index vars (denode oneX) (denode twoX) of
+                ( newVars, Ok un ) ->
+                    unifiableLists index newVars oneRemain twoRemain (un :: unified)
+
+                ( newVars, Err err ) ->
+                    ( vars, Err err )
+
+        _ ->
+            ( vars, Err MismatchedTypeVariables )
 
 
 unifyNumber :
@@ -1625,309 +1998,25 @@ inferRecordField index { nameOfRecord, fieldName } =
         }
 
 
-unifiableHelper :
-    VariableCache
-    -> Annotation.TypeAnnotation
-    -> Annotation.TypeAnnotation
-    -> ( VariableCache, Result InferenceError Annotation.TypeAnnotation )
-unifiableHelper vars one two =
-    case one of
-        Annotation.GenericType varName ->
-            case Dict.get varName vars of
-                Nothing ->
-                    case two of
-                        Annotation.GenericType varNameB ->
-                            if varNameB == varName then
-                                ( vars, Ok one )
+protectInference index infResult =
+    case infResult of
+        Ok inf ->
+            Ok
+                { type_ =
+                    protectAnnotation index inf.type_
+                , inferences = Dict.empty
+                }
 
-                            else
-                                ( addInference varName two vars
-                                , Ok two
-                                )
-
-                        _ ->
-                            ( addInference varName two vars
-                            , Ok two
-                            )
-
-                Just found ->
-                    case two of
-                        Annotation.GenericType varNameB ->
-                            case Dict.get varNameB vars of
-                                Nothing ->
-                                    ( addInference varNameB found vars
-                                    , Ok two
-                                    )
-
-                                Just foundTwo ->
-                                    unifiableHelper vars found foundTwo
-
-                        _ ->
-                            unifiableHelper vars found two
-
-        Annotation.Typed oneName oneContents ->
-            case two of
-                Annotation.Typed twoName twoContents ->
-                    if denode oneName == denode twoName then
-                        case unifiableLists vars oneContents twoContents [] of
-                            ( newVars, Ok unifiedContent ) ->
-                                ( newVars, Ok (Annotation.Typed twoName unifiedContent) )
-
-                            ( newVars, Err err ) ->
-                                ( newVars, Err err )
-
-                    else
-                        ( vars, Err (UnableToUnify one two) )
-
-                Annotation.GenericType b ->
-                    ( addInference b one vars
-                    , Ok one
-                    )
-
-                _ ->
-                    ( vars, Err (UnableToUnify one two) )
-
-        Annotation.Unit ->
-            case two of
-                Annotation.GenericType b ->
-                    case Dict.get b vars of
-                        Nothing ->
-                            ( addInference b one vars
-                            , Ok one
-                            )
-
-                        Just foundTwo ->
-                            unifiableHelper vars one foundTwo
-
-                Annotation.Unit ->
-                    ( vars, Ok Annotation.Unit )
-
-                _ ->
-                    ( vars, Err (UnableToUnify one two) )
-
-        Annotation.Tupled valsA ->
-            case two of
-                Annotation.GenericType b ->
-                    case Dict.get b vars of
-                        Nothing ->
-                            ( addInference b one vars
-                            , Ok one
-                            )
-
-                        Just foundTwo ->
-                            unifiableHelper vars one foundTwo
-
-                Annotation.Tupled valsB ->
-                    case unifiableLists vars valsA valsB [] of
-                        ( newVars, Ok unified ) ->
-                            ( newVars
-                            , Ok
-                                (Annotation.Tupled unified)
-                            )
-
-                        ( newVars, Err err ) ->
-                            ( newVars, Err err )
-
-                _ ->
-                    ( vars, Err (UnableToUnify one two) )
-
-        Annotation.Record fieldsA ->
-            case two of
-                Annotation.GenericType b ->
-                    case Dict.get b vars of
-                        Nothing ->
-                            ( addInference b one vars
-                            , Ok one
-                            )
-
-                        Just foundTwo ->
-                            unifiableHelper vars one foundTwo
-
-                Annotation.GenericRecord twoRecName fieldsB ->
-                    ( vars, Err (UnableToUnify one two) )
-
-                Annotation.Record fieldsB ->
-                    case unifiableFields vars fieldsA fieldsB [] of
-                        ( newVars, Ok unifiedFields ) ->
-                            ( newVars
-                            , Ok (Annotation.Record unifiedFields)
-                            )
-
-                        ( newVars, Err err ) ->
-                            ( newVars, Err err )
-
-                _ ->
-                    ( vars, Err (UnableToUnify one two) )
-
-        Annotation.GenericRecord reVarName (Node.Node fieldsARange fieldsA) ->
-            case two of
-                Annotation.GenericType b ->
-                    case Dict.get b vars of
-                        Nothing ->
-                            ( addInference b one vars
-                            , Ok one
-                            )
-
-                        Just foundTwo ->
-                            unifiableHelper vars one foundTwo
-
-                Annotation.GenericRecord twoRecName fieldsB ->
-                    ( vars, Err (UnableToUnify one two) )
-
-                Annotation.Record fieldsB ->
-                    case unifiableFields vars fieldsA fieldsB [] of
-                        ( newVars, Ok unifiedFields ) ->
-                            ( newVars
-                            , Ok (Annotation.Record unifiedFields)
-                            )
-
-                        ( newVars, Err err ) ->
-                            ( newVars, Err err )
-
-                _ ->
-                    ( vars, Err (UnableToUnify one two) )
-
-        Annotation.FunctionTypeAnnotation oneA oneB ->
-            case two of
-                Annotation.GenericType b ->
-                    case Dict.get b vars of
-                        Nothing ->
-                            ( addInference b one vars
-                            , Ok one
-                            )
-
-                        Just foundTwo ->
-                            unifiableHelper vars one foundTwo
-
-                Annotation.FunctionTypeAnnotation twoA twoB ->
-                    case unifiableHelper vars (denode oneA) (denode twoA) of
-                        ( aVars, Ok unifiedA ) ->
-                            case unifiableHelper aVars (denode oneB) (denode twoB) of
-                                ( bVars, Ok unifiedB ) ->
-                                    ( bVars
-                                    , Ok
-                                        (Annotation.FunctionTypeAnnotation
-                                            (nodify unifiedA)
-                                            (nodify unifiedB)
-                                        )
-                                    )
-
-                                otherwise ->
-                                    otherwise
-
-                        otherwise ->
-                            otherwise
-
-                _ ->
-                    ( vars, Err (UnableToUnify one two) )
-
-
-unifiableFields :
-    VariableCache
-    -> List (Node ( Node String, Node Annotation.TypeAnnotation ))
-    -> List (Node ( Node String, Node Annotation.TypeAnnotation ))
-    -> List Annotation.RecordField
-    ->
-        ( VariableCache
-        , Result InferenceError Annotation.RecordDefinition
-        )
-unifiableFields vars one two unified =
-    case ( one, two ) of
-        ( [], [] ) ->
-            ( vars, Ok (nodifyAll (List.reverse unified)) )
-
-        ( oneX :: oneRemain, twoFields ) ->
-            let
-                ( oneFieldName, oneFieldVal ) =
-                    denode oneX
-
-                oneName =
-                    denode oneFieldName
-
-                oneVal =
-                    denode oneFieldVal
-            in
-            case getField oneName oneVal twoFields [] of
-                Ok ( matchingFieldVal, remainingTwo ) ->
-                    let
-                        ( newVars, unifiedFieldResult ) =
-                            unifiableHelper vars oneVal matchingFieldVal
-                    in
-                    case unifiedFieldResult of
-                        Ok unifiedField ->
-                            unifiableFields newVars oneRemain remainingTwo (( nodify oneName, nodify unifiedField ) :: unified)
-
-                        Err err ->
-                            ( newVars, Err err )
-
-                Err notFound ->
-                    ( vars, Err notFound )
-
-        _ ->
-            ( vars, Err MismatchedTypeVariables )
-
-
-getField name val fields captured =
-    case fields of
-        [] ->
-            Err (CouldNotFindField name)
-
-        top :: remain ->
-            let
-                ( topFieldName, topFieldVal ) =
-                    denode top
-
-                topName =
-                    denode topFieldName
-
-                topVal =
-                    denode topFieldVal
-            in
-            if topName == name then
-                Ok
-                    ( topVal
-                    , captured ++ remain
-                    )
-
-            else
-                getField name val remain (top :: captured)
-
-
-unifiableLists vars one two unified =
-    case ( one, two ) of
-        ( [], [] ) ->
-            ( vars, Ok (nodifyAll (List.reverse unified)) )
-
-        ( [ oneX ], [ twoX ] ) ->
-            case unifiableHelper vars (denode oneX) (denode twoX) of
-                ( newVars, Ok un ) ->
-                    ( newVars, Ok (nodifyAll (List.reverse (un :: unified))) )
-
-                ( newVars, Err err ) ->
-                    ( newVars, Err err )
-
-        ( oneX :: oneRemain, twoX :: twoRemain ) ->
-            case unifiableHelper vars (denode oneX) (denode twoX) of
-                ( newVars, Ok un ) ->
-                    unifiableLists newVars oneRemain twoRemain (un :: unified)
-
-                ( newVars, Err err ) ->
-                    ( vars, Err err )
-
-        _ ->
-            ( vars, Err MismatchedTypeVariables )
+        Err err ->
+            Err err
 
 
 protectAnnotation index ann =
     case ann of
         Annotation.GenericType str ->
-            -- if String.contains "_" str then
-            --     Annotation.GenericType str
-            -- else
             Annotation.GenericType
                 (str ++ indexToString index)
 
-        -- str
         Annotation.Typed modName anns ->
             Annotation.Typed modName
                 (List.map (mapNode (protectAnnotation index))

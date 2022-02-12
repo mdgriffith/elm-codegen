@@ -208,7 +208,7 @@ signature (Compiler.Expression exp) =
     in
     case expresh.annotation of
         Ok sig ->
-            case Compiler.resolveVariables sig.inferences sig.type_ of
+            case Compiler.resolve sig.inferences sig.type_ of
                 Ok finalType ->
                     Internal.Write.writeAnnotation finalType
 
@@ -567,7 +567,7 @@ withType ann (Compiler.Expression toExp) =
             in
             { exp
                 | annotation =
-                    Compiler.unifyOn ann exp.annotation
+                    Compiler.unifyOn index ann exp.annotation
                 , imports = exp.imports ++ Compiler.getAnnotationImports ann
             }
 
@@ -1509,11 +1509,18 @@ apply express argExpressions =
     Compiler.Expression
         (\index ->
             let
-                ( nextIndex, exp ) =
+                ( annotationIndex, exp ) =
                     Compiler.toExpressionDetails index express
+
+                nextIndex =
+                    Compiler.next annotationIndex
 
                 args =
                     Compiler.thread nextIndex argExpressions
+
+                protectedAnnotation =
+                    Compiler.protectInference annotationIndex
+                        exp.annotation
             in
             { expression =
                 -- Disabling autopipe for now.
@@ -1526,7 +1533,7 @@ apply express argExpressions =
                         )
                     )
             , annotation =
-                Compiler.applyType exp.annotation args
+                Compiler.applyType annotationIndex protectedAnnotation args
             , imports = exp.imports ++ List.concatMap Compiler.getImports args
             }
         )
@@ -2279,6 +2286,61 @@ comment content =
     Compiler.Comment ("{- " ++ content ++ " -}")
 
 
+renderDocumentation resolvedType bodyAnnotation =
+    case resolvedType of
+        Ok sig ->
+            case bodyAnnotation of
+                Ok inference ->
+                    Nothing
+
+                Err err ->
+                    Just
+                        (renderError err)
+
+        Err err ->
+            Just
+                err
+
+
+sep : String
+sep =
+    "\n----\n"
+
+
+renderDebugDocumentation resolvedType bodyAnnotation =
+    case resolvedType of
+        Ok sig ->
+            case bodyAnnotation of
+                Ok inference ->
+                    Just (Internal.Write.writeInference inference)
+
+                Err err ->
+                    Just
+                        (renderError err)
+
+        Err err ->
+            case bodyAnnotation of
+                Ok inference ->
+                    Just
+                        (Internal.Write.writeInference inference
+                            ++ sep
+                            ++ err
+                        )
+
+                Err _ ->
+                    Just err
+
+
+renderError : List Compiler.InferenceError -> String
+renderError err =
+    "-- ELM-CODEGEN ERROR --\n\n"
+        ++ (err
+                |> List.map Compiler.inferenceErrorToString
+                |> String.join "\n\n"
+           )
+        ++ "\n\n"
+
+
 {-| -}
 declaration : String -> Expression -> Declaration
 declaration name (Compiler.Expression toBody) =
@@ -2286,38 +2348,16 @@ declaration name (Compiler.Expression toBody) =
         body =
             toBody Compiler.startIndex
 
-        renderError err =
-            "-- ELM-CODEGEN ERROR --\n\n"
-                ++ (err
-                        |> List.map Compiler.inferenceErrorToString
-                        |> String.join "\n\n"
-                   )
-                ++ "\n\n"
-
         resolvedType =
             body.annotation
                 |> Result.mapError
                     renderError
                 |> Result.andThen
-                    (\sig -> Compiler.resolveVariables sig.inferences sig.type_)
+                    (\sig -> Compiler.resolve sig.inferences sig.type_)
     in
     { documentation =
         Compiler.nodifyMaybe
-            (case resolvedType of
-                Ok sig ->
-                    case body.annotation of
-                        Ok inference ->
-                            -- Just (Internal.Write.writeInference inference)
-                            Nothing
-
-                        Err err ->
-                            Just
-                                (renderError err)
-
-                Err err ->
-                    Just
-                        err
-            )
+            (renderDebugDocumentation resolvedType body.annotation)
     , signature =
         case body.annotation of
             Ok sig ->
@@ -3043,6 +3083,9 @@ applyInfix2 (BinOp symbol dir _) infixAnnotation l r =
 
                 ( rightIndex, right ) =
                     Compiler.toExpressionDetails leftIndex r
+
+                annotationIndex =
+                    Compiler.next rightIndex
             in
             { expression =
                 Exp.OperatorApplication symbol
@@ -3050,7 +3093,7 @@ applyInfix2 (BinOp symbol dir _) infixAnnotation l r =
                     (Compiler.nodify left.expression)
                     (Compiler.nodify right.expression)
             , annotation =
-                Compiler.applyType
+                Compiler.applyType annotationIndex
                     (Ok
                         { type_ = infixAnnotation
                         , inferences = Dict.empty
@@ -3073,6 +3116,9 @@ applyNumber symbol dir l r =
 
                 ( rightIndex, right ) =
                     Compiler.toExpressionDetails leftIndex r
+
+                annotationIndex =
+                    Compiler.next rightIndex
             in
             { expression =
                 Exp.OperatorApplication symbol
@@ -3080,7 +3126,7 @@ applyNumber symbol dir l r =
                     (Compiler.nodify left.expression)
                     (Compiler.nodify right.expression)
             , annotation =
-                Compiler.applyType
+                Compiler.applyType annotationIndex
                     (Ok
                         { inferences = Dict.empty
                         , type_ =
