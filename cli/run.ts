@@ -57,7 +57,7 @@ async function run_generator(base: string, moduleName: string, elm_source: strin
         fs.writeFileSync(fullpath, file.contents)
       }
       if (files.length == 1) {
-        console.log(format_block([`${chalk.yellow(files[0].path)} was created in ${chalk.cyan(base)}!`]))
+        console.log(format_block([`${chalk.cyan(base + path.sep)}${chalk.yellow(files[0].path)} was generated!`]))
       } else {
         console.log(format_block([`${chalk.yellow(files.length)} files generated in ${chalk.cyan(base)}!`]))
       }
@@ -69,9 +69,14 @@ async function run_generator(base: string, moduleName: string, elm_source: strin
         for (const err of errors) {
           formatted = formatted + format_title(err.title) + "\n\n" + err.description + "\n"
         }
-      }
-      else {
-        formatted = `Error in ${moduleName}\n\n` + chalk.cyan(errors.message) + `\n\n\nAdd the ${chalk.cyan("--debug")} flag to see details.` // Assuming this is an Elm init error.
+      } else {
+        if (errors.message.contains("https://github.com/elm/core/blob/1.0.0/hints/2.md")) {
+          formatted = `Problem with the flags given to your Elm application on initialization.\n\n\nAdd the ${chalk.cyan(
+            "--debug"
+          )} to see more details!` // Assuming this is an Elm init error.
+        } else {
+          formatted = chalk.cyan(errors.message)
+        }
       }
       console.error(formatted)
     })

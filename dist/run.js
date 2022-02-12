@@ -118,7 +118,7 @@ function run_generator(base, moduleName, elm_source, flags) {
                     fs.writeFileSync(fullpath, file.contents);
                 }
                 if (files.length == 1) {
-                    console.log(format_block([chalk_1.default.yellow(files[0].path) + " was created in " + chalk_1.default.cyan(base) + "!"]));
+                    console.log(format_block(["" + chalk_1.default.cyan(base + path.sep) + chalk_1.default.yellow(files[0].path) + " was generated!"]));
                 }
                 else {
                     console.log(format_block([chalk_1.default.yellow(files.length) + " files generated in " + chalk_1.default.cyan(base) + "!"]));
@@ -126,9 +126,19 @@ function run_generator(base, moduleName, elm_source, flags) {
             })
                 .catch(function (errors) {
                 var formatted = "";
-                for (var _i = 0, errors_1 = errors; _i < errors_1.length; _i++) {
-                    var err = errors_1[_i];
-                    formatted = formatted + format_title(err.title) + "\n\n" + err.description + "\n";
+                if (!!errors[Symbol.iterator]) {
+                    for (var _i = 0, errors_1 = errors; _i < errors_1.length; _i++) {
+                        var err = errors_1[_i];
+                        formatted = formatted + format_title(err.title) + "\n\n" + err.description + "\n";
+                    }
+                }
+                else {
+                    if (errors.message.contains("https://github.com/elm/core/blob/1.0.0/hints/2.md")) {
+                        formatted = "Problem with the flags given to your Elm application on initialization.\n\n\nAdd the " + chalk_1.default.cyan("--debug") + " to see more details!"; // Assuming this is an Elm init error.
+                    }
+                    else {
+                        formatted = chalk_1.default.cyan(errors.message);
+                    }
                 }
                 console.error(formatted);
             });
