@@ -26,6 +26,7 @@ module Elm exposing
     , toString, signature, expressionImports
     , declarationToString, declarationImports
     , apply, value
+    , unwrap, unwrapper
     )
 
 {-|
@@ -122,6 +123,8 @@ module Elm exposing
 # Low-level
 
 @docs apply, value
+
+@docs unwrap, unwrapper
 
 -}
 
@@ -570,6 +573,97 @@ withType ann (Compiler.Expression toExp) =
                     Compiler.unifyOn ann exp.annotation
                 , imports = exp.imports ++ Compiler.getAnnotationImports ann
             }
+
+
+{-| Generate a lambda which unwraps a single-variant type.
+
+    Elm.unwrapper [ "MyModule" ] "MyType"
+
+Results in the following lambda
+
+    \(MyModule.MyType val) -> val
+
+**Note** This needs to be a type with only a single variant
+
+-}
+unwrapper : List String -> String -> Expression
+unwrapper modName typename =
+    Compiler.Expression <|
+        \index ->
+            let
+                childIndex =
+                    Compiler.dive index
+
+                arg1Name =
+                    "val" ++ Compiler.indexToString index
+
+                unwrappedName =
+                    "unwrapped" ++ Compiler.indexToString index
+
+                arg1Type =
+                    Elm.Annotation.var arg1Name
+
+                arg1 =
+                    value
+                        { importFrom = []
+                        , name = arg1Name
+                        , annotation = Just arg1Type
+                        }
+            in
+            { expression =
+                Exp.LambdaExpression
+                    { args =
+                        [ Compiler.nodify
+                            (Pattern.NamedPattern
+                                { moduleName = modName
+                                , name = typename
+                                }
+                                [ Pattern.VarPattern arg1Name
+                                    |> Compiler.nodify
+                                ]
+                            )
+                        ]
+                    , expression =
+                        Compiler.nodify
+                            (Exp.FunctionOrValue []
+                                arg1Name
+                            )
+                    }
+            , annotation =
+                Ok
+                    { type_ =
+                        Annotation.FunctionTypeAnnotation
+                            (Compiler.nodify (Annotation.GenericType arg1Name))
+                            (Compiler.nodify (Annotation.GenericType unwrappedName))
+                    , inferences = Dict.empty
+                    }
+            , imports =
+                case modName of
+                    [] ->
+                        []
+
+                    _ ->
+                        [ modName ]
+            }
+
+
+{-| Unwraps a single-variant type
+
+    Elm.declaration "myFunction" <|
+        Elm.fn "val"
+            (\\val ->
+                Elm.unwrap "MyType" val
+            )
+
+Results in the following lambda
+
+    myFunction val =
+        ((MyType val) -> val) val
+
+-}
+unwrap : List String -> String -> Expression -> Expression
+unwrap modName typename exp =
+    apply (unwrapper modName typename) [ exp ]
 
 
 {-| -}
