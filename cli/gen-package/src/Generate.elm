@@ -802,7 +802,7 @@ generateBlocks thisModule block =
                                             |> Elm.maybe
                                     }
                                 )
-                                vars
+                                (unpack value.tipe [] vars)
                         )
                         |> Elm.declaration value.name
                         |> Elm.withDocumentation value.comment
@@ -946,6 +946,27 @@ asArgumentTypeHelperForLambdas tipe =
 
         _ ->
             expressionType
+
+
+unpack : Elm.Type.Type -> List Elm.Expression -> List Elm.Expression -> List Elm.Expression
+unpack tipe unpacked stilToUnpack =
+    case stilToUnpack of
+        [] ->
+            List.reverse unpacked
+
+        top :: remaining ->
+            case tipe of
+                Elm.Type.Lambda one two ->
+                    let
+                        unpackedTop =
+                            getArgumentUnpacker "unpack" 0 one top
+                    in
+                    unpack two
+                        (unpackedTop :: unpacked)
+                        remaining
+
+                _ ->
+                    List.reverse unpacked ++ stilToUnpack
 
 
 {-| -}
