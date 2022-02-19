@@ -258,9 +258,6 @@ blockToCall thisModule block =
                                 , arguments =
                                     [ asArgument 1 one
                                     ]
-                                , values =
-                                    [ asValue value.name 1 one
-                                    ]
                                 }
 
                         arguments =
@@ -790,9 +787,6 @@ generateBlocks thisModule block =
                                 , arguments =
                                     [ asArgument 1 one
                                     ]
-                                , values =
-                                    [ asValue value.name 1 one
-                                    ]
                                 }
                     in
                     [ Elm.function
@@ -808,7 +802,7 @@ generateBlocks thisModule block =
                                             |> Elm.maybe
                                     }
                                 )
-                                (List.reverse (List.drop 1 captured.values))
+                                vars
                         )
                         |> Elm.declaration value.name
                         |> Elm.withDocumentation value.comment
@@ -863,12 +857,10 @@ captureFunction :
     ->
         { index : Int
         , arguments : List ( String, Maybe Annotation.Annotation )
-        , values : List Elm.Expression
         }
     ->
         { index : Int
         , arguments : List ( String, Maybe Annotation.Annotation )
-        , values : List Elm.Expression
         }
 captureFunction baseName tipe captured =
     case tipe of
@@ -877,13 +869,11 @@ captureFunction baseName tipe captured =
                 two
                 { index = captured.index + 1
                 , arguments = asArgument captured.index one :: captured.arguments
-                , values = asValue baseName captured.index one :: captured.values
                 }
 
         _ ->
             { index = captured.index + 1
             , arguments = asArgument captured.index tipe :: captured.arguments
-            , values = asValue baseName captured.index tipe :: captured.values
             }
 
 
