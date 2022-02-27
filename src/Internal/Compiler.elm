@@ -1334,7 +1334,9 @@ applyType annotation args =
         Ok topAnnotation ->
             case extractListAnnotation args [] topAnnotation.inferences of
                 Ok extracted ->
-                    applyTypeHelper extracted.inferences topAnnotation.type_ extracted.types
+                    applyTypeHelper extracted.inferences
+                        topAnnotation.type_
+                        extracted.types
 
                 Err err ->
                     Err err
@@ -1369,6 +1371,30 @@ applyTypeHelper cache fn args =
                                 [ err
                                 ]
 
+        Annotation.GenericType varName ->
+            case args of
+                [] ->
+                    Ok
+                        { type_ = fn
+                        , inferences = cache
+                        }
+
+                _ ->
+                    let
+                        resultType =
+                            Annotation.GenericType (varName ++ "_result")
+                    in
+                    Ok
+                        { type_ = resultType
+                        , inferences =
+                            cache
+                                |> addInference varName
+                                    (makeFunction
+                                        resultType
+                                        args
+                                    )
+                        }
+
         final ->
             case args of
                 [] ->
@@ -1381,6 +1407,49 @@ applyTypeHelper cache fn args =
                     Err
                         [ FunctionAppliedToTooManyArgs final args
                         ]
+
+
+{-| Transform from
+
+    [ Arg, Arg1, Arg2, Arg3 ]
+
+To
+
+    Fn
+        Arg
+        (Fn Arg1
+            (Fn Arg2 Arg3)
+        )
+
+We do this by reversing the list.
+
+Then building up the function backwards
+
+-}
+makeFunction : Annotation.TypeAnnotation -> List Annotation.TypeAnnotation -> Annotation.TypeAnnotation
+makeFunction result args =
+    List.reverse args
+        |> makeFunctionReversedHelper result
+
+
+makeFunctionReversedHelper : Annotation.TypeAnnotation -> List Annotation.TypeAnnotation -> Annotation.TypeAnnotation
+makeFunctionReversedHelper last reversedArgs =
+    case reversedArgs of
+        [] ->
+            last
+
+        penUlt :: [] ->
+            Annotation.FunctionTypeAnnotation
+                (Node.Node Range.emptyRange penUlt)
+                (Node.Node Range.emptyRange last)
+
+        penUlt :: remain ->
+            makeFunctionReversedHelper
+                (Annotation.FunctionTypeAnnotation
+                    (Node.Node Range.emptyRange penUlt)
+                    (Node.Node Range.emptyRange last)
+                )
+                remain
 
 
 unify : List ExpressionDetails -> Result (List InferenceError) Inference
@@ -1937,10 +2006,6 @@ addInference :
     -> Dict String Annotation.TypeAnnotation
     -> Dict String Annotation.TypeAnnotation
 addInference key value infs =
-    -- let
-    --     _ =
-    --         Debug.log "   FACT:" ( key, value )
-    -- in
     Dict.update key
         (\maybeValue ->
             case maybeValue of

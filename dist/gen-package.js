@@ -4670,27 +4670,6 @@ var $author$project$Internal$Compiler$FunctionAppliedToTooManyArgs = F2(
 	function (a, b) {
 		return {$: 3, a: a, b: b};
 	});
-var $stil4m$elm_syntax$Elm$Syntax$Node$value = function (_v0) {
-	var v = _v0.b;
-	return v;
-};
-var $author$project$Internal$Compiler$denode = $stil4m$elm_syntax$Elm$Syntax$Node$value;
-var $author$project$Internal$Compiler$MismatchedTypeVariables = {$: 4};
-var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Record = function (a) {
-	return {$: 4, a: a};
-};
-var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Tupled = function (a) {
-	return {$: 3, a: a};
-};
-var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Typed = F2(
-	function (a, b) {
-		return {$: 1, a: a, b: b};
-	});
-var $author$project$Internal$Compiler$UnableToUnify = F2(
-	function (a, b) {
-		return {$: 12, a: a, b: b};
-	});
-var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Unit = {$: 2};
 var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$GenericRecord = F2(
 	function (a, b) {
 		return {$: 5, a: a, b: b};
@@ -5219,6 +5198,62 @@ var $author$project$Internal$Compiler$addInference = F3(
 			},
 			infs);
 	});
+var $stil4m$elm_syntax$Elm$Syntax$Node$value = function (_v0) {
+	var v = _v0.b;
+	return v;
+};
+var $author$project$Internal$Compiler$denode = $stil4m$elm_syntax$Elm$Syntax$Node$value;
+var $author$project$Internal$Compiler$makeFunctionReversedHelper = F2(
+	function (last, reversedArgs) {
+		makeFunctionReversedHelper:
+		while (true) {
+			if (!reversedArgs.b) {
+				return last;
+			} else {
+				if (!reversedArgs.b.b) {
+					var penUlt = reversedArgs.a;
+					return A2(
+						$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$FunctionTypeAnnotation,
+						A2($stil4m$elm_syntax$Elm$Syntax$Node$Node, $stil4m$elm_syntax$Elm$Syntax$Range$emptyRange, penUlt),
+						A2($stil4m$elm_syntax$Elm$Syntax$Node$Node, $stil4m$elm_syntax$Elm$Syntax$Range$emptyRange, last));
+				} else {
+					var penUlt = reversedArgs.a;
+					var remain = reversedArgs.b;
+					var $temp$last = A2(
+						$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$FunctionTypeAnnotation,
+						A2($stil4m$elm_syntax$Elm$Syntax$Node$Node, $stil4m$elm_syntax$Elm$Syntax$Range$emptyRange, penUlt),
+						A2($stil4m$elm_syntax$Elm$Syntax$Node$Node, $stil4m$elm_syntax$Elm$Syntax$Range$emptyRange, last)),
+						$temp$reversedArgs = remain;
+					last = $temp$last;
+					reversedArgs = $temp$reversedArgs;
+					continue makeFunctionReversedHelper;
+				}
+			}
+		}
+	});
+var $author$project$Internal$Compiler$makeFunction = F2(
+	function (result, args) {
+		return A2(
+			$author$project$Internal$Compiler$makeFunctionReversedHelper,
+			result,
+			$elm$core$List$reverse(args));
+	});
+var $author$project$Internal$Compiler$MismatchedTypeVariables = {$: 4};
+var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Record = function (a) {
+	return {$: 4, a: a};
+};
+var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Tupled = function (a) {
+	return {$: 3, a: a};
+};
+var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Typed = F2(
+	function (a, b) {
+		return {$: 1, a: a, b: b};
+	});
+var $author$project$Internal$Compiler$UnableToUnify = F2(
+	function (a, b) {
+		return {$: 12, a: a, b: b};
+	});
+var $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Unit = {$: 2};
 var $author$project$Internal$Compiler$CouldNotFindField = function (a) {
 	return {$: 7, a: a};
 };
@@ -5749,49 +5784,67 @@ var $author$project$Internal$Compiler$applyTypeHelper = F3(
 	function (cache, fn, args) {
 		applyTypeHelper:
 		while (true) {
-			if (fn.$ === 6) {
-				var one = fn.a;
-				var two = fn.b;
-				if (!args.b) {
-					return $elm$core$Result$Ok(
-						{g: cache, f: fn});
-				} else {
-					var top = args.a;
-					var rest = args.b;
-					var _v2 = A3(
-						$author$project$Internal$Compiler$unifiable,
-						cache,
-						$author$project$Internal$Compiler$denode(one),
-						top);
-					if (!_v2.b.$) {
-						var variableCache = _v2.a;
-						var $temp$cache = variableCache,
-							$temp$fn = $author$project$Internal$Compiler$denode(two),
-							$temp$args = rest;
-						cache = $temp$cache;
-						fn = $temp$fn;
-						args = $temp$args;
-						continue applyTypeHelper;
+			switch (fn.$) {
+				case 6:
+					var one = fn.a;
+					var two = fn.b;
+					if (!args.b) {
+						return $elm$core$Result$Ok(
+							{g: cache, f: fn});
 					} else {
-						var varCache = _v2.a;
-						var err = _v2.b.a;
+						var top = args.a;
+						var rest = args.b;
+						var _v2 = A3(
+							$author$project$Internal$Compiler$unifiable,
+							cache,
+							$author$project$Internal$Compiler$denode(one),
+							top);
+						if (!_v2.b.$) {
+							var variableCache = _v2.a;
+							var $temp$cache = variableCache,
+								$temp$fn = $author$project$Internal$Compiler$denode(two),
+								$temp$args = rest;
+							cache = $temp$cache;
+							fn = $temp$fn;
+							args = $temp$args;
+							continue applyTypeHelper;
+						} else {
+							var varCache = _v2.a;
+							var err = _v2.b.a;
+							return $elm$core$Result$Err(
+								_List_fromArray(
+									[err]));
+						}
+					}
+				case 0:
+					var varName = fn.a;
+					if (!args.b) {
+						return $elm$core$Result$Ok(
+							{g: cache, f: fn});
+					} else {
+						var resultType = $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$GenericType(varName + '_result');
+						return $elm$core$Result$Ok(
+							{
+								g: A3(
+									$author$project$Internal$Compiler$addInference,
+									varName,
+									A2($author$project$Internal$Compiler$makeFunction, resultType, args),
+									cache),
+								f: resultType
+							});
+					}
+				default:
+					var _final = fn;
+					if (!args.b) {
+						return $elm$core$Result$Ok(
+							{g: cache, f: fn});
+					} else {
 						return $elm$core$Result$Err(
 							_List_fromArray(
-								[err]));
+								[
+									A2($author$project$Internal$Compiler$FunctionAppliedToTooManyArgs, _final, args)
+								]));
 					}
-				}
-			} else {
-				var _final = fn;
-				if (!args.b) {
-					return $elm$core$Result$Ok(
-						{g: cache, f: fn});
-				} else {
-					return $elm$core$Result$Err(
-						_List_fromArray(
-							[
-								A2($author$project$Internal$Compiler$FunctionAppliedToTooManyArgs, _final, args)
-							]));
-				}
 			}
 		}
 	});
