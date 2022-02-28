@@ -69,7 +69,7 @@ section on [structure][] in the guide before reaching for this!
 [structure]: https://guide.elm-lang.org/webapps/structure.html
 -}
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
-map arg1 arg2 =
+map arg1 arg2_1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Platform", "Sub" ]
@@ -91,7 +91,7 @@ map arg1 arg2 =
                     )
             }
         )
-        [ Elm.fn "map0" (\fn0_2_0 -> arg1 fn0_2_0), arg2 ]
+        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), arg2_1 ]
 
 
 annotation_ : { sub : Type.Annotation -> Type.Annotation }
@@ -130,7 +130,7 @@ call_ =
                 )
                 [ arg1_0 ]
     , map =
-        \arg1_0 arg2_0 ->
+        \arg1_1_0 arg2_2_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Platform", "Sub" ]
@@ -154,7 +154,7 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0, arg2_0 ]
+                [ arg1_1_0, arg2_2_0 ]
     }
 
 

@@ -99,20 +99,25 @@ worker arg1 =
         [ Elm.record
             [ Elm.field
                 "init"
-                (Elm.fn "worker0" (\fn0_1_2_0 -> arg1.init fn0_1_2_0))
+                (Elm.fn "unpack0" (\fn0_6_2_3_0 -> arg1.init fn0_6_2_3_0))
             , Elm.field
                 "update"
                 (Elm.fn
-                    "worker0"
-                    (\fn0_1_2_0 ->
+                    "unpack0"
+                    (\fn0_7_2_3_0 ->
                         Elm.fn
-                            "worker1"
-                            (\fn0_5_1_2_0 -> arg1.update fn0_1_2_0 fn0_5_1_2_0)
+                            "unpack1"
+                            (\fn0_3_7_2_3_0 ->
+                                arg1.update fn0_7_2_3_0 fn0_3_7_2_3_0
+                            )
                     )
                 )
             , Elm.field
                 "subscriptions"
-                (Elm.fn "worker0" (\fn0_1_2_0 -> arg1.subscriptions fn0_1_2_0))
+                (Elm.fn
+                    "unpack0"
+                    (\fn0_8_2_3_0 -> arg1.subscriptions fn0_8_2_3_0)
+                )
             ]
         ]
 
@@ -121,7 +126,7 @@ worker arg1 =
 be handled by the overall `update` function, just like events from `Html`.
 -}
 sendToApp : Elm.Expression -> Elm.Expression -> Elm.Expression
-sendToApp arg1 arg2 =
+sendToApp arg1 arg2_1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Platform" ]
@@ -143,7 +148,7 @@ sendToApp arg1 arg2 =
                     )
             }
         )
-        [ arg1, arg2 ]
+        [ arg1, arg2_1 ]
 
 
 {-| Send the router a message for your effect manager. This message will
@@ -153,7 +158,7 @@ effect manager as necessary.
 As an example, the effect manager for web sockets
 -}
 sendToSelf : Elm.Expression -> Elm.Expression -> Elm.Expression
-sendToSelf arg1 arg2 =
+sendToSelf arg1 arg2_1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Platform" ]
@@ -175,7 +180,7 @@ sendToSelf arg1 arg2 =
                     )
             }
         )
-        [ arg1, arg2 ]
+        [ arg1, arg2_1 ]
 
 
 annotation_ :
@@ -187,13 +192,15 @@ annotation_ :
     }
 annotation_ =
     { program =
-        \arg0_0 arg1_0 arg2_0 ->
-            Type.namedWith moduleName_ "Program" [ arg0_0, arg1_0, arg2_0 ]
+        \arg0_0 arg1_1_0 arg2_2_0 ->
+            Type.namedWith moduleName_ "Program" [ arg0_0, arg1_1_0, arg2_2_0 ]
     , task =
-        \arg0_0 arg1_0 -> Type.namedWith moduleName_ "Task" [ arg0_0, arg1_0 ]
+        \arg0_1_0 arg1_2_0 ->
+            Type.namedWith moduleName_ "Task" [ arg0_1_0, arg1_2_0 ]
     , processId = Type.namedWith moduleName_ "ProcessId" []
     , router =
-        \arg0_0 arg1_0 -> Type.namedWith moduleName_ "Router" [ arg0_0, arg1_0 ]
+        \arg0_3_0 arg1_4_0 ->
+            Type.namedWith moduleName_ "Router" [ arg0_3_0, arg1_4_0 ]
     }
 
 
@@ -261,7 +268,7 @@ call_ =
                 )
                 [ arg1_0 ]
     , sendToApp =
-        \arg1_0 arg2_0 ->
+        \arg1_1_0 arg2_2_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Platform" ]
@@ -283,9 +290,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0, arg2_0 ]
+                [ arg1_1_0, arg2_2_0 ]
     , sendToSelf =
-        \arg1_0 arg2_0 ->
+        \arg1_2_0 arg2_3_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Platform" ]
@@ -307,7 +314,7 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0, arg2_0 ]
+                [ arg1_2_0, arg2_3_0 ]
     }
 
 

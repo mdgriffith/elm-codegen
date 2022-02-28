@@ -9,7 +9,7 @@ import Elm.Case
 import Elm.Docs
 import Elm.Gen
 import Elm.Type
-import Gen.Elm as ElmGen
+import Gen.Elm
 import Gen.Elm.Annotation as GenType
 import Gen.Elm.Case
 import Internal.Compiler as Compiler
@@ -170,7 +170,7 @@ thisModuleName =
 
 valueWith : List String -> Elm.Expression -> Elm.Type.Type -> Elm.Expression
 valueWith thisModule name ann =
-    ElmGen.value
+    Gen.Elm.value
         { importFrom = List.map Elm.string thisModule
         , name = name
         , annotation =
@@ -182,7 +182,7 @@ valueWith thisModule name ann =
 
 apply : Elm.Expression -> List Elm.Expression -> Elm.Expression
 apply fn args =
-    ElmGen.apply fn args
+    Gen.Elm.apply fn args
 
 
 expressionType : Annotation.Annotation
@@ -283,8 +283,8 @@ blockToCall thisModule block =
                                     []
                     in
                     Elm.function arguments
-                        (ElmGen.apply
-                            (ElmGen.value
+                        (Gen.Elm.apply
+                            (Gen.Elm.value
                                 { importFrom = List.map Elm.string thisModule
                                 , name = Elm.string value.name
                                 , annotation =
@@ -490,10 +490,10 @@ block2Maker thisModule block =
                             fields
                                 |> List.map
                                     (\( fieldName, _ ) ->
-                                        ElmGen.field (Elm.string fieldName)
+                                        Gen.Elm.field (Elm.string fieldName)
                                             (Elm.get fieldName arg)
                                     )
-                                |> ElmGen.record
+                                |> Gen.Elm.record
                     in
                     Elm.fn "arg" lambdaValue
                         |> Just
@@ -668,10 +668,10 @@ typeCreation thisModule block =
                             fields
                                 |> List.map
                                     (\( fieldName, _ ) ->
-                                        ElmGen.field (Elm.string fieldName)
+                                        Gen.Elm.field (Elm.string fieldName)
                                             (Elm.get fieldName arg)
                                     )
-                                |> ElmGen.record
+                                |> Gen.Elm.record
                         )
                         |> Elm.field alias.name
                     ]
@@ -792,8 +792,8 @@ generateBlocks thisModule block =
                     [ Elm.function
                         (List.reverse (List.drop 1 captured.arguments))
                         (\vars ->
-                            ElmGen.apply
-                                (ElmGen.value
+                            Gen.Elm.apply
+                                (Gen.Elm.value
                                     { importFrom = List.map Elm.string thisModule
                                     , name = Elm.string value.name
                                     , annotation =
@@ -1071,15 +1071,19 @@ getArgumentUnpacker baseName freshCount tipe value =
                                 }
                             )
                             [ Elm.functionReduced varName
-                                (typeToAnnotation inner)
-                                (getArgumentUnpacker baseName (freshCount + 1) inner)
+                                (\exp ->
+                                    getArgumentUnpacker baseName
+                                        (freshCount + 1)
+                                        inner
+                                        (exp |> Elm.withType (typeToAnnotation inner))
+                                )
                             , value
                             ]
 
                     else
                         value
             in
-            Elm.apply ElmGen.values_.list
+            Elm.apply Gen.Elm.values_.list
                 [ unpackedInner
                 ]
 
@@ -1087,37 +1091,38 @@ getArgumentUnpacker baseName freshCount tipe value =
             fields
                 |> List.map
                     (\( fieldName, fieldType ) ->
-                        ElmGen.field
+                        Gen.Elm.field
                             (Elm.string fieldName)
                             (getArgumentUnpacker baseName freshCount fieldType <|
                                 Elm.get fieldName value
                             )
                     )
-                |> ElmGen.record
+                |> Gen.Elm.record
 
         _ ->
             value
 
 
 callElmFn : Elm.Expression -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
-callElmFn arg1 arg2 =
-    Elm.apply
-        (Elm.value
-            { importFrom = [ "Elm" ]
-            , name = "fn"
-            , annotation =
-                Just
-                    (Annotation.function
-                        [ Annotation.string
-                        , Annotation.function
-                            [ Annotation.namedWith [ "Elm" ] "Expression" [] ]
-                            (Annotation.namedWith [ "Elm" ] "Expression" [])
-                        ]
-                        (Annotation.namedWith [ "Elm" ] "Expression" [])
-                    )
-            }
-        )
-        [ arg1, Elm.fn "fn0" (\fnArg0_0 -> arg2 fnArg0_0) ]
+callElmFn =
+    -- Elm.apply
+    --     (Elm.value
+    --         { importFrom = [ "Elm" ]
+    --         , name = "fn"
+    --         , annotation =
+    --             Just
+    --                 (Annotation.function
+    --                     [ Annotation.string
+    --                     , Annotation.function
+    --                         [ Annotation.namedWith [ "Elm" ] "Expression" [] ]
+    --                         (Annotation.namedWith [ "Elm" ] "Expression" [])
+    --                     ]
+    --                     (Annotation.namedWith [ "Elm" ] "Expression" [])
+    --                 )
+    --         }
+    --     )
+    --     [ arg1, Elm.fn "fn0" (\fnArg0_0 -> arg2 fnArg0_0) ]
+    Gen.Elm.fn
 
 
 {-|

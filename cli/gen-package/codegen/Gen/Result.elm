@@ -23,7 +23,7 @@ If the result is an `Err`, the same error value will propagate through.
     map sqrt (Err "bad input") == Err "bad input"
 -}
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
-map arg1 arg2 =
+map arg1 arg2_1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Result" ]
@@ -45,7 +45,7 @@ map arg1 arg2 =
                     )
             }
         )
-        [ Elm.fn "map0" (\fn0_2_0 -> arg1 fn0_2_0), arg2 ]
+        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), arg2_1 ]
 
 
 {-| Apply a function if both results are `Ok`. If not, the first `Err` will
@@ -64,7 +64,7 @@ map2 :
     -> Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
-map2 arg1 arg2 arg3 =
+map2 arg1 arg2_1 arg3_2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Result" ]
@@ -93,10 +93,12 @@ map2 arg1 arg2 arg3 =
             }
         )
         [ Elm.fn
-            "map20"
-            (\fn0_2_0 -> Elm.fn "map21" (\fn0_2_2_0 -> arg1 fn0_2_0 fn0_2_2_0))
-        , arg2
-        , arg3
+            "unpack0"
+            (\fn0_3_3_0 ->
+                Elm.fn "unpack1" (\fn0_3_3_3_0 -> arg1 fn0_3_3_0 fn0_3_3_3_0)
+            )
+        , arg2_1
+        , arg3_2
         ]
 
 
@@ -107,7 +109,7 @@ map3 :
     -> Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
-map3 arg1 arg2 arg3 arg4 =
+map3 arg1 arg2_1 arg3_2 arg4_3 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Result" ]
@@ -140,19 +142,21 @@ map3 arg1 arg2 arg3 arg4 =
             }
         )
         [ Elm.fn
-            "map30"
-            (\fn0_2_0 ->
+            "unpack0"
+            (\fn0_3_3_0 ->
                 Elm.fn
-                    "map31"
-                    (\fn0_2_2_0 ->
+                    "unpack1"
+                    (\fn0_3_3_3_0 ->
                         Elm.fn
-                            "map32"
-                            (\fn0_2_2_2_0 -> arg1 fn0_2_0 fn0_2_2_0 fn0_2_2_2_0)
+                            "unpack2"
+                            (\fn0_3_3_3_3_0 ->
+                                arg1 fn0_3_3_0 fn0_3_3_3_0 fn0_3_3_3_3_0
+                            )
                     )
             )
-        , arg2
-        , arg3
-        , arg4
+        , arg2_1
+        , arg3_2
+        , arg4_3
         ]
 
 
@@ -168,7 +172,7 @@ map4 :
     -> Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
-map4 arg1 arg2 arg3 arg4 arg5 =
+map4 arg1 arg2_1 arg3_2 arg4_3 arg5_4 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Result" ]
@@ -209,27 +213,27 @@ map4 arg1 arg2 arg3 arg4 arg5 =
             }
         )
         [ Elm.fn
-            "map40"
-            (\fn0_2_0 ->
+            "unpack0"
+            (\fn0_3_3_0 ->
                 Elm.fn
-                    "map41"
-                    (\fn0_2_2_0 ->
+                    "unpack1"
+                    (\fn0_3_3_3_0 ->
                         Elm.fn
-                            "map42"
-                            (\fn0_2_2_2_0 ->
+                            "unpack2"
+                            (\fn0_3_3_3_3_0 ->
                                 Elm.fn
-                                    "map43"
-                                    (\fn0_2_2_2_2_0 ->
-                                        arg1 fn0_2_0 fn0_2_2_0 fn0_2_2_2_0
-                                            fn0_2_2_2_2_0
+                                    "unpack3"
+                                    (\fn0_3_3_3_3_3_0 ->
+                                        arg1 fn0_3_3_0 fn0_3_3_3_0 fn0_3_3_3_3_0
+                                            fn0_3_3_3_3_3_0
                                     )
                             )
                     )
             )
-        , arg2
-        , arg3
-        , arg4
-        , arg5
+        , arg2_1
+        , arg3_2
+        , arg4_3
+        , arg5_4
         ]
 
 
@@ -247,7 +251,7 @@ map5 :
     -> Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
-map5 arg1 arg2 arg3 arg4 arg5 arg6 =
+map5 arg1 arg2_1 arg3_2 arg4_3 arg5_4 arg6_5 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Result" ]
@@ -293,34 +297,34 @@ map5 arg1 arg2 arg3 arg4 arg5 arg6 =
             }
         )
         [ Elm.fn
-            "map50"
-            (\fn0_2_0 ->
+            "unpack0"
+            (\fn0_3_3_0 ->
                 Elm.fn
-                    "map51"
-                    (\fn0_2_2_0 ->
+                    "unpack1"
+                    (\fn0_3_3_3_0 ->
                         Elm.fn
-                            "map52"
-                            (\fn0_2_2_2_0 ->
+                            "unpack2"
+                            (\fn0_3_3_3_3_0 ->
                                 Elm.fn
-                                    "map53"
-                                    (\fn0_2_2_2_2_0 ->
+                                    "unpack3"
+                                    (\fn0_3_3_3_3_3_0 ->
                                         Elm.fn
-                                            "map54"
-                                            (\fn0_2_2_2_2_2_0 ->
-                                                arg1 fn0_2_0 fn0_2_2_0
-                                                    fn0_2_2_2_0
-                                                    fn0_2_2_2_2_0
-                                                    fn0_2_2_2_2_2_0
+                                            "unpack4"
+                                            (\fn0_3_3_3_3_3_3_0 ->
+                                                arg1 fn0_3_3_0 fn0_3_3_3_0
+                                                    fn0_3_3_3_3_0
+                                                    fn0_3_3_3_3_3_0
+                                                    fn0_3_3_3_3_3_3_0
                                             )
                                     )
                             )
                     )
             )
-        , arg2
-        , arg3
-        , arg4
-        , arg5
-        , arg6
+        , arg2_1
+        , arg3_2
+        , arg4_3
+        , arg5_4
+        , arg6_5
         ]
 
 
@@ -359,7 +363,7 @@ the exact ways your computation may fail. This way it is easy to handle in your
 code.
 -}
 andThen : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
-andThen arg1 arg2 =
+andThen arg1 arg2_1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Result" ]
@@ -387,7 +391,7 @@ andThen arg1 arg2 =
                     )
             }
         )
-        [ Elm.fn "andThen0" (\fn0_2_0 -> arg1 fn0_2_0), arg2 ]
+        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), arg2_1 ]
 
 
 {-| If the result is `Ok` return the value, but if the result is an `Err` then
@@ -397,7 +401,7 @@ return a given default value. The following examples try to parse integers.
     Result.withDefault 0 (Err "no") == 0
 -}
 withDefault : Elm.Expression -> Elm.Expression -> Elm.Expression
-withDefault arg1 arg2 =
+withDefault arg1 arg2_1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Result" ]
@@ -415,7 +419,7 @@ withDefault arg1 arg2 =
                     )
             }
         )
-        [ arg1, arg2 ]
+        [ arg1, arg2_1 ]
 
 
 {-| Convert to a simpler `Maybe` if the actual error message is not needed or
@@ -458,7 +462,7 @@ uses `Results`.
         fromMaybe ("error parsing string: " ++ toString string) (parseInt string)
 -}
 fromMaybe : Elm.Expression -> Elm.Expression -> Elm.Expression
-fromMaybe arg1 arg2 =
+fromMaybe arg1 arg2_1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Result" ]
@@ -475,7 +479,7 @@ fromMaybe arg1 arg2 =
                     )
             }
         )
-        [ arg1, arg2 ]
+        [ arg1, arg2_1 ]
 
 
 {-| Transform an `Err` value. For example, say the errors we get have too much
@@ -494,7 +498,7 @@ information:
 -}
 mapError :
     (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
-mapError arg1 arg2 =
+mapError arg1 arg2_1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Result" ]
@@ -516,13 +520,14 @@ mapError arg1 arg2 =
                     )
             }
         )
-        [ Elm.fn "mapError0" (\fn0_2_0 -> arg1 fn0_2_0), arg2 ]
+        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), arg2_1 ]
 
 
 annotation_ : { result : Type.Annotation -> Type.Annotation -> Type.Annotation }
 annotation_ =
     { result =
-        \arg0_0 arg1_0 -> Type.namedWith moduleName_ "Result" [ arg0_0, arg1_0 ]
+        \arg0_0 arg1_1_0 ->
+            Type.namedWith moduleName_ "Result" [ arg0_0, arg1_1_0 ]
     }
 
 
@@ -548,7 +553,7 @@ make_ =
                 )
                 [ ar0_0 ]
     , err =
-        \ar0_0 ->
+        \ar0_1_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Result" ]
@@ -562,25 +567,26 @@ make_ =
                             )
                     }
                 )
-                [ ar0_0 ]
+                [ ar0_1_0 ]
     }
 
 
 caseOf_ :
     { result :
         Elm.Expression
-        -> { err : Elm.Expression -> Elm.Expression
-        , ok : Elm.Expression -> Elm.Expression
+        -> { tags_1_0
+            | ok : Elm.Expression -> Elm.Expression
+            , err : Elm.Expression -> Elm.Expression
         }
         -> Elm.Expression
     }
 caseOf_ =
     { result =
-        \expresssion_0 tags_0 ->
+        \expresssion_0 tags_1_0 ->
             Elm.Case.custom
                 expresssion_0
-                [ Elm.Case.branch1 [ "Result" ] "Ok" tags_0.ok
-                , Elm.Case.branch1 [ "Result" ] "Err" tags_0.err
+                [ Elm.Case.branch1 [ "Result" ] "Ok" tags_1_0.ok
+                , Elm.Case.branch1 [ "Result" ] "Err" tags_1_0.err
                 ]
     }
 
@@ -618,7 +624,7 @@ call_ :
     }
 call_ =
     { map =
-        \arg1_0 arg2_0 ->
+        \arg1_0 arg2_1_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Result" ]
@@ -642,9 +648,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0, arg2_0 ]
+                [ arg1_0, arg2_1_0 ]
     , map2 =
-        \arg1_0 arg2_0 arg3_0 ->
+        \arg1_1_0 arg2_2_0 arg3_3_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Result" ]
@@ -672,9 +678,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0, arg2_0, arg3_0 ]
+                [ arg1_1_0, arg2_2_0, arg3_3_0 ]
     , map3 =
-        \arg1_0 arg2_0 arg3_0 arg4_0 ->
+        \arg1_2_0 arg2_3_0 arg3_4_0 arg4_5_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Result" ]
@@ -706,9 +712,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0, arg2_0, arg3_0, arg4_0 ]
+                [ arg1_2_0, arg2_3_0, arg3_4_0, arg4_5_0 ]
     , map4 =
-        \arg1_0 arg2_0 arg3_0 arg4_0 arg5_0 ->
+        \arg1_3_0 arg2_4_0 arg3_5_0 arg4_6_0 arg5_7_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Result" ]
@@ -748,9 +754,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0, arg2_0, arg3_0, arg4_0, arg5_0 ]
+                [ arg1_3_0, arg2_4_0, arg3_5_0, arg4_6_0, arg5_7_0 ]
     , map5 =
-        \arg1_0 arg2_0 arg3_0 arg4_0 arg5_0 arg6_0 ->
+        \arg1_4_0 arg2_5_0 arg3_6_0 arg4_7_0 arg5_8_0 arg6_9_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Result" ]
@@ -795,9 +801,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0, arg2_0, arg3_0, arg4_0, arg5_0, arg6_0 ]
+                [ arg1_4_0, arg2_5_0, arg3_6_0, arg4_7_0, arg5_8_0, arg6_9_0 ]
     , andThen =
-        \arg1_0 arg2_0 ->
+        \arg1_5_0 arg2_6_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Result" ]
@@ -825,9 +831,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0, arg2_0 ]
+                [ arg1_5_0, arg2_6_0 ]
     , withDefault =
-        \arg1_0 arg2_0 ->
+        \arg1_6_0 arg2_7_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Result" ]
@@ -845,9 +851,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0, arg2_0 ]
+                [ arg1_6_0, arg2_7_0 ]
     , toMaybe =
-        \arg1_0 ->
+        \arg1_7_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Result" ]
@@ -864,9 +870,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0 ]
+                [ arg1_7_0 ]
     , fromMaybe =
-        \arg1_0 arg2_0 ->
+        \arg1_8_0 arg2_9_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Result" ]
@@ -883,9 +889,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0, arg2_0 ]
+                [ arg1_8_0, arg2_9_0 ]
     , mapError =
-        \arg1_0 arg2_0 ->
+        \arg1_9_0 arg2_10_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Result" ]
@@ -907,7 +913,7 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0, arg2_0 ]
+                [ arg1_9_0, arg2_10_0 ]
     }
 
 

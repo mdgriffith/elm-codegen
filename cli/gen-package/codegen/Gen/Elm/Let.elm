@@ -35,7 +35,7 @@ letIn arg1 =
 
 {-| -}
 value : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
-value arg1 arg2 arg3 =
+value arg1 arg2_1 arg3_2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Let" ]
@@ -57,7 +57,7 @@ value arg1 arg2 arg3 =
                     )
             }
         )
-        [ arg1, arg2, arg3 ]
+        [ arg1, arg2_1, arg3_2 ]
 
 
 {-| -}
@@ -67,7 +67,7 @@ tuple :
     -> Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
-tuple arg1 arg2 arg3 arg4 =
+tuple arg1 arg2_1 arg3_2 arg4_3 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Let" ]
@@ -93,13 +93,13 @@ tuple arg1 arg2 arg3 arg4 =
                     )
             }
         )
-        [ arg1, arg2, arg3, arg4 ]
+        [ arg1, arg2_1, arg3_2, arg4_3 ]
 
 
 {-| -}
 record :
     List Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
-record arg1 arg2 arg3 =
+record arg1 arg2_1 arg3_2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Let" ]
@@ -123,7 +123,7 @@ record arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.list arg1, arg2, arg3 ]
+        [ Elm.list arg1, arg2_1, arg3_2 ]
 
 
 {-| -}
@@ -183,7 +183,7 @@ call_ =
                 )
                 [ arg1_0 ]
     , value =
-        \arg1_0 arg2_0 arg3_0 ->
+        \arg1_1_0 arg2_2_0 arg3_3_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Let" ]
@@ -213,9 +213,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0, arg2_0, arg3_0 ]
+                [ arg1_1_0, arg2_2_0, arg3_3_0 ]
     , tuple =
-        \arg1_0 arg2_0 arg3_0 arg4_0 ->
+        \arg1_2_0 arg2_3_0 arg3_4_0 arg4_5_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Let" ]
@@ -253,9 +253,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0, arg2_0, arg3_0, arg4_0 ]
+                [ arg1_2_0, arg2_3_0, arg3_4_0, arg4_5_0 ]
     , record =
-        \arg1_0 arg2_0 arg3_0 ->
+        \arg1_3_0 arg2_4_0 arg3_5_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Let" ]
@@ -287,9 +287,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0, arg2_0, arg3_0 ]
+                [ arg1_3_0, arg2_4_0, arg3_5_0 ]
     , toExpression =
-        \arg1_0 ->
+        \arg1_4_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Let" ]
@@ -306,7 +306,7 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0 ]
+                [ arg1_4_0 ]
     }
 
 

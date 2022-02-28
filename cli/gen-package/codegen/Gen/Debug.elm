@@ -63,7 +63,7 @@ terminal. We may have a package in Elm for this someday, but browser
 applications are the primary focus of platform development for now.
 -}
 log : Elm.Expression -> Elm.Expression -> Elm.Expression
-log arg1 arg2 =
+log arg1 arg2_1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Debug" ]
@@ -73,7 +73,7 @@ log arg1 arg2 =
                     (Type.function [ Type.string, Type.var "a" ] (Type.var "a"))
             }
         )
-        [ arg1, arg2 ]
+        [ arg1, arg2_1 ]
 
 
 {-| This is a placeholder for code that you will write later.
@@ -136,7 +136,7 @@ call_ =
                 )
                 [ arg1_0 ]
     , log =
-        \arg1_0 arg2_0 ->
+        \arg1_1_0 arg2_2_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Debug" ]
@@ -149,9 +149,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0, arg2_0 ]
+                [ arg1_1_0, arg2_2_0 ]
     , todo =
-        \arg1_0 ->
+        \arg1_2_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Debug" ]
@@ -160,7 +160,7 @@ call_ =
                         Just (Type.function [ Type.string ] (Type.var "a"))
                     }
                 )
-                [ arg1_0 ]
+                [ arg1_2_0 ]
     }
 
 

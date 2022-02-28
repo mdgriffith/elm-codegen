@@ -118,7 +118,7 @@ call_ =
                 )
                 [ arg1_0 ]
     , cyan =
-        \arg1_0 ->
+        \arg1_1_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Error", "Format" ]
@@ -127,9 +127,9 @@ call_ =
                         Just (Type.function [ Type.string ] Type.string)
                     }
                 )
-                [ arg1_0 ]
+                [ arg1_1_0 ]
     , yellow =
-        \arg1_0 ->
+        \arg1_2_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Error", "Format" ]
@@ -138,9 +138,9 @@ call_ =
                         Just (Type.function [ Type.string ] Type.string)
                     }
                 )
-                [ arg1_0 ]
+                [ arg1_2_0 ]
     , green =
-        \arg1_0 ->
+        \arg1_3_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Error", "Format" ]
@@ -149,9 +149,9 @@ call_ =
                         Just (Type.function [ Type.string ] Type.string)
                     }
                 )
-                [ arg1_0 ]
+                [ arg1_3_0 ]
     , red =
-        \arg1_0 ->
+        \arg1_4_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Error", "Format" ]
@@ -160,9 +160,9 @@ call_ =
                         Just (Type.function [ Type.string ] Type.string)
                     }
                 )
-                [ arg1_0 ]
+                [ arg1_4_0 ]
     , grey =
-        \arg1_0 ->
+        \arg1_5_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Error", "Format" ]
@@ -171,7 +171,7 @@ call_ =
                         Just (Type.function [ Type.string ] Type.string)
                     }
                 )
-                [ arg1_0 ]
+                [ arg1_5_0 ]
     }
 
 

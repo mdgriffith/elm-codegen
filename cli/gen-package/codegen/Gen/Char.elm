@@ -303,7 +303,7 @@ call_ =
                 )
                 [ arg1_0 ]
     , isLower =
-        \arg1_0 ->
+        \arg1_1_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -311,9 +311,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.bool)
                     }
                 )
-                [ arg1_0 ]
+                [ arg1_1_0 ]
     , isAlpha =
-        \arg1_0 ->
+        \arg1_2_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -321,9 +321,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.bool)
                     }
                 )
-                [ arg1_0 ]
+                [ arg1_2_0 ]
     , isAlphaNum =
-        \arg1_0 ->
+        \arg1_3_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -331,9 +331,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.bool)
                     }
                 )
-                [ arg1_0 ]
+                [ arg1_3_0 ]
     , isDigit =
-        \arg1_0 ->
+        \arg1_4_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -341,9 +341,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.bool)
                     }
                 )
-                [ arg1_0 ]
+                [ arg1_4_0 ]
     , isOctDigit =
-        \arg1_0 ->
+        \arg1_5_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -351,9 +351,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.bool)
                     }
                 )
-                [ arg1_0 ]
+                [ arg1_5_0 ]
     , isHexDigit =
-        \arg1_0 ->
+        \arg1_6_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -361,9 +361,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.bool)
                     }
                 )
-                [ arg1_0 ]
+                [ arg1_6_0 ]
     , toUpper =
-        \arg1_0 ->
+        \arg1_7_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -371,9 +371,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.char)
                     }
                 )
-                [ arg1_0 ]
+                [ arg1_7_0 ]
     , toLower =
-        \arg1_0 ->
+        \arg1_8_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -381,9 +381,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.char)
                     }
                 )
-                [ arg1_0 ]
+                [ arg1_8_0 ]
     , toLocaleUpper =
-        \arg1_0 ->
+        \arg1_9_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -391,9 +391,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.char)
                     }
                 )
-                [ arg1_0 ]
+                [ arg1_9_0 ]
     , toLocaleLower =
-        \arg1_0 ->
+        \arg1_10_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -401,9 +401,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.char)
                     }
                 )
-                [ arg1_0 ]
+                [ arg1_10_0 ]
     , toCode =
-        \arg1_0 ->
+        \arg1_11_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -411,9 +411,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.int)
                     }
                 )
-                [ arg1_0 ]
+                [ arg1_11_0 ]
     , fromCode =
-        \arg1_0 ->
+        \arg1_12_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -421,7 +421,7 @@ call_ =
                     , annotation = Just (Type.function [ Type.int ] Type.char)
                     }
                 )
-                [ arg1_0 ]
+                [ arg1_12_0 ]
     }
 
 
