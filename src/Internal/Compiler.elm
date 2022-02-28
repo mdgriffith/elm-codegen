@@ -121,6 +121,12 @@ getName desiredName ((Index top tail scope) as index) =
             )
 
 
+protectTypeName : String -> Index -> String
+protectTypeName base index =
+    formatValue
+        (base ++ indexToString index)
+
+
 indexToString : Index -> String
 indexToString (Index top tail scope) =
     (if top == 0 then

@@ -83,7 +83,7 @@ asValue : Compiler.Index -> String -> Expression -> ( String, Expression )
 asValue index desiredName sourceExpression =
     let
         ( name, newIndex ) =
-            Compiler.getName index desiredName
+            Compiler.getName desiredName index
     in
     ( name
     , Compiler.Expression <|
@@ -93,8 +93,8 @@ asValue index desiredName sourceExpression =
                     (Compiler.sanitize name)
             , annotation =
                 let
-                    ( newIndex, sourceDetails ) =
-                        Compiler.toExpressionDetails index sourceExpression
+                    ( _, sourceDetails ) =
+                        Compiler.toExpressionDetails newIndex sourceExpression
                 in
                 sourceDetails.annotation
             , imports =
@@ -133,10 +133,10 @@ unpackTuple :
 unpackTuple index desiredNameOne desiredNameTwo sourceExpression =
     let
         ( oneName, oneIndex ) =
-            Compiler.getName index desiredNameOne
+            Compiler.getName desiredNameOne index
 
         ( twoName, twoIndex ) =
-            Compiler.getName index desiredNameTwo
+            Compiler.getName desiredNameTwo oneIndex
 
         ( newIndex, sourceDetails ) =
             Compiler.toExpressionDetails twoIndex sourceExpression
