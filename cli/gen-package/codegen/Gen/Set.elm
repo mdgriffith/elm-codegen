@@ -52,7 +52,7 @@ singleton arg1 =
 {-| Insert a value into a set.
 -}
 insert : Elm.Expression -> Elm.Expression -> Elm.Expression
-insert arg1 arg2_1 =
+insert arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -74,13 +74,13 @@ insert arg1 arg2_1 =
                     )
             }
         )
-        [ arg1, arg2_1 ]
+        [ arg1, arg2 ]
 
 
 {-| Remove a value from a set. If the value is not found, no changes are made.
 -}
 remove : Elm.Expression -> Elm.Expression -> Elm.Expression
-remove arg1 arg2_1 =
+remove arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -102,7 +102,7 @@ remove arg1 arg2_1 =
                     )
             }
         )
-        [ arg1, arg2_1 ]
+        [ arg1, arg2 ]
 
 
 {-| Determine if a set is empty.
@@ -127,7 +127,7 @@ isEmpty arg1 =
 {-| Determine if a value is in a set.
 -}
 member : Elm.Expression -> Elm.Expression -> Elm.Expression
-member arg1 arg2_1 =
+member arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -145,7 +145,7 @@ member arg1 arg2_1 =
                     )
             }
         )
-        [ arg1, arg2_1 ]
+        [ arg1, arg2 ]
 
 
 {-| Determine the number of elements in a set.
@@ -170,7 +170,7 @@ size arg1 =
 {-| Get the union of two sets. Keep all values.
 -}
 union : Elm.Expression -> Elm.Expression -> Elm.Expression
-union arg1 arg2_1 =
+union arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -195,13 +195,13 @@ union arg1 arg2_1 =
                     )
             }
         )
-        [ arg1, arg2_1 ]
+        [ arg1, arg2 ]
 
 
 {-| Get the intersection of two sets. Keeps values that appear in both sets.
 -}
 intersect : Elm.Expression -> Elm.Expression -> Elm.Expression
-intersect arg1 arg2_1 =
+intersect arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -226,14 +226,14 @@ intersect arg1 arg2_1 =
                     )
             }
         )
-        [ arg1, arg2_1 ]
+        [ arg1, arg2 ]
 
 
 {-| Get the difference between the first set and the second. Keeps values
 that do not appear in the second set.
 -}
 diff : Elm.Expression -> Elm.Expression -> Elm.Expression
-diff arg1 arg2_1 =
+diff arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -258,7 +258,7 @@ diff arg1 arg2_1 =
                     )
             }
         )
-        [ arg1, arg2_1 ]
+        [ arg1, arg2 ]
 
 
 {-| Convert a set into a list, sorted from lowest to highest.
@@ -306,7 +306,7 @@ fromList arg1 =
 {-| Map a function onto a set, creating a new set with no duplicates.
 -}
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
-map arg1 arg2_1 =
+map arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -330,7 +330,7 @@ map arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2 ]
 
 
 {-| Fold over the values in a set, in order from lowest to highest.
@@ -340,7 +340,7 @@ foldl :
     -> Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
-foldl arg1 arg2_1 arg3_2 =
+foldl arg1 arg2 arg3 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -360,9 +360,9 @@ foldl arg1 arg2_1 arg3_2 =
         )
         [ Elm.functionReduced
             "unpack"
-            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
-        , arg2_1
-        , arg3_2
+            (\unpack -> Elm.functionReduced "unpack" (arg1 unpack))
+        , arg2
+        , arg3
         ]
 
 
@@ -373,7 +373,7 @@ foldr :
     -> Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
-foldr arg1 arg2_1 arg3_2 =
+foldr arg1 arg2 arg3 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -393,9 +393,9 @@ foldr arg1 arg2_1 arg3_2 =
         )
         [ Elm.functionReduced
             "unpack"
-            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
-        , arg2_1
-        , arg3_2
+            (\unpack -> Elm.functionReduced "unpack" (arg1 unpack))
+        , arg2
+        , arg3
         ]
 
 
@@ -414,7 +414,7 @@ foldr arg1 arg2_1 arg3_2 =
     -- positives == Set.fromList [1,2]
 -}
 filter : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
-filter arg1 arg2_1 =
+filter arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -436,7 +436,7 @@ filter arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2 ]
 
 
 {-| Create two new sets. The first contains all the elements that passed the
@@ -444,7 +444,7 @@ given test, and the second contains all the elements that did not.
 -}
 partition :
     (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
-partition arg1 arg2_1 =
+partition arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Set" ]
@@ -473,12 +473,12 @@ partition arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2 ]
 
 
 annotation_ : { set : Type.Annotation -> Type.Annotation }
 annotation_ =
-    { set = \arg0_0 -> Type.namedWith moduleName_ "Set" [ arg0_0 ] }
+    { set = \arg0 -> Type.namedWith moduleName_ "Set" [ arg0 ] }
 
 
 call_ :
@@ -503,7 +503,7 @@ call_ :
     }
 call_ =
     { singleton =
-        \arg1_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -520,9 +520,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0 ]
+                [ arg1 ]
     , insert =
-        \arg1_1_0 arg2_2_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -544,9 +544,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_1_0, arg2_2_0 ]
+                [ arg1, arg2 ]
     , remove =
-        \arg1_2_0 arg2_3_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -568,9 +568,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_2_0, arg2_3_0 ]
+                [ arg1, arg2 ]
     , isEmpty =
-        \arg1_3_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -587,9 +587,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_3_0 ]
+                [ arg1 ]
     , member =
-        \arg1_4_0 arg2_5_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -607,9 +607,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_4_0, arg2_5_0 ]
+                [ arg1, arg2 ]
     , size =
-        \arg1_5_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -626,9 +626,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_5_0 ]
+                [ arg1 ]
     , union =
-        \arg1_6_0 arg2_7_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -653,9 +653,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_6_0, arg2_7_0 ]
+                [ arg1, arg2 ]
     , intersect =
-        \arg1_7_0 arg2_8_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -680,9 +680,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_7_0, arg2_8_0 ]
+                [ arg1, arg2 ]
     , diff =
-        \arg1_8_0 arg2_9_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -707,9 +707,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_8_0, arg2_9_0 ]
+                [ arg1, arg2 ]
     , toList =
-        \arg1_9_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -726,9 +726,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_9_0 ]
+                [ arg1 ]
     , fromList =
-        \arg1_10_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -745,9 +745,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_10_0 ]
+                [ arg1 ]
     , map =
-        \arg1_11_0 arg2_12_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -771,9 +771,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_11_0, arg2_12_0 ]
+                [ arg1, arg2 ]
     , foldl =
-        \arg1_12_0 arg2_13_0 arg3_14_0 ->
+        \arg1 arg2 arg3 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -794,9 +794,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_12_0, arg2_13_0, arg3_14_0 ]
+                [ arg1, arg2, arg3 ]
     , foldr =
-        \arg1_13_0 arg2_14_0 arg3_15_0 ->
+        \arg1 arg2 arg3 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -817,9 +817,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_13_0, arg2_14_0, arg3_15_0 ]
+                [ arg1, arg2, arg3 ]
     , filter =
-        \arg1_14_0 arg2_15_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -843,9 +843,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_14_0, arg2_15_0 ]
+                [ arg1, arg2 ]
     , partition =
-        \arg1_15_0 arg2_16_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -876,7 +876,7 @@ call_ =
                             )
                     }
                 )
-                [ arg1_15_0, arg2_16_0 ]
+                [ arg1, arg2 ]
     }
 
 

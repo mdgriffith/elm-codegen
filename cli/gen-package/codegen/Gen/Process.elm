@@ -119,7 +119,7 @@ call_ :
     }
 call_ =
     { spawn =
-        \arg1_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Process" ]
@@ -142,9 +142,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0 ]
+                [ arg1 ]
     , sleep =
-        \arg1_1_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Process" ]
@@ -161,9 +161,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_1_0 ]
+                [ arg1 ]
     , kill =
-        \arg1_2_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Process" ]
@@ -180,7 +180,7 @@ call_ =
                             )
                     }
                 )
-                [ arg1_2_0 ]
+                [ arg1 ]
     }
 
 

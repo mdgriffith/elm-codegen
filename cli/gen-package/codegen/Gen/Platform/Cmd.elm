@@ -72,7 +72,7 @@ section on [structure][] in the guide before reaching for this!
 [structure]: https://guide.elm-lang.org/webapps/structure.html
 -}
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
-map arg1 arg2_1 =
+map arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Platform", "Cmd" ]
@@ -94,12 +94,12 @@ map arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2 ]
 
 
 annotation_ : { cmd : Type.Annotation -> Type.Annotation }
 annotation_ =
-    { cmd = \arg0_0 -> Type.namedWith moduleName_ "Cmd" [ arg0_0 ] }
+    { cmd = \arg0 -> Type.namedWith moduleName_ "Cmd" [ arg0 ] }
 
 
 call_ :
@@ -108,7 +108,7 @@ call_ :
     }
 call_ =
     { batch =
-        \arg1_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Platform", "Cmd" ]
@@ -131,9 +131,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0 ]
+                [ arg1 ]
     , map =
-        \arg1_1_0 arg2_2_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Platform", "Cmd" ]
@@ -157,7 +157,7 @@ call_ =
                             )
                     }
                 )
-                [ arg1_1_0, arg2_2_0 ]
+                [ arg1, arg2 ]
     }
 
 

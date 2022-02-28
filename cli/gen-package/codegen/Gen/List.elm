@@ -38,7 +38,7 @@ singleton arg1 =
     repeat 3 (0,0) == [(0,0),(0,0),(0,0)]
 -}
 repeat : Elm.Expression -> Elm.Expression -> Elm.Expression
-repeat arg1 arg2_1 =
+repeat arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -51,7 +51,7 @@ repeat arg1 arg2_1 =
                     )
             }
         )
-        [ arg1, arg2_1 ]
+        [ arg1, arg2 ]
 
 
 {-| Create a list of numbers, every element increasing by one.
@@ -62,7 +62,7 @@ You give the lowest and highest number that should be in the list.
     range 6 3 == []
 -}
 range : Elm.Expression -> Elm.Expression -> Elm.Expression
-range arg1 arg2_1 =
+range arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -71,7 +71,7 @@ range arg1 arg2_1 =
                 Just (Type.function [ Type.int, Type.int ] (Type.list Type.int))
             }
         )
-        [ arg1, arg2_1 ]
+        [ arg1, arg2 ]
 
 
 {-| Apply a function to every element of a list.
@@ -84,7 +84,7 @@ So `map func [ a, b, c ]` is the same as `[ func a, func b, func c ]`
 -}
 map :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
-map arg1 arg2_1 =
+map arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -99,7 +99,7 @@ map arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, Elm.list arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, Elm.list arg2 ]
 
 
 {-| Same as `map` but the function is also applied to the index of each
@@ -111,7 +111,7 @@ indexedMap :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> List Elm.Expression
     -> Elm.Expression
-indexedMap arg1 arg2_1 =
+indexedMap arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -130,8 +130,8 @@ indexedMap arg1 arg2_1 =
         )
         [ Elm.functionReduced
             "unpack"
-            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
-        , Elm.list arg2_1
+            (\unpack -> Elm.functionReduced "unpack" (arg1 unpack))
+        , Elm.list arg2
         ]
 
 
@@ -152,7 +152,7 @@ foldl :
     -> Elm.Expression
     -> List Elm.Expression
     -> Elm.Expression
-foldl arg1 arg2_1 arg3_2 =
+foldl arg1 arg2 arg3 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -172,9 +172,9 @@ foldl arg1 arg2_1 arg3_2 =
         )
         [ Elm.functionReduced
             "unpack"
-            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
-        , arg2_1
-        , Elm.list arg3_2
+            (\unpack -> Elm.functionReduced "unpack" (arg1 unpack))
+        , arg2
+        , Elm.list arg3
         ]
 
 
@@ -195,7 +195,7 @@ foldr :
     -> Elm.Expression
     -> List Elm.Expression
     -> Elm.Expression
-foldr arg1 arg2_1 arg3_2 =
+foldr arg1 arg2 arg3 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -215,9 +215,9 @@ foldr arg1 arg2_1 arg3_2 =
         )
         [ Elm.functionReduced
             "unpack"
-            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
-        , arg2_1
-        , Elm.list arg3_2
+            (\unpack -> Elm.functionReduced "unpack" (arg1 unpack))
+        , arg2
+        , Elm.list arg3
         ]
 
 
@@ -227,7 +227,7 @@ foldr arg1 arg2_1 arg3_2 =
 -}
 filter :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
-filter arg1 arg2_1 =
+filter arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -242,7 +242,7 @@ filter arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, Elm.list arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, Elm.list arg2 ]
 
 
 {-| Filter out certain values. For example, maybe you have a bunch of strings
@@ -257,7 +257,7 @@ from an untrusted source and you want to turn them into numbers:
 -}
 filterMap :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
-filterMap arg1 arg2_1 =
+filterMap arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -274,7 +274,7 @@ filterMap arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, Elm.list arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, Elm.list arg2 ]
 
 
 {-| Determine the length of a list.
@@ -321,7 +321,7 @@ reverse arg1 =
     member 4 [1,2,3,4] == True
 -}
 member : Elm.Expression -> List Elm.Expression -> Elm.Expression
-member arg1 arg2_1 =
+member arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -334,7 +334,7 @@ member arg1 arg2_1 =
                     )
             }
         )
-        [ arg1, Elm.list arg2_1 ]
+        [ arg1, Elm.list arg2 ]
 
 
 {-| Determine if all elements satisfy some test.
@@ -345,7 +345,7 @@ member arg1 arg2_1 =
 -}
 all :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
-all arg1 arg2_1 =
+all arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -360,7 +360,7 @@ all arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, Elm.list arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, Elm.list arg2 ]
 
 
 {-| Determine if any elements satisfy some test.
@@ -371,7 +371,7 @@ all arg1 arg2_1 =
 -}
 any :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
-any arg1 arg2_1 =
+any arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -386,7 +386,7 @@ any arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, Elm.list arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, Elm.list arg2 ]
 
 
 {-| Find the maximum element in a non-empty list.
@@ -489,7 +489,7 @@ product arg1 =
 You can also use [the `(++)` operator](Basics#++) to append lists.
 -}
 append : List Elm.Expression -> List Elm.Expression -> Elm.Expression
-append arg1 arg2_1 =
+append arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -502,7 +502,7 @@ append arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.list arg1, Elm.list arg2_1 ]
+        [ Elm.list arg1, Elm.list arg2 ]
 
 
 {-| Concatenate a bunch of lists into a single list:
@@ -532,7 +532,7 @@ concat arg1 =
 -}
 concatMap :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
-concatMap arg1 arg2_1 =
+concatMap arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -549,7 +549,7 @@ concatMap arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, Elm.list arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, Elm.list arg2 ]
 
 
 {-| Places the given value between all members of the given list.
@@ -557,7 +557,7 @@ concatMap arg1 arg2_1 =
     intersperse "on" ["turtles","turtles","turtles"] == ["turtles","on","turtles","on","turtles"]
 -}
 intersperse : Elm.Expression -> List Elm.Expression -> Elm.Expression
-intersperse arg1 arg2_1 =
+intersperse arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -570,7 +570,7 @@ intersperse arg1 arg2_1 =
                     )
             }
         )
-        [ arg1, Elm.list arg2_1 ]
+        [ arg1, Elm.list arg2 ]
 
 
 {-| Combine two lists, combining them with the given function.
@@ -595,7 +595,7 @@ map2 :
     -> List Elm.Expression
     -> List Elm.Expression
     -> Elm.Expression
-map2 arg1 arg2_1 arg3_2 =
+map2 arg1 arg2 arg3 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -615,9 +615,9 @@ map2 arg1 arg2_1 arg3_2 =
         )
         [ Elm.functionReduced
             "unpack"
-            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
-        , Elm.list arg2_1
-        , Elm.list arg3_2
+            (\unpack -> Elm.functionReduced "unpack" (arg1 unpack))
+        , Elm.list arg2
+        , Elm.list arg3
         ]
 
 
@@ -628,7 +628,7 @@ map3 :
     -> List Elm.Expression
     -> List Elm.Expression
     -> Elm.Expression
-map3 arg1 arg2_1 arg3_2 arg4_3 =
+map3 arg1 arg2 arg3 arg4 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -649,18 +649,16 @@ map3 arg1 arg2_1 arg3_2 arg4_3 =
         )
         [ Elm.functionReduced
             "unpack"
-            (\unpack_3_3_0 ->
+            (\unpack ->
                 Elm.functionReduced
                     "unpack"
-                    (\unpack_3_3_3_0 ->
-                        Elm.functionReduced
-                            "unpack"
-                            (arg1 unpack_3_3_0 unpack_3_3_3_0)
+                    (\unpack0 ->
+                        Elm.functionReduced "unpack" (arg1 unpack unpack0)
                     )
             )
-        , Elm.list arg2_1
-        , Elm.list arg3_2
-        , Elm.list arg4_3
+        , Elm.list arg2
+        , Elm.list arg3
+        , Elm.list arg4
         ]
 
 
@@ -676,7 +674,7 @@ map4 :
     -> List Elm.Expression
     -> List Elm.Expression
     -> Elm.Expression
-map4 arg1 arg2_1 arg3_2 arg4_3 arg5_4 =
+map4 arg1 arg2 arg3 arg4 arg5 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -702,25 +700,23 @@ map4 arg1 arg2_1 arg3_2 arg4_3 arg5_4 =
         )
         [ Elm.functionReduced
             "unpack"
-            (\unpack_3_3_0 ->
+            (\unpack ->
                 Elm.functionReduced
                     "unpack"
-                    (\unpack_3_3_3_0 ->
+                    (\unpack0 ->
                         Elm.functionReduced
                             "unpack"
-                            (\unpack_3_3_3_3_0 ->
+                            (\unpack_4_3_3_3_0 ->
                                 Elm.functionReduced
                                     "unpack"
-                                    (arg1 unpack_3_3_0 unpack_3_3_3_0
-                                        unpack_3_3_3_3_0
-                                    )
+                                    (arg1 unpack unpack0 unpack_4_3_3_3_0)
                             )
                     )
             )
-        , Elm.list arg2_1
-        , Elm.list arg3_2
-        , Elm.list arg4_3
-        , Elm.list arg5_4
+        , Elm.list arg2
+        , Elm.list arg3
+        , Elm.list arg4
+        , Elm.list arg5
         ]
 
 
@@ -738,7 +734,7 @@ map5 :
     -> List Elm.Expression
     -> List Elm.Expression
     -> Elm.Expression
-map5 arg1 arg2_1 arg3_2 arg4_3 arg5_4 arg6_5 =
+map5 arg1 arg2 arg3 arg4 arg5 arg6 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -766,31 +762,31 @@ map5 arg1 arg2_1 arg3_2 arg4_3 arg5_4 arg6_5 =
         )
         [ Elm.functionReduced
             "unpack"
-            (\unpack_3_3_0 ->
+            (\unpack ->
                 Elm.functionReduced
                     "unpack"
-                    (\unpack_3_3_3_0 ->
+                    (\unpack0 ->
                         Elm.functionReduced
                             "unpack"
-                            (\unpack_3_3_3_3_0 ->
+                            (\unpack_4_3_3_3_0 ->
                                 Elm.functionReduced
                                     "unpack"
-                                    (\unpack_3_3_3_3_3_0 ->
+                                    (\unpack_4_4_3_3_3_0 ->
                                         Elm.functionReduced
                                             "unpack"
-                                            (arg1 unpack_3_3_0 unpack_3_3_3_0
-                                                 unpack_3_3_3_3_0
-                                                unpack_3_3_3_3_3_0
+                                            (arg1 unpack unpack0
+                                                 unpack_4_3_3_3_0
+                                                unpack_4_4_3_3_3_0
                                             )
                                     )
                             )
                     )
             )
-        , Elm.list arg2_1
-        , Elm.list arg3_2
-        , Elm.list arg4_3
-        , Elm.list arg5_4
-        , Elm.list arg6_5
+        , Elm.list arg2
+        , Elm.list arg3
+        , Elm.list arg4
+        , Elm.list arg5
+        , Elm.list arg6
         ]
 
 
@@ -828,7 +824,7 @@ sort arg1 =
 -}
 sortBy :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
-sortBy arg1 arg2_1 =
+sortBy arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -843,7 +839,7 @@ sortBy arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, Elm.list arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, Elm.list arg2 ]
 
 
 {-| Sort values with a custom comparison function.
@@ -863,7 +859,7 @@ sortWith :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> List Elm.Expression
     -> Elm.Expression
-sortWith arg1 arg2_1 =
+sortWith arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -882,8 +878,8 @@ sortWith arg1 arg2_1 =
         )
         [ Elm.functionReduced
             "unpack"
-            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
-        , Elm.list arg2_1
+            (\unpack -> Elm.functionReduced "unpack" (arg1 unpack))
+        , Elm.list arg2
         ]
 
 
@@ -962,7 +958,7 @@ tail arg1 =
     take 2 [1,2,3,4] == [1,2]
 -}
 take : Elm.Expression -> List Elm.Expression -> Elm.Expression
-take arg1 arg2_1 =
+take arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -975,7 +971,7 @@ take arg1 arg2_1 =
                     )
             }
         )
-        [ arg1, Elm.list arg2_1 ]
+        [ arg1, Elm.list arg2 ]
 
 
 {-| Drop the first *n* members of a list.
@@ -983,7 +979,7 @@ take arg1 arg2_1 =
     drop 2 [1,2,3,4] == [3,4]
 -}
 drop : Elm.Expression -> List Elm.Expression -> Elm.Expression
-drop arg1 arg2_1 =
+drop arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -996,7 +992,7 @@ drop arg1 arg2_1 =
                     )
             }
         )
-        [ arg1, Elm.list arg2_1 ]
+        [ arg1, Elm.list arg2 ]
 
 
 {-| Partition a list based on some test. The first list contains all values
@@ -1007,7 +1003,7 @@ that satisfy the test, and the second list contains all the value that do not.
 -}
 partition :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
-partition arg1 arg2_1 =
+partition arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "List" ]
@@ -1025,7 +1021,7 @@ partition arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, Elm.list arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, Elm.list arg2 ]
 
 
 {-| Decompose a list of tuples into a tuple of lists.
@@ -1113,7 +1109,7 @@ call_ :
     }
 call_ =
     { singleton =
-        \arg1_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1126,9 +1122,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0 ]
+                [ arg1 ]
     , repeat =
-        \arg1_1_0 arg2_2_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1141,9 +1137,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_1_0, arg2_2_0 ]
+                [ arg1, arg2 ]
     , range =
-        \arg1_2_0 arg2_3_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1156,9 +1152,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_2_0, arg2_3_0 ]
+                [ arg1, arg2 ]
     , map =
-        \arg1_3_0 arg2_4_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1173,9 +1169,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_3_0, arg2_4_0 ]
+                [ arg1, arg2 ]
     , indexedMap =
-        \arg1_4_0 arg2_5_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1192,9 +1188,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_4_0, arg2_5_0 ]
+                [ arg1, arg2 ]
     , foldl =
-        \arg1_5_0 arg2_6_0 arg3_7_0 ->
+        \arg1 arg2 arg3 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1212,9 +1208,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_5_0, arg2_6_0, arg3_7_0 ]
+                [ arg1, arg2, arg3 ]
     , foldr =
-        \arg1_6_0 arg2_7_0 arg3_8_0 ->
+        \arg1 arg2 arg3 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1232,9 +1228,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_6_0, arg2_7_0, arg3_8_0 ]
+                [ arg1, arg2, arg3 ]
     , filter =
-        \arg1_7_0 arg2_8_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1249,9 +1245,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_7_0, arg2_8_0 ]
+                [ arg1, arg2 ]
     , filterMap =
-        \arg1_8_0 arg2_9_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1268,9 +1264,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_8_0, arg2_9_0 ]
+                [ arg1, arg2 ]
     , length =
-        \arg1_9_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1281,9 +1277,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_9_0 ]
+                [ arg1 ]
     , reverse =
-        \arg1_10_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1296,9 +1292,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_10_0 ]
+                [ arg1 ]
     , member =
-        \arg1_11_0 arg2_12_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1311,9 +1307,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_11_0, arg2_12_0 ]
+                [ arg1, arg2 ]
     , all =
-        \arg1_12_0 arg2_13_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1328,9 +1324,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_12_0, arg2_13_0 ]
+                [ arg1, arg2 ]
     , any =
-        \arg1_13_0 arg2_14_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1345,9 +1341,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_13_0, arg2_14_0 ]
+                [ arg1, arg2 ]
     , maximum =
-        \arg1_14_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1360,9 +1356,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_14_0 ]
+                [ arg1 ]
     , minimum =
-        \arg1_15_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1375,9 +1371,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_15_0 ]
+                [ arg1 ]
     , sum =
-        \arg1_16_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1390,9 +1386,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_16_0 ]
+                [ arg1 ]
     , product =
-        \arg1_17_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1405,9 +1401,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_17_0 ]
+                [ arg1 ]
     , append =
-        \arg1_18_0 arg2_19_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1422,9 +1418,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_18_0, arg2_19_0 ]
+                [ arg1, arg2 ]
     , concat =
-        \arg1_19_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1437,9 +1433,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_19_0 ]
+                [ arg1 ]
     , concatMap =
-        \arg1_20_0 arg2_21_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1456,9 +1452,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_20_0, arg2_21_0 ]
+                [ arg1, arg2 ]
     , intersperse =
-        \arg1_21_0 arg2_22_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1471,9 +1467,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_21_0, arg2_22_0 ]
+                [ arg1, arg2 ]
     , map2 =
-        \arg1_22_0 arg2_23_0 arg3_24_0 ->
+        \arg1 arg2 arg3 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1491,9 +1487,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_22_0, arg2_23_0, arg3_24_0 ]
+                [ arg1, arg2, arg3 ]
     , map3 =
-        \arg1_23_0 arg2_24_0 arg3_25_0 arg4_26_0 ->
+        \arg1 arg2 arg3 arg4 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1512,9 +1508,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_23_0, arg2_24_0, arg3_25_0, arg4_26_0 ]
+                [ arg1, arg2, arg3, arg4 ]
     , map4 =
-        \arg1_24_0 arg2_25_0 arg3_26_0 arg4_27_0 arg5_28_0 ->
+        \arg1 arg2 arg3 arg4 arg5 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1538,9 +1534,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_24_0, arg2_25_0, arg3_26_0, arg4_27_0, arg5_28_0 ]
+                [ arg1, arg2, arg3, arg4, arg5 ]
     , map5 =
-        \arg1_25_0 arg2_26_0 arg3_27_0 arg4_28_0 arg5_29_0 arg6_30_0 ->
+        \arg1 arg2 arg3 arg4 arg5 arg6 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1566,15 +1562,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_25_0
-                , arg2_26_0
-                , arg3_27_0
-                , arg4_28_0
-                , arg5_29_0
-                , arg6_30_0
-                ]
+                [ arg1, arg2, arg3, arg4, arg5, arg6 ]
     , sort =
-        \arg1_26_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1587,9 +1577,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_26_0 ]
+                [ arg1 ]
     , sortBy =
-        \arg1_27_0 arg2_28_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1606,9 +1596,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_27_0, arg2_28_0 ]
+                [ arg1, arg2 ]
     , sortWith =
-        \arg1_28_0 arg2_29_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1625,9 +1615,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_28_0, arg2_29_0 ]
+                [ arg1, arg2 ]
     , isEmpty =
-        \arg1_29_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1640,9 +1630,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_29_0 ]
+                [ arg1 ]
     , head =
-        \arg1_30_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1655,9 +1645,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_30_0 ]
+                [ arg1 ]
     , tail =
-        \arg1_31_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1670,9 +1660,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_31_0 ]
+                [ arg1 ]
     , take =
-        \arg1_32_0 arg2_33_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1685,9 +1675,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_32_0, arg2_33_0 ]
+                [ arg1, arg2 ]
     , drop =
-        \arg1_33_0 arg2_34_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1700,9 +1690,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_33_0, arg2_34_0 ]
+                [ arg1, arg2 ]
     , partition =
-        \arg1_34_0 arg2_35_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1720,9 +1710,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_34_0, arg2_35_0 ]
+                [ arg1, arg2 ]
     , unzip =
-        \arg1_35_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "List" ]
@@ -1740,7 +1730,7 @@ call_ =
                             )
                     }
                 )
-                [ arg1_35_0 ]
+                [ arg1 ]
     }
 
 

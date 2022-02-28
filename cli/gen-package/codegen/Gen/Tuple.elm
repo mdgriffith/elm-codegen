@@ -24,7 +24,7 @@ moduleName_ =
       List.map2 Tuple.pair xs ys
 -}
 pair : Elm.Expression -> Elm.Expression -> Elm.Expression
-pair arg1 arg2_1 =
+pair arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Tuple" ]
@@ -37,7 +37,7 @@ pair arg1 arg2_1 =
                     )
             }
         )
-        [ arg1, arg2_1 ]
+        [ arg1, arg2 ]
 
 
 {-| Extract the first value from a tuple.
@@ -93,7 +93,7 @@ second arg1 =
 -}
 mapFirst :
     (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
-mapFirst arg1 arg2_1 =
+mapFirst arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Tuple" ]
@@ -108,7 +108,7 @@ mapFirst arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2 ]
 
 
 {-| Transform the second value in a tuple.
@@ -118,7 +118,7 @@ mapFirst arg1 arg2_1 =
 -}
 mapSecond :
     (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
-mapSecond arg1 arg2_1 =
+mapSecond arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Tuple" ]
@@ -133,7 +133,7 @@ mapSecond arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2 ]
 
 
 {-| Transform both parts of a tuple.
@@ -148,7 +148,7 @@ mapBoth :
     -> (Elm.Expression -> Elm.Expression)
     -> Elm.Expression
     -> Elm.Expression
-mapBoth arg1 arg2_1 arg3_2 =
+mapBoth arg1 arg2 arg3 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Tuple" ]
@@ -165,8 +165,8 @@ mapBoth arg1 arg2_1 arg3_2 =
             }
         )
         [ Elm.functionReduced "unpack" arg1
-        , Elm.functionReduced "unpack" arg2_1
-        , arg3_2
+        , Elm.functionReduced "unpack" arg2
+        , arg3
         ]
 
 
@@ -181,7 +181,7 @@ call_ :
     }
 call_ =
     { pair =
-        \arg1_0 arg2_1_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Tuple" ]
@@ -194,9 +194,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0, arg2_1_0 ]
+                [ arg1, arg2 ]
     , first =
-        \arg1_1_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Tuple" ]
@@ -209,9 +209,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_1_0 ]
+                [ arg1 ]
     , second =
-        \arg1_2_0 ->
+        \arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Tuple" ]
@@ -224,9 +224,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_2_0 ]
+                [ arg1 ]
     , mapFirst =
-        \arg1_3_0 arg2_4_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Tuple" ]
@@ -241,9 +241,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_3_0, arg2_4_0 ]
+                [ arg1, arg2 ]
     , mapSecond =
-        \arg1_4_0 arg2_5_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Tuple" ]
@@ -258,9 +258,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_4_0, arg2_5_0 ]
+                [ arg1, arg2 ]
     , mapBoth =
-        \arg1_5_0 arg2_6_0 arg3_7_0 ->
+        \arg1 arg2 arg3 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Tuple" ]
@@ -276,7 +276,7 @@ call_ =
                             )
                     }
                 )
-                [ arg1_5_0, arg2_6_0, arg3_7_0 ]
+                [ arg1, arg2, arg3 ]
     }
 
 

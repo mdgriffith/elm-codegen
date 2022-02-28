@@ -32,7 +32,7 @@ that a [custom type][ct] will clean your code up quite a bit!
 [ct]: https://guide.elm-lang.org/types/custom_types.html
 -}
 withDefault : Elm.Expression -> Elm.Expression -> Elm.Expression
-withDefault arg1 arg2_1 =
+withDefault arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Maybe" ]
@@ -45,7 +45,7 @@ withDefault arg1 arg2_1 =
                     )
             }
         )
-        [ arg1, arg2_1 ]
+        [ arg1, arg2 ]
 
 
 {-| Transform a `Maybe` value with a given function:
@@ -58,7 +58,7 @@ withDefault arg1 arg2_1 =
 
 -}
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
-map arg1 arg2_1 =
+map arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Maybe" ]
@@ -73,7 +73,7 @@ map arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2 ]
 
 
 {-| Apply a function if all the arguments are `Just` a value.
@@ -91,7 +91,7 @@ map2 :
     -> Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
-map2 arg1 arg2_1 arg3_2 =
+map2 arg1 arg2 arg3 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Maybe" ]
@@ -111,9 +111,9 @@ map2 arg1 arg2_1 arg3_2 =
         )
         [ Elm.functionReduced
             "unpack"
-            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
-        , arg2_1
-        , arg3_2
+            (\unpack -> Elm.functionReduced "unpack" (arg1 unpack))
+        , arg2
+        , arg3
         ]
 
 
@@ -124,7 +124,7 @@ map3 :
     -> Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
-map3 arg1 arg2_1 arg3_2 arg4_3 =
+map3 arg1 arg2 arg3 arg4 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Maybe" ]
@@ -145,18 +145,16 @@ map3 arg1 arg2_1 arg3_2 arg4_3 =
         )
         [ Elm.functionReduced
             "unpack"
-            (\unpack_3_3_0 ->
+            (\unpack ->
                 Elm.functionReduced
                     "unpack"
-                    (\unpack_3_3_3_0 ->
-                        Elm.functionReduced
-                            "unpack"
-                            (arg1 unpack_3_3_0 unpack_3_3_3_0)
+                    (\unpack0 ->
+                        Elm.functionReduced "unpack" (arg1 unpack unpack0)
                     )
             )
-        , arg2_1
-        , arg3_2
-        , arg4_3
+        , arg2
+        , arg3
+        , arg4
         ]
 
 
@@ -172,7 +170,7 @@ map4 :
     -> Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
-map4 arg1 arg2_1 arg3_2 arg4_3 arg5_4 =
+map4 arg1 arg2 arg3 arg4 arg5 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Maybe" ]
@@ -198,25 +196,23 @@ map4 arg1 arg2_1 arg3_2 arg4_3 arg5_4 =
         )
         [ Elm.functionReduced
             "unpack"
-            (\unpack_3_3_0 ->
+            (\unpack ->
                 Elm.functionReduced
                     "unpack"
-                    (\unpack_3_3_3_0 ->
+                    (\unpack0 ->
                         Elm.functionReduced
                             "unpack"
-                            (\unpack_3_3_3_3_0 ->
+                            (\unpack_4_3_3_3_0 ->
                                 Elm.functionReduced
                                     "unpack"
-                                    (arg1 unpack_3_3_0 unpack_3_3_3_0
-                                        unpack_3_3_3_3_0
-                                    )
+                                    (arg1 unpack unpack0 unpack_4_3_3_3_0)
                             )
                     )
             )
-        , arg2_1
-        , arg3_2
-        , arg4_3
-        , arg5_4
+        , arg2
+        , arg3
+        , arg4
+        , arg5
         ]
 
 
@@ -234,7 +230,7 @@ map5 :
     -> Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
-map5 arg1 arg2_1 arg3_2 arg4_3 arg5_4 arg6_5 =
+map5 arg1 arg2 arg3 arg4 arg5 arg6 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Maybe" ]
@@ -262,31 +258,31 @@ map5 arg1 arg2_1 arg3_2 arg4_3 arg5_4 arg6_5 =
         )
         [ Elm.functionReduced
             "unpack"
-            (\unpack_3_3_0 ->
+            (\unpack ->
                 Elm.functionReduced
                     "unpack"
-                    (\unpack_3_3_3_0 ->
+                    (\unpack0 ->
                         Elm.functionReduced
                             "unpack"
-                            (\unpack_3_3_3_3_0 ->
+                            (\unpack_4_3_3_3_0 ->
                                 Elm.functionReduced
                                     "unpack"
-                                    (\unpack_3_3_3_3_3_0 ->
+                                    (\unpack_4_4_3_3_3_0 ->
                                         Elm.functionReduced
                                             "unpack"
-                                            (arg1 unpack_3_3_0 unpack_3_3_3_0
-                                                 unpack_3_3_3_3_0
-                                                unpack_3_3_3_3_3_0
+                                            (arg1 unpack unpack0
+                                                 unpack_4_3_3_3_0
+                                                unpack_4_4_3_3_3_0
                                             )
                                     )
                             )
                     )
             )
-        , arg2_1
-        , arg3_2
-        , arg4_3
-        , arg5_4
-        , arg6_5
+        , arg2
+        , arg3
+        , arg4
+        , arg5
+        , arg6
         ]
 
 
@@ -323,7 +319,7 @@ short-circuit and result in `Nothing`. If `toValidMonth` results in `Nothing`,
 again the chain of computations will result in `Nothing`.
 -}
 andThen : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
-andThen arg1 arg2_1 =
+andThen arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Maybe" ]
@@ -340,18 +336,18 @@ andThen arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2 ]
 
 
 annotation_ : { maybe : Type.Annotation -> Type.Annotation }
 annotation_ =
-    { maybe = \arg0_0 -> Type.namedWith moduleName_ "Maybe" [ arg0_0 ] }
+    { maybe = \arg0 -> Type.namedWith moduleName_ "Maybe" [ arg0 ] }
 
 
 make_ : { just : Elm.Expression -> Elm.Expression, nothing : Elm.Expression }
 make_ =
     { just =
-        \ar0_0 ->
+        \ar0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Maybe" ]
@@ -360,7 +356,7 @@ make_ =
                         Just (Type.namedWith [] "Maybe" [ Type.var "a" ])
                     }
                 )
-                [ ar0_0 ]
+                [ ar0 ]
     , nothing =
         Elm.value
             { importFrom = [ "Maybe" ]
@@ -373,7 +369,7 @@ make_ =
 caseOf_ :
     { maybe :
         Elm.Expression
-        -> { tags_1_0
+        -> { tags
             | just : Elm.Expression -> Elm.Expression
             , nothing : Elm.Expression
         }
@@ -381,11 +377,11 @@ caseOf_ :
     }
 caseOf_ =
     { maybe =
-        \expresssion_0 tags_1_0 ->
+        \expresssion tags ->
             Elm.Case.custom
-                expresssion_0
-                [ Elm.Case.branch1 [ "Maybe" ] "Just" tags_1_0.just
-                , Elm.Case.branch0 [ "Maybe" ] "Nothing" tags_1_0.nothing
+                expresssion
+                [ Elm.Case.branch1 [ "Maybe" ] "Just" tags.just
+                , Elm.Case.branch0 [ "Maybe" ] "Nothing" tags.nothing
                 ]
     }
 
@@ -420,7 +416,7 @@ call_ :
     }
 call_ =
     { withDefault =
-        \arg1_0 arg2_1_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Maybe" ]
@@ -433,9 +429,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_0, arg2_1_0 ]
+                [ arg1, arg2 ]
     , map =
-        \arg1_1_0 arg2_2_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Maybe" ]
@@ -450,9 +446,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_1_0, arg2_2_0 ]
+                [ arg1, arg2 ]
     , map2 =
-        \arg1_2_0 arg2_3_0 arg3_4_0 ->
+        \arg1 arg2 arg3 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Maybe" ]
@@ -470,9 +466,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_2_0, arg2_3_0, arg3_4_0 ]
+                [ arg1, arg2, arg3 ]
     , map3 =
-        \arg1_3_0 arg2_4_0 arg3_5_0 arg4_6_0 ->
+        \arg1 arg2 arg3 arg4 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Maybe" ]
@@ -491,9 +487,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_3_0, arg2_4_0, arg3_5_0, arg4_6_0 ]
+                [ arg1, arg2, arg3, arg4 ]
     , map4 =
-        \arg1_4_0 arg2_5_0 arg3_6_0 arg4_7_0 arg5_8_0 ->
+        \arg1 arg2 arg3 arg4 arg5 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Maybe" ]
@@ -517,9 +513,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_4_0, arg2_5_0, arg3_6_0, arg4_7_0, arg5_8_0 ]
+                [ arg1, arg2, arg3, arg4, arg5 ]
     , map5 =
-        \arg1_5_0 arg2_6_0 arg3_7_0 arg4_8_0 arg5_9_0 arg6_10_0 ->
+        \arg1 arg2 arg3 arg4 arg5 arg6 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Maybe" ]
@@ -545,9 +541,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1_5_0, arg2_6_0, arg3_7_0, arg4_8_0, arg5_9_0, arg6_10_0 ]
+                [ arg1, arg2, arg3, arg4, arg5, arg6 ]
     , andThen =
-        \arg1_6_0 arg2_7_0 ->
+        \arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Maybe" ]
@@ -564,7 +560,7 @@ call_ =
                             )
                     }
                 )
-                [ arg1_6_0, arg2_7_0 ]
+                [ arg1, arg2 ]
     }
 
 
