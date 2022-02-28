@@ -110,7 +110,7 @@ update arg1 arg2_1 arg3_2 =
                     )
             }
         )
-        [ arg1, Elm.fn "unpack0" (\fn0_4_3_0 -> arg2_1 fn0_4_3_0), arg3_2 ]
+        [ arg1, Elm.functionReduced "unpack" arg2_1, arg3_2 ]
 
 
 {-| Remove a key-value pair from a dictionary. If the key is not found,
@@ -370,11 +370,9 @@ map arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn "unpack1" (\fn0_3_3_3_0 -> arg1 fn0_3_3_0 fn0_3_3_3_0)
-            )
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
         , arg2_1
         ]
 
@@ -419,17 +417,15 @@ foldl arg1 arg2_1 arg3_2 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn
-                    "unpack1"
-                    (\fn0_3_3_3_0 ->
-                        Elm.fn
-                            "unpack2"
-                            (\fn0_3_3_3_3_0 ->
-                                arg1 fn0_3_3_0 fn0_3_3_3_0 fn0_3_3_3_3_0
-                            )
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 ->
+                Elm.functionReduced
+                    "unpack"
+                    (\unpack_3_3_3_0 ->
+                        Elm.functionReduced
+                            "unpack"
+                            (arg1 unpack_3_3_0 unpack_3_3_3_0)
                     )
             )
         , arg2_1
@@ -477,17 +473,15 @@ foldr arg1 arg2_1 arg3_2 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn
-                    "unpack1"
-                    (\fn0_3_3_3_0 ->
-                        Elm.fn
-                            "unpack2"
-                            (\fn0_3_3_3_3_0 ->
-                                arg1 fn0_3_3_0 fn0_3_3_3_0 fn0_3_3_3_3_0
-                            )
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 ->
+                Elm.functionReduced
+                    "unpack"
+                    (\unpack_3_3_3_0 ->
+                        Elm.functionReduced
+                            "unpack"
+                            (arg1 unpack_3_3_0 unpack_3_3_3_0)
                     )
             )
         , arg2_1
@@ -524,11 +518,9 @@ filter arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn "unpack1" (\fn0_3_3_3_0 -> arg1 fn0_3_3_0 fn0_3_3_3_0)
-            )
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
         , arg2_1
         ]
 
@@ -572,11 +564,9 @@ partition arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn "unpack1" (\fn0_3_3_3_0 -> arg1 fn0_3_3_0 fn0_3_3_3_0)
-            )
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
         , arg2_1
         ]
 
@@ -739,49 +729,43 @@ merge arg1 arg2_1 arg3_2 arg4_3 arg5_4 arg6_5 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn
-                    "unpack1"
-                    (\fn0_3_3_3_0 ->
-                        Elm.fn
-                            "unpack2"
-                            (\fn0_3_3_3_3_0 ->
-                                arg1 fn0_3_3_0 fn0_3_3_3_0 fn0_3_3_3_3_0
-                            )
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 ->
+                Elm.functionReduced
+                    "unpack"
+                    (\unpack_3_3_3_0 ->
+                        Elm.functionReduced
+                            "unpack"
+                            (arg1 unpack_3_3_0 unpack_3_3_3_0)
                     )
             )
-        , Elm.fn
-            "unpack0"
-            (\fn0_4_3_0 ->
-                Elm.fn
-                    "unpack1"
-                    (\fn0_3_4_3_0 ->
-                        Elm.fn
-                            "unpack2"
-                            (\fn0_3_3_4_3_0 ->
-                                Elm.fn
-                                    "unpack3"
-                                    (\fn0_3_3_3_4_3_0 ->
-                                        arg2_1 fn0_4_3_0 fn0_3_4_3_0
-                                            fn0_3_3_4_3_0
-                                            fn0_3_3_3_4_3_0
+        , Elm.functionReduced
+            "unpack"
+            (\unpack_4_3_0 ->
+                Elm.functionReduced
+                    "unpack"
+                    (\unpack_3_4_3_0 ->
+                        Elm.functionReduced
+                            "unpack"
+                            (\unpack_3_3_4_3_0 ->
+                                Elm.functionReduced
+                                    "unpack"
+                                    (arg2_1 unpack_4_3_0 unpack_3_4_3_0
+                                        unpack_3_3_4_3_0
                                     )
                             )
                     )
             )
-        , Elm.fn
-            "unpack0"
-            (\fn0_5_3_0 ->
-                Elm.fn
-                    "unpack1"
-                    (\fn0_3_5_3_0 ->
-                        Elm.fn
-                            "unpack2"
-                            (\fn0_3_3_5_3_0 ->
-                                arg3_2 fn0_5_3_0 fn0_3_5_3_0 fn0_3_3_5_3_0
-                            )
+        , Elm.functionReduced
+            "unpack"
+            (\unpack_5_3_0 ->
+                Elm.functionReduced
+                    "unpack"
+                    (\unpack_3_5_3_0 ->
+                        Elm.functionReduced
+                            "unpack"
+                            (arg3_2 unpack_5_3_0 unpack_3_5_3_0)
                     )
             )
         , arg4_3

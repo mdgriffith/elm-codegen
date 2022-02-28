@@ -97,27 +97,20 @@ worker arg1 =
             }
         )
         [ Elm.record
-            [ Elm.field
-                "init"
-                (Elm.fn "unpack0" (\fn0_6_2_3_0 -> arg1.init fn0_6_2_3_0))
+            [ Elm.field "init" (Elm.functionReduced "unpack" arg1.init)
             , Elm.field
                 "update"
-                (Elm.fn
-                    "unpack0"
-                    (\fn0_7_2_3_0 ->
-                        Elm.fn
-                            "unpack1"
-                            (\fn0_3_7_2_3_0 ->
-                                arg1.update fn0_7_2_3_0 fn0_3_7_2_3_0
-                            )
+                (Elm.functionReduced
+                    "unpack"
+                    (\unpack_7_2_3_0 ->
+                        Elm.functionReduced
+                            "unpack"
+                            (arg1.update unpack_7_2_3_0)
                     )
                 )
             , Elm.field
                 "subscriptions"
-                (Elm.fn
-                    "unpack0"
-                    (\fn0_8_2_3_0 -> arg1.subscriptions fn0_8_2_3_0)
-                )
+                (Elm.functionReduced "unpack" arg1.subscriptions)
             ]
         ]
 

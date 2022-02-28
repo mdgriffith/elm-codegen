@@ -108,7 +108,7 @@ mapFirst arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
 
 
 {-| Transform the second value in a tuple.
@@ -133,7 +133,7 @@ mapSecond arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
 
 
 {-| Transform both parts of a tuple.
@@ -164,8 +164,8 @@ mapBoth arg1 arg2_1 arg3_2 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0)
-        , Elm.fn "unpack0" (\fn0_4_3_0 -> arg2_1 fn0_4_3_0)
+        [ Elm.functionReduced "unpack" arg1
+        , Elm.functionReduced "unpack" arg2_1
         , arg3_2
         ]
 

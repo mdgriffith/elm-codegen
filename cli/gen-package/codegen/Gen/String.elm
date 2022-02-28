@@ -771,7 +771,7 @@ map arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
 
 
 {-| Keep only the characters that pass the test.
@@ -792,7 +792,7 @@ filter arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
 
 
 {-| Reduce a string from the left.
@@ -822,11 +822,9 @@ foldl arg1 arg2_1 arg3_2 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn "unpack1" (\fn0_3_3_3_0 -> arg1 fn0_3_3_0 fn0_3_3_3_0)
-            )
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
         , arg2_1
         , arg3_2
         ]
@@ -859,11 +857,9 @@ foldr arg1 arg2_1 arg3_2 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn "unpack1" (\fn0_3_3_3_0 -> arg1 fn0_3_3_0 fn0_3_3_3_0)
-            )
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
         , arg2_1
         , arg3_2
         ]
@@ -889,7 +885,7 @@ any arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
 
 
 {-| Determine whether *all* characters pass the test.
@@ -912,7 +908,7 @@ all arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
 
 
 annotation_ : { string : Type.Annotation }

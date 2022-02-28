@@ -99,7 +99,7 @@ map arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), Elm.list arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, Elm.list arg2_1 ]
 
 
 {-| Same as `map` but the function is also applied to the index of each
@@ -128,11 +128,9 @@ indexedMap arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn "unpack1" (\fn0_3_3_3_0 -> arg1 fn0_3_3_0 fn0_3_3_3_0)
-            )
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
         , Elm.list arg2_1
         ]
 
@@ -172,11 +170,9 @@ foldl arg1 arg2_1 arg3_2 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn "unpack1" (\fn0_3_3_3_0 -> arg1 fn0_3_3_0 fn0_3_3_3_0)
-            )
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
         , arg2_1
         , Elm.list arg3_2
         ]
@@ -217,11 +213,9 @@ foldr arg1 arg2_1 arg3_2 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn "unpack1" (\fn0_3_3_3_0 -> arg1 fn0_3_3_0 fn0_3_3_3_0)
-            )
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
         , arg2_1
         , Elm.list arg3_2
         ]
@@ -248,7 +242,7 @@ filter arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), Elm.list arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, Elm.list arg2_1 ]
 
 
 {-| Filter out certain values. For example, maybe you have a bunch of strings
@@ -280,7 +274,7 @@ filterMap arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), Elm.list arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, Elm.list arg2_1 ]
 
 
 {-| Determine the length of a list.
@@ -366,7 +360,7 @@ all arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), Elm.list arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, Elm.list arg2_1 ]
 
 
 {-| Determine if any elements satisfy some test.
@@ -392,7 +386,7 @@ any arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), Elm.list arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, Elm.list arg2_1 ]
 
 
 {-| Find the maximum element in a non-empty list.
@@ -529,7 +523,7 @@ concat arg1 =
                     )
             }
         )
-        [ Elm.list (List.map (\lambdaArg0 -> Elm.list lambdaArg0_4_3_0) arg1) ]
+        [ Elm.list (List.map Elm.list arg1) ]
 
 
 {-| Map a given function onto a list and flatten the resulting lists.
@@ -555,7 +549,7 @@ concatMap arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), Elm.list arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, Elm.list arg2_1 ]
 
 
 {-| Places the given value between all members of the given list.
@@ -619,11 +613,9 @@ map2 arg1 arg2_1 arg3_2 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn "unpack1" (\fn0_3_3_3_0 -> arg1 fn0_3_3_0 fn0_3_3_3_0)
-            )
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
         , Elm.list arg2_1
         , Elm.list arg3_2
         ]
@@ -655,17 +647,15 @@ map3 arg1 arg2_1 arg3_2 arg4_3 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn
-                    "unpack1"
-                    (\fn0_3_3_3_0 ->
-                        Elm.fn
-                            "unpack2"
-                            (\fn0_3_3_3_3_0 ->
-                                arg1 fn0_3_3_0 fn0_3_3_3_0 fn0_3_3_3_3_0
-                            )
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 ->
+                Elm.functionReduced
+                    "unpack"
+                    (\unpack_3_3_3_0 ->
+                        Elm.functionReduced
+                            "unpack"
+                            (arg1 unpack_3_3_0 unpack_3_3_3_0)
                     )
             )
         , Elm.list arg2_1
@@ -710,20 +700,19 @@ map4 arg1 arg2_1 arg3_2 arg4_3 arg5_4 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn
-                    "unpack1"
-                    (\fn0_3_3_3_0 ->
-                        Elm.fn
-                            "unpack2"
-                            (\fn0_3_3_3_3_0 ->
-                                Elm.fn
-                                    "unpack3"
-                                    (\fn0_3_3_3_3_3_0 ->
-                                        arg1 fn0_3_3_0 fn0_3_3_3_0 fn0_3_3_3_3_0
-                                            fn0_3_3_3_3_3_0
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 ->
+                Elm.functionReduced
+                    "unpack"
+                    (\unpack_3_3_3_0 ->
+                        Elm.functionReduced
+                            "unpack"
+                            (\unpack_3_3_3_3_0 ->
+                                Elm.functionReduced
+                                    "unpack"
+                                    (arg1 unpack_3_3_0 unpack_3_3_3_0
+                                        unpack_3_3_3_3_0
                                     )
                             )
                     )
@@ -775,25 +764,23 @@ map5 arg1 arg2_1 arg3_2 arg4_3 arg5_4 arg6_5 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn
-                    "unpack1"
-                    (\fn0_3_3_3_0 ->
-                        Elm.fn
-                            "unpack2"
-                            (\fn0_3_3_3_3_0 ->
-                                Elm.fn
-                                    "unpack3"
-                                    (\fn0_3_3_3_3_3_0 ->
-                                        Elm.fn
-                                            "unpack4"
-                                            (\fn0_3_3_3_3_3_3_0 ->
-                                                arg1 fn0_3_3_0 fn0_3_3_3_0
-                                                    fn0_3_3_3_3_0
-                                                    fn0_3_3_3_3_3_0
-                                                    fn0_3_3_3_3_3_3_0
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 ->
+                Elm.functionReduced
+                    "unpack"
+                    (\unpack_3_3_3_0 ->
+                        Elm.functionReduced
+                            "unpack"
+                            (\unpack_3_3_3_3_0 ->
+                                Elm.functionReduced
+                                    "unpack"
+                                    (\unpack_3_3_3_3_3_0 ->
+                                        Elm.functionReduced
+                                            "unpack"
+                                            (arg1 unpack_3_3_0 unpack_3_3_3_0
+                                                 unpack_3_3_3_3_0
+                                                unpack_3_3_3_3_3_0
                                             )
                                     )
                             )
@@ -856,7 +843,7 @@ sortBy arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), Elm.list arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, Elm.list arg2_1 ]
 
 
 {-| Sort values with a custom comparison function.
@@ -893,11 +880,9 @@ sortWith arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn "unpack1" (\fn0_3_3_3_0 -> arg1 fn0_3_3_0 fn0_3_3_3_0)
-            )
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
         , Elm.list arg2_1
         ]
 
@@ -1040,7 +1025,7 @@ partition arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), Elm.list arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, Elm.list arg2_1 ]
 
 
 {-| Decompose a list of tuples into a tuple of lists.

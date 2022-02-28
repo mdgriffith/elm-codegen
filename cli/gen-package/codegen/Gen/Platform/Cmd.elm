@@ -94,7 +94,7 @@ map arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
 
 
 annotation_ : { cmd : Type.Annotation -> Type.Annotation }

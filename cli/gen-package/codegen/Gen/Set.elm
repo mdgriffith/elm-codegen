@@ -330,7 +330,7 @@ map arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
 
 
 {-| Fold over the values in a set, in order from lowest to highest.
@@ -358,11 +358,9 @@ foldl arg1 arg2_1 arg3_2 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn "unpack1" (\fn0_3_3_3_0 -> arg1 fn0_3_3_0 fn0_3_3_3_0)
-            )
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
         , arg2_1
         , arg3_2
         ]
@@ -393,11 +391,9 @@ foldr arg1 arg2_1 arg3_2 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn "unpack1" (\fn0_3_3_3_0 -> arg1 fn0_3_3_0 fn0_3_3_3_0)
-            )
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
         , arg2_1
         , arg3_2
         ]
@@ -440,7 +436,7 @@ filter arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
 
 
 {-| Create two new sets. The first contains all the elements that passed the
@@ -477,7 +473,7 @@ partition arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
 
 
 annotation_ : { set : Type.Annotation -> Type.Annotation }

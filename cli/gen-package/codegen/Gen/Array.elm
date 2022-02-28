@@ -51,7 +51,7 @@ initialize arg1 arg2_1 =
                     )
             }
         )
-        [ arg1, Elm.fn "unpack0" (\fn0_4_3_0 -> arg2_1 fn0_4_3_0) ]
+        [ arg1, Elm.functionReduced "unpack" arg2_1 ]
 
 
 {-| Creates an array with a given length, filled with a default element.
@@ -337,7 +337,7 @@ map arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
 
 
 {-| Apply a function on every element with its index as first argument.
@@ -365,11 +365,9 @@ indexedMap arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn "unpack1" (\fn0_3_3_3_0 -> arg1 fn0_3_3_0 fn0_3_3_3_0)
-            )
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
         , arg2_1
         ]
 
@@ -401,11 +399,9 @@ foldl arg1 arg2_1 arg3_2 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn "unpack1" (\fn0_3_3_3_0 -> arg1 fn0_3_3_0 fn0_3_3_3_0)
-            )
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
         , arg2_1
         , arg3_2
         ]
@@ -438,11 +434,9 @@ foldr arg1 arg2_1 arg3_2 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn "unpack1" (\fn0_3_3_3_0 -> arg1 fn0_3_3_0 fn0_3_3_3_0)
-            )
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
         , arg2_1
         , arg3_2
         ]
@@ -468,7 +462,7 @@ filter arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
 
 
 annotation_ : { array : Type.Annotation -> Type.Annotation }

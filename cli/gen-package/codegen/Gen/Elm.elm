@@ -1,7 +1,7 @@
-module Gen.Elm exposing (alias, and, annotation_, append, apply, bool, call_, char, comment, cons, customType, declaration, declarationImports, declarationToString, divide, docs, equal, expose, exposeWith, expressionImports, field, file, fileWith, float, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, get, gt, gte, hex, ifThen, int, intDivide, just, keep, letIn, list, lt, lte, make_, maybe, minus, moduleName_, multiply, notEqual, nothing, or, parse, plus, portIncoming, portOutgoing, power, query, record, signature, skip, slash, string, toString, triple, tuple, unit, unsafe, updateRecord, value, values_, variant, variantWith, withDocumentation, withType)
+module Gen.Elm exposing (alias, and, annotation_, append, apply, bool, call_, char, comment, cons, customType, declaration, declarationImports, declarationToString, divide, docs, equal, expose, exposeWith, expressionImports, field, file, fileWith, float, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, get, gt, gte, hex, ifThen, int, intDivide, just, keep, letIn, list, lt, lte, make_, maybe, minus, moduleName_, multiply, notEqual, nothing, or, parse, plus, portIncoming, portOutgoing, power, query, record, signature, skip, slash, string, toString, triple, tuple, unit, unsafe, unwrap, unwrapper, updateRecord, value, values_, variant, variantWith, withDocumentation, withType)
 
 {-| 
-@docs moduleName_, file, bool, int, float, char, string, hex, unit, maybe, just, nothing, list, tuple, triple, withType, record, field, get, updateRecord, letIn, ifThen, comment, declaration, withDocumentation, expose, exposeWith, fileWith, docs, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, customType, variant, variantWith, alias, equal, notEqual, append, cons, plus, minus, multiply, divide, intDivide, power, lt, gt, lte, gte, and, or, keep, skip, slash, query, portIncoming, portOutgoing, parse, unsafe, toString, signature, expressionImports, declarationToString, declarationImports, apply, value, annotation_, make_, call_, values_
+@docs moduleName_, file, bool, int, float, char, string, hex, unit, maybe, just, nothing, list, tuple, triple, withType, record, field, get, updateRecord, letIn, ifThen, comment, declaration, withDocumentation, expose, exposeWith, fileWith, docs, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, customType, variant, variantWith, alias, equal, notEqual, append, cons, plus, minus, multiply, divide, intDivide, power, lt, gt, lte, gte, and, or, keep, skip, slash, query, portIncoming, portOutgoing, parse, unsafe, toString, signature, expressionImports, declarationToString, declarationImports, apply, value, unwrap, unwrapper, annotation_, make_, call_, values_
 -}
 
 
@@ -642,9 +642,7 @@ fileWith arg1 arg2_1 arg3_2 =
         )
         [ Elm.list arg1
         , Elm.record
-            [ Elm.field
-                "docs"
-                (Elm.fn "unpack0" (\fn0_6_3_3_0 -> arg2_1.docs fn0_6_3_3_0))
+            [ Elm.field "docs" (Elm.functionReduced "unpack" arg2_1.docs)
             , Elm.field "aliases" (Elm.list arg2_1.aliases)
             ]
         , Elm.list arg3_2
@@ -766,7 +764,7 @@ fn arg1 arg2_1 =
                     )
             }
         )
-        [ arg1, Elm.fn "unpack0" (\fn0_4_3_0 -> arg2_1 fn0_4_3_0) ]
+        [ arg1, Elm.functionReduced "unpack" arg2_1 ]
 
 
 {-| -}
@@ -797,10 +795,9 @@ fn2 arg1 arg2_1 arg3_2 =
         )
         [ arg1
         , arg2_1
-        , Elm.fn
-            "unpack0"
-            (\fn0_5_3_0 ->
-                Elm.fn "unpack1" (\fn0_3_5_3_0 -> arg3_2 fn0_5_3_0 fn0_3_5_3_0)
+        , Elm.functionReduced
+            "unpack"
+            (\unpack_5_3_0 -> Elm.functionReduced "unpack" (arg3_2 unpack_5_3_0)
             )
         ]
 
@@ -837,17 +834,15 @@ fn3 arg1 arg2_1 arg3_2 arg4_3 =
         [ arg1
         , arg2_1
         , arg3_2
-        , Elm.fn
-            "unpack0"
-            (\fn0_6_3_0 ->
-                Elm.fn
-                    "unpack1"
-                    (\fn0_3_6_3_0 ->
-                        Elm.fn
-                            "unpack2"
-                            (\fn0_3_3_6_3_0 ->
-                                arg4_3 fn0_6_3_0 fn0_3_6_3_0 fn0_3_3_6_3_0
-                            )
+        , Elm.functionReduced
+            "unpack"
+            (\unpack_6_3_0 ->
+                Elm.functionReduced
+                    "unpack"
+                    (\unpack_3_6_3_0 ->
+                        Elm.functionReduced
+                            "unpack"
+                            (arg4_3 unpack_6_3_0 unpack_3_6_3_0)
                     )
             )
         ]
@@ -893,21 +888,19 @@ fn4 arg1 arg2_1 arg3_2 arg4_3 arg5_4 =
         , arg2_1
         , arg3_2
         , arg4_3
-        , Elm.fn
-            "unpack0"
-            (\fn0_7_3_0 ->
-                Elm.fn
-                    "unpack1"
-                    (\fn0_3_7_3_0 ->
-                        Elm.fn
-                            "unpack2"
-                            (\fn0_3_3_7_3_0 ->
-                                Elm.fn
-                                    "unpack3"
-                                    (\fn0_3_3_3_7_3_0 ->
-                                        arg5_4 fn0_7_3_0 fn0_3_7_3_0
-                                            fn0_3_3_7_3_0
-                                            fn0_3_3_3_7_3_0
+        , Elm.functionReduced
+            "unpack"
+            (\unpack_7_3_0 ->
+                Elm.functionReduced
+                    "unpack"
+                    (\unpack_3_7_3_0 ->
+                        Elm.functionReduced
+                            "unpack"
+                            (\unpack_3_3_7_3_0 ->
+                                Elm.functionReduced
+                                    "unpack"
+                                    (arg5_4 unpack_7_3_0 unpack_3_7_3_0
+                                        unpack_3_3_7_3_0
                                     )
                             )
                     )
@@ -960,25 +953,23 @@ fn5 arg1 arg2_1 arg3_2 arg4_3 arg5_4 arg6_5 =
         , arg3_2
         , arg4_3
         , arg5_4
-        , Elm.fn
-            "unpack0"
-            (\fn0_8_3_0 ->
-                Elm.fn
-                    "unpack1"
-                    (\fn0_3_8_3_0 ->
-                        Elm.fn
-                            "unpack2"
-                            (\fn0_3_3_8_3_0 ->
-                                Elm.fn
-                                    "unpack3"
-                                    (\fn0_3_3_3_8_3_0 ->
-                                        Elm.fn
-                                            "unpack4"
-                                            (\fn0_3_3_3_3_8_3_0 ->
-                                                arg6_5 fn0_8_3_0 fn0_3_8_3_0
-                                                    fn0_3_3_8_3_0
-                                                    fn0_3_3_3_8_3_0
-                                                    fn0_3_3_3_3_8_3_0
+        , Elm.functionReduced
+            "unpack"
+            (\unpack_8_3_0 ->
+                Elm.functionReduced
+                    "unpack"
+                    (\unpack_3_8_3_0 ->
+                        Elm.functionReduced
+                            "unpack"
+                            (\unpack_3_3_8_3_0 ->
+                                Elm.functionReduced
+                                    "unpack"
+                                    (\unpack_3_3_3_8_3_0 ->
+                                        Elm.functionReduced
+                                            "unpack"
+                                            (arg6_5 unpack_8_3_0 unpack_3_8_3_0
+                                                 unpack_3_3_8_3_0
+                                                unpack_3_3_3_8_3_0
                                             )
                                     )
                             )
@@ -1037,30 +1028,28 @@ fn6 arg1 arg2_1 arg3_2 arg4_3 arg5_4 arg6_5 arg7_6 =
         , arg4_3
         , arg5_4
         , arg6_5
-        , Elm.fn
-            "unpack0"
-            (\fn0_9_3_0 ->
-                Elm.fn
-                    "unpack1"
-                    (\fn0_3_9_3_0 ->
-                        Elm.fn
-                            "unpack2"
-                            (\fn0_3_3_9_3_0 ->
-                                Elm.fn
-                                    "unpack3"
-                                    (\fn0_3_3_3_9_3_0 ->
-                                        Elm.fn
-                                            "unpack4"
-                                            (\fn0_3_3_3_3_9_3_0 ->
-                                                Elm.fn
-                                                    "unpack5"
-                                                    (\fn0_3_3_3_3_3_9_3_0 ->
-                                                        arg7_6 fn0_9_3_0
-                                                            fn0_3_9_3_0
-                                                            fn0_3_3_9_3_0
-                                                            fn0_3_3_3_9_3_0
-                                                            fn0_3_3_3_3_9_3_0
-                                                            fn0_3_3_3_3_3_9_3_0
+        , Elm.functionReduced
+            "unpack"
+            (\unpack_9_3_0 ->
+                Elm.functionReduced
+                    "unpack"
+                    (\unpack_3_9_3_0 ->
+                        Elm.functionReduced
+                            "unpack"
+                            (\unpack_3_3_9_3_0 ->
+                                Elm.functionReduced
+                                    "unpack"
+                                    (\unpack_3_3_3_9_3_0 ->
+                                        Elm.functionReduced
+                                            "unpack"
+                                            (\unpack_3_3_3_3_9_3_0 ->
+                                                Elm.functionReduced
+                                                    "unpack"
+                                                    (arg7_6 unpack_9_3_0
+                                                         unpack_3_9_3_0
+                                                         unpack_3_3_9_3_0
+                                                         unpack_3_3_3_9_3_0
+                                                        unpack_3_3_3_3_9_3_0
                                                     )
                                             )
                                     )
@@ -1111,7 +1100,7 @@ function arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.list arg1, Elm.fn "unpack0" (\fn0_4_3_0 -> arg2_1 fn0_4_3_0) ]
+        [ Elm.list arg1, Elm.functionReduced "unpack" arg2_1 ]
 
 
 {-| This is a special case of function declaration which will _reduce_ itself if possible.
@@ -1128,11 +1117,8 @@ Then it will replace itself with just
 
 -}
 functionReduced :
-    Elm.Expression
-    -> Elm.Expression
-    -> (Elm.Expression -> Elm.Expression)
-    -> Elm.Expression
-functionReduced arg1 arg2_1 arg3_2 =
+    Elm.Expression -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
+functionReduced arg1 arg2_1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -1141,7 +1127,6 @@ functionReduced arg1 arg2_1 arg3_2 =
                 Just
                     (Type.function
                         [ Type.string
-                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
                         , Type.function
                             [ Type.namedWith [ "Elm" ] "Expression" [] ]
                             (Type.namedWith [ "Elm" ] "Expression" [])
@@ -1150,7 +1135,7 @@ functionReduced arg1 arg2_1 arg3_2 =
                     )
             }
         )
-        [ arg1, arg2_1, Elm.fn "unpack0" (\fn0_5_3_0 -> arg3_2 fn0_5_3_0) ]
+        [ arg1, Elm.functionReduced "unpack" arg2_1 ]
 
 
 {-| A custom type declaration.
@@ -1972,6 +1957,69 @@ value arg1 =
         ]
 
 
+{-| Unwraps a single-variant type
+
+    Elm.declaration "myFunction" <|
+        Elm.fn "val"
+            (\\val ->
+                Elm.unwrap "MyType" val
+            )
+
+Results in the following lambda
+
+    myFunction val =
+        ((MyType val) -> val) val
+
+-}
+unwrap :
+    List Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+unwrap arg1 arg2_1 arg3_2 =
+    Elm.apply
+        (Elm.value
+            { importFrom = [ "Elm" ]
+            , name = "unwrap"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.list Type.string
+                        , Type.string
+                        , Type.namedWith [ "Elm" ] "Expression" []
+                        ]
+                        (Type.namedWith [ "Elm" ] "Expression" [])
+                    )
+            }
+        )
+        [ Elm.list arg1, arg2_1, arg3_2 ]
+
+
+{-| Generate a lambda which unwraps a single-variant type.
+
+    Elm.unwrapper [ "MyModule" ] "MyType"
+
+Results in the following lambda
+
+    \(MyModule.MyType val) -> val
+
+**Note** This needs to be a type with only a single variant
+
+-}
+unwrapper : List Elm.Expression -> Elm.Expression -> Elm.Expression
+unwrapper arg1 arg2_1 =
+    Elm.apply
+        (Elm.value
+            { importFrom = [ "Elm" ]
+            , name = "unwrapper"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.list Type.string, Type.string ]
+                        (Type.namedWith [ "Elm" ] "Expression" [])
+                    )
+            }
+        )
+        [ Elm.list arg1, arg2_1 ]
+
+
 annotation_ :
     { file : Type.Annotation
     , expression : Type.Annotation
@@ -2065,8 +2113,7 @@ call_ :
         -> Elm.Expression
         -> Elm.Expression
     , function : Elm.Expression -> Elm.Expression -> Elm.Expression
-    , functionReduced :
-        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+    , functionReduced : Elm.Expression -> Elm.Expression -> Elm.Expression
     , customType : Elm.Expression -> Elm.Expression -> Elm.Expression
     , variant : Elm.Expression -> Elm.Expression
     , variantWith : Elm.Expression -> Elm.Expression -> Elm.Expression
@@ -2102,6 +2149,9 @@ call_ :
     , declarationImports : Elm.Expression -> Elm.Expression
     , apply : Elm.Expression -> Elm.Expression -> Elm.Expression
     , value : Elm.Expression -> Elm.Expression
+    , unwrap :
+        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+    , unwrapper : Elm.Expression -> Elm.Expression -> Elm.Expression
     }
 call_ =
     { file =
@@ -2771,7 +2821,7 @@ call_ =
                 )
                 [ arg1_32_0, arg2_33_0 ]
     , functionReduced =
-        \arg1_33_0 arg2_34_0 arg3_35_0 ->
+        \arg1_33_0 arg2_34_0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2780,10 +2830,6 @@ call_ =
                         Just
                             (Type.function
                                 [ Type.string
-                                , Type.namedWith
-                                    [ "Elm", "Annotation" ]
-                                    "Annotation"
-                                    []
                                 , Type.function
                                     [ Type.namedWith [ "Elm" ] "Expression" [] ]
                                     (Type.namedWith [ "Elm" ] "Expression" [])
@@ -2792,7 +2838,7 @@ call_ =
                             )
                     }
                 )
-                [ arg1_33_0, arg2_34_0, arg3_35_0 ]
+                [ arg1_33_0, arg2_34_0 ]
     , customType =
         \arg1_34_0 arg2_35_0 ->
             Elm.apply
@@ -3415,6 +3461,39 @@ call_ =
                     }
                 )
                 [ arg1_68_0 ]
+    , unwrap =
+        \arg1_69_0 arg2_70_0 arg3_71_0 ->
+            Elm.apply
+                (Elm.value
+                    { importFrom = [ "Elm" ]
+                    , name = "unwrap"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.list Type.string
+                                , Type.string
+                                , Type.namedWith [ "Elm" ] "Expression" []
+                                ]
+                                (Type.namedWith [ "Elm" ] "Expression" [])
+                            )
+                    }
+                )
+                [ arg1_69_0, arg2_70_0, arg3_71_0 ]
+    , unwrapper =
+        \arg1_70_0 arg2_71_0 ->
+            Elm.apply
+                (Elm.value
+                    { importFrom = [ "Elm" ]
+                    , name = "unwrapper"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.list Type.string, Type.string ]
+                                (Type.namedWith [ "Elm" ] "Expression" [])
+                            )
+                    }
+                )
+                [ arg1_70_0, arg2_71_0 ]
     }
 
 
@@ -3490,6 +3569,8 @@ values_ :
     , declarationImports : Elm.Expression
     , apply : Elm.Expression
     , value : Elm.Expression
+    , unwrap : Elm.Expression
+    , unwrapper : Elm.Expression
     }
 values_ =
     { file =
@@ -4014,7 +4095,6 @@ values_ =
                 Just
                     (Type.function
                         [ Type.string
-                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
                         , Type.function
                             [ Type.namedWith [ "Elm" ] "Expression" [] ]
                             (Type.namedWith [ "Elm" ] "Expression" [])
@@ -4493,6 +4573,31 @@ values_ =
                               )
                             ]
                         ]
+                        (Type.namedWith [ "Elm" ] "Expression" [])
+                    )
+            }
+    , unwrap =
+        Elm.value
+            { importFrom = [ "Elm" ]
+            , name = "unwrap"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.list Type.string
+                        , Type.string
+                        , Type.namedWith [ "Elm" ] "Expression" []
+                        ]
+                        (Type.namedWith [ "Elm" ] "Expression" [])
+                    )
+            }
+    , unwrapper =
+        Elm.value
+            { importFrom = [ "Elm" ]
+            , name = "unwrapper"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.list Type.string, Type.string ]
                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }

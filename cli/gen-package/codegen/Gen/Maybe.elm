@@ -73,7 +73,7 @@ map arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
 
 
 {-| Apply a function if all the arguments are `Just` a value.
@@ -109,11 +109,9 @@ map2 arg1 arg2_1 arg3_2 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn "unpack1" (\fn0_3_3_3_0 -> arg1 fn0_3_3_0 fn0_3_3_3_0)
-            )
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 -> Elm.functionReduced "unpack" (arg1 unpack_3_3_0))
         , arg2_1
         , arg3_2
         ]
@@ -145,17 +143,15 @@ map3 arg1 arg2_1 arg3_2 arg4_3 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn
-                    "unpack1"
-                    (\fn0_3_3_3_0 ->
-                        Elm.fn
-                            "unpack2"
-                            (\fn0_3_3_3_3_0 ->
-                                arg1 fn0_3_3_0 fn0_3_3_3_0 fn0_3_3_3_3_0
-                            )
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 ->
+                Elm.functionReduced
+                    "unpack"
+                    (\unpack_3_3_3_0 ->
+                        Elm.functionReduced
+                            "unpack"
+                            (arg1 unpack_3_3_0 unpack_3_3_3_0)
                     )
             )
         , arg2_1
@@ -200,20 +196,19 @@ map4 arg1 arg2_1 arg3_2 arg4_3 arg5_4 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn
-                    "unpack1"
-                    (\fn0_3_3_3_0 ->
-                        Elm.fn
-                            "unpack2"
-                            (\fn0_3_3_3_3_0 ->
-                                Elm.fn
-                                    "unpack3"
-                                    (\fn0_3_3_3_3_3_0 ->
-                                        arg1 fn0_3_3_0 fn0_3_3_3_0 fn0_3_3_3_3_0
-                                            fn0_3_3_3_3_3_0
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 ->
+                Elm.functionReduced
+                    "unpack"
+                    (\unpack_3_3_3_0 ->
+                        Elm.functionReduced
+                            "unpack"
+                            (\unpack_3_3_3_3_0 ->
+                                Elm.functionReduced
+                                    "unpack"
+                                    (arg1 unpack_3_3_0 unpack_3_3_3_0
+                                        unpack_3_3_3_3_0
                                     )
                             )
                     )
@@ -265,25 +260,23 @@ map5 arg1 arg2_1 arg3_2 arg4_3 arg5_4 arg6_5 =
                     )
             }
         )
-        [ Elm.fn
-            "unpack0"
-            (\fn0_3_3_0 ->
-                Elm.fn
-                    "unpack1"
-                    (\fn0_3_3_3_0 ->
-                        Elm.fn
-                            "unpack2"
-                            (\fn0_3_3_3_3_0 ->
-                                Elm.fn
-                                    "unpack3"
-                                    (\fn0_3_3_3_3_3_0 ->
-                                        Elm.fn
-                                            "unpack4"
-                                            (\fn0_3_3_3_3_3_3_0 ->
-                                                arg1 fn0_3_3_0 fn0_3_3_3_0
-                                                    fn0_3_3_3_3_0
-                                                    fn0_3_3_3_3_3_0
-                                                    fn0_3_3_3_3_3_3_0
+        [ Elm.functionReduced
+            "unpack"
+            (\unpack_3_3_0 ->
+                Elm.functionReduced
+                    "unpack"
+                    (\unpack_3_3_3_0 ->
+                        Elm.functionReduced
+                            "unpack"
+                            (\unpack_3_3_3_3_0 ->
+                                Elm.functionReduced
+                                    "unpack"
+                                    (\unpack_3_3_3_3_3_0 ->
+                                        Elm.functionReduced
+                                            "unpack"
+                                            (arg1 unpack_3_3_0 unpack_3_3_3_0
+                                                 unpack_3_3_3_3_0
+                                                unpack_3_3_3_3_3_0
                                             )
                                     )
                             )
@@ -347,7 +340,7 @@ andThen arg1 arg2_1 =
                     )
             }
         )
-        [ Elm.fn "unpack0" (\fn0_3_3_0 -> arg1 fn0_3_3_0), arg2_1 ]
+        [ Elm.functionReduced "unpack" arg1, arg2_1 ]
 
 
 annotation_ : { maybe : Type.Annotation -> Type.Annotation }
