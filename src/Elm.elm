@@ -1832,16 +1832,26 @@ Then it will replace itself with just
 **Note** you likely won't need this! It's generally used by the package-helper generator, but that might be a relatively special case.
 
 -}
-functionReduced : String -> Elm.Annotation.Annotation -> (Expression -> Expression) -> Expression
-functionReduced argBaseName argType toExpression =
+functionReduced : String -> (Expression -> Expression) -> Expression
+functionReduced argBaseName toExpression =
     Compiler.Expression <|
         \index ->
             let
                 childIndex =
                     Compiler.dive index
 
+                arg1Name =
+                    argBaseName ++ Compiler.indexToString index
+
+                argType =
+                    Elm.Annotation.var arg1Name
+
                 arg1 =
-                    valueWithHelper [] argBaseName argType
+                    value
+                        { importFrom = []
+                        , name = arg1Name
+                        , annotation = Just argType
+                        }
 
                 (Compiler.Expression toExpr) =
                     toExpression arg1
