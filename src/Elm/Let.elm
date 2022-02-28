@@ -82,8 +82,8 @@ value desiredName valueExpr sourceLet =
 asValue : Compiler.Index -> String -> Expression -> ( String, Expression )
 asValue index desiredName sourceExpression =
     let
-        name =
-            desiredName ++ Compiler.indexToString index
+        ( name, newIndex ) =
+            Compiler.getName index desiredName
     in
     ( name
     , Compiler.Expression <|
@@ -132,14 +132,14 @@ unpackTuple :
         }
 unpackTuple index desiredNameOne desiredNameTwo sourceExpression =
     let
-        oneName =
-            desiredNameOne ++ Compiler.indexToString index
+        ( oneName, oneIndex ) =
+            Compiler.getName index desiredNameOne
 
-        twoName =
-            desiredNameTwo ++ Compiler.indexToString (Compiler.next index)
+        ( twoName, twoIndex ) =
+            Compiler.getName index desiredNameTwo
 
         ( newIndex, sourceDetails ) =
-            Compiler.toExpressionDetails index sourceExpression
+            Compiler.toExpressionDetails twoIndex sourceExpression
     in
     { one =
         { name = oneName

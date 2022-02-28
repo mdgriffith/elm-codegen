@@ -10,6 +10,7 @@ import Elm.Syntax.Range as Range exposing (emptyRange)
 import Elm.Syntax.TypeAnnotation as Annotation
 import Elm.Writer
 import Error.Format
+import Set exposing (Set)
 
 
 type Annotation
@@ -67,32 +68,61 @@ If you're handing an index to a lower lever, use Compiler.dive.
 
 -}
 type Index
-    = Index Int (List Int)
+    = Index Int (List Int) Scope
+
+
+type alias Scope =
+    Set String
 
 
 {-| -}
 startIndex : Index
 startIndex =
-    Index 0 []
+    Index 0 [] Set.empty
 
 
 next : Index -> Index
-next (Index top tail) =
-    Index (top + 1) tail
+next (Index top tail scope) =
+    Index (top + 1) tail scope
 
 
 nextN : Int -> Index -> Index
-nextN n (Index top tail) =
-    Index (top + n) tail
+nextN n (Index top tail scope) =
+    Index (top + n) tail scope
 
 
 dive : Index -> Index
-dive (Index top tail) =
-    Index 0 (top :: tail)
+dive (Index top tail scope) =
+    Index 0 (top :: tail) scope
+
+
+getName : String -> Index -> ( String, Index )
+getName desiredName ((Index top tail scope) as index) =
+    if not (Set.member desiredName scope) then
+        ( desiredName, Index top tail (Set.insert desiredName scope) )
+
+    else
+        let
+            protectedName =
+                desiredName ++ String.fromInt top
+        in
+        if not (Set.member protectedName scope) then
+            ( protectedName
+            , Index (top + 1) tail (Set.insert protectedName scope)
+            )
+
+        else
+            let
+                protectedNameLevel2 =
+                    desiredName ++ indexToString index
+            in
+            ( protectedNameLevel2
+            , Index (top + 1) tail (Set.insert protectedNameLevel2 scope)
+            )
 
 
 indexToString : Index -> String
-indexToString (Index top tail) =
+indexToString (Index top tail scope) =
     (if top == 0 then
         ""
 
