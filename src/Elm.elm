@@ -1862,7 +1862,7 @@ functionReduced argBaseName toExpression =
             { expression =
                 betaReduce <|
                     Exp.LambdaExpression
-                        { args = [ Compiler.nodify (Pattern.VarPattern argBaseName) ]
+                        { args = [ Compiler.nodify (Pattern.VarPattern arg1Name) ]
                         , expression = Compiler.nodify expr.expression
                         }
             , annotation =
