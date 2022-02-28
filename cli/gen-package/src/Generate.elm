@@ -959,7 +959,7 @@ unpack tipe unpacked stilToUnpack =
                 Elm.Type.Lambda one two ->
                     let
                         unpackedTop =
-                            getArgumentUnpacker "unpack" 0 one top
+                            getArgumentUnpacker "unpack" one top
                     in
                     unpack two
                         (unpackedTop :: unpacked)
@@ -967,19 +967,6 @@ unpack tipe unpacked stilToUnpack =
 
                 _ ->
                     List.reverse unpacked ++ stilToUnpack
-
-
-{-| -}
-asValue : String -> Int -> Elm.Type.Type -> Elm.Expression
-asValue baseName index tipe =
-    getArgumentUnpacker baseName 0 tipe <|
-        Elm.value
-            { importFrom = []
-            , name = argName index
-            , annotation =
-                Just
-                    (typeToGeneratedAnnotation tipe)
-            }
 
 
 needsUnpacking : Elm.Type.Type -> Bool
@@ -1017,42 +1004,46 @@ functionArgTypes fnType args =
             }
 
 
-unpackFunction : String -> Int -> Elm.Expression -> Elm.Type.Type -> Elm.Expression
-unpackFunction baseName freshCount renderer tipe =
+unpackFunction : String -> Elm.Expression -> Elm.Type.Type -> Elm.Expression
+unpackFunction baseName renderer tipe =
     case tipe of
         Elm.Type.Lambda one two ->
-            callElmFn (Elm.string (baseName ++ String.fromInt freshCount))
+            Gen.Elm.functionReduced
+                (Elm.string baseName)
                 (\val ->
                     let
                         full =
                             val
                                 |> Elm.withType (typeToGeneratedAnnotationExpression one)
                     in
-                    unpackFunction baseName (freshCount + 1) (Elm.apply renderer [ full ]) two
+                    unpackFunction baseName
+                        (Elm.apply renderer [ full ])
+                        two
                 )
 
         _ ->
             renderer
 
 
-getArgumentUnpacker : String -> Int -> Elm.Type.Type -> Elm.Expression -> Elm.Expression
-getArgumentUnpacker baseName freshCount tipe value =
+getArgumentUnpacker : String -> Elm.Type.Type -> Elm.Expression -> Elm.Expression
+getArgumentUnpacker baseName tipe value =
     case tipe of
         Elm.Type.Lambda one two ->
-            callElmFn (Elm.string (baseName ++ String.fromInt freshCount))
+            Gen.Elm.functionReduced
+                (Elm.string baseName)
                 (\val ->
                     let
                         full =
                             val
                                 |> Elm.withType (typeToGeneratedAnnotationExpression one)
                     in
-                    unpackFunction baseName (freshCount + 1) (Elm.apply value [ full ]) two
+                    unpackFunction baseName (Elm.apply value [ full ]) two
                 )
 
         Elm.Type.Type "List.List" [ inner ] ->
             let
                 varName =
-                    "lambdaArg" ++ String.fromInt freshCount
+                    "lambdaArg"
 
                 unpackedInner =
                     if needsUnpacking inner then
@@ -1073,7 +1064,6 @@ getArgumentUnpacker baseName freshCount tipe value =
                             [ Elm.functionReduced varName
                                 (\exp ->
                                     getArgumentUnpacker baseName
-                                        (freshCount + 1)
                                         inner
                                         (exp |> Elm.withType (typeToAnnotation inner))
                                 )
@@ -1093,7 +1083,7 @@ getArgumentUnpacker baseName freshCount tipe value =
                     (\( fieldName, fieldType ) ->
                         Gen.Elm.field
                             (Elm.string fieldName)
-                            (getArgumentUnpacker baseName freshCount fieldType <|
+                            (getArgumentUnpacker baseName fieldType <|
                                 Elm.get fieldName value
                             )
                     )
@@ -1101,28 +1091,6 @@ getArgumentUnpacker baseName freshCount tipe value =
 
         _ ->
             value
-
-
-callElmFn : Elm.Expression -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
-callElmFn =
-    -- Elm.apply
-    --     (Elm.value
-    --         { importFrom = [ "Elm" ]
-    --         , name = "fn"
-    --         , annotation =
-    --             Just
-    --                 (Annotation.function
-    --                     [ Annotation.string
-    --                     , Annotation.function
-    --                         [ Annotation.namedWith [ "Elm" ] "Expression" [] ]
-    --                         (Annotation.namedWith [ "Elm" ] "Expression" [])
-    --                     ]
-    --                     (Annotation.namedWith [ "Elm" ] "Expression" [])
-    --                 )
-    --         }
-    --     )
-    --     [ arg1, Elm.fn "fn0" (\fnArg0_0 -> arg2 fnArg0_0) ]
-    Gen.Elm.fn
 
 
 {-|
