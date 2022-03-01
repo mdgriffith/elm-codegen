@@ -19,7 +19,7 @@ moduleName_ =
 
     Elm.fn "myMaybe" <|
         \myMaybe ->
-            Elm.Case.list myMaybe
+            Elm.Case.maybe myMaybe
                 { nothing = Elm.int 0
                 , just =
                     \content ->

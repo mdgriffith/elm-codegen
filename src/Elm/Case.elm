@@ -20,11 +20,13 @@ module Elm.Case exposing
 
 -}
 
+import Dict exposing (Dict)
 import Elm exposing (Expression)
 import Elm.Annotation as Type
 import Elm.Syntax.Expression as Exp
 import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
+import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Compiler as Compiler
 
 
@@ -87,20 +89,41 @@ captureCaseHelper (Branch toBranch) accum =
             Nothing ->
                 Just exp.annotation
 
-            Just exist ->
-                if exist == exp.annotation then
-                    accum.annotation
+            Just (Ok gatheredAnnotation) ->
+                Compiler.unifyOn
+                    (Compiler.Annotation
+                        { annotation = gatheredAnnotation.type_
+                        , imports = []
+                        }
+                    )
+                    (exp.annotation
+                        |> combineInferences gatheredAnnotation.inferences
+                    )
+                    |> Just
 
-                else
-                    Just (Err [ Compiler.CaseBranchesReturnDifferentTypes ])
+            Just err ->
+                Just err
     }
+
+
+combineInferences :
+    Dict.Dict String Annotation.TypeAnnotation
+    -> Result (List Compiler.InferenceError) Compiler.Inference
+    -> Result (List Compiler.InferenceError) Compiler.Inference
+combineInferences infs infResult =
+    case infResult of
+        Ok inferred ->
+            Ok { inferred | inferences = Compiler.mergeInferences infs inferred.inferences }
+
+        Err err ->
+            Err err
 
 
 {-|
 
     Elm.fn "myMaybe" <|
         \myMaybe ->
-            Elm.Case.list myMaybe
+            Elm.Case.maybe myMaybe
                 { nothing = Elm.int 0
                 , just =
                     \content ->
