@@ -17,7 +17,7 @@ moduleName_ =
 
 {-| A type variable
 -}
-var : Elm.Expression -> Elm.Expression
+var : String -> Elm.Expression
 var arg1 =
     Elm.apply
         (Elm.value
@@ -31,7 +31,7 @@ var arg1 =
                     )
             }
         )
-        [ arg1 ]
+        [ Elm.string arg1 ]
 
 
 {-| -}
@@ -101,7 +101,7 @@ unit =
 
 
 {-| -}
-named : List Elm.Expression -> Elm.Expression -> Elm.Expression
+named : List String -> String -> Elm.Expression
 named arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -115,15 +115,11 @@ named arg1 arg2 =
                     )
             }
         )
-        [ Elm.list arg1, arg2 ]
+        [ Elm.list (List.map Elm.string arg1), Elm.string arg2 ]
 
 
 {-| -}
-namedWith :
-    List Elm.Expression
-    -> Elm.Expression
-    -> List Elm.Expression
-    -> Elm.Expression
+namedWith : List String -> String -> List Elm.Expression -> Elm.Expression
 namedWith arg1 arg2 arg3 =
     Elm.apply
         (Elm.value
@@ -145,7 +141,7 @@ namedWith arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.list arg1, arg2, Elm.list arg3 ]
+        [ Elm.list (List.map Elm.string arg1), Elm.string arg2, Elm.list arg3 ]
 
 
 {-| -}
@@ -314,7 +310,7 @@ record arg1 =
 
 
 {-| -}
-extensible : Elm.Expression -> List Elm.Expression -> Elm.Expression
+extensible : String -> List Elm.Expression -> Elm.Expression
 extensible arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -338,7 +334,7 @@ extensible arg1 arg2 =
                     )
             }
         )
-        [ arg1, Elm.list arg2 ]
+        [ Elm.string arg1, Elm.list arg2 ]
 
 
 {-| -}

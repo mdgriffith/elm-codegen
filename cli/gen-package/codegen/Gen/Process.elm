@@ -60,7 +60,7 @@ delay work until later.
 
 [setTimeout]: https://developer.mozilla.org/en-US/docs/Web/API/WindowTimers/setTimeout
 -}
-sleep : Elm.Expression -> Elm.Expression
+sleep : Float -> Elm.Expression
 sleep arg1 =
     Elm.apply
         (Elm.value
@@ -78,7 +78,7 @@ sleep arg1 =
                     )
             }
         )
-        [ arg1 ]
+        [ Elm.float arg1 ]
 
 
 {-| Sometimes you `spawn` a process, but later decide it would be a waste to

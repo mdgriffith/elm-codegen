@@ -34,7 +34,7 @@ letIn arg1 =
 
 
 {-| -}
-value : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+value : String -> Elm.Expression -> Elm.Expression -> Elm.Expression
 value arg1 arg2 arg3 =
     Elm.apply
         (Elm.value
@@ -57,16 +57,11 @@ value arg1 arg2 arg3 =
                     )
             }
         )
-        [ arg1, arg2, arg3 ]
+        [ Elm.string arg1, arg2, arg3 ]
 
 
 {-| -}
-tuple :
-    Elm.Expression
-    -> Elm.Expression
-    -> Elm.Expression
-    -> Elm.Expression
-    -> Elm.Expression
+tuple : String -> String -> Elm.Expression -> Elm.Expression -> Elm.Expression
 tuple arg1 arg2 arg3 arg4 =
     Elm.apply
         (Elm.value
@@ -93,12 +88,11 @@ tuple arg1 arg2 arg3 arg4 =
                     )
             }
         )
-        [ arg1, arg2, arg3, arg4 ]
+        [ Elm.string arg1, Elm.string arg2, arg3, arg4 ]
 
 
 {-| -}
-record :
-    List Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+record : List String -> Elm.Expression -> Elm.Expression -> Elm.Expression
 record arg1 arg2 arg3 =
     Elm.apply
         (Elm.value
@@ -123,7 +117,7 @@ record arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.list arg1, arg2, arg3 ]
+        [ Elm.list (List.map Elm.string arg1), arg2, arg3 ]
 
 
 {-| -}

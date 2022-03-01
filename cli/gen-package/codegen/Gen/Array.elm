@@ -36,8 +36,7 @@ the element at index `i` initialized to the result of `(f i)`.
     initialize 4 (\n -> n*n) == fromList [0,1,4,9]
     initialize 4 (always 0)  == fromList [0,0,0,0]
 -}
-initialize :
-    Elm.Expression -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
+initialize : Int -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
 initialize arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -51,7 +50,7 @@ initialize arg1 arg2 =
                     )
             }
         )
-        [ arg1, Elm.functionReduced "unpack" arg2 ]
+        [ Elm.int arg1, Elm.functionReduced "unpack" arg2 ]
 
 
 {-| Creates an array with a given length, filled with a default element.
@@ -61,7 +60,7 @@ initialize arg1 arg2 =
 
 Notice that `repeat 3 x` is the same as `initialize 3 (always x)`.
 -}
-repeat : Elm.Expression -> Elm.Expression -> Elm.Expression
+repeat : Int -> Elm.Expression -> Elm.Expression
 repeat arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -75,7 +74,7 @@ repeat arg1 arg2 =
                     )
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.int arg1, arg2 ]
 
 
 {-| Create an array from a `List`.
@@ -147,7 +146,7 @@ range.
     get  5 (fromList [0,1,2]) == Nothing
     get -1 (fromList [0,1,2]) == Nothing
 -}
-get : Elm.Expression -> Elm.Expression -> Elm.Expression
+get : Int -> Elm.Expression -> Elm.Expression
 get arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -163,7 +162,7 @@ get arg1 arg2 =
                     )
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.int arg1, arg2 ]
 
 
 {-| Set the element at a particular index. Returns an updated array.
@@ -171,7 +170,7 @@ If the index is out of range, the array is unaltered.
 
     set 1 7 (fromList [1,2,3]) == fromList [1,7,3]
 -}
-set : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+set : Int -> Elm.Expression -> Elm.Expression -> Elm.Expression
 set arg1 arg2 arg3 =
     Elm.apply
         (Elm.value
@@ -188,7 +187,7 @@ set arg1 arg2 arg3 =
                     )
             }
         )
-        [ arg1, arg2, arg3 ]
+        [ Elm.int arg1, arg2, arg3 ]
 
 
 {-| Push an element onto the end of an array.
@@ -254,7 +253,7 @@ the end of the array.
 This makes it pretty easy to `pop` the last element off of an array:
 `slice 0 -1 array`
 -}
-slice : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+slice : Int -> Int -> Elm.Expression -> Elm.Expression
 slice arg1 arg2 arg3 =
     Elm.apply
         (Elm.value
@@ -271,7 +270,7 @@ slice arg1 arg2 arg3 =
                     )
             }
         )
-        [ arg1, arg2, arg3 ]
+        [ Elm.int arg1, Elm.int arg2, arg3 ]
 
 
 {-| Create a list of elements from an array.

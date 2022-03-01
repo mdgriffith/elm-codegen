@@ -20,7 +20,7 @@ moduleName_ =
     isEmpty "" == True
     isEmpty "the world" == False
 -}
-isEmpty : Elm.Expression -> Elm.Expression
+isEmpty : String -> Elm.Expression
 isEmpty arg1 =
     Elm.apply
         (Elm.value
@@ -29,7 +29,7 @@ isEmpty arg1 =
             , annotation = Just (Type.function [ Type.string ] Type.bool)
             }
         )
-        [ arg1 ]
+        [ Elm.string arg1 ]
 
 
 {-| Get the length of a string.
@@ -38,7 +38,7 @@ isEmpty arg1 =
     length "" == 0
 
 -}
-length : Elm.Expression -> Elm.Expression
+length : String -> Elm.Expression
 length arg1 =
     Elm.apply
         (Elm.value
@@ -47,14 +47,14 @@ length arg1 =
             , annotation = Just (Type.function [ Type.string ] Type.int)
             }
         )
-        [ arg1 ]
+        [ Elm.string arg1 ]
 
 
 {-| Reverse a string.
 
     reverse "stressed" == "desserts"
 -}
-reverse : Elm.Expression -> Elm.Expression
+reverse : String -> Elm.Expression
 reverse arg1 =
     Elm.apply
         (Elm.value
@@ -63,14 +63,14 @@ reverse arg1 =
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
         )
-        [ arg1 ]
+        [ Elm.string arg1 ]
 
 
 {-| Repeat a string *n* times.
 
     repeat 3 "ha" == "hahaha"
 -}
-repeat : Elm.Expression -> Elm.Expression -> Elm.Expression
+repeat : Int -> String -> Elm.Expression
 repeat arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -80,7 +80,7 @@ repeat arg1 arg2 =
                 Just (Type.function [ Type.int, Type.string ] Type.string)
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.int arg1, Elm.string arg2 ]
 
 
 {-| Replace all occurrences of some substring.
@@ -94,7 +94,7 @@ repeat arg1 arg2 =
 [parser]: /packages/elm/parser/latest
 [regex]: /packages/elm/regex/latest
 -}
-replace : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+replace : String -> String -> String -> Elm.Expression
 replace arg1 arg2 arg3 =
     Elm.apply
         (Elm.value
@@ -108,7 +108,7 @@ replace arg1 arg2 arg3 =
                     )
             }
         )
-        [ arg1, arg2, arg3 ]
+        [ Elm.string arg1, Elm.string arg2, Elm.string arg3 ]
 
 
 {-| Append two strings. You can also use [the `(++)` operator](Basics#++)
@@ -116,7 +116,7 @@ to do this.
 
     append "butter" "fly" == "butterfly"
 -}
-append : Elm.Expression -> Elm.Expression -> Elm.Expression
+append : String -> String -> Elm.Expression
 append arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -126,14 +126,14 @@ append arg1 arg2 =
                 Just (Type.function [ Type.string, Type.string ] Type.string)
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.string arg1, Elm.string arg2 ]
 
 
 {-| Concatenate many strings into one.
 
     concat ["never","the","less"] == "nevertheless"
 -}
-concat : List Elm.Expression -> Elm.Expression
+concat : List String -> Elm.Expression
 concat arg1 =
     Elm.apply
         (Elm.value
@@ -143,7 +143,7 @@ concat arg1 =
                 Just (Type.function [ Type.list Type.string ] Type.string)
             }
         )
-        [ Elm.list arg1 ]
+        [ Elm.list (List.map Elm.string arg1) ]
 
 
 {-| Split a string using a given separator.
@@ -152,7 +152,7 @@ concat arg1 =
     split "/" "home/evan/Desktop/" == ["home","evan","Desktop", ""]
 
 -}
-split : Elm.Expression -> Elm.Expression -> Elm.Expression
+split : String -> String -> Elm.Expression
 split arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -166,7 +166,7 @@ split arg1 arg2 =
                     )
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.string arg1, Elm.string arg2 ]
 
 
 {-| Put many strings together with a given separator.
@@ -175,7 +175,7 @@ split arg1 arg2 =
     join " " ["cat","dog","cow"]       == "cat dog cow"
     join "/" ["home","evan","Desktop"] == "home/evan/Desktop"
 -}
-join : Elm.Expression -> List Elm.Expression -> Elm.Expression
+join : String -> List String -> Elm.Expression
 join arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -189,14 +189,14 @@ join arg1 arg2 =
                     )
             }
         )
-        [ arg1, Elm.list arg2 ]
+        [ Elm.string arg1, Elm.list (List.map Elm.string arg2) ]
 
 
 {-| Break a string into words, splitting on chunks of whitespace.
 
     words "How are \t you? \n Good?" == ["How","are","you?","Good?"]
 -}
-words : Elm.Expression -> Elm.Expression
+words : String -> Elm.Expression
 words arg1 =
     Elm.apply
         (Elm.value
@@ -206,14 +206,14 @@ words arg1 =
                 Just (Type.function [ Type.string ] (Type.list Type.string))
             }
         )
-        [ arg1 ]
+        [ Elm.string arg1 ]
 
 
 {-| Break a string into lines, splitting on newlines.
 
     lines "How are you?\nGood?" == ["How are you?", "Good?"]
 -}
-lines : Elm.Expression -> Elm.Expression
+lines : String -> Elm.Expression
 lines arg1 =
     Elm.apply
         (Elm.value
@@ -223,7 +223,7 @@ lines arg1 =
                 Just (Type.function [ Type.string ] (Type.list Type.string))
             }
         )
-        [ arg1 ]
+        [ Elm.string arg1 ]
 
 
 {-| Take a substring given a start and end index. Negative indexes
@@ -234,7 +234,7 @@ are taken starting from the *end* of the list.
     slice  0 -7 "snakes on a plane!" == "snakes on a"
     slice -6 -1 "snakes on a plane!" == "plane"
 -}
-slice : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+slice : Int -> Int -> String -> Elm.Expression
 slice arg1 arg2 arg3 =
     Elm.apply
         (Elm.value
@@ -248,14 +248,14 @@ slice arg1 arg2 arg3 =
                     )
             }
         )
-        [ arg1, arg2, arg3 ]
+        [ Elm.int arg1, Elm.int arg2, Elm.string arg3 ]
 
 
 {-| Take *n* characters from the left side of a string.
 
     left 2 "Mulder" == "Mu"
 -}
-left : Elm.Expression -> Elm.Expression -> Elm.Expression
+left : Int -> String -> Elm.Expression
 left arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -265,14 +265,14 @@ left arg1 arg2 =
                 Just (Type.function [ Type.int, Type.string ] Type.string)
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.int arg1, Elm.string arg2 ]
 
 
 {-| Take *n* characters from the right side of a string.
 
     right 2 "Scully" == "ly"
 -}
-right : Elm.Expression -> Elm.Expression -> Elm.Expression
+right : Int -> String -> Elm.Expression
 right arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -282,14 +282,14 @@ right arg1 arg2 =
                 Just (Type.function [ Type.int, Type.string ] Type.string)
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.int arg1, Elm.string arg2 ]
 
 
 {-| Drop *n* characters from the left side of a string.
 
     dropLeft 2 "The Lone Gunmen" == "e Lone Gunmen"
 -}
-dropLeft : Elm.Expression -> Elm.Expression -> Elm.Expression
+dropLeft : Int -> String -> Elm.Expression
 dropLeft arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -299,14 +299,14 @@ dropLeft arg1 arg2 =
                 Just (Type.function [ Type.int, Type.string ] Type.string)
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.int arg1, Elm.string arg2 ]
 
 
 {-| Drop *n* characters from the right side of a string.
 
     dropRight 2 "Cigarette Smoking Man" == "Cigarette Smoking M"
 -}
-dropRight : Elm.Expression -> Elm.Expression -> Elm.Expression
+dropRight : Int -> String -> Elm.Expression
 dropRight arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -316,7 +316,7 @@ dropRight arg1 arg2 =
                 Just (Type.function [ Type.int, Type.string ] Type.string)
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.int arg1, Elm.string arg2 ]
 
 
 {-| See if the second string contains the first one.
@@ -326,7 +326,7 @@ dropRight arg1 arg2 =
     contains "THE" "theory" == False
 
 -}
-contains : Elm.Expression -> Elm.Expression -> Elm.Expression
+contains : String -> String -> Elm.Expression
 contains arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -336,7 +336,7 @@ contains arg1 arg2 =
                 Just (Type.function [ Type.string, Type.string ] Type.bool)
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.string arg1, Elm.string arg2 ]
 
 
 {-| See if the second string starts with the first one.
@@ -344,7 +344,7 @@ contains arg1 arg2 =
     startsWith "the" "theory" == True
     startsWith "ory" "theory" == False
 -}
-startsWith : Elm.Expression -> Elm.Expression -> Elm.Expression
+startsWith : String -> String -> Elm.Expression
 startsWith arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -354,7 +354,7 @@ startsWith arg1 arg2 =
                 Just (Type.function [ Type.string, Type.string ] Type.bool)
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.string arg1, Elm.string arg2 ]
 
 
 {-| See if the second string ends with the first one.
@@ -362,7 +362,7 @@ startsWith arg1 arg2 =
     endsWith "the" "theory" == False
     endsWith "ory" "theory" == True
 -}
-endsWith : Elm.Expression -> Elm.Expression -> Elm.Expression
+endsWith : String -> String -> Elm.Expression
 endsWith arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -372,7 +372,7 @@ endsWith arg1 arg2 =
                 Just (Type.function [ Type.string, Type.string ] Type.bool)
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.string arg1, Elm.string arg2 ]
 
 
 {-| Get all of the indexes for a substring in another string.
@@ -381,7 +381,7 @@ endsWith arg1 arg2 =
     indexes "ss" "Mississippi"  == [2,5]
     indexes "needle" "haystack" == []
 -}
-indexes : Elm.Expression -> Elm.Expression -> Elm.Expression
+indexes : String -> String -> Elm.Expression
 indexes arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -395,11 +395,11 @@ indexes arg1 arg2 =
                     )
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.string arg1, Elm.string arg2 ]
 
 
 {-| Alias for `indexes`. -}
-indices : Elm.Expression -> Elm.Expression -> Elm.Expression
+indices : String -> String -> Elm.Expression
 indices arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -413,7 +413,7 @@ indices arg1 arg2 =
                     )
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.string arg1, Elm.string arg2 ]
 
 
 {-| Try to convert a string into an int, failing on improperly formatted strings.
@@ -429,7 +429,7 @@ want to use [`Maybe.withDefault`](Maybe#withDefault) to handle bad data:
     Maybe.withDefault 0 (String.toInt "42") == 42
     Maybe.withDefault 0 (String.toInt "ab") == 0
 -}
-toInt : Elm.Expression -> Elm.Expression
+toInt : String -> Elm.Expression
 toInt arg1 =
     Elm.apply
         (Elm.value
@@ -439,7 +439,7 @@ toInt arg1 =
                 Just (Type.function [ Type.string ] (Type.maybe Type.int))
             }
         )
-        [ arg1 ]
+        [ Elm.string arg1 ]
 
 
 {-| Convert an `Int` to a `String`.
@@ -450,7 +450,7 @@ toInt arg1 =
 Check out [`Debug.toString`](Debug#toString) to convert *any* value to a string
 for debugging purposes.
 -}
-fromInt : Elm.Expression -> Elm.Expression
+fromInt : Int -> Elm.Expression
 fromInt arg1 =
     Elm.apply
         (Elm.value
@@ -459,7 +459,7 @@ fromInt arg1 =
             , annotation = Just (Type.function [ Type.int ] Type.string)
             }
         )
-        [ arg1 ]
+        [ Elm.int arg1 ]
 
 
 {-| Try to convert a string into a float, failing on improperly formatted strings.
@@ -475,7 +475,7 @@ want to use [`Maybe.withDefault`](Maybe#withDefault) to handle bad data:
     Maybe.withDefault 0 (String.toFloat "42.5") == 42.5
     Maybe.withDefault 0 (String.toFloat "cats") == 0
 -}
-toFloat : Elm.Expression -> Elm.Expression
+toFloat : String -> Elm.Expression
 toFloat arg1 =
     Elm.apply
         (Elm.value
@@ -485,7 +485,7 @@ toFloat arg1 =
                 Just (Type.function [ Type.string ] (Type.maybe Type.float))
             }
         )
-        [ arg1 ]
+        [ Elm.string arg1 ]
 
 
 {-| Convert a `Float` to a `String`.
@@ -497,7 +497,7 @@ toFloat arg1 =
 Check out [`Debug.toString`](Debug#toString) to convert *any* value to a string
 for debugging purposes.
 -}
-fromFloat : Elm.Expression -> Elm.Expression
+fromFloat : Float -> Elm.Expression
 fromFloat arg1 =
     Elm.apply
         (Elm.value
@@ -506,14 +506,14 @@ fromFloat arg1 =
             , annotation = Just (Type.function [ Type.float ] Type.string)
             }
         )
-        [ arg1 ]
+        [ Elm.float arg1 ]
 
 
 {-| Create a string from a given character.
 
     fromChar 'a' == "a"
 -}
-fromChar : Elm.Expression -> Elm.Expression
+fromChar : Char.Char -> Elm.Expression
 fromChar arg1 =
     Elm.apply
         (Elm.value
@@ -522,14 +522,14 @@ fromChar arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.string)
             }
         )
-        [ arg1 ]
+        [ Elm.char arg1 ]
 
 
 {-| Add a character to the beginning of a string.
 
     cons 'T' "he truth is out there" == "The truth is out there"
 -}
-cons : Elm.Expression -> Elm.Expression -> Elm.Expression
+cons : Char.Char -> String -> Elm.Expression
 cons arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -539,7 +539,7 @@ cons arg1 arg2 =
                 Just (Type.function [ Type.char, Type.string ] Type.string)
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.char arg1, Elm.string arg2 ]
 
 
 {-| Split a non-empty string into its head and tail. This lets you
@@ -548,7 +548,7 @@ pattern match on strings exactly as you would with lists.
     uncons "abc" == Just ('a',"bc")
     uncons ""    == Nothing
 -}
-uncons : Elm.Expression -> Elm.Expression
+uncons : String -> Elm.Expression
 uncons arg1 =
     Elm.apply
         (Elm.value
@@ -562,7 +562,7 @@ uncons arg1 =
                     )
             }
         )
-        [ arg1 ]
+        [ Elm.string arg1 ]
 
 
 {-| Convert a string to a list of characters.
@@ -570,7 +570,7 @@ uncons arg1 =
     toList "abc" == ['a','b','c']
     toList "🙈🙉🙊" == ['🙈','🙉','🙊']
 -}
-toList : Elm.Expression -> Elm.Expression
+toList : String -> Elm.Expression
 toList arg1 =
     Elm.apply
         (Elm.value
@@ -580,7 +580,7 @@ toList arg1 =
                 Just (Type.function [ Type.string ] (Type.list Type.char))
             }
         )
-        [ arg1 ]
+        [ Elm.string arg1 ]
 
 
 {-| Convert a list of characters into a String. Can be useful if you
@@ -590,7 +590,7 @@ something.
     fromList ['a','b','c'] == "abc"
     fromList ['🙈','🙉','🙊'] == "🙈🙉🙊"
 -}
-fromList : List Elm.Expression -> Elm.Expression
+fromList : List Char.Char -> Elm.Expression
 fromList arg1 =
     Elm.apply
         (Elm.value
@@ -600,7 +600,7 @@ fromList arg1 =
                 Just (Type.function [ Type.list Type.char ] Type.string)
             }
         )
-        [ Elm.list arg1 ]
+        [ Elm.list (List.map Elm.char arg1) ]
 
 
 {-| Convert a string to all upper case. Useful for case-insensitive comparisons
@@ -608,7 +608,7 @@ and VIRTUAL YELLING.
 
     toUpper "skinner" == "SKINNER"
 -}
-toUpper : Elm.Expression -> Elm.Expression
+toUpper : String -> Elm.Expression
 toUpper arg1 =
     Elm.apply
         (Elm.value
@@ -617,14 +617,14 @@ toUpper arg1 =
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
         )
-        [ arg1 ]
+        [ Elm.string arg1 ]
 
 
 {-| Convert a string to all lower case. Useful for case-insensitive comparisons.
 
     toLower "X-FILES" == "x-files"
 -}
-toLower : Elm.Expression -> Elm.Expression
+toLower : String -> Elm.Expression
 toLower arg1 =
     Elm.apply
         (Elm.value
@@ -633,7 +633,7 @@ toLower arg1 =
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
         )
-        [ arg1 ]
+        [ Elm.string arg1 ]
 
 
 {-| Pad a string on both sides until it has a given length.
@@ -642,7 +642,7 @@ toLower arg1 =
     pad 5 ' ' "11"  == "  11 "
     pad 5 ' ' "121" == " 121 "
 -}
-pad : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+pad : Int -> Char.Char -> String -> Elm.Expression
 pad arg1 arg2 arg3 =
     Elm.apply
         (Elm.value
@@ -656,7 +656,7 @@ pad arg1 arg2 arg3 =
                     )
             }
         )
-        [ arg1, arg2, arg3 ]
+        [ Elm.int arg1, Elm.char arg2, Elm.string arg3 ]
 
 
 {-| Pad a string on the left until it has a given length.
@@ -665,7 +665,7 @@ pad arg1 arg2 arg3 =
     padLeft 5 '.' "11"  == "...11"
     padLeft 5 '.' "121" == "..121"
 -}
-padLeft : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+padLeft : Int -> Char.Char -> String -> Elm.Expression
 padLeft arg1 arg2 arg3 =
     Elm.apply
         (Elm.value
@@ -679,7 +679,7 @@ padLeft arg1 arg2 arg3 =
                     )
             }
         )
-        [ arg1, arg2, arg3 ]
+        [ Elm.int arg1, Elm.char arg2, Elm.string arg3 ]
 
 
 {-| Pad a string on the right until it has a given length.
@@ -688,7 +688,7 @@ padLeft arg1 arg2 arg3 =
     padRight 5 '.' "11"  == "11..."
     padRight 5 '.' "121" == "121.."
 -}
-padRight : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+padRight : Int -> Char.Char -> String -> Elm.Expression
 padRight arg1 arg2 arg3 =
     Elm.apply
         (Elm.value
@@ -702,14 +702,14 @@ padRight arg1 arg2 arg3 =
                     )
             }
         )
-        [ arg1, arg2, arg3 ]
+        [ Elm.int arg1, Elm.char arg2, Elm.string arg3 ]
 
 
 {-| Get rid of whitespace on both sides of a string.
 
     trim "  hats  \n" == "hats"
 -}
-trim : Elm.Expression -> Elm.Expression
+trim : String -> Elm.Expression
 trim arg1 =
     Elm.apply
         (Elm.value
@@ -718,14 +718,14 @@ trim arg1 =
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
         )
-        [ arg1 ]
+        [ Elm.string arg1 ]
 
 
 {-| Get rid of whitespace on the left of a string.
 
     trimLeft "  hats  \n" == "hats  \n"
 -}
-trimLeft : Elm.Expression -> Elm.Expression
+trimLeft : String -> Elm.Expression
 trimLeft arg1 =
     Elm.apply
         (Elm.value
@@ -734,14 +734,14 @@ trimLeft arg1 =
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
         )
-        [ arg1 ]
+        [ Elm.string arg1 ]
 
 
 {-| Get rid of whitespace on the right of a string.
 
     trimRight "  hats  \n" == "  hats"
 -}
-trimRight : Elm.Expression -> Elm.Expression
+trimRight : String -> Elm.Expression
 trimRight arg1 =
     Elm.apply
         (Elm.value
@@ -750,14 +750,14 @@ trimRight arg1 =
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
         )
-        [ arg1 ]
+        [ Elm.string arg1 ]
 
 
 {-| Transform every character in a string
 
     map (\c -> if c == '/' then '.' else c) "a/b/c" == "a.b.c"
 -}
-map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
+map : (Elm.Expression -> Elm.Expression) -> String -> Elm.Expression
 map arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -771,14 +771,14 @@ map arg1 arg2 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, arg2 ]
+        [ Elm.functionReduced "unpack" arg1, Elm.string arg2 ]
 
 
 {-| Keep only the characters that pass the test.
 
     filter isDigit "R2-D2" == "22"
 -}
-filter : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
+filter : (Elm.Expression -> Elm.Expression) -> String -> Elm.Expression
 filter arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -792,7 +792,7 @@ filter arg1 arg2 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, arg2 ]
+        [ Elm.functionReduced "unpack" arg1, Elm.string arg2 ]
 
 
 {-| Reduce a string from the left.
@@ -802,7 +802,7 @@ filter arg1 arg2 =
 foldl :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
-    -> Elm.Expression
+    -> String
     -> Elm.Expression
 foldl arg1 arg2 arg3 =
     Elm.apply
@@ -826,7 +826,7 @@ foldl arg1 arg2 arg3 =
             "unpack"
             (\unpack -> Elm.functionReduced "unpack" (arg1 unpack))
         , arg2
-        , arg3
+        , Elm.string arg3
         ]
 
 
@@ -837,7 +837,7 @@ foldl arg1 arg2 arg3 =
 foldr :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
-    -> Elm.Expression
+    -> String
     -> Elm.Expression
 foldr arg1 arg2 arg3 =
     Elm.apply
@@ -861,7 +861,7 @@ foldr arg1 arg2 arg3 =
             "unpack"
             (\unpack -> Elm.functionReduced "unpack" (arg1 unpack))
         , arg2
-        , arg3
+        , Elm.string arg3
         ]
 
 
@@ -871,7 +871,7 @@ foldr arg1 arg2 arg3 =
     any isDigit "R2-D2" == True
     any isDigit "heart" == False
 -}
-any : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
+any : (Elm.Expression -> Elm.Expression) -> String -> Elm.Expression
 any arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -885,7 +885,7 @@ any arg1 arg2 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, arg2 ]
+        [ Elm.functionReduced "unpack" arg1, Elm.string arg2 ]
 
 
 {-| Determine whether *all* characters pass the test.
@@ -894,7 +894,7 @@ any arg1 arg2 =
     all isDigit "R2-D2" == False
     all isDigit "heart" == False
 -}
-all : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
+all : (Elm.Expression -> Elm.Expression) -> String -> Elm.Expression
 all arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -908,7 +908,7 @@ all arg1 arg2 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, arg2 ]
+        [ Elm.functionReduced "unpack" arg1, Elm.string arg2 ]
 
 
 annotation_ : { string : Type.Annotation }

@@ -378,8 +378,7 @@ otherwise arg1 =
 
 
 {-| -}
-branch0 :
-    List Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+branch0 : List String -> String -> Elm.Expression -> Elm.Expression
 branch0 arg1 arg2 arg3 =
     Elm.apply
         (Elm.value
@@ -396,13 +395,13 @@ branch0 arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.list arg1, arg2, arg3 ]
+        [ Elm.list (List.map Elm.string arg1), Elm.string arg2, arg3 ]
 
 
 {-| -}
 branch1 :
-    List Elm.Expression
-    -> Elm.Expression
+    List String
+    -> String
     -> (Elm.Expression -> Elm.Expression)
     -> Elm.Expression
 branch1 arg1 arg2 arg3 =
@@ -423,13 +422,16 @@ branch1 arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.list arg1, arg2, Elm.functionReduced "unpack" arg3 ]
+        [ Elm.list (List.map Elm.string arg1)
+        , Elm.string arg2
+        , Elm.functionReduced "unpack" arg3
+        ]
 
 
 {-| -}
 branch2 :
-    List Elm.Expression
-    -> Elm.Expression
+    List String
+    -> String
     -> (Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
 branch2 arg1 arg2 arg3 =
@@ -452,8 +454,8 @@ branch2 arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.list arg1
-        , arg2
+        [ Elm.list (List.map Elm.string arg1)
+        , Elm.string arg2
         , Elm.functionReduced
             "unpack"
             (\unpack -> Elm.functionReduced "unpack" (arg3 unpack))
@@ -462,8 +464,8 @@ branch2 arg1 arg2 arg3 =
 
 {-| -}
 branch3 :
-    List Elm.Expression
-    -> Elm.Expression
+    List String
+    -> String
     -> (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
 branch3 arg1 arg2 arg3 =
@@ -487,8 +489,8 @@ branch3 arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.list arg1
-        , arg2
+        [ Elm.list (List.map Elm.string arg1)
+        , Elm.string arg2
         , Elm.functionReduced
             "unpack"
             (\unpack ->
@@ -503,8 +505,8 @@ branch3 arg1 arg2 arg3 =
 
 {-| -}
 branch4 :
-    List Elm.Expression
-    -> Elm.Expression
+    List String
+    -> String
     -> (Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
@@ -533,8 +535,8 @@ branch4 arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.list arg1
-        , arg2
+        [ Elm.list (List.map Elm.string arg1)
+        , Elm.string arg2
         , Elm.functionReduced
             "unpack"
             (\unpack ->
@@ -555,8 +557,8 @@ branch4 arg1 arg2 arg3 =
 
 {-| -}
 branch5 :
-    List Elm.Expression
-    -> Elm.Expression
+    List String
+    -> String
     -> (Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
@@ -587,8 +589,8 @@ branch5 arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.list arg1
-        , arg2
+        [ Elm.list (List.map Elm.string arg1)
+        , Elm.string arg2
         , Elm.functionReduced
             "unpack"
             (\unpack ->
@@ -616,8 +618,8 @@ branch5 arg1 arg2 arg3 =
 
 {-| -}
 branch6 :
-    List Elm.Expression
-    -> Elm.Expression
+    List String
+    -> String
     -> (Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
@@ -650,8 +652,8 @@ branch6 arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.list arg1
-        , arg2
+        [ Elm.list (List.map Elm.string arg1)
+        , Elm.string arg2
         , Elm.functionReduced
             "unpack"
             (\unpack ->
@@ -684,9 +686,9 @@ branch6 arg1 arg2 arg3 =
 
 {-| -}
 branchWith :
-    List Elm.Expression
-    -> Elm.Expression
-    -> Elm.Expression
+    List String
+    -> String
+    -> Int
     -> (Elm.Expression -> Elm.Expression)
     -> Elm.Expression
 branchWith arg1 arg2 arg3 arg4 =
@@ -710,12 +712,15 @@ branchWith arg1 arg2 arg3 arg4 =
                     )
             }
         )
-        [ Elm.list arg1, arg2, arg3, Elm.functionReduced "unpack" arg4 ]
+        [ Elm.list (List.map Elm.string arg1)
+        , Elm.string arg2
+        , Elm.int arg3
+        , Elm.functionReduced "unpack" arg4
+        ]
 
 
 {-| -}
-listBranch :
-    Elm.Expression -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
+listBranch : Int -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
 listBranch arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -735,7 +740,7 @@ listBranch arg1 arg2 =
                     )
             }
         )
-        [ arg1, Elm.functionReduced "unpack" arg2 ]
+        [ Elm.int arg1, Elm.functionReduced "unpack" arg2 ]
 
 
 annotation_ : { branch : Type.Annotation }

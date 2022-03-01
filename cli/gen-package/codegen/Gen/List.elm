@@ -37,7 +37,7 @@ singleton arg1 =
 
     repeat 3 (0,0) == [(0,0),(0,0),(0,0)]
 -}
-repeat : Elm.Expression -> Elm.Expression -> Elm.Expression
+repeat : Int -> Elm.Expression -> Elm.Expression
 repeat arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -51,7 +51,7 @@ repeat arg1 arg2 =
                     )
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.int arg1, arg2 ]
 
 
 {-| Create a list of numbers, every element increasing by one.
@@ -61,7 +61,7 @@ You give the lowest and highest number that should be in the list.
     range 3 3 == [3]
     range 6 3 == []
 -}
-range : Elm.Expression -> Elm.Expression -> Elm.Expression
+range : Int -> Int -> Elm.Expression
 range arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -71,7 +71,7 @@ range arg1 arg2 =
                 Just (Type.function [ Type.int, Type.int ] (Type.list Type.int))
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.int arg1, Elm.int arg2 ]
 
 
 {-| Apply a function to every element of a list.
@@ -957,7 +957,7 @@ tail arg1 =
 
     take 2 [1,2,3,4] == [1,2]
 -}
-take : Elm.Expression -> List Elm.Expression -> Elm.Expression
+take : Int -> List Elm.Expression -> Elm.Expression
 take arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -971,14 +971,14 @@ take arg1 arg2 =
                     )
             }
         )
-        [ arg1, Elm.list arg2 ]
+        [ Elm.int arg1, Elm.list arg2 ]
 
 
 {-| Drop the first *n* members of a list.
 
     drop 2 [1,2,3,4] == [3,4]
 -}
-drop : Elm.Expression -> List Elm.Expression -> Elm.Expression
+drop : Int -> List Elm.Expression -> Elm.Expression
 drop arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -992,7 +992,7 @@ drop arg1 arg2 =
                     )
             }
         )
-        [ arg1, Elm.list arg2 ]
+        [ Elm.int arg1, Elm.list arg2 ]
 
 
 {-| Partition a list based on some test. The first list contains all values

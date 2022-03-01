@@ -27,7 +27,7 @@ moduleName_ =
     isUpper '-' == False
     isUpper 'Σ' == False
 -}
-isUpper : Elm.Expression -> Elm.Expression
+isUpper : Char.Char -> Elm.Expression
 isUpper arg1 =
     Elm.apply
         (Elm.value
@@ -36,7 +36,7 @@ isUpper arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.bool)
             }
         )
-        [ arg1 ]
+        [ Elm.char arg1 ]
 
 
 {-| Detect lower case ASCII characters.
@@ -51,7 +51,7 @@ isUpper arg1 =
     isLower '-' == False
     isLower 'π' == False
 -}
-isLower : Elm.Expression -> Elm.Expression
+isLower : Char.Char -> Elm.Expression
 isLower arg1 =
     Elm.apply
         (Elm.value
@@ -60,7 +60,7 @@ isLower arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.bool)
             }
         )
-        [ arg1 ]
+        [ Elm.char arg1 ]
 
 
 {-| Detect upper case and lower case ASCII characters.
@@ -74,7 +74,7 @@ isLower arg1 =
     isAlpha '-' == False
     isAlpha 'π' == False
 -}
-isAlpha : Elm.Expression -> Elm.Expression
+isAlpha : Char.Char -> Elm.Expression
 isAlpha arg1 =
     Elm.apply
         (Elm.value
@@ -83,7 +83,7 @@ isAlpha arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.bool)
             }
         )
-        [ arg1 ]
+        [ Elm.char arg1 ]
 
 
 {-| Detect upper case and lower case ASCII characters.
@@ -98,7 +98,7 @@ isAlpha arg1 =
     isAlphaNum '-' == False
     isAlphaNum 'π' == False
 -}
-isAlphaNum : Elm.Expression -> Elm.Expression
+isAlphaNum : Char.Char -> Elm.Expression
 isAlphaNum arg1 =
     Elm.apply
         (Elm.value
@@ -107,7 +107,7 @@ isAlphaNum arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.bool)
             }
         )
-        [ arg1 ]
+        [ Elm.char arg1 ]
 
 
 {-| Detect digits `0123456789`
@@ -121,7 +121,7 @@ isAlphaNum arg1 =
     isDigit 'b' == False
     isDigit 'A' == False
 -}
-isDigit : Elm.Expression -> Elm.Expression
+isDigit : Char.Char -> Elm.Expression
 isDigit arg1 =
     Elm.apply
         (Elm.value
@@ -130,7 +130,7 @@ isDigit arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.bool)
             }
         )
-        [ arg1 ]
+        [ Elm.char arg1 ]
 
 
 {-| Detect octal digits `01234567`
@@ -144,7 +144,7 @@ isDigit arg1 =
     isOctDigit 'a' == False
     isOctDigit 'A' == False
 -}
-isOctDigit : Elm.Expression -> Elm.Expression
+isOctDigit : Char.Char -> Elm.Expression
 isOctDigit arg1 =
     Elm.apply
         (Elm.value
@@ -153,12 +153,12 @@ isOctDigit arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.bool)
             }
         )
-        [ arg1 ]
+        [ Elm.char arg1 ]
 
 
 {-| Detect hexadecimal digits `0123456789abcdefABCDEF`
 -}
-isHexDigit : Elm.Expression -> Elm.Expression
+isHexDigit : Char.Char -> Elm.Expression
 isHexDigit arg1 =
     Elm.apply
         (Elm.value
@@ -167,11 +167,11 @@ isHexDigit arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.bool)
             }
         )
-        [ arg1 ]
+        [ Elm.char arg1 ]
 
 
 {-| Convert to upper case. -}
-toUpper : Elm.Expression -> Elm.Expression
+toUpper : Char.Char -> Elm.Expression
 toUpper arg1 =
     Elm.apply
         (Elm.value
@@ -180,11 +180,11 @@ toUpper arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.char)
             }
         )
-        [ arg1 ]
+        [ Elm.char arg1 ]
 
 
 {-| Convert to lower case. -}
-toLower : Elm.Expression -> Elm.Expression
+toLower : Char.Char -> Elm.Expression
 toLower arg1 =
     Elm.apply
         (Elm.value
@@ -193,11 +193,11 @@ toLower arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.char)
             }
         )
-        [ arg1 ]
+        [ Elm.char arg1 ]
 
 
 {-| Convert to upper case, according to any locale-specific case mappings. -}
-toLocaleUpper : Elm.Expression -> Elm.Expression
+toLocaleUpper : Char.Char -> Elm.Expression
 toLocaleUpper arg1 =
     Elm.apply
         (Elm.value
@@ -206,11 +206,11 @@ toLocaleUpper arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.char)
             }
         )
-        [ arg1 ]
+        [ Elm.char arg1 ]
 
 
 {-| Convert to lower case, according to any locale-specific case mappings. -}
-toLocaleLower : Elm.Expression -> Elm.Expression
+toLocaleLower : Char.Char -> Elm.Expression
 toLocaleLower arg1 =
     Elm.apply
         (Elm.value
@@ -219,7 +219,7 @@ toLocaleLower arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.char)
             }
         )
-        [ arg1 ]
+        [ Elm.char arg1 ]
 
 
 {-| Convert to the corresponding Unicode [code point][cp].
@@ -232,7 +232,7 @@ toLocaleLower arg1 =
     toCode '𝌆' == 0x1D306
     toCode '😃' == 0x1F603
 -}
-toCode : Elm.Expression -> Elm.Expression
+toCode : Char.Char -> Elm.Expression
 toCode arg1 =
     Elm.apply
         (Elm.value
@@ -241,7 +241,7 @@ toCode arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.int)
             }
         )
-        [ arg1 ]
+        [ Elm.char arg1 ]
 
 
 {-| Convert a Unicode [code point][cp] to a character.
@@ -259,7 +259,7 @@ range, you get [the replacement character][fffd].
 [cp]: https://en.wikipedia.org/wiki/Code_point
 [fffd]: https://en.wikipedia.org/wiki/Specials_(Unicode_block)#Replacement_character
 -}
-fromCode : Elm.Expression -> Elm.Expression
+fromCode : Int -> Elm.Expression
 fromCode arg1 =
     Elm.apply
         (Elm.value
@@ -268,7 +268,7 @@ fromCode arg1 =
             , annotation = Just (Type.function [ Type.int ] Type.char)
             }
         )
-        [ arg1 ]
+        [ Elm.int arg1 ]
 
 
 annotation_ : { char : Type.Annotation }

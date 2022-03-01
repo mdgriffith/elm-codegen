@@ -17,7 +17,7 @@ moduleName_ =
 
 {-| Bitwise AND
 -}
-and : Elm.Expression -> Elm.Expression -> Elm.Expression
+and : Int -> Int -> Elm.Expression
 and arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -26,12 +26,12 @@ and arg1 arg2 =
             , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.int arg1, Elm.int arg2 ]
 
 
 {-| Bitwise OR
 -}
-or : Elm.Expression -> Elm.Expression -> Elm.Expression
+or : Int -> Int -> Elm.Expression
 or arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -40,12 +40,12 @@ or arg1 arg2 =
             , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.int arg1, Elm.int arg2 ]
 
 
 {-| Bitwise XOR
 -}
-xor : Elm.Expression -> Elm.Expression -> Elm.Expression
+xor : Int -> Int -> Elm.Expression
 xor arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -54,12 +54,12 @@ xor arg1 arg2 =
             , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.int arg1, Elm.int arg2 ]
 
 
 {-| Flip each bit individually, often called bitwise NOT
 -}
-complement : Elm.Expression -> Elm.Expression
+complement : Int -> Elm.Expression
 complement arg1 =
     Elm.apply
         (Elm.value
@@ -68,7 +68,7 @@ complement arg1 =
             , annotation = Just (Type.function [ Type.int ] Type.int)
             }
         )
-        [ arg1 ]
+        [ Elm.int arg1 ]
 
 
 {-| Shift bits to the left by a given offset, filling new bits with zeros.
@@ -77,7 +77,7 @@ This can be used to multiply numbers by powers of two.
     shiftLeftBy 1 5 == 10
     shiftLeftBy 5 1 == 32
 -}
-shiftLeftBy : Elm.Expression -> Elm.Expression -> Elm.Expression
+shiftLeftBy : Int -> Int -> Elm.Expression
 shiftLeftBy arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -86,7 +86,7 @@ shiftLeftBy arg1 arg2 =
             , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.int arg1, Elm.int arg2 ]
 
 
 {-| Shift bits to the right by a given offset, filling new bits with
@@ -102,7 +102,7 @@ with copies of the highest bit.
 
 [ars]: https://en.wikipedia.org/wiki/Bitwise_operation#Arithmetic_shift
 -}
-shiftRightBy : Elm.Expression -> Elm.Expression -> Elm.Expression
+shiftRightBy : Int -> Int -> Elm.Expression
 shiftRightBy arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -111,7 +111,7 @@ shiftRightBy arg1 arg2 =
             , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.int arg1, Elm.int arg2 ]
 
 
 {-| Shift bits to the right by a given offset, filling new bits with zeros.
@@ -126,7 +126,7 @@ zeros.
 
 [lrs]: https://en.wikipedia.org/wiki/Bitwise_operation#Logical_shift
 -}
-shiftRightZfBy : Elm.Expression -> Elm.Expression -> Elm.Expression
+shiftRightZfBy : Int -> Int -> Elm.Expression
 shiftRightZfBy arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -135,7 +135,7 @@ shiftRightZfBy arg1 arg2 =
             , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.int arg1, Elm.int arg2 ]
 
 
 call_ :

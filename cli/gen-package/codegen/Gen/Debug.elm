@@ -62,7 +62,7 @@ use ports for now. That will give you full access to reading and writing in the
 terminal. We may have a package in Elm for this someday, but browser
 applications are the primary focus of platform development for now.
 -}
-log : Elm.Expression -> Elm.Expression -> Elm.Expression
+log : String -> Elm.Expression -> Elm.Expression
 log arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -73,7 +73,7 @@ log arg1 arg2 =
                     (Type.function [ Type.string, Type.var "a" ] (Type.var "a"))
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.string arg1, arg2 ]
 
 
 {-| This is a placeholder for code that you will write later.
@@ -106,7 +106,7 @@ exceptions should not appear in the resulting applications.
 like [`Maybe`](#Maybe) and [`Result`](#Result) which guarantee that no error
 goes unhandled!
 -}
-todo : Elm.Expression -> Elm.Expression
+todo : String -> Elm.Expression
 todo arg1 =
     Elm.apply
         (Elm.value
@@ -115,7 +115,7 @@ todo arg1 =
             , annotation = Just (Type.function [ Type.string ] (Type.var "a"))
             }
         )
-        [ arg1 ]
+        [ Elm.string arg1 ]
 
 
 call_ :

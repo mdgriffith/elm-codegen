@@ -24,7 +24,7 @@ values like this:
       toFloat number / 2
 
 -}
-toFloat : Elm.Expression -> Elm.Expression
+toFloat : Int -> Elm.Expression
 toFloat arg1 =
     Elm.apply
         (Elm.value
@@ -33,7 +33,7 @@ toFloat arg1 =
             , annotation = Just (Type.function [ Type.int ] Type.float)
             }
         )
-        [ arg1 ]
+        [ Elm.int arg1 ]
 
 
 {-| Round a number to the nearest integer.
@@ -47,7 +47,7 @@ toFloat arg1 =
     round -1.5 == -1
     round -1.8 == -2
 -}
-round : Elm.Expression -> Elm.Expression
+round : Float -> Elm.Expression
 round arg1 =
     Elm.apply
         (Elm.value
@@ -56,7 +56,7 @@ round arg1 =
             , annotation = Just (Type.function [ Type.float ] Type.int)
             }
         )
-        [ arg1 ]
+        [ Elm.float arg1 ]
 
 
 {-| Floor function, rounding down.
@@ -70,7 +70,7 @@ round arg1 =
     floor -1.5 == -2
     floor -1.8 == -2
 -}
-floor : Elm.Expression -> Elm.Expression
+floor : Float -> Elm.Expression
 floor arg1 =
     Elm.apply
         (Elm.value
@@ -79,7 +79,7 @@ floor arg1 =
             , annotation = Just (Type.function [ Type.float ] Type.int)
             }
         )
-        [ arg1 ]
+        [ Elm.float arg1 ]
 
 
 {-| Ceiling function, rounding up.
@@ -93,7 +93,7 @@ floor arg1 =
     ceiling -1.5 == -1
     ceiling -1.8 == -1
 -}
-ceiling : Elm.Expression -> Elm.Expression
+ceiling : Float -> Elm.Expression
 ceiling arg1 =
     Elm.apply
         (Elm.value
@@ -102,7 +102,7 @@ ceiling arg1 =
             , annotation = Just (Type.function [ Type.float ] Type.int)
             }
         )
-        [ arg1 ]
+        [ Elm.float arg1 ]
 
 
 {-| Truncate a number, rounding towards zero.
@@ -116,7 +116,7 @@ ceiling arg1 =
     truncate -1.5 == -1
     truncate -1.8 == -1
 -}
-truncate : Elm.Expression -> Elm.Expression
+truncate : Float -> Elm.Expression
 truncate arg1 =
     Elm.apply
         (Elm.value
@@ -125,7 +125,7 @@ truncate arg1 =
             , annotation = Just (Type.function [ Type.float ] Type.int)
             }
         )
-        [ arg1 ]
+        [ Elm.float arg1 ]
 
 
 {-| Find the larger of two comparables.
@@ -202,7 +202,7 @@ compare arg1 arg2 =
     not True == False
     not False == True
 -}
-not : Elm.Expression -> Elm.Expression
+not : Bool -> Elm.Expression
 not arg1 =
     Elm.apply
         (Elm.value
@@ -211,7 +211,7 @@ not arg1 =
             , annotation = Just (Type.function [ Type.bool ] Type.bool)
             }
         )
-        [ arg1 ]
+        [ Elm.bool arg1 ]
 
 
 {-| The exclusive-or operator. `True` if exactly one input is `True`.
@@ -221,7 +221,7 @@ not arg1 =
     xor False True  == True
     xor False False == False
 -}
-xor : Elm.Expression -> Elm.Expression -> Elm.Expression
+xor : Bool -> Bool -> Elm.Expression
 xor arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -231,7 +231,7 @@ xor arg1 arg2 =
                 Just (Type.function [ Type.bool, Type.bool ] Type.bool)
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.bool arg1, Elm.bool arg2 ]
 
 
 {-| Perform [modular arithmetic](https://en.wikipedia.org/wiki/Modular_arithmetic).
@@ -254,7 +254,7 @@ information.
 
 [dm]: https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/divmodnote-letter.pdf
 -}
-modBy : Elm.Expression -> Elm.Expression -> Elm.Expression
+modBy : Int -> Int -> Elm.Expression
 modBy arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -263,7 +263,7 @@ modBy arg1 arg2 =
             , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.int arg1, Elm.int arg2 ]
 
 
 {-| Get the remainder after division. Here are bunch of examples of dividing by four:
@@ -277,7 +277,7 @@ information.
 
 [dm]: https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/divmodnote-letter.pdf
 -}
-remainderBy : Elm.Expression -> Elm.Expression -> Elm.Expression
+remainderBy : Int -> Int -> Elm.Expression
 remainderBy arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -286,7 +286,7 @@ remainderBy arg1 arg2 =
             , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.int arg1, Elm.int arg2 ]
 
 
 {-| Negate a number.
@@ -364,7 +364,7 @@ clamp arg1 arg2 arg3 =
     sqrt 16 == 4
     sqrt 25 == 5
 -}
-sqrt : Elm.Expression -> Elm.Expression
+sqrt : Float -> Elm.Expression
 sqrt arg1 =
     Elm.apply
         (Elm.value
@@ -373,7 +373,7 @@ sqrt arg1 =
             , annotation = Just (Type.function [ Type.float ] Type.float)
             }
         )
-        [ arg1 ]
+        [ Elm.float arg1 ]
 
 
 {-| Calculate the logarithm of a number with a given base.
@@ -381,7 +381,7 @@ sqrt arg1 =
     logBase 10 100 == 2
     logBase 2 256 == 8
 -}
-logBase : Elm.Expression -> Elm.Expression -> Elm.Expression
+logBase : Float -> Float -> Elm.Expression
 logBase arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -391,7 +391,7 @@ logBase arg1 arg2 =
                 Just (Type.function [ Type.float, Type.float ] Type.float)
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.float arg1, Elm.float arg2 ]
 
 
 {-| An approximation of e.
@@ -406,7 +406,7 @@ e =
 
     degrees 180 == 3.141592653589793
 -}
-degrees : Elm.Expression -> Elm.Expression
+degrees : Float -> Elm.Expression
 degrees arg1 =
     Elm.apply
         (Elm.value
@@ -415,14 +415,14 @@ degrees arg1 =
             , annotation = Just (Type.function [ Type.float ] Type.float)
             }
         )
-        [ arg1 ]
+        [ Elm.float arg1 ]
 
 
 {-| Convert radians to standard Elm angles (radians).
 
     radians pi == 3.141592653589793
 -}
-radians : Elm.Expression -> Elm.Expression
+radians : Float -> Elm.Expression
 radians arg1 =
     Elm.apply
         (Elm.value
@@ -431,14 +431,14 @@ radians arg1 =
             , annotation = Just (Type.function [ Type.float ] Type.float)
             }
         )
-        [ arg1 ]
+        [ Elm.float arg1 ]
 
 
 {-| Convert turns to standard Elm angles (radians). One turn is equal to 360°.
 
     turns (1/2) == 3.141592653589793
 -}
-turns : Elm.Expression -> Elm.Expression
+turns : Float -> Elm.Expression
 turns arg1 =
     Elm.apply
         (Elm.value
@@ -447,7 +447,7 @@ turns arg1 =
             , annotation = Just (Type.function [ Type.float ] Type.float)
             }
         )
-        [ arg1 ]
+        [ Elm.float arg1 ]
 
 
 {-| An approximation of pi.
@@ -466,7 +466,7 @@ pi =
     cos (pi/3)           == 0.5000000000000001
 
 -}
-cos : Elm.Expression -> Elm.Expression
+cos : Float -> Elm.Expression
 cos arg1 =
     Elm.apply
         (Elm.value
@@ -475,7 +475,7 @@ cos arg1 =
             , annotation = Just (Type.function [ Type.float ] Type.float)
             }
         )
-        [ arg1 ]
+        [ Elm.float arg1 ]
 
 
 {-| Figure out the sine given an angle in radians.
@@ -486,7 +486,7 @@ cos arg1 =
     sin (pi/6)           == 0.49999999999999994
 
 -}
-sin : Elm.Expression -> Elm.Expression
+sin : Float -> Elm.Expression
 sin arg1 =
     Elm.apply
         (Elm.value
@@ -495,7 +495,7 @@ sin arg1 =
             , annotation = Just (Type.function [ Type.float ] Type.float)
             }
         )
-        [ arg1 ]
+        [ Elm.float arg1 ]
 
 
 {-| Figure out the tangent given an angle in radians.
@@ -505,7 +505,7 @@ sin arg1 =
     tan (radians (pi/4)) == 0.9999999999999999
     tan (pi/4)           == 0.9999999999999999
 -}
-tan : Elm.Expression -> Elm.Expression
+tan : Float -> Elm.Expression
 tan arg1 =
     Elm.apply
         (Elm.value
@@ -514,7 +514,7 @@ tan arg1 =
             , annotation = Just (Type.function [ Type.float ] Type.float)
             }
         )
-        [ arg1 ]
+        [ Elm.float arg1 ]
 
 
 {-| Figure out the arccosine for `adjacent / hypotenuse` in radians:
@@ -522,7 +522,7 @@ tan arg1 =
     acos (1/2) == 1.0471975511965979 -- 60° or pi/3 radians
 
 -}
-acos : Elm.Expression -> Elm.Expression
+acos : Float -> Elm.Expression
 acos arg1 =
     Elm.apply
         (Elm.value
@@ -531,7 +531,7 @@ acos arg1 =
             , annotation = Just (Type.function [ Type.float ] Type.float)
             }
         )
-        [ arg1 ]
+        [ Elm.float arg1 ]
 
 
 {-| Figure out the arcsine for `opposite / hypotenuse` in radians:
@@ -539,7 +539,7 @@ acos arg1 =
     asin (1/2) == 0.5235987755982989 -- 30° or pi/6 radians
 
 -}
-asin : Elm.Expression -> Elm.Expression
+asin : Float -> Elm.Expression
 asin arg1 =
     Elm.apply
         (Elm.value
@@ -548,7 +548,7 @@ asin arg1 =
             , annotation = Just (Type.function [ Type.float ] Type.float)
             }
         )
-        [ arg1 ]
+        [ Elm.float arg1 ]
 
 
 {-| This helps you find the angle (in radians) to an `(x,y)` coordinate, but
@@ -569,7 +569,7 @@ Notice that everything is between `pi/2` and `-pi/2`. That is pretty useless
 for figuring out angles in any sort of visualization, so again, check out
 [`atan2`](#atan2) instead!
 -}
-atan : Elm.Expression -> Elm.Expression
+atan : Float -> Elm.Expression
 atan arg1 =
     Elm.apply
         (Elm.value
@@ -578,7 +578,7 @@ atan arg1 =
             , annotation = Just (Type.function [ Type.float ] Type.float)
             }
         )
-        [ arg1 ]
+        [ Elm.float arg1 ]
 
 
 {-| This helps you find the angle (in radians) to an `(x,y)` coordinate.
@@ -591,7 +591,7 @@ range of angles:
     atan2 -1  1 == -0.7853981633974483 -- 315° or 7*pi/4 radians
 
 -}
-atan2 : Elm.Expression -> Elm.Expression -> Elm.Expression
+atan2 : Float -> Float -> Elm.Expression
 atan2 arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -601,7 +601,7 @@ atan2 arg1 arg2 =
                 Just (Type.function [ Type.float, Type.float ] Type.float)
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.float arg1, Elm.float arg2 ]
 
 
 {-| Convert Cartesian coordinates (x,y) to polar coordinates (r,&theta;).
@@ -656,7 +656,7 @@ numbers](https://en.wikipedia.org/wiki/NaN).
     isNaN (1/0)     == False  -- infinity is a number
     isNaN 1         == False
 -}
-isNaN : Elm.Expression -> Elm.Expression
+isNaN : Float -> Elm.Expression
 isNaN arg1 =
     Elm.apply
         (Elm.value
@@ -665,7 +665,7 @@ isNaN arg1 =
             , annotation = Just (Type.function [ Type.float ] Type.bool)
             }
         )
-        [ arg1 ]
+        [ Elm.float arg1 ]
 
 
 {-| Determine whether a float is positive or negative infinity.
@@ -678,7 +678,7 @@ isNaN arg1 =
 Notice that NaN is not infinite! For float `n` to be finite implies that
 `not (isInfinite n || isNaN n)` evaluates to `True`.
 -}
-isInfinite : Elm.Expression -> Elm.Expression
+isInfinite : Float -> Elm.Expression
 isInfinite arg1 =
     Elm.apply
         (Elm.value
@@ -687,7 +687,7 @@ isInfinite arg1 =
             , annotation = Just (Type.function [ Type.float ] Type.bool)
             }
         )
-        [ arg1 ]
+        [ Elm.float arg1 ]
 
 
 {-| Given a value, returns exactly the same value. This is called

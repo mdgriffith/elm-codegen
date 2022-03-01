@@ -23,7 +23,7 @@ moduleName_ =
         ]
 
 -}
-file : List Elm.Expression -> List Elm.Expression -> Elm.Expression
+file : List String -> List Elm.Expression -> Elm.Expression
 file arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -39,11 +39,11 @@ file arg1 arg2 =
                     )
             }
         )
-        [ Elm.list arg1, Elm.list arg2 ]
+        [ Elm.list (List.map Elm.string arg1), Elm.list arg2 ]
 
 
 {-| -}
-bool : Elm.Expression -> Elm.Expression
+bool : Bool -> Elm.Expression
 bool arg1 =
     Elm.apply
         (Elm.value
@@ -57,11 +57,11 @@ bool arg1 =
                     )
             }
         )
-        [ arg1 ]
+        [ Elm.bool arg1 ]
 
 
 {-| -}
-int : Elm.Expression -> Elm.Expression
+int : Int -> Elm.Expression
 int arg1 =
     Elm.apply
         (Elm.value
@@ -75,11 +75,11 @@ int arg1 =
                     )
             }
         )
-        [ arg1 ]
+        [ Elm.int arg1 ]
 
 
 {-| -}
-float : Elm.Expression -> Elm.Expression
+float : Float -> Elm.Expression
 float arg1 =
     Elm.apply
         (Elm.value
@@ -93,11 +93,11 @@ float arg1 =
                     )
             }
         )
-        [ arg1 ]
+        [ Elm.float arg1 ]
 
 
 {-| -}
-char : Elm.Expression -> Elm.Expression
+char : Char.Char -> Elm.Expression
 char arg1 =
     Elm.apply
         (Elm.value
@@ -111,11 +111,11 @@ char arg1 =
                     )
             }
         )
-        [ arg1 ]
+        [ Elm.char arg1 ]
 
 
 {-| -}
-string : Elm.Expression -> Elm.Expression
+string : String -> Elm.Expression
 string arg1 =
     Elm.apply
         (Elm.value
@@ -129,11 +129,11 @@ string arg1 =
                     )
             }
         )
-        [ arg1 ]
+        [ Elm.string arg1 ]
 
 
 {-| -}
-hex : Elm.Expression -> Elm.Expression
+hex : Int -> Elm.Expression
 hex arg1 =
     Elm.apply
         (Elm.value
@@ -147,7 +147,7 @@ hex arg1 =
                     )
             }
         )
-        [ arg1 ]
+        [ Elm.int arg1 ]
 
 
 {-| -}
@@ -321,7 +321,7 @@ record arg1 =
 
 
 {-| -}
-field : Elm.Expression -> Elm.Expression -> Elm.Expression
+field : String -> Elm.Expression -> Elm.Expression
 field arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -337,7 +337,7 @@ field arg1 arg2 =
                     )
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.string arg1, arg2 ]
 
 
 {-|
@@ -350,7 +350,7 @@ results in
     record.field
 
 -}
-get : Elm.Expression -> Elm.Expression -> Elm.Expression
+get : String -> Elm.Expression -> Elm.Expression
 get arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -366,7 +366,7 @@ get arg1 arg2 =
                     )
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.string arg1, arg2 ]
 
 
 {-| -}
@@ -460,7 +460,7 @@ ifThen arg1 arg2 arg3 =
 
 
 {-| -}
-comment : Elm.Expression -> Elm.Expression
+comment : String -> Elm.Expression
 comment arg1 =
     Elm.apply
         (Elm.value
@@ -474,11 +474,11 @@ comment arg1 =
                     )
             }
         )
-        [ arg1 ]
+        [ Elm.string arg1 ]
 
 
 {-| -}
-declaration : Elm.Expression -> Elm.Expression -> Elm.Expression
+declaration : String -> Elm.Expression -> Elm.Expression
 declaration arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -494,12 +494,12 @@ declaration arg1 arg2 =
                     )
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.string arg1, arg2 ]
 
 
 {-| Add a documentation comment to a declaration!
 -}
-withDocumentation : Elm.Expression -> Elm.Expression -> Elm.Expression
+withDocumentation : String -> Elm.Expression -> Elm.Expression
 withDocumentation arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -515,7 +515,7 @@ withDocumentation arg1 arg2 =
                     )
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.string arg1, arg2 ]
 
 
 {-| By default, everything is exposed for your module.
@@ -546,7 +546,7 @@ For precise control over what is rendered for the module comment, use [fileWith]
 
 -}
 exposeWith :
-    { exposeConstructor : Elm.Expression, group : Elm.Expression }
+    { exposeConstructor : Bool, group : Elm.Expression }
     -> Elm.Expression
     -> Elm.Expression
 exposeWith arg1 arg2 =
@@ -568,7 +568,7 @@ exposeWith arg1 arg2 =
             }
         )
         [ Elm.record
-            [ Elm.field "exposeConstructor" arg1.exposeConstructor
+            [ Elm.field "exposeConstructor" (Elm.bool arg1.exposeConstructor)
             , Elm.field "group" arg1.group
             ]
         , arg2
@@ -595,7 +595,7 @@ All values rendered in this file that are from this module would also automatica
 
 -}
 fileWith :
-    List Elm.Expression
+    List String
     -> { docs : Elm.Expression -> Elm.Expression
     , aliases : List Elm.Expression
     }
@@ -640,7 +640,7 @@ fileWith arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.list arg1
+        [ Elm.list (List.map Elm.string arg1)
         , Elm.record
             [ Elm.field "docs" (Elm.functionReduced "unpack" arg2.docs)
             , Elm.field "aliases" (Elm.list arg2.aliases)
@@ -662,8 +662,7 @@ If a `group` has been given, it will be rendered as a second level header.
 ```
 
 -}
-docs :
-    { group : Elm.Expression, members : List Elm.Expression } -> Elm.Expression
+docs : { group : Elm.Expression, members : List String } -> Elm.Expression
 docs arg1 =
     Elm.apply
         (Elm.value
@@ -683,7 +682,7 @@ docs arg1 =
         )
         [ Elm.record
             [ Elm.field "group" arg1.group
-            , Elm.field "members" (Elm.list arg1.members)
+            , Elm.field "members" (Elm.list (List.map Elm.string arg1.members))
             ]
         ]
 
@@ -746,7 +745,7 @@ In this case you can use [`withType`](#withType) to manually attach a type to a 
         )
 
 -}
-fn : Elm.Expression -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
+fn : String -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
 fn arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -764,13 +763,13 @@ fn arg1 arg2 =
                     )
             }
         )
-        [ arg1, Elm.functionReduced "unpack" arg2 ]
+        [ Elm.string arg1, Elm.functionReduced "unpack" arg2 ]
 
 
 {-| -}
 fn2 :
-    Elm.Expression
-    -> Elm.Expression
+    String
+    -> String
     -> (Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
 fn2 arg1 arg2 arg3 =
@@ -793,8 +792,8 @@ fn2 arg1 arg2 arg3 =
                     )
             }
         )
-        [ arg1
-        , arg2
+        [ Elm.string arg1
+        , Elm.string arg2
         , Elm.functionReduced
             "unpack"
             (\unpack -> Elm.functionReduced "unpack" (arg3 unpack))
@@ -803,9 +802,9 @@ fn2 arg1 arg2 arg3 =
 
 {-| -}
 fn3 :
-    Elm.Expression
-    -> Elm.Expression
-    -> Elm.Expression
+    String
+    -> String
+    -> String
     -> (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
 fn3 arg1 arg2 arg3 arg4 =
@@ -830,9 +829,9 @@ fn3 arg1 arg2 arg3 arg4 =
                     )
             }
         )
-        [ arg1
-        , arg2
-        , arg3
+        [ Elm.string arg1
+        , Elm.string arg2
+        , Elm.string arg3
         , Elm.functionReduced
             "unpack"
             (\unpack ->
@@ -847,10 +846,10 @@ fn3 arg1 arg2 arg3 arg4 =
 
 {-| -}
 fn4 :
-    Elm.Expression
-    -> Elm.Expression
-    -> Elm.Expression
-    -> Elm.Expression
+    String
+    -> String
+    -> String
+    -> String
     -> (Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
@@ -881,10 +880,10 @@ fn4 arg1 arg2 arg3 arg4 arg5 =
                     )
             }
         )
-        [ arg1
-        , arg2
-        , arg3
-        , arg4
+        [ Elm.string arg1
+        , Elm.string arg2
+        , Elm.string arg3
+        , Elm.string arg4
         , Elm.functionReduced
             "unpack"
             (\unpack ->
@@ -905,11 +904,11 @@ fn4 arg1 arg2 arg3 arg4 arg5 =
 
 {-| -}
 fn5 :
-    Elm.Expression
-    -> Elm.Expression
-    -> Elm.Expression
-    -> Elm.Expression
-    -> Elm.Expression
+    String
+    -> String
+    -> String
+    -> String
+    -> String
     -> (Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
@@ -943,11 +942,11 @@ fn5 arg1 arg2 arg3 arg4 arg5 arg6 =
                     )
             }
         )
-        [ arg1
-        , arg2
-        , arg3
-        , arg4
-        , arg5
+        [ Elm.string arg1
+        , Elm.string arg2
+        , Elm.string arg3
+        , Elm.string arg4
+        , Elm.string arg5
         , Elm.functionReduced
             "unpack"
             (\unpack ->
@@ -975,12 +974,12 @@ fn5 arg1 arg2 arg3 arg4 arg5 arg6 =
 
 {-| -}
 fn6 :
-    Elm.Expression
-    -> Elm.Expression
-    -> Elm.Expression
-    -> Elm.Expression
-    -> Elm.Expression
-    -> Elm.Expression
+    String
+    -> String
+    -> String
+    -> String
+    -> String
+    -> String
     -> (Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
@@ -1017,12 +1016,12 @@ fn6 arg1 arg2 arg3 arg4 arg5 arg6 arg7 =
                     )
             }
         )
-        [ arg1
-        , arg2
-        , arg3
-        , arg4
-        , arg5
-        , arg6
+        [ Elm.string arg1
+        , Elm.string arg2
+        , Elm.string arg3
+        , Elm.string arg4
+        , Elm.string arg5
+        , Elm.string arg6
         , Elm.functionReduced
             "unpack"
             (\unpack ->
@@ -1110,8 +1109,7 @@ Then it will replace itself with just
 **Note** you likely won't need this! It's generally used by the package-helper generator, but that might be a relatively special case.
 
 -}
-functionReduced :
-    Elm.Expression -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
+functionReduced : String -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
 functionReduced arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -1129,7 +1127,7 @@ functionReduced arg1 arg2 =
                     )
             }
         )
-        [ arg1, Elm.functionReduced "unpack" arg2 ]
+        [ Elm.string arg1, Elm.functionReduced "unpack" arg2 ]
 
 
 {-| A custom type declaration.
@@ -1147,7 +1145,7 @@ Will result in
         | Two (List String)
 
 -}
-customType : Elm.Expression -> List Elm.Expression -> Elm.Expression
+customType : String -> List Elm.Expression -> Elm.Expression
 customType arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -1163,11 +1161,11 @@ customType arg1 arg2 =
                     )
             }
         )
-        [ arg1, Elm.list arg2 ]
+        [ Elm.string arg1, Elm.list arg2 ]
 
 
 {-| -}
-variant : Elm.Expression -> Elm.Expression
+variant : String -> Elm.Expression
 variant arg1 =
     Elm.apply
         (Elm.value
@@ -1181,11 +1179,11 @@ variant arg1 =
                     )
             }
         )
-        [ arg1 ]
+        [ Elm.string arg1 ]
 
 
 {-| -}
-variantWith : Elm.Expression -> List Elm.Expression -> Elm.Expression
+variantWith : String -> List Elm.Expression -> Elm.Expression
 variantWith arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -1206,7 +1204,7 @@ variantWith arg1 arg2 =
                     )
             }
         )
-        [ arg1, Elm.list arg2 ]
+        [ Elm.string arg1, Elm.list arg2 ]
 
 
 {-| A custom type declaration.
@@ -1230,7 +1228,7 @@ Should result in
         }
 
 -}
-alias : Elm.Expression -> Elm.Expression -> Elm.Expression
+alias : String -> Elm.Expression -> Elm.Expression
 alias arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -1246,7 +1244,7 @@ alias arg1 arg2 =
                     )
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.string arg1, arg2 ]
 
 
 {-| `==`
@@ -1696,7 +1694,7 @@ This will give you more flexibility in the future and save you having to wire up
 **Another note** - You may need to expose your port explicitly using `Elm.expose`
 
 -}
-portIncoming : Elm.Expression -> List Elm.Expression -> Elm.Expression
+portIncoming : String -> List Elm.Expression -> Elm.Expression
 portIncoming arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -1717,7 +1715,7 @@ portIncoming arg1 arg2 =
                     )
             }
         )
-        [ arg1, Elm.list arg2 ]
+        [ Elm.string arg1, Elm.list arg2 ]
 
 
 {-| Create a port that can send messages to the outside world!
@@ -1731,7 +1729,7 @@ will generate
     port tellTheWorld : String -> Cmd msg
 
 -}
-portOutgoing : Elm.Expression -> Elm.Expression -> Elm.Expression
+portOutgoing : String -> Elm.Expression -> Elm.Expression
 portOutgoing arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -1747,11 +1745,11 @@ portOutgoing arg1 arg2 =
                     )
             }
         )
-        [ arg1, arg2 ]
+        [ Elm.string arg1, arg2 ]
 
 
 {-| -}
-parse : Elm.Expression -> Elm.Expression
+parse : String -> Elm.Expression
 parse arg1 =
     Elm.apply
         (Elm.value
@@ -1780,11 +1778,11 @@ parse arg1 =
                     )
             }
         )
-        [ arg1 ]
+        [ Elm.string arg1 ]
 
 
 {-| -}
-unsafe : Elm.Expression -> Elm.Expression
+unsafe : String -> Elm.Expression
 unsafe arg1 =
     Elm.apply
         (Elm.value
@@ -1798,7 +1796,7 @@ unsafe arg1 =
                     )
             }
         )
-        [ arg1 ]
+        [ Elm.string arg1 ]
 
 
 {-| -}
@@ -1913,10 +1911,7 @@ apply arg1 arg2 =
 
 {-| -}
 value :
-    { importFrom : List Elm.Expression
-    , name : Elm.Expression
-    , annotation : Elm.Expression
-    }
+    { importFrom : List String, name : String, annotation : Elm.Expression }
     -> Elm.Expression
 value arg1 =
     Elm.apply
@@ -1944,8 +1939,10 @@ value arg1 =
             }
         )
         [ Elm.record
-            [ Elm.field "importFrom" (Elm.list arg1.importFrom)
-            , Elm.field "name" arg1.name
+            [ Elm.field
+                "importFrom"
+                (Elm.list (List.map Elm.string arg1.importFrom))
+            , Elm.field "name" (Elm.string arg1.name)
             , Elm.field "annotation" arg1.annotation
             ]
         ]
@@ -1965,8 +1962,7 @@ Results in the following lambda
         ((MyType val) -> val) val
 
 -}
-unwrap :
-    List Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+unwrap : List String -> String -> Elm.Expression -> Elm.Expression
 unwrap arg1 arg2 arg3 =
     Elm.apply
         (Elm.value
@@ -1983,7 +1979,7 @@ unwrap arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.list arg1, arg2, arg3 ]
+        [ Elm.list (List.map Elm.string arg1), Elm.string arg2, arg3 ]
 
 
 {-| Generate a lambda which unwraps a single-variant type.
@@ -1997,7 +1993,7 @@ Results in the following lambda
 **Note** This needs to be a type with only a single variant
 
 -}
-unwrapper : List Elm.Expression -> Elm.Expression -> Elm.Expression
+unwrapper : List String -> String -> Elm.Expression
 unwrapper arg1 arg2 =
     Elm.apply
         (Elm.value
@@ -2011,7 +2007,7 @@ unwrapper arg1 arg2 =
                     )
             }
         )
-        [ Elm.list arg1, arg2 ]
+        [ Elm.list (List.map Elm.string arg1), Elm.string arg2 ]
 
 
 annotation_ :
