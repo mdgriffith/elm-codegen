@@ -16,6 +16,8 @@ moduleName_ =
 
 
 {-| Bitwise AND
+
+and: Int -> Int -> Int
 -}
 and : Int -> Int -> Elm.Expression
 and arg1 arg2 =
@@ -30,6 +32,8 @@ and arg1 arg2 =
 
 
 {-| Bitwise OR
+
+or: Int -> Int -> Int
 -}
 or : Int -> Int -> Elm.Expression
 or arg1 arg2 =
@@ -44,6 +48,8 @@ or arg1 arg2 =
 
 
 {-| Bitwise XOR
+
+xor: Int -> Int -> Int
 -}
 xor : Int -> Int -> Elm.Expression
 xor arg1 arg2 =
@@ -58,6 +64,8 @@ xor arg1 arg2 =
 
 
 {-| Flip each bit individually, often called bitwise NOT
+
+complement: Int -> Int
 -}
 complement : Int -> Elm.Expression
 complement arg1 =
@@ -76,6 +84,8 @@ This can be used to multiply numbers by powers of two.
 
     shiftLeftBy 1 5 == 10
     shiftLeftBy 5 1 == 32
+
+shiftLeftBy: Int -> Int -> Int
 -}
 shiftLeftBy : Int -> Int -> Elm.Expression
 shiftLeftBy arg1 arg2 =
@@ -101,6 +111,8 @@ sometimes called a sign-propagating right shift because it fills empty spots
 with copies of the highest bit.
 
 [ars]: https://en.wikipedia.org/wiki/Bitwise_operation#Arithmetic_shift
+
+shiftRightBy: Int -> Int -> Int
 -}
 shiftRightBy : Int -> Int -> Elm.Expression
 shiftRightBy arg1 arg2 =
@@ -125,6 +137,8 @@ sometimes called a zero-fill right shift because it fills empty spots with
 zeros.
 
 [lrs]: https://en.wikipedia.org/wiki/Bitwise_operation#Logical_shift
+
+shiftRightZfBy: Int -> Int -> Int
 -}
 shiftRightZfBy : Int -> Int -> Elm.Expression
 shiftRightZfBy arg1 arg2 =

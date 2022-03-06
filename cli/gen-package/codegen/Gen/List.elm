@@ -19,6 +19,8 @@ moduleName_ =
 
     singleton 1234 == [1234]
     singleton "hi" == ["hi"]
+
+singleton: a -> List a
 -}
 singleton : Elm.Expression -> Elm.Expression
 singleton arg1 =
@@ -36,6 +38,8 @@ singleton arg1 =
 {-| Create a list with *n* copies of a value:
 
     repeat 3 (0,0) == [(0,0),(0,0),(0,0)]
+
+repeat: Int -> a -> List a
 -}
 repeat : Int -> Elm.Expression -> Elm.Expression
 repeat arg1 arg2 =
@@ -60,6 +64,8 @@ You give the lowest and highest number that should be in the list.
     range 3 6 == [3, 4, 5, 6]
     range 3 3 == [3]
     range 6 3 == []
+
+range: Int -> Int -> List Int
 -}
 range : Int -> Int -> Elm.Expression
 range arg1 arg2 =
@@ -81,6 +87,8 @@ range arg1 arg2 =
     map not [True,False,True] == [False,True,False]
 
 So `map func [ a, b, c ]` is the same as `[ func a, func b, func c ]`
+
+map: (a -> b) -> List a -> List b
 -}
 map :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
@@ -106,6 +114,8 @@ map arg1 arg2 =
 element (starting at zero).
 
     indexedMap Tuple.pair ["Tom","Sue","Bob"] == [ (0,"Tom"), (1,"Sue"), (2,"Bob") ]
+
+indexedMap: (Int -> a -> b) -> List a -> List b
 -}
 indexedMap :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
@@ -146,6 +156,8 @@ So `foldl step state [1,2,3]` is like saying:
       |> step 1
       |> step 2
       |> step 3
+
+foldl: (a -> b -> b) -> b -> List a -> b
 -}
 foldl :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
@@ -189,6 +201,8 @@ So `foldr step state [1,2,3]` is like saying:
       |> step 3
       |> step 2
       |> step 1
+
+foldr: (a -> b -> b) -> b -> List a -> b
 -}
 foldr :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
@@ -224,6 +238,8 @@ foldr arg1 arg2 arg3 =
 {-| Keep elements that satisfy the test.
 
     filter isEven [1,2,3,4,5,6] == [2,4,6]
+
+filter: (a -> Bool) -> List a -> List a
 -}
 filter :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
@@ -254,6 +270,7 @@ from an untrusted source and you want to turn them into numbers:
 
     -- numbers == [3, 12]
 
+filterMap: (a -> Maybe b) -> List a -> List b
 -}
 filterMap :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
@@ -280,6 +297,8 @@ filterMap arg1 arg2 =
 {-| Determine the length of a list.
 
     length [1,2,3] == 3
+
+length: List a -> Int
 -}
 length : List Elm.Expression -> Elm.Expression
 length arg1 =
@@ -297,6 +316,8 @@ length arg1 =
 {-| Reverse a list.
 
     reverse [1,2,3,4] == [4,3,2,1]
+
+reverse: List a -> List a
 -}
 reverse : List Elm.Expression -> Elm.Expression
 reverse arg1 =
@@ -319,6 +340,8 @@ reverse arg1 =
 
     member 9 [1,2,3,4] == False
     member 4 [1,2,3,4] == True
+
+member: a -> List a -> Bool
 -}
 member : Elm.Expression -> List Elm.Expression -> Elm.Expression
 member arg1 arg2 =
@@ -342,6 +365,8 @@ member arg1 arg2 =
     all isEven [2,4] == True
     all isEven [2,3] == False
     all isEven [] == True
+
+all: (a -> Bool) -> List a -> Bool
 -}
 all :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
@@ -368,6 +393,8 @@ all arg1 arg2 =
     any isEven [2,3] == True
     any isEven [1,3] == False
     any isEven [] == False
+
+any: (a -> Bool) -> List a -> Bool
 -}
 any :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
@@ -393,6 +420,8 @@ any arg1 arg2 =
 
     maximum [1,4,2] == Just 4
     maximum []      == Nothing
+
+maximum: List comparable -> Maybe comparable
 -}
 maximum : List Elm.Expression -> Elm.Expression
 maximum arg1 =
@@ -415,6 +444,8 @@ maximum arg1 =
 
     minimum [3,2,1] == Just 1
     minimum []      == Nothing
+
+minimum: List comparable -> Maybe comparable
 -}
 minimum : List Elm.Expression -> Elm.Expression
 minimum arg1 =
@@ -439,6 +470,7 @@ minimum arg1 =
     sum [1,1,1] == 3
     sum []      == 0
 
+sum: List number -> number
 -}
 sum : List Elm.Expression -> Elm.Expression
 sum arg1 =
@@ -463,6 +495,7 @@ sum arg1 =
     product [3,3,3] == 27
     product []      == 1
 
+product: List number -> number
 -}
 product : List Elm.Expression -> Elm.Expression
 product arg1 =
@@ -487,6 +520,8 @@ product arg1 =
     append ['a','b'] ['c'] == ['a','b','c']
 
 You can also use [the `(++)` operator](Basics#++) to append lists.
+
+append: List a -> List a -> List a
 -}
 append : List Elm.Expression -> List Elm.Expression -> Elm.Expression
 append arg1 arg2 =
@@ -508,6 +543,8 @@ append arg1 arg2 =
 {-| Concatenate a bunch of lists into a single list:
 
     concat [[1,2],[3],[4,5]] == [1,2,3,4,5]
+
+concat: List (List a) -> List a
 -}
 concat : List (List Elm.Expression) -> Elm.Expression
 concat arg1 =
@@ -529,6 +566,8 @@ concat arg1 =
 {-| Map a given function onto a list and flatten the resulting lists.
 
     concatMap f xs == concat (map f xs)
+
+concatMap: (a -> List b) -> List a -> List b
 -}
 concatMap :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
@@ -555,6 +594,8 @@ concatMap arg1 arg2 =
 {-| Places the given value between all members of the given list.
 
     intersperse "on" ["turtles","turtles","turtles"] == ["turtles","on","turtles","on","turtles"]
+
+intersperse: a -> List a -> List a
 -}
 intersperse : Elm.Expression -> List Elm.Expression -> Elm.Expression
 intersperse arg1 arg2 =
@@ -589,6 +630,7 @@ If one list is longer, the extra elements are dropped.
     -- pairs ["alice","bob","chuck"] [2,5,7,8]
     --   == [("alice",2),("bob",5),("chuck",7)]
 
+map2: (a -> b -> result) -> List a -> List b -> List result
 -}
 map2 :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
@@ -621,7 +663,7 @@ map2 arg1 arg2 arg3 =
         ]
 
 
-{-|-}
+{-| map3: (a -> b -> c -> result) -> List a -> List b -> List c -> List result -}
 map3 :
     (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> List Elm.Expression
@@ -662,7 +704,13 @@ map3 arg1 arg2 arg3 arg4 =
         ]
 
 
-{-|-}
+{-| map4: (a -> b -> c -> d -> result)
+-> List a
+-> List b
+-> List c
+-> List d
+-> List result
+-}
 map4 :
     (Elm.Expression
     -> Elm.Expression
@@ -720,7 +768,14 @@ map4 arg1 arg2 arg3 arg4 arg5 =
         ]
 
 
-{-|-}
+{-| map5: (a -> b -> c -> d -> e -> result)
+-> List a
+-> List b
+-> List c
+-> List d
+-> List e
+-> List result
+-}
 map5 :
     (Elm.Expression
     -> Elm.Expression
@@ -793,6 +848,8 @@ map5 arg1 arg2 arg3 arg4 arg5 arg6 =
 {-| Sort values from lowest to highest
 
     sort [3,1,5] == [1,3,5]
+
+sort: List comparable -> List comparable
 -}
 sort : List Elm.Expression -> Elm.Expression
 sort arg1 =
@@ -821,6 +878,8 @@ sort arg1 =
     sortBy .height [chuck,alice,bob] == [alice,chuck,bob]
 
     sortBy String.length ["mouse","cat"] == ["cat","mouse"]
+
+sortBy: (a -> comparable) -> List a -> List a
 -}
 sortBy :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
@@ -854,6 +913,8 @@ sortBy arg1 arg2 =
 
 This is also the most general sort function, allowing you
 to define any other: `sort == sortWith compare`
+
+sortWith: (a -> a -> Basics.Order) -> List a -> List a
 -}
 sortWith :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
@@ -889,6 +950,8 @@ sortWith arg1 arg2 =
 
 **Note:** It is usually preferable to use a `case` to test this so you do not
 forget to handle the `(x :: xs)` case as well!
+
+isEmpty: List a -> Bool
 -}
 isEmpty : List Elm.Expression -> Elm.Expression
 isEmpty arg1 =
@@ -910,6 +973,8 @@ isEmpty arg1 =
 
 **Note:** It is usually preferable to use a `case` to deconstruct a `List`
 because it gives you `(x :: xs)` and you can work with both subparts.
+
+head: List a -> Maybe a
 -}
 head : List Elm.Expression -> Elm.Expression
 head arg1 =
@@ -935,6 +1000,8 @@ head arg1 =
 
 **Note:** It is usually preferable to use a `case` to deconstruct a `List`
 because it gives you `(x :: xs)` and you can work with both subparts.
+
+tail: List a -> Maybe (List a)
 -}
 tail : List Elm.Expression -> Elm.Expression
 tail arg1 =
@@ -956,6 +1023,8 @@ tail arg1 =
 {-| Take the first *n* members of a list.
 
     take 2 [1,2,3,4] == [1,2]
+
+take: Int -> List a -> List a
 -}
 take : Int -> List Elm.Expression -> Elm.Expression
 take arg1 arg2 =
@@ -977,6 +1046,8 @@ take arg1 arg2 =
 {-| Drop the first *n* members of a list.
 
     drop 2 [1,2,3,4] == [3,4]
+
+drop: Int -> List a -> List a
 -}
 drop : Int -> List Elm.Expression -> Elm.Expression
 drop arg1 arg2 =
@@ -1000,6 +1071,8 @@ that satisfy the test, and the second list contains all the value that do not.
 
     partition (\x -> x < 3) [0,1,2,3,4,5] == ([0,1,2], [3,4,5])
     partition isEven        [0,1,2,3,4,5] == ([0,2,4], [1,3,5])
+
+partition: (a -> Bool) -> List a -> ( List a, List a )
 -}
 partition :
     (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
@@ -1027,6 +1100,8 @@ partition arg1 arg2 =
 {-| Decompose a list of tuples into a tuple of lists.
 
     unzip [(0, True), (17, False), (1337, True)] == ([0,17,1337], [True,False,True])
+
+unzip: List ( a, b ) -> ( List a, List b )
 -}
 unzip : List Elm.Expression -> Elm.Expression
 unzip arg1 =

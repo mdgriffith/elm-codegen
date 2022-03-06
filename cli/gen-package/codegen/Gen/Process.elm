@@ -26,6 +26,8 @@ there.
 **Note:** This creates a relatively restricted kind of `Process` because it
 cannot receive any messages. More flexibility for user-defined processes will
 come in a later release!
+
+spawn: Task.Task x a -> Task.Task y Process.Id
 -}
 spawn : Elm.Expression -> Elm.Expression
 spawn arg1 =
@@ -59,6 +61,8 @@ The JavaScript equivalent of this is [`setTimeout`][setTimeout] which lets you
 delay work until later.
 
 [setTimeout]: https://developer.mozilla.org/en-US/docs/Web/API/WindowTimers/setTimeout
+
+sleep: Float -> Task.Task x ()
 -}
 sleep : Float -> Elm.Expression
 sleep arg1 =
@@ -85,6 +89,8 @@ sleep arg1 =
 have it keep running and doing stuff. The `kill` function will force a process
 to bail on whatever task it is running. So if there is an HTTP request in
 flight, it will also abort the request.
+
+kill: Process.Id -> Task.Task x ()
 -}
 kill : Elm.Expression -> Elm.Expression
 kill arg1 =

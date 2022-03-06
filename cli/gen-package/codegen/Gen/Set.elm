@@ -16,6 +16,8 @@ moduleName_ =
 
 
 {-| Create an empty set.
+
+empty: Set.Set a
 -}
 empty : Elm.Expression
 empty =
@@ -27,6 +29,8 @@ empty =
 
 
 {-| Create a set with one value.
+
+singleton: comparable -> Set.Set comparable
 -}
 singleton : Elm.Expression -> Elm.Expression
 singleton arg1 =
@@ -50,6 +54,8 @@ singleton arg1 =
 
 
 {-| Insert a value into a set.
+
+insert: comparable -> Set.Set comparable -> Set.Set comparable
 -}
 insert : Elm.Expression -> Elm.Expression -> Elm.Expression
 insert arg1 arg2 =
@@ -78,6 +84,8 @@ insert arg1 arg2 =
 
 
 {-| Remove a value from a set. If the value is not found, no changes are made.
+
+remove: comparable -> Set.Set comparable -> Set.Set comparable
 -}
 remove : Elm.Expression -> Elm.Expression -> Elm.Expression
 remove arg1 arg2 =
@@ -106,6 +114,8 @@ remove arg1 arg2 =
 
 
 {-| Determine if a set is empty.
+
+isEmpty: Set.Set a -> Bool
 -}
 isEmpty : Elm.Expression -> Elm.Expression
 isEmpty arg1 =
@@ -125,6 +135,8 @@ isEmpty arg1 =
 
 
 {-| Determine if a value is in a set.
+
+member: comparable -> Set.Set comparable -> Bool
 -}
 member : Elm.Expression -> Elm.Expression -> Elm.Expression
 member arg1 arg2 =
@@ -149,6 +161,8 @@ member arg1 arg2 =
 
 
 {-| Determine the number of elements in a set.
+
+size: Set.Set a -> Int
 -}
 size : Elm.Expression -> Elm.Expression
 size arg1 =
@@ -168,6 +182,8 @@ size arg1 =
 
 
 {-| Get the union of two sets. Keep all values.
+
+union: Set.Set comparable -> Set.Set comparable -> Set.Set comparable
 -}
 union : Elm.Expression -> Elm.Expression -> Elm.Expression
 union arg1 arg2 =
@@ -199,6 +215,8 @@ union arg1 arg2 =
 
 
 {-| Get the intersection of two sets. Keeps values that appear in both sets.
+
+intersect: Set.Set comparable -> Set.Set comparable -> Set.Set comparable
 -}
 intersect : Elm.Expression -> Elm.Expression -> Elm.Expression
 intersect arg1 arg2 =
@@ -231,6 +249,8 @@ intersect arg1 arg2 =
 
 {-| Get the difference between the first set and the second. Keeps values
 that do not appear in the second set.
+
+diff: Set.Set comparable -> Set.Set comparable -> Set.Set comparable
 -}
 diff : Elm.Expression -> Elm.Expression -> Elm.Expression
 diff arg1 arg2 =
@@ -262,6 +282,8 @@ diff arg1 arg2 =
 
 
 {-| Convert a set into a list, sorted from lowest to highest.
+
+toList: Set.Set a -> List a
 -}
 toList : Elm.Expression -> Elm.Expression
 toList arg1 =
@@ -281,6 +303,8 @@ toList arg1 =
 
 
 {-| Convert a list into a set, removing any duplicates.
+
+fromList: List comparable -> Set.Set comparable
 -}
 fromList : List Elm.Expression -> Elm.Expression
 fromList arg1 =
@@ -304,6 +328,8 @@ fromList arg1 =
 
 
 {-| Map a function onto a set, creating a new set with no duplicates.
+
+map: (comparable -> comparable2) -> Set.Set comparable -> Set.Set comparable2
 -}
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 map arg1 arg2 =
@@ -334,6 +360,8 @@ map arg1 arg2 =
 
 
 {-| Fold over the values in a set, in order from lowest to highest.
+
+foldl: (a -> b -> b) -> b -> Set.Set a -> b
 -}
 foldl :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
@@ -367,6 +395,8 @@ foldl arg1 arg2 arg3 =
 
 
 {-| Fold over the values in a set, in order from highest to lowest.
+
+foldr: (a -> b -> b) -> b -> Set.Set a -> b
 -}
 foldr :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
@@ -412,6 +442,8 @@ foldr arg1 arg2 arg3 =
       Set.filter (\x -> x > 0) numbers
 
     -- positives == Set.fromList [1,2]
+
+filter: (comparable -> Bool) -> Set.Set comparable -> Set.Set comparable
 -}
 filter : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 filter arg1 arg2 =
@@ -441,6 +473,10 @@ filter arg1 arg2 =
 
 {-| Create two new sets. The first contains all the elements that passed the
 given test, and the second contains all the elements that did not.
+
+partition: (comparable -> Bool)
+-> Set.Set comparable
+-> ( Set.Set comparable, Set.Set comparable )
 -}
 partition :
     (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression

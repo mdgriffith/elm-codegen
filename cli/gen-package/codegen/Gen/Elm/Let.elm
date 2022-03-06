@@ -15,7 +15,7 @@ moduleName_ =
     [ "Elm", "Let" ]
 
 
-{-| -}
+{-| letIn: a -> Elm.Let.Let a -}
 letIn : Elm.Expression -> Elm.Expression
 letIn arg1 =
     Elm.apply
@@ -33,7 +33,7 @@ letIn arg1 =
         [ arg1 ]
 
 
-{-| -}
+{-| value: String -> Elm.Expression -> Elm.Let.Let (Elm.Expression -> a) -> Elm.Let.Let a -}
 value : String -> Elm.Expression -> Elm.Expression -> Elm.Expression
 value arg1 arg2 arg3 =
     Elm.apply
@@ -60,7 +60,12 @@ value arg1 arg2 arg3 =
         [ Elm.string arg1, arg2, arg3 ]
 
 
-{-| -}
+{-| tuple: String
+-> String
+-> Elm.Expression
+-> Elm.Let.Let (( Elm.Expression, Elm.Expression ) -> a)
+-> Elm.Let.Let a
+-}
 tuple : String -> String -> Elm.Expression -> Elm.Expression -> Elm.Expression
 tuple arg1 arg2 arg3 arg4 =
     Elm.apply
@@ -91,7 +96,11 @@ tuple arg1 arg2 arg3 arg4 =
         [ Elm.string arg1, Elm.string arg2, arg3, arg4 ]
 
 
-{-| -}
+{-| record: List String
+-> Elm.Expression
+-> Elm.Let.Let (List Elm.Expression -> a)
+-> Elm.Let.Let a
+-}
 record : List String -> Elm.Expression -> Elm.Expression -> Elm.Expression
 record arg1 arg2 arg3 =
     Elm.apply
@@ -120,7 +129,7 @@ record arg1 arg2 arg3 =
         [ Elm.list (List.map Elm.string arg1), arg2, arg3 ]
 
 
-{-| -}
+{-| toExpression: Elm.Let.Let Elm.Expression -> Elm.Expression -}
 toExpression : Elm.Expression -> Elm.Expression
 toExpression arg1 =
     Elm.apply

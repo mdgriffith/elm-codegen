@@ -17,6 +17,7 @@ moduleName_ =
 
 {-| Tell the runtime that there are no commands.
 
+none: Platform.Cmd.Cmd msg
 -}
 none : Elm.Expression
 none =
@@ -35,6 +36,8 @@ no ordering guarantees about the results.
 
 **Note:** `Cmd.none` and `Cmd.batch [ Cmd.none, Cmd.none ]` and `Cmd.batch []`
 all do the same thing.
+
+batch: List (Platform.Cmd.Cmd msg) -> Platform.Cmd.Cmd msg
 -}
 batch : List Elm.Expression -> Elm.Expression
 batch arg1 =
@@ -70,6 +73,8 @@ This is very rarely useful in well-structured Elm code, so definitely read the
 section on [structure][] in the guide before reaching for this!
 
 [structure]: https://guide.elm-lang.org/webapps/structure.html
+
+map: (a -> msg) -> Platform.Cmd.Cmd a -> Platform.Cmd.Cmd msg
 -}
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 map arg1 arg2 =

@@ -21,6 +21,8 @@ If the result is an `Err`, the same error value will propagate through.
 
     map sqrt (Ok 4.0)          == Ok 2.0
     map sqrt (Err "bad input") == Err "bad input"
+
+map: (a -> value) -> Result.Result x a -> Result.Result x value
 -}
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 map arg1 arg2 =
@@ -58,6 +60,11 @@ propagate through.
 
 This can be useful if you have two computations that may fail, and you want
 to put them together quickly.
+
+map2: (a -> b -> value)
+-> Result.Result x a
+-> Result.Result x b
+-> Result.Result x value
 -}
 map2 :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
@@ -100,7 +107,12 @@ map2 arg1 arg2 arg3 =
         ]
 
 
-{-|-}
+{-| map3: (a -> b -> c -> value)
+-> Result.Result x a
+-> Result.Result x b
+-> Result.Result x c
+-> Result.Result x value
+-}
 map3 :
     (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
@@ -154,7 +166,13 @@ map3 arg1 arg2 arg3 arg4 =
         ]
 
 
-{-|-}
+{-| map4: (a -> b -> c -> d -> value)
+-> Result.Result x a
+-> Result.Result x b
+-> Result.Result x c
+-> Result.Result x d
+-> Result.Result x value
+-}
 map4 :
     (Elm.Expression
     -> Elm.Expression
@@ -228,7 +246,14 @@ map4 arg1 arg2 arg3 arg4 arg5 =
         ]
 
 
-{-|-}
+{-| map5: (a -> b -> c -> d -> e -> value)
+-> Result.Result x a
+-> Result.Result x b
+-> Result.Result x c
+-> Result.Result x d
+-> Result.Result x e
+-> Result.Result x value
+-}
 map5 :
     (Elm.Expression
     -> Elm.Expression
@@ -350,6 +375,8 @@ This allows us to come out of a chain of operations with quite a specific error
 message. It is often best to create a custom type that explicitly represents
 the exact ways your computation may fail. This way it is easy to handle in your
 code.
+
+andThen: (a -> Result.Result x b) -> Result.Result x a -> Result.Result x b
 -}
 andThen : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 andThen arg1 arg2 =
@@ -388,6 +415,8 @@ return a given default value. The following examples try to parse integers.
 
     Result.withDefault 0 (Ok 123)   == 123
     Result.withDefault 0 (Err "no") == 0
+
+withDefault: a -> Result.Result x a -> a
 -}
 withDefault : Elm.Expression -> Elm.Expression -> Elm.Expression
 withDefault arg1 arg2 =
@@ -419,6 +448,8 @@ you need to interact with some code that primarily uses maybes.
     maybeParseInt : String -> Maybe Int
     maybeParseInt string =
         toMaybe (parseInt string)
+
+toMaybe: Result.Result x a -> Maybe a
 -}
 toMaybe : Elm.Expression -> Elm.Expression
 toMaybe arg1 =
@@ -449,6 +480,8 @@ uses `Results`.
     resultParseInt : String -> Result String Int
     resultParseInt string =
         fromMaybe ("error parsing string: " ++ toString string) (parseInt string)
+
+fromMaybe: x -> Maybe a -> Result.Result x a
 -}
 fromMaybe : Elm.Expression -> Elm.Expression -> Elm.Expression
 fromMaybe arg1 arg2 =
@@ -484,6 +517,8 @@ information:
 
     mapError .message (parseInt "123") == Ok 123
     mapError .message (parseInt "abc") == Err "char 'a' is not a number"
+
+mapError: (x -> y) -> Result.Result x a -> Result.Result y a
 -}
 mapError :
     (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression

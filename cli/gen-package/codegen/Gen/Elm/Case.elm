@@ -15,9 +15,7 @@ moduleName_ =
     [ "Elm", "Case" ]
 
 
-{-|
-
-    Elm.fn "myMaybe" <|
+{-| Elm.fn "myMaybe" <|
         \myMaybe ->
             Elm.Case.maybe myMaybe
                 { nothing = Elm.int 0
@@ -36,6 +34,9 @@ Generates
             Just just ->
                 just + 5
 
+maybe: Elm.Expression
+-> { nothing : Elm.Expression, just : Elm.Expression -> Elm.Expression }
+-> Elm.Expression
 -}
 maybe :
     Elm.Expression
@@ -73,9 +74,7 @@ maybe arg1 arg2 =
         ]
 
 
-{-|
-
-    Elm.fn "myResult" <|
+{-| Elm.fn "myResult" <|
         \myResult ->
             Elm.Case.triple myResult
                 { ok =
@@ -96,6 +95,11 @@ Generates
             Err err ->
                 err
 
+result: Elm.Expression
+-> { err : Elm.Expression -> Elm.Expression
+, ok : Elm.Expression -> Elm.Expression
+}
+-> Elm.Expression
 -}
 result :
     Elm.Expression
@@ -137,9 +141,7 @@ result arg1 arg2 =
         ]
 
 
-{-|
-
-    Elm.fn "myList" <|
+{-| Elm.fn "myList" <|
         \myList ->
             Elm.Case.list myList
                 { empty = Elm.int 0
@@ -158,6 +160,11 @@ Generates
             top :: remaining ->
                 top + 5
 
+list: Elm.Expression
+-> { empty : Elm.Expression
+, nonEmpty : Elm.Expression -> Elm.Expression -> Elm.Expression
+}
+-> Elm.Expression
 -}
 list :
     Elm.Expression
@@ -206,9 +213,7 @@ list arg1 arg2 =
         ]
 
 
-{-|
-
-    Elm.fn "myTuple" <|
+{-| Elm.fn "myTuple" <|
         \myTuple ->
             Elm.Case.tuple myTuple
                 { nothing = Elm.int 0
@@ -224,6 +229,9 @@ Generates
             ( one, two ) ->
                 5 + two
 
+tuple: Elm.Expression
+-> (Elm.Expression -> Elm.Expression -> Elm.Expression)
+-> Elm.Expression
 -}
 tuple :
     Elm.Expression
@@ -255,9 +263,7 @@ tuple arg1 arg2 =
         ]
 
 
-{-|
-
-    Elm.fn "myTriple" <|
+{-| Elm.fn "myTriple" <|
         \myTriple ->
             Elm.Case.triple myTriple
                 { nothing = Elm.int 0
@@ -273,6 +279,9 @@ Generates
             ( one, two, three ) ->
                 5 + two
 
+triple: Elm.Expression
+-> (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
+-> Elm.Expression
 -}
 triple :
     Elm.Expression
@@ -311,9 +320,7 @@ triple arg1 arg2 =
         ]
 
 
-{-|
-
-    Elm.fn "maybeString" <|
+{-| Elm.fn "maybeString" <|
         \maybeString ->
             Elm.Case.custom maybeString
                 [ Elm.Case.branch [ "Maybe" ]
@@ -334,6 +341,7 @@ Generates
             Just just ->
                 "Actually, it's " ++ just
 
+custom: Elm.Expression -> List Elm.Case.Branch -> Elm.Expression
 -}
 custom : Elm.Expression -> List Elm.Expression -> Elm.Expression
 custom arg1 arg2 =
@@ -356,6 +364,8 @@ custom arg1 arg2 =
 
 
 {-| A catchall branch in case you want the case to be nonexhaustive.
+
+otherwise: (Elm.Expression -> Elm.Expression) -> Elm.Case.Branch
 -}
 otherwise : (Elm.Expression -> Elm.Expression) -> Elm.Expression
 otherwise arg1 =
@@ -377,7 +387,7 @@ otherwise arg1 =
         [ Elm.functionReduced "unpack" arg1 ]
 
 
-{-| -}
+{-| branch0: List String -> String -> Elm.Expression -> Elm.Case.Branch -}
 branch0 : List String -> String -> Elm.Expression -> Elm.Expression
 branch0 arg1 arg2 arg3 =
     Elm.apply
@@ -398,7 +408,7 @@ branch0 arg1 arg2 arg3 =
         [ Elm.list (List.map Elm.string arg1), Elm.string arg2, arg3 ]
 
 
-{-| -}
+{-| branch1: List String -> String -> (Elm.Expression -> Elm.Expression) -> Elm.Case.Branch -}
 branch1 :
     List String
     -> String
@@ -428,7 +438,11 @@ branch1 arg1 arg2 arg3 =
         ]
 
 
-{-| -}
+{-| branch2: List String
+-> String
+-> (Elm.Expression -> Elm.Expression -> Elm.Expression)
+-> Elm.Case.Branch
+-}
 branch2 :
     List String
     -> String
@@ -462,7 +476,11 @@ branch2 arg1 arg2 arg3 =
         ]
 
 
-{-| -}
+{-| branch3: List String
+-> String
+-> (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
+-> Elm.Case.Branch
+-}
 branch3 :
     List String
     -> String
@@ -503,7 +521,15 @@ branch3 arg1 arg2 arg3 =
         ]
 
 
-{-| -}
+{-| branch4: List String
+-> String
+-> (Elm.Expression
+-> Elm.Expression
+-> Elm.Expression
+-> Elm.Expression
+-> Elm.Expression)
+-> Elm.Case.Branch
+-}
 branch4 :
     List String
     -> String
@@ -555,7 +581,16 @@ branch4 arg1 arg2 arg3 =
         ]
 
 
-{-| -}
+{-| branch5: List String
+-> String
+-> (Elm.Expression
+-> Elm.Expression
+-> Elm.Expression
+-> Elm.Expression
+-> Elm.Expression
+-> Elm.Expression)
+-> Elm.Case.Branch
+-}
 branch5 :
     List String
     -> String
@@ -616,7 +651,17 @@ branch5 arg1 arg2 arg3 =
         ]
 
 
-{-| -}
+{-| branch6: List String
+-> String
+-> (Elm.Expression
+-> Elm.Expression
+-> Elm.Expression
+-> Elm.Expression
+-> Elm.Expression
+-> Elm.Expression
+-> Elm.Expression)
+-> Elm.Case.Branch
+-}
 branch6 :
     List String
     -> String
@@ -684,7 +729,12 @@ branch6 arg1 arg2 arg3 =
         ]
 
 
-{-| -}
+{-| branchWith: List String
+-> String
+-> Int
+-> (List Elm.Expression -> Elm.Expression)
+-> Elm.Case.Branch
+-}
 branchWith :
     List String
     -> String
@@ -719,7 +769,7 @@ branchWith arg1 arg2 arg3 arg4 =
         ]
 
 
-{-| -}
+{-| listBranch: Int -> (List Elm.Expression -> Elm.Expression) -> Elm.Case.Branch -}
 listBranch : Int -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
 listBranch arg1 arg2 =
     Elm.apply

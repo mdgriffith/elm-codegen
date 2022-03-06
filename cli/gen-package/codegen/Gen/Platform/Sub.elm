@@ -16,6 +16,8 @@ moduleName_ =
 
 
 {-| Tell the runtime that there are no subscriptions.
+
+none: Platform.Sub.Sub msg
 -}
 none : Elm.Expression
 none =
@@ -32,6 +34,8 @@ subscriptions.
 
 **Note:** `Sub.none` and `Sub.batch [ Sub.none, Sub.none ]` and
 `Sub.batch []` all do the same thing.
+
+batch: List (Platform.Sub.Sub msg) -> Platform.Sub.Sub msg
 -}
 batch : List Elm.Expression -> Elm.Expression
 batch arg1 =
@@ -67,6 +71,8 @@ This is very rarely useful in well-structured Elm code, so definitely read the
 section on [structure][] in the guide before reaching for this!
 
 [structure]: https://guide.elm-lang.org/webapps/structure.html
+
+map: (a -> msg) -> Platform.Sub.Sub a -> Platform.Sub.Sub msg
 -}
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 map arg1 arg2 =

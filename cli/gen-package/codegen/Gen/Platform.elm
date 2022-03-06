@@ -34,6 +34,12 @@ module has a few ways to create that kind of `Program` instead!
 
 [headless]: https://en.wikipedia.org/wiki/Headless_software
 [browser]: /packages/elm/browser/latest/Browser
+
+worker: { init : flags -> ( model, Platform.Cmd.Cmd msg )
+, update : msg -> model -> ( model, Platform.Cmd.Cmd msg )
+, subscriptions : model -> Platform.Sub.Sub msg
+}
+-> Platform.Program flags model msg
 -}
 worker :
     { init : Elm.Expression -> Elm.Expression
@@ -115,6 +121,8 @@ worker arg1 =
 
 {-| Send the router a message for the main loop of your app. This message will
 be handled by the overall `update` function, just like events from `Html`.
+
+sendToApp: Platform.Router msg a -> msg -> Platform.Task x ()
 -}
 sendToApp : Elm.Expression -> Elm.Expression -> Elm.Expression
 sendToApp arg1 arg2 =
@@ -147,6 +155,8 @@ be routed to the `onSelfMsg` function, where you can update the state of your
 effect manager as necessary.
 
 As an example, the effect manager for web sockets
+
+sendToSelf: Platform.Router a msg -> msg -> Platform.Task x ()
 -}
 sendToSelf : Elm.Expression -> Elm.Expression -> Elm.Expression
 sendToSelf arg1 arg2 =

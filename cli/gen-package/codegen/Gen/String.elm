@@ -19,6 +19,8 @@ moduleName_ =
 
     isEmpty "" == True
     isEmpty "the world" == False
+
+isEmpty: String -> Bool
 -}
 isEmpty : String -> Elm.Expression
 isEmpty arg1 =
@@ -37,6 +39,7 @@ isEmpty arg1 =
     length "innumerable" == 11
     length "" == 0
 
+length: String -> Int
 -}
 length : String -> Elm.Expression
 length arg1 =
@@ -53,6 +56,8 @@ length arg1 =
 {-| Reverse a string.
 
     reverse "stressed" == "desserts"
+
+reverse: String -> String
 -}
 reverse : String -> Elm.Expression
 reverse arg1 =
@@ -69,6 +74,8 @@ reverse arg1 =
 {-| Repeat a string *n* times.
 
     repeat 3 "ha" == "hahaha"
+
+repeat: Int -> String -> String
 -}
 repeat : Int -> String -> Elm.Expression
 repeat arg1 arg2 =
@@ -93,6 +100,8 @@ repeat arg1 arg2 =
 
 [parser]: /packages/elm/parser/latest
 [regex]: /packages/elm/regex/latest
+
+replace: String -> String -> String -> String
 -}
 replace : String -> String -> String -> Elm.Expression
 replace arg1 arg2 arg3 =
@@ -115,6 +124,8 @@ replace arg1 arg2 arg3 =
 to do this.
 
     append "butter" "fly" == "butterfly"
+
+append: String -> String -> String
 -}
 append : String -> String -> Elm.Expression
 append arg1 arg2 =
@@ -132,6 +143,8 @@ append arg1 arg2 =
 {-| Concatenate many strings into one.
 
     concat ["never","the","less"] == "nevertheless"
+
+concat: List String -> String
 -}
 concat : List String -> Elm.Expression
 concat arg1 =
@@ -151,6 +164,7 @@ concat arg1 =
     split "," "cat,dog,cow"        == ["cat","dog","cow"]
     split "/" "home/evan/Desktop/" == ["home","evan","Desktop", ""]
 
+split: String -> String -> List String
 -}
 split : String -> String -> Elm.Expression
 split arg1 arg2 =
@@ -174,6 +188,8 @@ split arg1 arg2 =
     join "a" ["H","w","ii","n"]        == "Hawaiian"
     join " " ["cat","dog","cow"]       == "cat dog cow"
     join "/" ["home","evan","Desktop"] == "home/evan/Desktop"
+
+join: String -> List String -> String
 -}
 join : String -> List String -> Elm.Expression
 join arg1 arg2 =
@@ -195,6 +211,8 @@ join arg1 arg2 =
 {-| Break a string into words, splitting on chunks of whitespace.
 
     words "How are \t you? \n Good?" == ["How","are","you?","Good?"]
+
+words: String -> List String
 -}
 words : String -> Elm.Expression
 words arg1 =
@@ -212,6 +230,8 @@ words arg1 =
 {-| Break a string into lines, splitting on newlines.
 
     lines "How are you?\nGood?" == ["How are you?", "Good?"]
+
+lines: String -> List String
 -}
 lines : String -> Elm.Expression
 lines arg1 =
@@ -233,6 +253,8 @@ are taken starting from the *end* of the list.
     slice  0  6 "snakes on a plane!" == "snakes"
     slice  0 -7 "snakes on a plane!" == "snakes on a"
     slice -6 -1 "snakes on a plane!" == "plane"
+
+slice: Int -> Int -> String -> String
 -}
 slice : Int -> Int -> String -> Elm.Expression
 slice arg1 arg2 arg3 =
@@ -254,6 +276,8 @@ slice arg1 arg2 arg3 =
 {-| Take *n* characters from the left side of a string.
 
     left 2 "Mulder" == "Mu"
+
+left: Int -> String -> String
 -}
 left : Int -> String -> Elm.Expression
 left arg1 arg2 =
@@ -271,6 +295,8 @@ left arg1 arg2 =
 {-| Take *n* characters from the right side of a string.
 
     right 2 "Scully" == "ly"
+
+right: Int -> String -> String
 -}
 right : Int -> String -> Elm.Expression
 right arg1 arg2 =
@@ -288,6 +314,8 @@ right arg1 arg2 =
 {-| Drop *n* characters from the left side of a string.
 
     dropLeft 2 "The Lone Gunmen" == "e Lone Gunmen"
+
+dropLeft: Int -> String -> String
 -}
 dropLeft : Int -> String -> Elm.Expression
 dropLeft arg1 arg2 =
@@ -305,6 +333,8 @@ dropLeft arg1 arg2 =
 {-| Drop *n* characters from the right side of a string.
 
     dropRight 2 "Cigarette Smoking Man" == "Cigarette Smoking M"
+
+dropRight: Int -> String -> String
 -}
 dropRight : Int -> String -> Elm.Expression
 dropRight arg1 arg2 =
@@ -325,6 +355,7 @@ dropRight arg1 arg2 =
     contains "hat" "theory" == False
     contains "THE" "theory" == False
 
+contains: String -> String -> Bool
 -}
 contains : String -> String -> Elm.Expression
 contains arg1 arg2 =
@@ -343,6 +374,8 @@ contains arg1 arg2 =
 
     startsWith "the" "theory" == True
     startsWith "ory" "theory" == False
+
+startsWith: String -> String -> Bool
 -}
 startsWith : String -> String -> Elm.Expression
 startsWith arg1 arg2 =
@@ -361,6 +394,8 @@ startsWith arg1 arg2 =
 
     endsWith "the" "theory" == False
     endsWith "ory" "theory" == True
+
+endsWith: String -> String -> Bool
 -}
 endsWith : String -> String -> Elm.Expression
 endsWith arg1 arg2 =
@@ -380,6 +415,8 @@ endsWith arg1 arg2 =
     indexes "i" "Mississippi"   == [1,4,7,10]
     indexes "ss" "Mississippi"  == [2,5]
     indexes "needle" "haystack" == []
+
+indexes: String -> String -> List Int
 -}
 indexes : String -> String -> Elm.Expression
 indexes arg1 arg2 =
@@ -398,7 +435,10 @@ indexes arg1 arg2 =
         [ Elm.string arg1, Elm.string arg2 ]
 
 
-{-| Alias for `indexes`. -}
+{-| Alias for `indexes`.
+
+indices: String -> String -> List Int
+-}
 indices : String -> String -> Elm.Expression
 indices arg1 arg2 =
     Elm.apply
@@ -428,6 +468,8 @@ want to use [`Maybe.withDefault`](Maybe#withDefault) to handle bad data:
 
     Maybe.withDefault 0 (String.toInt "42") == 42
     Maybe.withDefault 0 (String.toInt "ab") == 0
+
+toInt: String -> Maybe Int
 -}
 toInt : String -> Elm.Expression
 toInt arg1 =
@@ -449,6 +491,8 @@ toInt arg1 =
 
 Check out [`Debug.toString`](Debug#toString) to convert *any* value to a string
 for debugging purposes.
+
+fromInt: Int -> String
 -}
 fromInt : Int -> Elm.Expression
 fromInt arg1 =
@@ -474,6 +518,8 @@ want to use [`Maybe.withDefault`](Maybe#withDefault) to handle bad data:
 
     Maybe.withDefault 0 (String.toFloat "42.5") == 42.5
     Maybe.withDefault 0 (String.toFloat "cats") == 0
+
+toFloat: String -> Maybe Float
 -}
 toFloat : String -> Elm.Expression
 toFloat arg1 =
@@ -496,6 +542,8 @@ toFloat arg1 =
 
 Check out [`Debug.toString`](Debug#toString) to convert *any* value to a string
 for debugging purposes.
+
+fromFloat: Float -> String
 -}
 fromFloat : Float -> Elm.Expression
 fromFloat arg1 =
@@ -512,6 +560,8 @@ fromFloat arg1 =
 {-| Create a string from a given character.
 
     fromChar 'a' == "a"
+
+fromChar: Char.Char -> String
 -}
 fromChar : Char.Char -> Elm.Expression
 fromChar arg1 =
@@ -528,6 +578,8 @@ fromChar arg1 =
 {-| Add a character to the beginning of a string.
 
     cons 'T' "he truth is out there" == "The truth is out there"
+
+cons: Char.Char -> String -> String
 -}
 cons : Char.Char -> String -> Elm.Expression
 cons arg1 arg2 =
@@ -547,6 +599,8 @@ pattern match on strings exactly as you would with lists.
 
     uncons "abc" == Just ('a',"bc")
     uncons ""    == Nothing
+
+uncons: String -> Maybe ( Char.Char, String )
 -}
 uncons : String -> Elm.Expression
 uncons arg1 =
@@ -569,6 +623,8 @@ uncons arg1 =
 
     toList "abc" == ['a','b','c']
     toList "🙈🙉🙊" == ['🙈','🙉','🙊']
+
+toList: String -> List Char.Char
 -}
 toList : String -> Elm.Expression
 toList arg1 =
@@ -589,6 +645,8 @@ something.
 
     fromList ['a','b','c'] == "abc"
     fromList ['🙈','🙉','🙊'] == "🙈🙉🙊"
+
+fromList: List Char.Char -> String
 -}
 fromList : List Char.Char -> Elm.Expression
 fromList arg1 =
@@ -607,6 +665,8 @@ fromList arg1 =
 and VIRTUAL YELLING.
 
     toUpper "skinner" == "SKINNER"
+
+toUpper: String -> String
 -}
 toUpper : String -> Elm.Expression
 toUpper arg1 =
@@ -623,6 +683,8 @@ toUpper arg1 =
 {-| Convert a string to all lower case. Useful for case-insensitive comparisons.
 
     toLower "X-FILES" == "x-files"
+
+toLower: String -> String
 -}
 toLower : String -> Elm.Expression
 toLower arg1 =
@@ -641,6 +703,8 @@ toLower arg1 =
     pad 5 ' ' "1"   == "  1  "
     pad 5 ' ' "11"  == "  11 "
     pad 5 ' ' "121" == " 121 "
+
+pad: Int -> Char.Char -> String -> String
 -}
 pad : Int -> Char.Char -> String -> Elm.Expression
 pad arg1 arg2 arg3 =
@@ -664,6 +728,8 @@ pad arg1 arg2 arg3 =
     padLeft 5 '.' "1"   == "....1"
     padLeft 5 '.' "11"  == "...11"
     padLeft 5 '.' "121" == "..121"
+
+padLeft: Int -> Char.Char -> String -> String
 -}
 padLeft : Int -> Char.Char -> String -> Elm.Expression
 padLeft arg1 arg2 arg3 =
@@ -687,6 +753,8 @@ padLeft arg1 arg2 arg3 =
     padRight 5 '.' "1"   == "1...."
     padRight 5 '.' "11"  == "11..."
     padRight 5 '.' "121" == "121.."
+
+padRight: Int -> Char.Char -> String -> String
 -}
 padRight : Int -> Char.Char -> String -> Elm.Expression
 padRight arg1 arg2 arg3 =
@@ -708,6 +776,8 @@ padRight arg1 arg2 arg3 =
 {-| Get rid of whitespace on both sides of a string.
 
     trim "  hats  \n" == "hats"
+
+trim: String -> String
 -}
 trim : String -> Elm.Expression
 trim arg1 =
@@ -724,6 +794,8 @@ trim arg1 =
 {-| Get rid of whitespace on the left of a string.
 
     trimLeft "  hats  \n" == "hats  \n"
+
+trimLeft: String -> String
 -}
 trimLeft : String -> Elm.Expression
 trimLeft arg1 =
@@ -740,6 +812,8 @@ trimLeft arg1 =
 {-| Get rid of whitespace on the right of a string.
 
     trimRight "  hats  \n" == "  hats"
+
+trimRight: String -> String
 -}
 trimRight : String -> Elm.Expression
 trimRight arg1 =
@@ -756,6 +830,8 @@ trimRight arg1 =
 {-| Transform every character in a string
 
     map (\c -> if c == '/' then '.' else c) "a/b/c" == "a.b.c"
+
+map: (Char.Char -> Char.Char) -> String -> String
 -}
 map : (Elm.Expression -> Elm.Expression) -> String -> Elm.Expression
 map arg1 arg2 =
@@ -777,6 +853,8 @@ map arg1 arg2 =
 {-| Keep only the characters that pass the test.
 
     filter isDigit "R2-D2" == "22"
+
+filter: (Char.Char -> Bool) -> String -> String
 -}
 filter : (Elm.Expression -> Elm.Expression) -> String -> Elm.Expression
 filter arg1 arg2 =
@@ -798,6 +876,8 @@ filter arg1 arg2 =
 {-| Reduce a string from the left.
 
     foldl cons "" "time" == "emit"
+
+foldl: (Char.Char -> b -> b) -> b -> String -> b
 -}
 foldl :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
@@ -833,6 +913,8 @@ foldl arg1 arg2 arg3 =
 {-| Reduce a string from the right.
 
     foldr cons "" "time" == "time"
+
+foldr: (Char.Char -> b -> b) -> b -> String -> b
 -}
 foldr :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
@@ -870,6 +952,8 @@ foldr arg1 arg2 arg3 =
     any isDigit "90210" == True
     any isDigit "R2-D2" == True
     any isDigit "heart" == False
+
+any: (Char.Char -> Bool) -> String -> Bool
 -}
 any : (Elm.Expression -> Elm.Expression) -> String -> Elm.Expression
 any arg1 arg2 =
@@ -893,6 +977,8 @@ any arg1 arg2 =
     all isDigit "90210" == True
     all isDigit "R2-D2" == False
     all isDigit "heart" == False
+
+all: (Char.Char -> Bool) -> String -> Bool
 -}
 all : (Elm.Expression -> Elm.Expression) -> String -> Elm.Expression
 all arg1 arg2 =

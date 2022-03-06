@@ -31,6 +31,8 @@ for viewing Elm data structures.
 a bunch of runtime metadata. For example, it shortens record field names, and
 we need that info to `toString` the value! As a consequence, packages cannot
 use `toString` because they may be used in `--optimize` mode.
+
+toString: a -> String
 -}
 toString : Elm.Expression -> Elm.Expression
 toString arg1 =
@@ -61,6 +63,8 @@ compiler optimizations that move code around.
 use ports for now. That will give you full access to reading and writing in the
 terminal. We may have a package in Elm for this someday, but browser
 applications are the primary focus of platform development for now.
+
+log: String -> a -> a
 -}
 log : String -> Elm.Expression -> Elm.Expression
 log arg1 arg2 =
@@ -105,6 +109,8 @@ exceptions should not appear in the resulting applications.
 **Note:** For the equivalent of try/catch error handling in Elm, use modules
 like [`Maybe`](#Maybe) and [`Result`](#Result) which guarantee that no error
 goes unhandled!
+
+todo: String -> a
 -}
 todo : String -> Elm.Expression
 todo arg1 =

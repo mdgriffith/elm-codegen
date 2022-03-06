@@ -11285,7 +11285,7 @@ var $the_sett$elm_pretty_printer$Pretty$nest = F2(
 			});
 	});
 var $author$project$Internal$Write$prettyDocumentation = function (docs) {
-	return A2($elm$core$String$contains, '\n', docs) ? $the_sett$elm_pretty_printer$Pretty$string('{-|\n' + (docs + '\n-}')) : $the_sett$elm_pretty_printer$Pretty$string('{-| ' + (docs + ' -}'));
+	return A2($elm$core$String$contains, '\n', docs) ? $the_sett$elm_pretty_printer$Pretty$string('{-| ' + (docs + '\n-}')) : $the_sett$elm_pretty_printer$Pretty$string('{-| ' + (docs + ' -}'));
 };
 var $the_sett$elm_pretty_printer$Internals$Union = F2(
 	function (a, b) {

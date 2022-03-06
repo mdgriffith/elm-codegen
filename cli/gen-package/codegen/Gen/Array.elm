@@ -18,6 +18,8 @@ moduleName_ =
 {-| Return an empty array.
 
     length empty == 0
+
+empty: Array.Array a
 -}
 empty : Elm.Expression
 empty =
@@ -35,6 +37,8 @@ the element at index `i` initialized to the result of `(f i)`.
     initialize 4 identity    == fromList [0,1,2,3]
     initialize 4 (\n -> n*n) == fromList [0,1,4,9]
     initialize 4 (always 0)  == fromList [0,0,0,0]
+
+initialize: Int -> (Int -> a) -> Array.Array a
 -}
 initialize : Int -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
 initialize arg1 arg2 =
@@ -59,6 +63,8 @@ initialize arg1 arg2 =
     repeat 3 "cat" == fromList ["cat","cat","cat"]
 
 Notice that `repeat 3 x` is the same as `initialize 3 (always x)`.
+
+repeat: Int -> a -> Array.Array a
 -}
 repeat : Int -> Elm.Expression -> Elm.Expression
 repeat arg1 arg2 =
@@ -78,6 +84,8 @@ repeat arg1 arg2 =
 
 
 {-| Create an array from a `List`.
+
+fromList: List a -> Array.Array a
 -}
 fromList : List Elm.Expression -> Elm.Expression
 fromList arg1 =
@@ -99,6 +107,8 @@ fromList arg1 =
 {-| Determine if an array is empty.
 
     isEmpty empty == True
+
+isEmpty: Array.Array a -> Bool
 -}
 isEmpty : Elm.Expression -> Elm.Expression
 isEmpty arg1 =
@@ -120,6 +130,8 @@ isEmpty arg1 =
 {-| Return the length of an array.
 
     length (fromList [1,2,3]) == 3
+
+length: Array.Array a -> Int
 -}
 length : Elm.Expression -> Elm.Expression
 length arg1 =
@@ -145,6 +157,8 @@ range.
     get  2 (fromList [0,1,2]) == Just 2
     get  5 (fromList [0,1,2]) == Nothing
     get -1 (fromList [0,1,2]) == Nothing
+
+get: Int -> Array.Array a -> Maybe a
 -}
 get : Int -> Elm.Expression -> Elm.Expression
 get arg1 arg2 =
@@ -169,6 +183,8 @@ get arg1 arg2 =
 If the index is out of range, the array is unaltered.
 
     set 1 7 (fromList [1,2,3]) == fromList [1,7,3]
+
+set: Int -> a -> Array.Array a -> Array.Array a
 -}
 set : Int -> Elm.Expression -> Elm.Expression -> Elm.Expression
 set arg1 arg2 arg3 =
@@ -193,6 +209,8 @@ set arg1 arg2 arg3 =
 {-| Push an element onto the end of an array.
 
     push 3 (fromList [1,2]) == fromList [1,2,3]
+
+push: a -> Array.Array a -> Array.Array a
 -}
 push : Elm.Expression -> Elm.Expression -> Elm.Expression
 push arg1 arg2 =
@@ -216,6 +234,8 @@ push arg1 arg2 =
 {-| Append two arrays to a new one.
 
     append (repeat 2 42) (repeat 3 81) == fromList [42,42,81,81,81]
+
+append: Array.Array a -> Array.Array a -> Array.Array a
 -}
 append : Elm.Expression -> Elm.Expression -> Elm.Expression
 append arg1 arg2 =
@@ -252,6 +272,8 @@ the end of the array.
 
 This makes it pretty easy to `pop` the last element off of an array:
 `slice 0 -1 array`
+
+slice: Int -> Int -> Array.Array a -> Array.Array a
 -}
 slice : Int -> Int -> Elm.Expression -> Elm.Expression
 slice arg1 arg2 arg3 =
@@ -276,6 +298,8 @@ slice arg1 arg2 arg3 =
 {-| Create a list of elements from an array.
 
     toList (fromList [3,5,8]) == [3,5,8]
+
+toList: Array.Array a -> List a
 -}
 toList : Elm.Expression -> Elm.Expression
 toList arg1 =
@@ -298,6 +322,8 @@ toList arg1 =
 paired with its index.
 
     toIndexedList (fromList ["cat","dog"]) == [(0,"cat"), (1,"dog")]
+
+toIndexedList: Array.Array a -> List ( Int, a )
 -}
 toIndexedList : Elm.Expression -> Elm.Expression
 toIndexedList arg1 =
@@ -319,6 +345,8 @@ toIndexedList arg1 =
 {-| Apply a function on every element in an array.
 
     map sqrt (fromList [1,4,9]) == fromList [1,2,3]
+
+map: (a -> b) -> Array.Array a -> Array.Array b
 -}
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 map arg1 arg2 =
@@ -342,6 +370,8 @@ map arg1 arg2 =
 {-| Apply a function on every element with its index as first argument.
 
     indexedMap (*) (fromList [5,5,5]) == fromList [0,5,10]
+
+indexedMap: (Int -> a -> b) -> Array.Array a -> Array.Array b
 -}
 indexedMap :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
@@ -374,6 +404,8 @@ indexedMap arg1 arg2 =
 {-| Reduce an array from the left. Read `foldl` as fold from the left.
 
     foldl (::) [] (fromList [1,2,3]) == [3,2,1]
+
+foldl: (a -> b -> b) -> b -> Array.Array a -> b
 -}
 foldl :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
@@ -409,6 +441,8 @@ foldl arg1 arg2 arg3 =
 {-| Reduce an array from the right. Read `foldr` as fold from the right.
 
     foldr (+) 0 (repeat 3 5) == 15
+
+foldr: (a -> b -> b) -> b -> Array.Array a -> b
 -}
 foldr :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
@@ -444,6 +478,8 @@ foldr arg1 arg2 arg3 =
 {-| Keep elements that pass the test.
 
     filter isEven (fromList [1,2,3,4,5,6]) == (fromList [2,4,6])
+
+filter: (a -> Bool) -> Array.Array a -> Array.Array a
 -}
 filter : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 filter arg1 arg2 =

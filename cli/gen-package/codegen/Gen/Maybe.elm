@@ -30,6 +30,8 @@ expression. And if you end up using `withDefault` a lot, it can be a good sign
 that a [custom type][ct] will clean your code up quite a bit!
 
 [ct]: https://guide.elm-lang.org/types/custom_types.html
+
+withDefault: a -> Maybe a -> a
 -}
 withDefault : Elm.Expression -> Elm.Expression -> Elm.Expression
 withDefault arg1 arg2 =
@@ -56,6 +58,7 @@ withDefault arg1 arg2 =
     map sqrt (String.toFloat "9") == Just 3
     map sqrt (String.toFloat "x") == Nothing
 
+map: (a -> b) -> Maybe a -> Maybe b
 -}
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 map arg1 arg2 =
@@ -85,6 +88,8 @@ map arg1 arg2 =
     map2 (+) (String.toInt "1") (String.toInt "123") == Just 124
     map2 (+) (String.toInt "x") (String.toInt "123") == Nothing
     map2 (+) (String.toInt "1") (String.toInt "1.3") == Nothing
+
+map2: (a -> b -> value) -> Maybe a -> Maybe b -> Maybe value
 -}
 map2 :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
@@ -117,7 +122,7 @@ map2 arg1 arg2 arg3 =
         ]
 
 
-{-|-}
+{-| map3: (a -> b -> c -> value) -> Maybe a -> Maybe b -> Maybe c -> Maybe value -}
 map3 :
     (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
@@ -158,7 +163,13 @@ map3 arg1 arg2 arg3 arg4 =
         ]
 
 
-{-|-}
+{-| map4: (a -> b -> c -> d -> value)
+-> Maybe a
+-> Maybe b
+-> Maybe c
+-> Maybe d
+-> Maybe value
+-}
 map4 :
     (Elm.Expression
     -> Elm.Expression
@@ -216,7 +227,14 @@ map4 arg1 arg2 arg3 arg4 arg5 =
         ]
 
 
-{-|-}
+{-| map5: (a -> b -> c -> d -> e -> value)
+-> Maybe a
+-> Maybe b
+-> Maybe c
+-> Maybe d
+-> Maybe e
+-> Maybe value
+-}
 map5 :
     (Elm.Expression
     -> Elm.Expression
@@ -317,6 +335,8 @@ In the `parseMonth` function, if `String.toInt` produces `Nothing` (because
 the `userInput` was not an integer) this entire chain of operations will
 short-circuit and result in `Nothing`. If `toValidMonth` results in `Nothing`,
 again the chain of computations will result in `Nothing`.
+
+andThen: (a -> Maybe b) -> Maybe a -> Maybe b
 -}
 andThen : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 andThen arg1 arg2 =

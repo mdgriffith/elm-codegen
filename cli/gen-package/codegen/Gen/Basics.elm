@@ -23,6 +23,7 @@ values like this:
     halfOf number =
       toFloat number / 2
 
+toFloat: Int -> Float
 -}
 toFloat : Int -> Elm.Expression
 toFloat arg1 =
@@ -46,6 +47,8 @@ toFloat arg1 =
     round -1.2 == -1
     round -1.5 == -1
     round -1.8 == -2
+
+round: Float -> Int
 -}
 round : Float -> Elm.Expression
 round arg1 =
@@ -69,6 +72,8 @@ round arg1 =
     floor -1.2 == -2
     floor -1.5 == -2
     floor -1.8 == -2
+
+floor: Float -> Int
 -}
 floor : Float -> Elm.Expression
 floor arg1 =
@@ -92,6 +97,8 @@ floor arg1 =
     ceiling -1.2 == -1
     ceiling -1.5 == -1
     ceiling -1.8 == -1
+
+ceiling: Float -> Int
 -}
 ceiling : Float -> Elm.Expression
 ceiling arg1 =
@@ -115,6 +122,8 @@ ceiling arg1 =
     truncate -1.2 == -1
     truncate -1.5 == -1
     truncate -1.8 == -1
+
+truncate: Float -> Int
 -}
 truncate : Float -> Elm.Expression
 truncate arg1 =
@@ -132,6 +141,8 @@ truncate arg1 =
 
     max 42 12345678 == 12345678
     max "abc" "xyz" == "xyz"
+
+max: comparable -> comparable -> comparable
 -}
 max : Elm.Expression -> Elm.Expression -> Elm.Expression
 max arg1 arg2 =
@@ -154,6 +165,8 @@ max arg1 arg2 =
 
     min 42 12345678 == 42
     min "abc" "xyz" == "abc"
+
+min: comparable -> comparable -> comparable
 -}
 min : Elm.Expression -> Elm.Expression -> Elm.Expression
 min arg1 arg2 =
@@ -179,6 +192,8 @@ are also the only values that work as `Dict` keys or `Set` members.
     compare 3 4 == LT
     compare 4 4 == EQ
     compare 5 4 == GT
+
+compare: comparable -> comparable -> Basics.Order
 -}
 compare : Elm.Expression -> Elm.Expression -> Elm.Expression
 compare arg1 arg2 =
@@ -201,6 +216,8 @@ compare arg1 arg2 =
 
     not True == False
     not False == True
+
+not: Bool -> Bool
 -}
 not : Bool -> Elm.Expression
 not arg1 =
@@ -220,6 +237,8 @@ not arg1 =
     xor True  False == True
     xor False True  == True
     xor False False == False
+
+xor: Bool -> Bool -> Bool
 -}
 xor : Bool -> Bool -> Elm.Expression
 xor arg1 arg2 =
@@ -253,6 +272,8 @@ or read Daan Leijen’s [Division and Modulus for Computer Scientists][dm] for m
 information.
 
 [dm]: https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/divmodnote-letter.pdf
+
+modBy: Int -> Int -> Int
 -}
 modBy : Int -> Int -> Elm.Expression
 modBy arg1 arg2 =
@@ -276,6 +297,8 @@ or read Daan Leijen’s [Division and Modulus for Computer Scientists][dm] for m
 information.
 
 [dm]: https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/divmodnote-letter.pdf
+
+remainderBy: Int -> Int -> Int
 -}
 remainderBy : Int -> Int -> Elm.Expression
 remainderBy arg1 arg2 =
@@ -294,6 +317,8 @@ remainderBy arg1 arg2 =
     negate 42 == -42
     negate -42 == 42
     negate 0 == 0
+
+negate: number -> number
 -}
 negate : Elm.Expression -> Elm.Expression
 negate arg1 =
@@ -316,6 +341,8 @@ negate arg1 =
     abs 3.14 == 3.14
 
 [abs]: https://en.wikipedia.org/wiki/Absolute_value
+
+abs: number -> number
 -}
 abs : Elm.Expression -> Elm.Expression
 abs arg1 =
@@ -336,6 +363,8 @@ abs arg1 =
     100     if x < 100
      x      if 100 <= x < 200
     200     if 200 <= x
+
+clamp: number -> number -> number -> number
 -}
 clamp : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 clamp arg1 arg2 arg3 =
@@ -363,6 +392,8 @@ clamp arg1 arg2 arg3 =
     sqrt  9 == 3
     sqrt 16 == 4
     sqrt 25 == 5
+
+sqrt: Float -> Float
 -}
 sqrt : Float -> Elm.Expression
 sqrt arg1 =
@@ -380,6 +411,8 @@ sqrt arg1 =
 
     logBase 10 100 == 2
     logBase 2 256 == 8
+
+logBase: Float -> Float -> Float
 -}
 logBase : Float -> Float -> Elm.Expression
 logBase arg1 arg2 =
@@ -395,6 +428,8 @@ logBase arg1 arg2 =
 
 
 {-| An approximation of e.
+
+e: Float
 -}
 e : Elm.Expression
 e =
@@ -405,6 +440,8 @@ e =
 {-| Convert degrees to standard Elm angles (radians).
 
     degrees 180 == 3.141592653589793
+
+degrees: Float -> Float
 -}
 degrees : Float -> Elm.Expression
 degrees arg1 =
@@ -421,6 +458,8 @@ degrees arg1 =
 {-| Convert radians to standard Elm angles (radians).
 
     radians pi == 3.141592653589793
+
+radians: Float -> Float
 -}
 radians : Float -> Elm.Expression
 radians arg1 =
@@ -437,6 +476,8 @@ radians arg1 =
 {-| Convert turns to standard Elm angles (radians). One turn is equal to 360°.
 
     turns (1/2) == 3.141592653589793
+
+turns: Float -> Float
 -}
 turns : Float -> Elm.Expression
 turns arg1 =
@@ -451,6 +492,8 @@ turns arg1 =
 
 
 {-| An approximation of pi.
+
+pi: Float
 -}
 pi : Elm.Expression
 pi =
@@ -465,6 +508,7 @@ pi =
     cos (radians (pi/3)) == 0.5000000000000001
     cos (pi/3)           == 0.5000000000000001
 
+cos: Float -> Float
 -}
 cos : Float -> Elm.Expression
 cos arg1 =
@@ -485,6 +529,7 @@ cos arg1 =
     sin (radians (pi/6)) == 0.49999999999999994
     sin (pi/6)           == 0.49999999999999994
 
+sin: Float -> Float
 -}
 sin : Float -> Elm.Expression
 sin arg1 =
@@ -504,6 +549,8 @@ sin arg1 =
     tan (turns (1/8))    == 0.9999999999999999
     tan (radians (pi/4)) == 0.9999999999999999
     tan (pi/4)           == 0.9999999999999999
+
+tan: Float -> Float
 -}
 tan : Float -> Elm.Expression
 tan arg1 =
@@ -521,6 +568,7 @@ tan arg1 =
 
     acos (1/2) == 1.0471975511965979 -- 60° or pi/3 radians
 
+acos: Float -> Float
 -}
 acos : Float -> Elm.Expression
 acos arg1 =
@@ -538,6 +586,7 @@ acos arg1 =
 
     asin (1/2) == 0.5235987755982989 -- 30° or pi/6 radians
 
+asin: Float -> Float
 -}
 asin : Float -> Elm.Expression
 asin arg1 =
@@ -568,6 +617,8 @@ not get angles that go in the full circle:
 Notice that everything is between `pi/2` and `-pi/2`. That is pretty useless
 for figuring out angles in any sort of visualization, so again, check out
 [`atan2`](#atan2) instead!
+
+atan: Float -> Float
 -}
 atan : Float -> Elm.Expression
 atan arg1 =
@@ -590,6 +641,7 @@ range of angles:
     atan2 -1 -1 == -2.356194490192345  -- 225° or 5*pi/4 radians
     atan2 -1  1 == -0.7853981633974483 -- 315° or 7*pi/4 radians
 
+atan2: Float -> Float -> Float
 -}
 atan2 : Float -> Float -> Elm.Expression
 atan2 arg1 arg2 =
@@ -608,6 +660,8 @@ atan2 arg1 arg2 =
 
     toPolar (3, 4) == ( 5, 0.9272952180016122)
     toPolar (5,12) == (13, 1.1760052070951352)
+
+toPolar: ( Float, Float ) -> ( Float, Float )
 -}
 toPolar : Elm.Expression -> Elm.Expression
 toPolar arg1 =
@@ -629,6 +683,8 @@ toPolar arg1 =
 {-| Convert polar coordinates (r,&theta;) to Cartesian coordinates (x,y).
 
     fromPolar (sqrt 2, degrees 45) == (1, 1)
+
+fromPolar: ( Float, Float ) -> ( Float, Float )
 -}
 fromPolar : Elm.Expression -> Elm.Expression
 fromPolar arg1 =
@@ -655,6 +711,8 @@ numbers](https://en.wikipedia.org/wiki/NaN).
     isNaN (sqrt -1) == True
     isNaN (1/0)     == False  -- infinity is a number
     isNaN 1         == False
+
+isNaN: Float -> Bool
 -}
 isNaN : Float -> Elm.Expression
 isNaN arg1 =
@@ -677,6 +735,8 @@ isNaN arg1 =
 
 Notice that NaN is not infinite! For float `n` to be finite implies that
 `not (isInfinite n || isNaN n)` evaluates to `True`.
+
+isInfinite: Float -> Bool
 -}
 isInfinite : Float -> Elm.Expression
 isInfinite arg1 =
@@ -692,6 +752,8 @@ isInfinite arg1 =
 
 {-| Given a value, returns exactly the same value. This is called
 [the identity function](https://en.wikipedia.org/wiki/Identity_function).
+
+identity: a -> a
 -}
 identity : Elm.Expression -> Elm.Expression
 identity arg1 =
@@ -712,6 +774,8 @@ functions like `map`:
 
     -- List.map (\_ -> 0) [1,2,3,4,5] == [0,0,0,0,0]
     -- always = (\x _ -> x)
+
+always: a -> b -> a
 -}
 always : Elm.Expression -> Elm.Expression -> Elm.Expression
 always arg1 arg2 =
@@ -744,6 +808,8 @@ messages. You could say:
 
 So the `never` function is basically telling the type system, make sure no one
 ever calls me!
+
+never: Basics.Never -> a
 -}
 never : Elm.Expression -> Elm.Expression
 never arg1 =

@@ -26,6 +26,8 @@ moduleName_ =
     isUpper 'a' == False
     isUpper '-' == False
     isUpper 'Σ' == False
+
+isUpper: Char.Char -> Bool
 -}
 isUpper : Char.Char -> Elm.Expression
 isUpper arg1 =
@@ -50,6 +52,8 @@ isUpper arg1 =
     isLower 'A' == False
     isLower '-' == False
     isLower 'π' == False
+
+isLower: Char.Char -> Bool
 -}
 isLower : Char.Char -> Elm.Expression
 isLower arg1 =
@@ -73,6 +77,8 @@ isLower arg1 =
     isAlpha '0' == False
     isAlpha '-' == False
     isAlpha 'π' == False
+
+isAlpha: Char.Char -> Bool
 -}
 isAlpha : Char.Char -> Elm.Expression
 isAlpha arg1 =
@@ -97,6 +103,8 @@ isAlpha arg1 =
 
     isAlphaNum '-' == False
     isAlphaNum 'π' == False
+
+isAlphaNum: Char.Char -> Bool
 -}
 isAlphaNum : Char.Char -> Elm.Expression
 isAlphaNum arg1 =
@@ -120,6 +128,8 @@ isAlphaNum arg1 =
     isDigit 'a' == False
     isDigit 'b' == False
     isDigit 'A' == False
+
+isDigit: Char.Char -> Bool
 -}
 isDigit : Char.Char -> Elm.Expression
 isDigit arg1 =
@@ -143,6 +153,8 @@ isDigit arg1 =
     isOctDigit '8' == False
     isOctDigit 'a' == False
     isOctDigit 'A' == False
+
+isOctDigit: Char.Char -> Bool
 -}
 isOctDigit : Char.Char -> Elm.Expression
 isOctDigit arg1 =
@@ -157,6 +169,8 @@ isOctDigit arg1 =
 
 
 {-| Detect hexadecimal digits `0123456789abcdefABCDEF`
+
+isHexDigit: Char.Char -> Bool
 -}
 isHexDigit : Char.Char -> Elm.Expression
 isHexDigit arg1 =
@@ -170,7 +184,10 @@ isHexDigit arg1 =
         [ Elm.char arg1 ]
 
 
-{-| Convert to upper case. -}
+{-| Convert to upper case.
+
+toUpper: Char.Char -> Char.Char
+-}
 toUpper : Char.Char -> Elm.Expression
 toUpper arg1 =
     Elm.apply
@@ -183,7 +200,10 @@ toUpper arg1 =
         [ Elm.char arg1 ]
 
 
-{-| Convert to lower case. -}
+{-| Convert to lower case.
+
+toLower: Char.Char -> Char.Char
+-}
 toLower : Char.Char -> Elm.Expression
 toLower arg1 =
     Elm.apply
@@ -196,7 +216,10 @@ toLower arg1 =
         [ Elm.char arg1 ]
 
 
-{-| Convert to upper case, according to any locale-specific case mappings. -}
+{-| Convert to upper case, according to any locale-specific case mappings.
+
+toLocaleUpper: Char.Char -> Char.Char
+-}
 toLocaleUpper : Char.Char -> Elm.Expression
 toLocaleUpper arg1 =
     Elm.apply
@@ -209,7 +232,10 @@ toLocaleUpper arg1 =
         [ Elm.char arg1 ]
 
 
-{-| Convert to lower case, according to any locale-specific case mappings. -}
+{-| Convert to lower case, according to any locale-specific case mappings.
+
+toLocaleLower: Char.Char -> Char.Char
+-}
 toLocaleLower : Char.Char -> Elm.Expression
 toLocaleLower arg1 =
     Elm.apply
@@ -231,6 +257,8 @@ toLocaleLower arg1 =
     toCode '木' == 0x6728
     toCode '𝌆' == 0x1D306
     toCode '😃' == 0x1F603
+
+toCode: Char.Char -> Int
 -}
 toCode : Char.Char -> Elm.Expression
 toCode arg1 =
@@ -258,6 +286,8 @@ range, you get [the replacement character][fffd].
 
 [cp]: https://en.wikipedia.org/wiki/Code_point
 [fffd]: https://en.wikipedia.org/wiki/Specials_(Unicode_block)#Replacement_character
+
+fromCode: Int -> Char.Char
 -}
 fromCode : Int -> Elm.Expression
 fromCode arg1 =

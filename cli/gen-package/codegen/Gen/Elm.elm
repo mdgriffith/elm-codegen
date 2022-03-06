@@ -22,6 +22,7 @@ moduleName_ =
             (Elm.string "a fancy string!")
         ]
 
+file: List String -> List Elm.Declaration -> Elm.File
 -}
 file : List String -> List Elm.Expression -> Elm.Expression
 file arg1 arg2 =
@@ -42,7 +43,7 @@ file arg1 arg2 =
         [ Elm.list (List.map Elm.string arg1), Elm.list arg2 ]
 
 
-{-| -}
+{-| bool: Bool -> Elm.Expression -}
 bool : Bool -> Elm.Expression
 bool arg1 =
     Elm.apply
@@ -60,7 +61,7 @@ bool arg1 =
         [ Elm.bool arg1 ]
 
 
-{-| -}
+{-| int: Int -> Elm.Expression -}
 int : Int -> Elm.Expression
 int arg1 =
     Elm.apply
@@ -78,7 +79,7 @@ int arg1 =
         [ Elm.int arg1 ]
 
 
-{-| -}
+{-| float: Float -> Elm.Expression -}
 float : Float -> Elm.Expression
 float arg1 =
     Elm.apply
@@ -96,7 +97,7 @@ float arg1 =
         [ Elm.float arg1 ]
 
 
-{-| -}
+{-| char: Char.Char -> Elm.Expression -}
 char : Char.Char -> Elm.Expression
 char arg1 =
     Elm.apply
@@ -114,7 +115,7 @@ char arg1 =
         [ Elm.char arg1 ]
 
 
-{-| -}
+{-| string: String -> Elm.Expression -}
 string : String -> Elm.Expression
 string arg1 =
     Elm.apply
@@ -132,7 +133,7 @@ string arg1 =
         [ Elm.string arg1 ]
 
 
-{-| -}
+{-| hex: Int -> Elm.Expression -}
 hex : Int -> Elm.Expression
 hex arg1 =
     Elm.apply
@@ -150,7 +151,7 @@ hex arg1 =
         [ Elm.int arg1 ]
 
 
-{-| -}
+{-| unit: Elm.Expression -}
 unit : Elm.Expression
 unit =
     Elm.value
@@ -160,7 +161,7 @@ unit =
         }
 
 
-{-| -}
+{-| maybe: Maybe Elm.Expression -> Elm.Expression -}
 maybe : Elm.Expression -> Elm.Expression
 maybe arg1 =
     Elm.apply
@@ -179,7 +180,7 @@ maybe arg1 =
         [ arg1 ]
 
 
-{-| -}
+{-| just: Elm.Expression -> Elm.Expression -}
 just : Elm.Expression -> Elm.Expression
 just arg1 =
     Elm.apply
@@ -197,7 +198,7 @@ just arg1 =
         [ arg1 ]
 
 
-{-| -}
+{-| nothing: Elm.Expression -}
 nothing : Elm.Expression
 nothing =
     Elm.value
@@ -207,7 +208,7 @@ nothing =
         }
 
 
-{-| -}
+{-| list: List Elm.Expression -> Elm.Expression -}
 list : List Elm.Expression -> Elm.Expression
 list arg1 =
     Elm.apply
@@ -225,7 +226,7 @@ list arg1 =
         [ Elm.list arg1 ]
 
 
-{-| -}
+{-| tuple: Elm.Expression -> Elm.Expression -> Elm.Expression -}
 tuple : Elm.Expression -> Elm.Expression -> Elm.Expression
 tuple arg1 arg2 =
     Elm.apply
@@ -245,7 +246,7 @@ tuple arg1 arg2 =
         [ arg1, arg2 ]
 
 
-{-| -}
+{-| triple: Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression -}
 triple : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 triple arg1 arg2 arg3 =
     Elm.apply
@@ -275,6 +276,7 @@ triple arg1 arg2 arg3 =
 
 Though be sure `elm-codegen` isn't already doing this automatically for you!
 
+withType: Elm.Annotation.Annotation -> Elm.Expression -> Elm.Expression
 -}
 withType : Elm.Expression -> Elm.Expression -> Elm.Expression
 withType arg1 arg2 =
@@ -295,13 +297,12 @@ withType arg1 arg2 =
         [ arg1, arg2 ]
 
 
-{-|
-
-    Elm.record
+{-| Elm.record
         [ Elm.field "name" (Elm.string "Elm")
         , Elm.field "designation" (Elm.string "Pretty fabulous")
         ]
 
+record: List Elm.Field -> Elm.Expression
 -}
 record : List Elm.Expression -> Elm.Expression
 record arg1 =
@@ -320,7 +321,7 @@ record arg1 =
         [ Elm.list arg1 ]
 
 
-{-| -}
+{-| field: String -> Elm.Expression -> Elm.Field -}
 field : String -> Elm.Expression -> Elm.Expression
 field arg1 arg2 =
     Elm.apply
@@ -340,15 +341,14 @@ field arg1 arg2 =
         [ Elm.string arg1, arg2 ]
 
 
-{-|
-
-    record
+{-| record
         |> Elm.get "field"
 
 results in
 
     record.field
 
+get: String -> Elm.Expression -> Elm.Expression
 -}
 get : String -> Elm.Expression -> Elm.Expression
 get arg1 arg2 =
@@ -369,7 +369,7 @@ get arg1 arg2 =
         [ Elm.string arg1, arg2 ]
 
 
-{-| -}
+{-| updateRecord: Elm.Expression -> List Elm.Field -> Elm.Expression -}
 updateRecord : Elm.Expression -> List Elm.Expression -> Elm.Expression
 updateRecord arg1 arg2 =
     Elm.apply
@@ -400,6 +400,7 @@ updateRecord arg1 arg2 =
         ]
         (Elm.add (Elm.value "one") (Elm.value "two"))
 
+letIn: List ( String, Elm.Expression ) -> Elm.Expression -> Elm.Expression
 -}
 letIn : List Elm.Expression -> Elm.Expression -> Elm.Expression
 letIn arg1 arg2 =
@@ -424,9 +425,7 @@ letIn arg1 arg2 =
         [ Elm.list arg1, arg2 ]
 
 
-{-|
-
-    ifThen (Elm.bool True)
+{-| ifThen (Elm.bool True)
         (Elm.string "yes")
         (Elm.string "no")
 
@@ -438,6 +437,7 @@ Will generate
     else
         "no"
 
+ifThen: Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 ifThen : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 ifThen arg1 arg2 arg3 =
@@ -459,7 +459,7 @@ ifThen arg1 arg2 arg3 =
         [ arg1, arg2, arg3 ]
 
 
-{-| -}
+{-| comment: String -> Elm.Declaration -}
 comment : String -> Elm.Expression
 comment arg1 =
     Elm.apply
@@ -477,7 +477,7 @@ comment arg1 =
         [ Elm.string arg1 ]
 
 
-{-| -}
+{-| declaration: String -> Elm.Expression -> Elm.Declaration -}
 declaration : String -> Elm.Expression -> Elm.Expression
 declaration arg1 arg2 =
     Elm.apply
@@ -498,6 +498,8 @@ declaration arg1 arg2 =
 
 
 {-| Add a documentation comment to a declaration!
+
+withDocumentation: String -> Elm.Declaration -> Elm.Declaration
 -}
 withDocumentation : String -> Elm.Expression -> Elm.Expression
 withDocumentation arg1 arg2 =
@@ -522,6 +524,7 @@ withDocumentation arg1 arg2 =
 
 However, you can tag specific declarations you want exposed, and then only those things will be exposed.
 
+expose: Elm.Declaration -> Elm.Declaration
 -}
 expose : Elm.Expression -> Elm.Expression
 expose arg1 =
@@ -544,6 +547,9 @@ expose arg1 =
 
 For precise control over what is rendered for the module comment, use [fileWith](#fileWith)
 
+exposeWith: { exposeConstructor : Bool, group : Maybe String }
+-> Elm.Declaration
+-> Elm.Declaration
 -}
 exposeWith :
     { exposeConstructor : Bool, group : Elm.Expression }
@@ -593,6 +599,12 @@ would make an import statement like
 
 All values rendered in this file that are from this module would also automatically respect this alias as well.
 
+fileWith: List String
+-> { docs : List { group : Maybe String, members : List String } -> List String
+, aliases : List ( List String, String )
+}
+-> List Elm.Declaration
+-> Elm.File
 -}
 fileWith :
     List String
@@ -661,6 +673,7 @@ If a `group` has been given, it will be rendered as a second level header.
 @docs one, two, three
 ```
 
+docs: { group : Maybe String, members : List String } -> String
 -}
 docs : { group : Elm.Expression, members : List String } -> Elm.Expression
 docs arg1 =
@@ -744,6 +757,7 @@ In this case you can use [`withType`](#withType) to manually attach a type to a 
             )
         )
 
+fn: String -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
 -}
 fn : String -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
 fn arg1 arg2 =
@@ -766,7 +780,11 @@ fn arg1 arg2 =
         [ Elm.string arg1, Elm.functionReduced "unpack" arg2 ]
 
 
-{-| -}
+{-| fn2: String
+-> String
+-> (Elm.Expression -> Elm.Expression -> Elm.Expression)
+-> Elm.Expression
+-}
 fn2 :
     String
     -> String
@@ -800,7 +818,12 @@ fn2 arg1 arg2 arg3 =
         ]
 
 
-{-| -}
+{-| fn3: String
+-> String
+-> String
+-> (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
+-> Elm.Expression
+-}
 fn3 :
     String
     -> String
@@ -844,7 +867,17 @@ fn3 arg1 arg2 arg3 arg4 =
         ]
 
 
-{-| -}
+{-| fn4: String
+-> String
+-> String
+-> String
+-> (Elm.Expression
+-> Elm.Expression
+-> Elm.Expression
+-> Elm.Expression
+-> Elm.Expression)
+-> Elm.Expression
+-}
 fn4 :
     String
     -> String
@@ -902,7 +935,19 @@ fn4 arg1 arg2 arg3 arg4 arg5 =
         ]
 
 
-{-| -}
+{-| fn5: String
+-> String
+-> String
+-> String
+-> String
+-> (Elm.Expression
+-> Elm.Expression
+-> Elm.Expression
+-> Elm.Expression
+-> Elm.Expression
+-> Elm.Expression)
+-> Elm.Expression
+-}
 fn5 :
     String
     -> String
@@ -972,7 +1017,21 @@ fn5 arg1 arg2 arg3 arg4 arg5 arg6 =
         ]
 
 
-{-| -}
+{-| fn6: String
+-> String
+-> String
+-> String
+-> String
+-> String
+-> (Elm.Expression
+-> Elm.Expression
+-> Elm.Expression
+-> Elm.Expression
+-> Elm.Expression
+-> Elm.Expression
+-> Elm.Expression)
+-> Elm.Expression
+-}
 fn6 :
     String
     -> String
@@ -1061,6 +1120,9 @@ Provide it with —
   - A list of argument names and an optional type
   - A function which will be given all the input arguments as `Expression`s.
 
+function: List ( String, Maybe Elm.Annotation.Annotation )
+-> (List Elm.Expression -> Elm.Expression)
+-> Elm.Expression
 -}
 function :
     List Elm.Expression -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
@@ -1108,6 +1170,7 @@ Then it will replace itself with just
 
 **Note** you likely won't need this! It's generally used by the package-helper generator, but that might be a relatively special case.
 
+functionReduced: String -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
 -}
 functionReduced : String -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
 functionReduced arg1 arg2 =
@@ -1144,6 +1207,7 @@ Will result in
         = One
         | Two (List String)
 
+customType: String -> List Elm.Variant -> Elm.Declaration
 -}
 customType : String -> List Elm.Expression -> Elm.Expression
 customType arg1 arg2 =
@@ -1164,7 +1228,7 @@ customType arg1 arg2 =
         [ Elm.string arg1, Elm.list arg2 ]
 
 
-{-| -}
+{-| variant: String -> Elm.Variant -}
 variant : String -> Elm.Expression
 variant arg1 =
     Elm.apply
@@ -1182,7 +1246,7 @@ variant arg1 =
         [ Elm.string arg1 ]
 
 
-{-| -}
+{-| variantWith: String -> List Elm.Annotation.Annotation -> Elm.Variant -}
 variantWith : String -> List Elm.Expression -> Elm.Expression
 variantWith arg1 arg2 =
     Elm.apply
@@ -1227,6 +1291,7 @@ Should result in
         , three : content
         }
 
+alias: String -> Elm.Annotation.Annotation -> Elm.Declaration
 -}
 alias : String -> Elm.Expression -> Elm.Expression
 alias arg1 arg2 =
@@ -1248,6 +1313,8 @@ alias arg1 arg2 =
 
 
 {-| `==`
+
+equal: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 equal : Elm.Expression -> Elm.Expression -> Elm.Expression
 equal arg1 arg2 =
@@ -1269,6 +1336,8 @@ equal arg1 arg2 =
 
 
 {-| `/=`
+
+notEqual: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 notEqual : Elm.Expression -> Elm.Expression -> Elm.Expression
 notEqual arg1 arg2 =
@@ -1290,6 +1359,8 @@ notEqual arg1 arg2 =
 
 
 {-| `++`
+
+append: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 append : Elm.Expression -> Elm.Expression -> Elm.Expression
 append arg1 arg2 =
@@ -1311,6 +1382,8 @@ append arg1 arg2 =
 
 
 {-| `::`
+
+cons: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 cons : Elm.Expression -> Elm.Expression -> Elm.Expression
 cons arg1 arg2 =
@@ -1332,6 +1405,8 @@ cons arg1 arg2 =
 
 
 {-| `+`
+
+plus: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 plus : Elm.Expression -> Elm.Expression -> Elm.Expression
 plus arg1 arg2 =
@@ -1353,6 +1428,8 @@ plus arg1 arg2 =
 
 
 {-| `-`
+
+minus: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 minus : Elm.Expression -> Elm.Expression -> Elm.Expression
 minus arg1 arg2 =
@@ -1374,6 +1451,8 @@ minus arg1 arg2 =
 
 
 {-| `*`
+
+multiply: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 multiply : Elm.Expression -> Elm.Expression -> Elm.Expression
 multiply arg1 arg2 =
@@ -1395,6 +1474,8 @@ multiply arg1 arg2 =
 
 
 {-| `/`
+
+divide: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 divide : Elm.Expression -> Elm.Expression -> Elm.Expression
 divide arg1 arg2 =
@@ -1416,6 +1497,8 @@ divide arg1 arg2 =
 
 
 {-| `//`
+
+intDivide: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 intDivide : Elm.Expression -> Elm.Expression -> Elm.Expression
 intDivide arg1 arg2 =
@@ -1437,6 +1520,8 @@ intDivide arg1 arg2 =
 
 
 {-| The to-the-power-of operator `^`
+
+power: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 power : Elm.Expression -> Elm.Expression -> Elm.Expression
 power arg1 arg2 =
@@ -1458,6 +1543,8 @@ power arg1 arg2 =
 
 
 {-| `<`
+
+lt: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 lt : Elm.Expression -> Elm.Expression -> Elm.Expression
 lt arg1 arg2 =
@@ -1479,6 +1566,8 @@ lt arg1 arg2 =
 
 
 {-| `>`
+
+gt: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 gt : Elm.Expression -> Elm.Expression -> Elm.Expression
 gt arg1 arg2 =
@@ -1500,6 +1589,8 @@ gt arg1 arg2 =
 
 
 {-| `<=`
+
+lte: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 lte : Elm.Expression -> Elm.Expression -> Elm.Expression
 lte arg1 arg2 =
@@ -1521,6 +1612,8 @@ lte arg1 arg2 =
 
 
 {-| `>=`
+
+gte: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 gte : Elm.Expression -> Elm.Expression -> Elm.Expression
 gte arg1 arg2 =
@@ -1542,6 +1635,8 @@ gte arg1 arg2 =
 
 
 {-| `&&`
+
+and: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 and : Elm.Expression -> Elm.Expression -> Elm.Expression
 and arg1 arg2 =
@@ -1563,6 +1658,8 @@ and arg1 arg2 =
 
 
 {-| `||`
+
+or: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 or : Elm.Expression -> Elm.Expression -> Elm.Expression
 or arg1 arg2 =
@@ -1587,6 +1684,7 @@ or arg1 arg2 =
 
 `|=`
 
+keep: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 keep : Elm.Expression -> Elm.Expression -> Elm.Expression
 keep arg1 arg2 =
@@ -1608,6 +1706,8 @@ keep arg1 arg2 =
 
 
 {-| `|.`
+
+skip: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 skip : Elm.Expression -> Elm.Expression -> Elm.Expression
 skip arg1 arg2 =
@@ -1629,6 +1729,8 @@ skip arg1 arg2 =
 
 
 {-| `</>` used in url parsing
+
+slash: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 slash : Elm.Expression -> Elm.Expression -> Elm.Expression
 slash arg1 arg2 =
@@ -1650,6 +1752,8 @@ slash arg1 arg2 =
 
 
 {-| `<?>` used in url parsing
+
+query: Elm.Expression -> Elm.Expression -> Elm.Expression
 -}
 query : Elm.Expression -> Elm.Expression -> Elm.Expression
 query arg1 arg2 =
@@ -1670,9 +1774,7 @@ query arg1 arg2 =
         [ arg1, arg2 ]
 
 
-{-|
-
-    import Elm.Annotation as Type
+{-| import Elm.Annotation as Type
 
     Elm.portIncoming "receiveMessageFromTheWorld"
         [ Type.string
@@ -1693,6 +1795,7 @@ This will give you more flexibility in the future and save you having to wire up
 
 **Another note** - You may need to expose your port explicitly using `Elm.expose`
 
+portIncoming: String -> List Elm.Annotation.Annotation -> Elm.Declaration
 -}
 portIncoming : String -> List Elm.Expression -> Elm.Expression
 portIncoming arg1 arg2 =
@@ -1728,6 +1831,7 @@ will generate
 
     port tellTheWorld : String -> Cmd msg
 
+portOutgoing: String -> Elm.Annotation.Annotation -> Elm.Declaration
 -}
 portOutgoing : String -> Elm.Expression -> Elm.Expression
 portOutgoing arg1 arg2 =
@@ -1748,7 +1852,7 @@ portOutgoing arg1 arg2 =
         [ Elm.string arg1, arg2 ]
 
 
-{-| -}
+{-| parse: String -> Result.Result String { declarations : List Elm.Declaration } -}
 parse : String -> Elm.Expression
 parse arg1 =
     Elm.apply
@@ -1781,7 +1885,7 @@ parse arg1 =
         [ Elm.string arg1 ]
 
 
-{-| -}
+{-| unsafe: String -> Elm.Declaration -}
 unsafe : String -> Elm.Expression
 unsafe arg1 =
     Elm.apply
@@ -1799,7 +1903,7 @@ unsafe arg1 =
         [ Elm.string arg1 ]
 
 
-{-| -}
+{-| toString: Elm.Expression -> String -}
 toString : Elm.Expression -> Elm.Expression
 toString arg1 =
     Elm.apply
@@ -1817,7 +1921,7 @@ toString arg1 =
         [ arg1 ]
 
 
-{-| -}
+{-| signature: Elm.Expression -> String -}
 signature : Elm.Expression -> Elm.Expression
 signature arg1 =
     Elm.apply
@@ -1835,7 +1939,7 @@ signature arg1 =
         [ arg1 ]
 
 
-{-| -}
+{-| expressionImports: Elm.Expression -> String -}
 expressionImports : Elm.Expression -> Elm.Expression
 expressionImports arg1 =
     Elm.apply
@@ -1853,7 +1957,7 @@ expressionImports arg1 =
         [ arg1 ]
 
 
-{-| -}
+{-| declarationToString: Elm.Declaration -> String -}
 declarationToString : Elm.Expression -> Elm.Expression
 declarationToString arg1 =
     Elm.apply
@@ -1871,7 +1975,7 @@ declarationToString arg1 =
         [ arg1 ]
 
 
-{-| -}
+{-| declarationImports: Elm.Declaration -> String -}
 declarationImports : Elm.Expression -> Elm.Expression
 declarationImports arg1 =
     Elm.apply
@@ -1889,7 +1993,7 @@ declarationImports arg1 =
         [ arg1 ]
 
 
-{-| -}
+{-| apply: Elm.Expression -> List Elm.Expression -> Elm.Expression -}
 apply : Elm.Expression -> List Elm.Expression -> Elm.Expression
 apply arg1 arg2 =
     Elm.apply
@@ -1909,7 +2013,12 @@ apply arg1 arg2 =
         [ arg1, Elm.list arg2 ]
 
 
-{-| -}
+{-| value: { importFrom : List String
+, name : String
+, annotation : Maybe Elm.Annotation.Annotation
+}
+-> Elm.Expression
+-}
 value :
     { importFrom : List String, name : String, annotation : Elm.Expression }
     -> Elm.Expression
@@ -1961,6 +2070,7 @@ Results in the following lambda
     myFunction val =
         ((MyType val) -> val) val
 
+unwrap: List String -> String -> Elm.Expression -> Elm.Expression
 -}
 unwrap : List String -> String -> Elm.Expression -> Elm.Expression
 unwrap arg1 arg2 arg3 =
@@ -1992,6 +2102,7 @@ Results in the following lambda
 
 **Note** This needs to be a type with only a single variant
 
+unwrapper: List String -> String -> Elm.Expression
 -}
 unwrapper : List String -> String -> Elm.Expression
 unwrapper arg1 arg2 =

@@ -16,6 +16,8 @@ moduleName_ =
 
 
 {-| A type variable
+
+var: String -> Elm.Annotation.Annotation
 -}
 var : String -> Elm.Expression
 var arg1 =
@@ -34,7 +36,7 @@ var arg1 =
         [ Elm.string arg1 ]
 
 
-{-| -}
+{-| bool: Elm.Annotation.Annotation -}
 bool : Elm.Expression
 bool =
     Elm.value
@@ -45,7 +47,7 @@ bool =
         }
 
 
-{-| -}
+{-| int: Elm.Annotation.Annotation -}
 int : Elm.Expression
 int =
     Elm.value
@@ -56,7 +58,7 @@ int =
         }
 
 
-{-| -}
+{-| float: Elm.Annotation.Annotation -}
 float : Elm.Expression
 float =
     Elm.value
@@ -67,7 +69,7 @@ float =
         }
 
 
-{-| -}
+{-| string: Elm.Annotation.Annotation -}
 string : Elm.Expression
 string =
     Elm.value
@@ -78,7 +80,7 @@ string =
         }
 
 
-{-| -}
+{-| char: Elm.Annotation.Annotation -}
 char : Elm.Expression
 char =
     Elm.value
@@ -89,7 +91,7 @@ char =
         }
 
 
-{-| -}
+{-| unit: Elm.Annotation.Annotation -}
 unit : Elm.Expression
 unit =
     Elm.value
@@ -100,7 +102,7 @@ unit =
         }
 
 
-{-| -}
+{-| named: List String -> String -> Elm.Annotation.Annotation -}
 named : List String -> String -> Elm.Expression
 named arg1 arg2 =
     Elm.apply
@@ -118,7 +120,11 @@ named arg1 arg2 =
         [ Elm.list (List.map Elm.string arg1), Elm.string arg2 ]
 
 
-{-| -}
+{-| namedWith: List String
+-> String
+-> List Elm.Annotation.Annotation
+-> Elm.Annotation.Annotation
+-}
 namedWith : List String -> String -> List Elm.Expression -> Elm.Expression
 namedWith arg1 arg2 arg3 =
     Elm.apply
@@ -144,7 +150,7 @@ namedWith arg1 arg2 arg3 =
         [ Elm.list (List.map Elm.string arg1), Elm.string arg2, Elm.list arg3 ]
 
 
-{-| -}
+{-| maybe: Elm.Annotation.Annotation -> Elm.Annotation.Annotation -}
 maybe : Elm.Expression -> Elm.Expression
 maybe arg1 =
     Elm.apply
@@ -163,7 +169,7 @@ maybe arg1 =
         [ arg1 ]
 
 
-{-| -}
+{-| list: Elm.Annotation.Annotation -> Elm.Annotation.Annotation -}
 list : Elm.Expression -> Elm.Expression
 list arg1 =
     Elm.apply
@@ -182,7 +188,10 @@ list arg1 =
         [ arg1 ]
 
 
-{-| -}
+{-| tuple: Elm.Annotation.Annotation
+-> Elm.Annotation.Annotation
+-> Elm.Annotation.Annotation
+-}
 tuple : Elm.Expression -> Elm.Expression -> Elm.Expression
 tuple arg1 arg2 =
     Elm.apply
@@ -202,7 +211,11 @@ tuple arg1 arg2 =
         [ arg1, arg2 ]
 
 
-{-| -}
+{-| triple: Elm.Annotation.Annotation
+-> Elm.Annotation.Annotation
+-> Elm.Annotation.Annotation
+-> Elm.Annotation.Annotation
+-}
 triple : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 triple arg1 arg2 arg3 =
     Elm.apply
@@ -223,7 +236,7 @@ triple arg1 arg2 arg3 =
         [ arg1, arg2, arg3 ]
 
 
-{-| -}
+{-| set: Elm.Annotation.Annotation -> Elm.Annotation.Annotation -}
 set : Elm.Expression -> Elm.Expression
 set arg1 =
     Elm.apply
@@ -242,7 +255,10 @@ set arg1 =
         [ arg1 ]
 
 
-{-| -}
+{-| dict: Elm.Annotation.Annotation
+-> Elm.Annotation.Annotation
+-> Elm.Annotation.Annotation
+-}
 dict : Elm.Expression -> Elm.Expression -> Elm.Expression
 dict arg1 arg2 =
     Elm.apply
@@ -262,7 +278,10 @@ dict arg1 arg2 =
         [ arg1, arg2 ]
 
 
-{-| -}
+{-| result: Elm.Annotation.Annotation
+-> Elm.Annotation.Annotation
+-> Elm.Annotation.Annotation
+-}
 result : Elm.Expression -> Elm.Expression -> Elm.Expression
 result arg1 arg2 =
     Elm.apply
@@ -282,7 +301,7 @@ result arg1 arg2 =
         [ arg1, arg2 ]
 
 
-{-| -}
+{-| record: List ( String, Elm.Annotation.Annotation ) -> Elm.Annotation.Annotation -}
 record : List Elm.Expression -> Elm.Expression
 record arg1 =
     Elm.apply
@@ -309,7 +328,10 @@ record arg1 =
         [ Elm.list arg1 ]
 
 
-{-| -}
+{-| extensible: String
+-> List ( String, Elm.Annotation.Annotation )
+-> Elm.Annotation.Annotation
+-}
 extensible : String -> List Elm.Expression -> Elm.Expression
 extensible arg1 arg2 =
     Elm.apply
@@ -337,7 +359,10 @@ extensible arg1 arg2 =
         [ Elm.string arg1, Elm.list arg2 ]
 
 
-{-| -}
+{-| function: List Elm.Annotation.Annotation
+-> Elm.Annotation.Annotation
+-> Elm.Annotation.Annotation
+-}
 function : List Elm.Expression -> Elm.Expression -> Elm.Expression
 function arg1 arg2 =
     Elm.apply
@@ -362,7 +387,7 @@ function arg1 arg2 =
         [ Elm.list arg1, arg2 ]
 
 
-{-| -}
+{-| toString: Elm.Annotation.Annotation -> String -}
 toString : Elm.Expression -> Elm.Expression
 toString arg1 =
     Elm.apply

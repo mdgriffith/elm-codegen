@@ -36,6 +36,8 @@ changed a task like "make delicious lasagna" into a command like "Hey Elm, make
 delicious lasagna and give it to my `update` function as a `Msg` value."
 
 [guide]: https://guide.elm-lang.org/
+
+perform: (a -> msg) -> Task.Task Basics.Never a -> Platform.Cmd.Cmd msg
 -}
 perform : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 perform arg1 arg2 =
@@ -88,6 +90,8 @@ you succeeded or failed."
 feeling for how commands fit into The Elm Architecture.
 
 [guide]: https://guide.elm-lang.org/
+
+attempt: (Result.Result x a -> msg) -> Task.Task x a -> Platform.Cmd.Cmd msg
 -}
 attempt : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 attempt arg1 arg2 =
@@ -135,6 +139,8 @@ now:
         |> andThen (\_ -> Time.now)
 
 First the process sleeps for an hour **and then** it tells us what time it is.
+
+andThen: (a -> Task.Task x b) -> Task.Task x a -> Task.Task x b
 -}
 andThen : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 andThen arg1 arg2 =
@@ -178,6 +184,7 @@ andThen arg1 arg2 =
       Time.now
         |> andThen (\t -> succeed (Time.posixToMillis t))
 
+succeed: a -> Task.Task x a
 -}
 succeed : Elm.Expression -> Elm.Expression
 succeed arg1 =
@@ -208,6 +215,8 @@ used with `andThen` to check on the outcome of another task.
     notFound : Task Error a
     notFound =
       fail NotFound
+
+fail: x -> Task.Task x a
 -}
 fail : Elm.Expression -> Elm.Expression
 fail arg1 =
@@ -236,6 +245,7 @@ sequence fails.
 
     sequence [ succeed 1, succeed 2 ] == succeed [ 1, 2 ]
 
+sequence: List (Task.Task x a) -> Task.Task x (List a)
 -}
 sequence : List Elm.Expression -> Elm.Expression
 sequence arg1 =
@@ -279,6 +289,8 @@ out what time it will be in one hour:
       Time.millisToPosix (Time.posixToMillis time + 60 * 60 * 1000)
 
 [time]: /packages/elm/time/latest/
+
+map: (a -> b) -> Task.Task x a -> Task.Task x b
 -}
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 map arg1 arg2 =
@@ -321,6 +333,8 @@ order, so it would try the first request and only continue after it succeeds.
 If it fails, the whole thing fails!
 
 [time]: /packages/elm/time/latest/
+
+map2: (a -> b -> result) -> Task.Task x a -> Task.Task x b -> Task.Task x result
 -}
 map2 :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
@@ -363,7 +377,12 @@ map2 arg1 arg2 arg3 =
         ]
 
 
-{-|-}
+{-| map3: (a -> b -> c -> result)
+-> Task.Task x a
+-> Task.Task x b
+-> Task.Task x c
+-> Task.Task x result
+-}
 map3 :
     (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
@@ -417,7 +436,13 @@ map3 arg1 arg2 arg3 arg4 =
         ]
 
 
-{-|-}
+{-| map4: (a -> b -> c -> d -> result)
+-> Task.Task x a
+-> Task.Task x b
+-> Task.Task x c
+-> Task.Task x d
+-> Task.Task x result
+-}
 map4 :
     (Elm.Expression
     -> Elm.Expression
@@ -491,7 +516,14 @@ map4 arg1 arg2 arg3 arg4 arg5 =
         ]
 
 
-{-|-}
+{-| map5: (a -> b -> c -> d -> e -> result)
+-> Task.Task x a
+-> Task.Task x b
+-> Task.Task x c
+-> Task.Task x d
+-> Task.Task x e
+-> Task.Task x result
+-}
 map5 :
     (Elm.Expression
     -> Elm.Expression
@@ -590,6 +622,8 @@ callback to recover.
     succeed 9
       |> onError (\msg -> succeed 42)
       -- succeed 9
+
+onError: (x -> Task.Task y a) -> Task.Task x a -> Task.Task y a
 -}
 onError : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
 onError arg1 arg2 =
@@ -636,6 +670,8 @@ types to match up.
         [ mapError Http serverTask
         , mapError WebGL textureTask
         ]
+
+mapError: (x -> y) -> Task.Task x a -> Task.Task y a
 -}
 mapError :
     (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
