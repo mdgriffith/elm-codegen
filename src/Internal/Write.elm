@@ -549,7 +549,11 @@ prettyDestructuring aliases pattern expr =
 
 prettyDocumentation : Documentation -> Doc t
 prettyDocumentation docs =
-    Pretty.string ("{-|" ++ docs ++ "-}")
+    if String.contains "\n" docs then
+        Pretty.string ("{-| " ++ docs ++ "\n-}")
+
+    else
+        Pretty.string ("{-| " ++ docs ++ " -}")
 
 
 {-| Pretty prints a type signature.

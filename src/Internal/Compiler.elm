@@ -425,64 +425,72 @@ getAnnotation exp =
 
 
 documentation : String -> Declaration -> Declaration
-documentation doc decl =
-    case decl of
-        Comment _ ->
-            decl
+documentation rawDoc decl =
+    let
+        doc =
+            String.trim rawDoc
+    in
+    if String.isEmpty doc then
+        decl
 
-        Block source ->
-            decl
+    else
+        case decl of
+            Comment _ ->
+                decl
 
-        Declaration exp imports body ->
-            let
-                addDocs maybeNodedExistingDocs =
-                    case maybeNodedExistingDocs of
-                        Nothing ->
-                            doc
+            Block source ->
+                decl
 
-                        Just (Node.Node range existing) ->
-                            doc ++ "\n\n" ++ existing
-            in
-            case body of
-                Declaration.FunctionDeclaration func ->
-                    Declaration exp
-                        imports
-                        (Declaration.FunctionDeclaration
-                            { func
-                                | documentation =
-                                    Just (nodify (addDocs func.documentation))
-                            }
-                        )
+            Declaration exp imports body ->
+                let
+                    addDocs maybeNodedExistingDocs =
+                        case maybeNodedExistingDocs of
+                            Nothing ->
+                                doc
 
-                Declaration.AliasDeclaration typealias ->
-                    Declaration exp
-                        imports
-                        (Declaration.AliasDeclaration
-                            { typealias
-                                | documentation =
-                                    Just (nodify (addDocs typealias.documentation))
-                            }
-                        )
+                            Just (Node.Node range existing) ->
+                                doc ++ "\n\n" ++ existing
+                in
+                case body of
+                    Declaration.FunctionDeclaration func ->
+                        Declaration exp
+                            imports
+                            (Declaration.FunctionDeclaration
+                                { func
+                                    | documentation =
+                                        Just (nodify (addDocs func.documentation))
+                                }
+                            )
 
-                Declaration.CustomTypeDeclaration typeDecl ->
-                    Declaration exp
-                        imports
-                        (Declaration.CustomTypeDeclaration
-                            { typeDecl
-                                | documentation =
-                                    Just
-                                        (nodify (addDocs typeDecl.documentation))
-                            }
-                        )
+                    Declaration.AliasDeclaration typealias ->
+                        Declaration exp
+                            imports
+                            (Declaration.AliasDeclaration
+                                { typealias
+                                    | documentation =
+                                        Just (nodify (addDocs typealias.documentation))
+                                }
+                            )
 
-                Declaration.PortDeclaration sig ->
-                    decl
+                    Declaration.CustomTypeDeclaration typeDecl ->
+                        Declaration exp
+                            imports
+                            (Declaration.CustomTypeDeclaration
+                                { typeDecl
+                                    | documentation =
+                                        Just
+                                            (nodify (addDocs typeDecl.documentation))
+                                }
+                            )
 
-                Declaration.InfixDeclaration _ ->
-                    decl
+                    Declaration.PortDeclaration sig ->
+                        decl
 
-                Declaration.Destructuring _ _ ->
-                    decl
+                    Declaration.InfixDeclaration _ ->
+                        decl
+
+                    Declaration.Destructuring _ _ ->
+                        decl
 
 
 {-| -}

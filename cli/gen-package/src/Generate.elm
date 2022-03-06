@@ -8,11 +8,13 @@ import Elm.Annotation as Annotation
 import Elm.Case
 import Elm.Docs
 import Elm.Gen
+import Elm.Syntax.TypeAnnotation
 import Elm.Type
 import Gen.Elm
 import Gen.Elm.Annotation as GenType
 import Gen.Elm.Case
 import Internal.Compiler as Compiler
+import Internal.Write as Write
 import Json.Decode as Json
 
 
@@ -802,6 +804,7 @@ generateBlocks thisModule block =
                                 (unpack value.tipe [] vars)
                         )
                         |> Elm.declaration value.name
+                        |> Elm.withDocumentation (value.name ++ ": " ++ typeToString value.tipe)
                         |> Elm.withDocumentation value.comment
                         |> Elm.expose
                     ]
@@ -813,6 +816,7 @@ generateBlocks thisModule block =
                             value.tipe
                             |> Elm.withType expressionType
                         )
+                        |> Elm.withDocumentation (value.name ++ ": " ++ typeToString value.tipe)
                         |> Elm.withDocumentation value.comment
                         |> Elm.expose
                     ]
@@ -1441,3 +1445,88 @@ isLocal thisModule thisType =
 
                     else
                         False
+
+
+typeToString : Elm.Type.Type -> String
+typeToString type_ =
+    docTypeToAnnotation type_
+        |> Write.writeAnnotation
+
+
+docTypeToAnnotation : Elm.Type.Type -> Elm.Syntax.TypeAnnotation.TypeAnnotation
+docTypeToAnnotation tipe =
+    case tipe of
+        Elm.Type.Var var ->
+            Elm.Syntax.TypeAnnotation.GenericType var
+
+        Elm.Type.Type typeName inner ->
+            let
+                modName =
+                    case List.reverse (String.split "." typeName) of
+                        [] ->
+                            Compiler.nodify ( [], "()" )
+
+                        [ "Int", "Basics" ] ->
+                            Compiler.nodify ( [], "Int" )
+
+                        [ "Float", "Basics" ] ->
+                            Compiler.nodify ( [], "Float" )
+
+                        [ "Bool", "Basics" ] ->
+                            Compiler.nodify ( [], "Bool" )
+
+                        [ "String", "String" ] ->
+                            Compiler.nodify ( [], "String" )
+
+                        [ "List", "List" ] ->
+                            Compiler.nodify ( [], "List" )
+
+                        [ "Maybe", "Maybe" ] ->
+                            Compiler.nodify ( [], "Maybe" )
+
+                        top :: tail ->
+                            Compiler.nodify ( List.reverse tail, top )
+            in
+            Elm.Syntax.TypeAnnotation.Typed
+                modName
+                (List.map (docTypeToAnnotation >> Compiler.nodify) inner)
+
+        Elm.Type.Tuple [] ->
+            Elm.Syntax.TypeAnnotation.Unit
+
+        Elm.Type.Tuple inner ->
+            Elm.Syntax.TypeAnnotation.Tupled
+                (List.map (docTypeToAnnotation >> Compiler.nodify) inner)
+
+        Elm.Type.Record fields Nothing ->
+            Elm.Syntax.TypeAnnotation.Record
+                (List.map
+                    (\( name, fieldType ) ->
+                        Compiler.nodify
+                            ( Compiler.nodify name
+                            , Compiler.nodify
+                                (docTypeToAnnotation fieldType)
+                            )
+                    )
+                    fields
+                )
+
+        Elm.Type.Record fields (Just recordName) ->
+            Elm.Syntax.TypeAnnotation.GenericRecord (Compiler.nodify recordName)
+                (Compiler.nodify
+                    (List.map
+                        (\( name, fieldType ) ->
+                            Compiler.nodify
+                                ( Compiler.nodify name
+                                , Compiler.nodify
+                                    (docTypeToAnnotation fieldType)
+                                )
+                        )
+                        fields
+                    )
+                )
+
+        Elm.Type.Lambda one two ->
+            Elm.Syntax.TypeAnnotation.FunctionTypeAnnotation
+                (Compiler.nodify (docTypeToAnnotation one))
+                (Compiler.nodify (docTypeToAnnotation two))

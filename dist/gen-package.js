@@ -11285,7 +11285,7 @@ var $the_sett$elm_pretty_printer$Pretty$nest = F2(
 			});
 	});
 var $author$project$Internal$Write$prettyDocumentation = function (docs) {
-	return $the_sett$elm_pretty_printer$Pretty$string('{-|' + (docs + '-}'));
+	return A2($elm$core$String$contains, '\n', docs) ? $the_sett$elm_pretty_printer$Pretty$string('{-|\n' + (docs + '\n-}')) : $the_sett$elm_pretty_printer$Pretty$string('{-| ' + (docs + ' -}'));
 };
 var $the_sett$elm_pretty_printer$Internals$Union = F2(
 	function (a, b) {
@@ -14106,6 +14106,158 @@ var $author$project$Elm$fileWith = F3(
 				bZ: mod
 			});
 	});
+var $author$project$Generate$docTypeToAnnotation = function (tipe) {
+	switch (tipe.$) {
+		case 0:
+			var _var = tipe.a;
+			return $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$GenericType(_var);
+		case 3:
+			var typeName = tipe.a;
+			var inner = tipe.b;
+			var modName = function () {
+				var _v1 = $elm$core$List$reverse(
+					A2($elm$core$String$split, '.', typeName));
+				_v1$7:
+				while (true) {
+					if (!_v1.b) {
+						return $author$project$Internal$Compiler$nodify(
+							_Utils_Tuple2(_List_Nil, '()'));
+					} else {
+						if (_v1.b.b && (!_v1.b.b.b)) {
+							switch (_v1.b.a) {
+								case 'Basics':
+									switch (_v1.a) {
+										case 'Int':
+											var _v2 = _v1.b;
+											return $author$project$Internal$Compiler$nodify(
+												_Utils_Tuple2(_List_Nil, 'Int'));
+										case 'Float':
+											var _v3 = _v1.b;
+											return $author$project$Internal$Compiler$nodify(
+												_Utils_Tuple2(_List_Nil, 'Float'));
+										case 'Bool':
+											var _v4 = _v1.b;
+											return $author$project$Internal$Compiler$nodify(
+												_Utils_Tuple2(_List_Nil, 'Bool'));
+										default:
+											break _v1$7;
+									}
+								case 'String':
+									if (_v1.a === 'String') {
+										var _v5 = _v1.b;
+										return $author$project$Internal$Compiler$nodify(
+											_Utils_Tuple2(_List_Nil, 'String'));
+									} else {
+										break _v1$7;
+									}
+								case 'List':
+									if (_v1.a === 'List') {
+										var _v6 = _v1.b;
+										return $author$project$Internal$Compiler$nodify(
+											_Utils_Tuple2(_List_Nil, 'List'));
+									} else {
+										break _v1$7;
+									}
+								case 'Maybe':
+									if (_v1.a === 'Maybe') {
+										var _v7 = _v1.b;
+										return $author$project$Internal$Compiler$nodify(
+											_Utils_Tuple2(_List_Nil, 'Maybe'));
+									} else {
+										break _v1$7;
+									}
+								default:
+									break _v1$7;
+							}
+						} else {
+							break _v1$7;
+						}
+					}
+				}
+				var top = _v1.a;
+				var tail = _v1.b;
+				return $author$project$Internal$Compiler$nodify(
+					_Utils_Tuple2(
+						$elm$core$List$reverse(tail),
+						top));
+			}();
+			return A2(
+				$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Typed,
+				modName,
+				A2(
+					$elm$core$List$map,
+					A2($elm$core$Basics$composeR, $author$project$Generate$docTypeToAnnotation, $author$project$Internal$Compiler$nodify),
+					inner));
+		case 2:
+			if (!tipe.a.b) {
+				return $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Unit;
+			} else {
+				var inner = tipe.a;
+				return $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Tupled(
+					A2(
+						$elm$core$List$map,
+						A2($elm$core$Basics$composeR, $author$project$Generate$docTypeToAnnotation, $author$project$Internal$Compiler$nodify),
+						inner));
+			}
+		case 4:
+			if (tipe.b.$ === 1) {
+				var fields = tipe.a;
+				var _v8 = tipe.b;
+				return $stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Record(
+					A2(
+						$elm$core$List$map,
+						function (_v9) {
+							var name = _v9.a;
+							var fieldType = _v9.b;
+							return $author$project$Internal$Compiler$nodify(
+								_Utils_Tuple2(
+									$author$project$Internal$Compiler$nodify(name),
+									$author$project$Internal$Compiler$nodify(
+										$author$project$Generate$docTypeToAnnotation(fieldType))));
+						},
+						fields));
+			} else {
+				var fields = tipe.a;
+				var recordName = tipe.b.a;
+				return A2(
+					$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$GenericRecord,
+					$author$project$Internal$Compiler$nodify(recordName),
+					$author$project$Internal$Compiler$nodify(
+						A2(
+							$elm$core$List$map,
+							function (_v10) {
+								var name = _v10.a;
+								var fieldType = _v10.b;
+								return $author$project$Internal$Compiler$nodify(
+									_Utils_Tuple2(
+										$author$project$Internal$Compiler$nodify(name),
+										$author$project$Internal$Compiler$nodify(
+											$author$project$Generate$docTypeToAnnotation(fieldType))));
+							},
+							fields)));
+			}
+		default:
+			var one = tipe.a;
+			var two = tipe.b;
+			return A2(
+				$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$FunctionTypeAnnotation,
+				$author$project$Internal$Compiler$nodify(
+					$author$project$Generate$docTypeToAnnotation(one)),
+				$author$project$Internal$Compiler$nodify(
+					$author$project$Generate$docTypeToAnnotation(two)));
+	}
+};
+var $author$project$Internal$Write$noAliases = _List_Nil;
+var $author$project$Internal$Write$writeAnnotation = function (sig) {
+	return A2(
+		$the_sett$elm_pretty_printer$Pretty$pretty,
+		80,
+		A2($author$project$Internal$Write$prettyTypeAnnotation, $author$project$Internal$Write$noAliases, sig));
+};
+var $author$project$Generate$typeToString = function (type_) {
+	return $author$project$Internal$Write$writeAnnotation(
+		$author$project$Generate$docTypeToAnnotation(type_));
+};
 var $author$project$Gen$Elm$call_ = {
 	aO: F2(
 		function (arg1, arg2) {
@@ -17412,79 +17564,85 @@ var $stil4m$elm_syntax$Elm$Syntax$Declaration$AliasDeclaration = function (a) {
 var $stil4m$elm_syntax$Elm$Syntax$Declaration$CustomTypeDeclaration = function (a) {
 	return {$: 2, a: a};
 };
+var $elm$core$String$trim = _String_trim;
 var $author$project$Internal$Compiler$documentation = F2(
-	function (doc, decl) {
-		switch (decl.$) {
-			case 1:
-				return decl;
-			case 2:
-				var source = decl.a;
-				return decl;
-			default:
-				var exp = decl.a;
-				var imports = decl.b;
-				var body = decl.c;
-				var addDocs = function (maybeNodedExistingDocs) {
-					if (maybeNodedExistingDocs.$ === 1) {
-						return doc;
-					} else {
-						var _v3 = maybeNodedExistingDocs.a;
-						var range = _v3.a;
-						var existing = _v3.b;
-						return doc + ('\n\n' + existing);
+	function (rawDoc, decl) {
+		var doc = $elm$core$String$trim(rawDoc);
+		if ($elm$core$String$isEmpty(doc)) {
+			return decl;
+		} else {
+			switch (decl.$) {
+				case 1:
+					return decl;
+				case 2:
+					var source = decl.a;
+					return decl;
+				default:
+					var exp = decl.a;
+					var imports = decl.b;
+					var body = decl.c;
+					var addDocs = function (maybeNodedExistingDocs) {
+						if (maybeNodedExistingDocs.$ === 1) {
+							return doc;
+						} else {
+							var _v3 = maybeNodedExistingDocs.a;
+							var range = _v3.a;
+							var existing = _v3.b;
+							return doc + ('\n\n' + existing);
+						}
+					};
+					switch (body.$) {
+						case 0:
+							var func = body.a;
+							return A3(
+								$author$project$Internal$Compiler$Declaration,
+								exp,
+								imports,
+								$stil4m$elm_syntax$Elm$Syntax$Declaration$FunctionDeclaration(
+									_Utils_update(
+										func,
+										{
+											_: $elm$core$Maybe$Just(
+												$author$project$Internal$Compiler$nodify(
+													addDocs(func._)))
+										})));
+						case 1:
+							var typealias = body.a;
+							return A3(
+								$author$project$Internal$Compiler$Declaration,
+								exp,
+								imports,
+								$stil4m$elm_syntax$Elm$Syntax$Declaration$AliasDeclaration(
+									_Utils_update(
+										typealias,
+										{
+											_: $elm$core$Maybe$Just(
+												$author$project$Internal$Compiler$nodify(
+													addDocs(typealias._)))
+										})));
+						case 2:
+							var typeDecl = body.a;
+							return A3(
+								$author$project$Internal$Compiler$Declaration,
+								exp,
+								imports,
+								$stil4m$elm_syntax$Elm$Syntax$Declaration$CustomTypeDeclaration(
+									_Utils_update(
+										typeDecl,
+										{
+											_: $elm$core$Maybe$Just(
+												$author$project$Internal$Compiler$nodify(
+													addDocs(typeDecl._)))
+										})));
+						case 3:
+							var sig = body.a;
+							return decl;
+						case 4:
+							return decl;
+						default:
+							return decl;
 					}
-				};
-				switch (body.$) {
-					case 0:
-						var func = body.a;
-						return A3(
-							$author$project$Internal$Compiler$Declaration,
-							exp,
-							imports,
-							$stil4m$elm_syntax$Elm$Syntax$Declaration$FunctionDeclaration(
-								_Utils_update(
-									func,
-									{
-										_: $elm$core$Maybe$Just(
-											$author$project$Internal$Compiler$nodify(
-												addDocs(func._)))
-									})));
-					case 1:
-						var typealias = body.a;
-						return A3(
-							$author$project$Internal$Compiler$Declaration,
-							exp,
-							imports,
-							$stil4m$elm_syntax$Elm$Syntax$Declaration$AliasDeclaration(
-								_Utils_update(
-									typealias,
-									{
-										_: $elm$core$Maybe$Just(
-											$author$project$Internal$Compiler$nodify(
-												addDocs(typealias._)))
-									})));
-					case 2:
-						var typeDecl = body.a;
-						return A3(
-							$author$project$Internal$Compiler$Declaration,
-							exp,
-							imports,
-							$stil4m$elm_syntax$Elm$Syntax$Declaration$CustomTypeDeclaration(
-								_Utils_update(
-									typeDecl,
-									{
-										_: $elm$core$Maybe$Just(
-											$author$project$Internal$Compiler$nodify(
-												addDocs(typeDecl._)))
-									})));
-					case 3:
-						var sig = body.a;
-						return decl;
-					case 4:
-						return decl;
-					default:
-						return decl;
-				}
+			}
 		}
 	});
 var $author$project$Elm$withDocumentation = $author$project$Internal$Compiler$documentation;
@@ -17524,25 +17682,28 @@ var $author$project$Generate$generateBlocks = F2(
 								$author$project$Elm$withDocumentation,
 								value.S,
 								A2(
-									$author$project$Elm$declaration,
-									value.m,
+									$author$project$Elm$withDocumentation,
+									value.m + (': ' + $author$project$Generate$typeToString(value.aK)),
 									A2(
-										$author$project$Elm$function,
-										$elm$core$List$reverse(
-											A2($elm$core$List$drop, 1, captured.c$)),
-										function (vars) {
-											return A2(
-												$author$project$Gen$Elm$apply,
-												$author$project$Gen$Elm$value(
-													{
-														b: $author$project$Elm$maybe(
-															$elm$core$Maybe$Just(
-																A2($author$project$Generate$typeToExpression, thisModule, value.aK))),
-														w: thisModule,
-														m: value.m
-													}),
-												A3($author$project$Generate$unpack, value.aK, _List_Nil, vars));
-										}))))
+										$author$project$Elm$declaration,
+										value.m,
+										A2(
+											$author$project$Elm$function,
+											$elm$core$List$reverse(
+												A2($elm$core$List$drop, 1, captured.c$)),
+											function (vars) {
+												return A2(
+													$author$project$Gen$Elm$apply,
+													$author$project$Gen$Elm$value(
+														{
+															b: $author$project$Elm$maybe(
+																$elm$core$Maybe$Just(
+																	A2($author$project$Generate$typeToExpression, thisModule, value.aK))),
+															w: thisModule,
+															m: value.m
+														}),
+													A3($author$project$Generate$unpack, value.aK, _List_Nil, vars));
+											})))))
 						]);
 				} else {
 					return _List_fromArray(
@@ -17552,12 +17713,15 @@ var $author$project$Generate$generateBlocks = F2(
 								$author$project$Elm$withDocumentation,
 								value.S,
 								A2(
-									$author$project$Elm$declaration,
-									value.m,
+									$author$project$Elm$withDocumentation,
+									value.m + (': ' + $author$project$Generate$typeToString(value.aK)),
 									A2(
-										$author$project$Elm$withType,
-										$author$project$Generate$expressionType,
-										A3($author$project$Generate$valueWith, thisModule, value.m, value.aK)))))
+										$author$project$Elm$declaration,
+										value.m,
+										A2(
+											$author$project$Elm$withType,
+											$author$project$Generate$expressionType,
+											A3($author$project$Generate$valueWith, thisModule, value.m, value.aK))))))
 						]);
 				}
 			case 4:
@@ -17671,7 +17835,6 @@ var $elm$project_metadata_utils$Elm$Docs$nameToBlock = F2(
 						docs.R,
 						$elm$project_metadata_utils$Elm$Docs$UnknownBlock(name)))));
 	});
-var $elm$core$String$trim = _String_trim;
 var $elm$core$String$trimLeft = _String_trimLeft;
 var $elm$core$String$words = _String_words;
 var $elm$project_metadata_utils$Elm$Docs$partsToBlocks = F2(
