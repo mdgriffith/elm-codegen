@@ -1714,8 +1714,28 @@ unifiableHelper vars one two =
                         Just foundTwo ->
                             unifiableHelper vars one foundTwo
 
-                Annotation.GenericRecord twoRecName fieldsB ->
-                    ( vars, Err (UnableToUnify one two) )
+                Annotation.GenericRecord (Node.Node _ twoRecName) (Node.Node _ fieldsB) ->
+                    case Dict.get twoRecName vars of
+                        Nothing ->
+                            case unifiableFields vars fieldsA fieldsB [] of
+                                ( newVars, Ok unifiedFields ) ->
+                                    ( newVars
+                                    , Ok (Annotation.Record unifiedFields)
+                                    )
+
+                                ( newVars, Err err ) ->
+                                    ( newVars, Err err )
+
+                        Just knownType ->
+                            -- NOTE: we should probably check knownType in some way?
+                            case unifiableFields vars fieldsA fieldsB [] of
+                                ( newVars, Ok unifiedFields ) ->
+                                    ( newVars
+                                    , Ok (Annotation.Record unifiedFields)
+                                    )
+
+                                ( newVars, Err err ) ->
+                                    ( newVars, Err err )
 
                 Annotation.Record fieldsB ->
                     case unifiableFields vars fieldsA fieldsB [] of
@@ -1730,7 +1750,7 @@ unifiableHelper vars one two =
                 _ ->
                     ( vars, Err (UnableToUnify one two) )
 
-        Annotation.GenericRecord reVarName (Node.Node fieldsARange fieldsA) ->
+        Annotation.GenericRecord (Node.Node _ reVarName) (Node.Node fieldsARange fieldsA) ->
             case two of
                 Annotation.GenericType b ->
                     case Dict.get b vars of
@@ -1742,8 +1762,31 @@ unifiableHelper vars one two =
                         Just foundTwo ->
                             unifiableHelper vars one foundTwo
 
-                Annotation.GenericRecord twoRecName fieldsB ->
-                    ( vars, Err (UnableToUnify one two) )
+                Annotation.GenericRecord (Node.Node _ twoRecName) (Node.Node _ fieldsB) ->
+                    case Dict.get twoRecName vars of
+                        Nothing ->
+                            -- Here, I think we need an inference that
+                            -- reVarName == twoRecName
+                            -- Also, do we care if the fields match up, or do we grow the record?
+                            case unifiableFields vars fieldsA fieldsB [] of
+                                ( newVars, Ok unifiedFields ) ->
+                                    ( newVars
+                                    , Ok (Annotation.Record unifiedFields)
+                                    )
+
+                                ( newVars, Err err ) ->
+                                    ( newVars, Err err )
+
+                        Just knownType ->
+                            -- NOTE: we should probably check knownType in some way?
+                            case unifiableFields vars fieldsA fieldsB [] of
+                                ( newVars, Ok unifiedFields ) ->
+                                    ( newVars
+                                    , Ok (Annotation.Record unifiedFields)
+                                    )
+
+                                ( newVars, Err err ) ->
+                                    ( newVars, Err err )
 
                 Annotation.Record fieldsB ->
                     case unifiableFields vars fieldsA fieldsB [] of
@@ -1793,6 +1836,8 @@ unifiableHelper vars one two =
                     ( vars, Err (UnableToUnify one two) )
 
 
+{-| Checks that all fields in `one` are in `two` and are unifiable.
+-}
 unifiableFields :
     VariableCache
     -> List (Node ( Node String, Node Annotation.TypeAnnotation ))

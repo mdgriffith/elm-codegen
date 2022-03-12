@@ -5339,9 +5339,9 @@ var $author$project$Internal$Compiler$unifiableFields = F4(
 	function (vars, one, two, unified) {
 		unifiableFields:
 		while (true) {
-			var _v30 = _Utils_Tuple2(one, two);
-			if (!_v30.a.b) {
-				if (!_v30.b.b) {
+			var _v41 = _Utils_Tuple2(one, two);
+			if (!_v41.a.b) {
+				if (!_v41.b.b) {
 					return _Utils_Tuple2(
 						vars,
 						$elm$core$Result$Ok(
@@ -5353,23 +5353,23 @@ var $author$project$Internal$Compiler$unifiableFields = F4(
 						$elm$core$Result$Err($author$project$Internal$Compiler$MismatchedTypeVariables));
 				}
 			} else {
-				var _v31 = _v30.a;
-				var oneX = _v31.a;
-				var oneRemain = _v31.b;
-				var twoFields = _v30.b;
-				var _v32 = $author$project$Internal$Compiler$denode(oneX);
-				var oneFieldName = _v32.a;
-				var oneFieldVal = _v32.b;
+				var _v42 = _v41.a;
+				var oneX = _v42.a;
+				var oneRemain = _v42.b;
+				var twoFields = _v41.b;
+				var _v43 = $author$project$Internal$Compiler$denode(oneX);
+				var oneFieldName = _v43.a;
+				var oneFieldVal = _v43.b;
 				var oneName = $author$project$Internal$Compiler$denode(oneFieldName);
 				var oneVal = $author$project$Internal$Compiler$denode(oneFieldVal);
-				var _v33 = A4($author$project$Internal$Compiler$getField, oneName, oneVal, twoFields, _List_Nil);
-				if (!_v33.$) {
-					var _v34 = _v33.a;
-					var matchingFieldVal = _v34.a;
-					var remainingTwo = _v34.b;
-					var _v35 = A3($author$project$Internal$Compiler$unifiableHelper, vars, oneVal, matchingFieldVal);
-					var newVars = _v35.a;
-					var unifiedFieldResult = _v35.b;
+				var _v44 = A4($author$project$Internal$Compiler$getField, oneName, oneVal, twoFields, _List_Nil);
+				if (!_v44.$) {
+					var _v45 = _v44.a;
+					var matchingFieldVal = _v45.a;
+					var remainingTwo = _v45.b;
+					var _v46 = A3($author$project$Internal$Compiler$unifiableHelper, vars, oneVal, matchingFieldVal);
+					var newVars = _v46.a;
+					var unifiedFieldResult = _v46.b;
 					if (!unifiedFieldResult.$) {
 						var unifiedField = unifiedFieldResult.a;
 						var $temp$vars = newVars,
@@ -5393,7 +5393,7 @@ var $author$project$Internal$Compiler$unifiableFields = F4(
 							$elm$core$Result$Err(err));
 					}
 				} else {
-					var notFound = _v33.a;
+					var notFound = _v44.a;
 					return _Utils_Tuple2(
 						vars,
 						$elm$core$Result$Err(notFound));
@@ -5586,25 +5586,58 @@ var $author$project$Internal$Compiler$unifiableHelper = F3(
 								continue unifiableHelper;
 							}
 						case 5:
-							var twoRecName = two.a;
-							var fieldsB = two.b;
-							return _Utils_Tuple2(
-								vars,
-								$elm$core$Result$Err(
-									A2($author$project$Internal$Compiler$UnableToUnify, one, two)));
+							var _v21 = two.a;
+							var twoRecName = _v21.b;
+							var _v22 = two.b;
+							var fieldsB = _v22.b;
+							var _v23 = A2($elm$core$Dict$get, twoRecName, vars);
+							if (_v23.$ === 1) {
+								var _v24 = A4($author$project$Internal$Compiler$unifiableFields, vars, fieldsA, fieldsB, _List_Nil);
+								if (!_v24.b.$) {
+									var newVars = _v24.a;
+									var unifiedFields = _v24.b.a;
+									return _Utils_Tuple2(
+										newVars,
+										$elm$core$Result$Ok(
+											$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Record(unifiedFields)));
+								} else {
+									var newVars = _v24.a;
+									var err = _v24.b.a;
+									return _Utils_Tuple2(
+										newVars,
+										$elm$core$Result$Err(err));
+								}
+							} else {
+								var knownType = _v23.a;
+								var _v25 = A4($author$project$Internal$Compiler$unifiableFields, vars, fieldsA, fieldsB, _List_Nil);
+								if (!_v25.b.$) {
+									var newVars = _v25.a;
+									var unifiedFields = _v25.b.a;
+									return _Utils_Tuple2(
+										newVars,
+										$elm$core$Result$Ok(
+											$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Record(unifiedFields)));
+								} else {
+									var newVars = _v25.a;
+									var err = _v25.b.a;
+									return _Utils_Tuple2(
+										newVars,
+										$elm$core$Result$Err(err));
+								}
+							}
 						case 4:
 							var fieldsB = two.a;
-							var _v21 = A4($author$project$Internal$Compiler$unifiableFields, vars, fieldsA, fieldsB, _List_Nil);
-							if (!_v21.b.$) {
-								var newVars = _v21.a;
-								var unifiedFields = _v21.b.a;
+							var _v26 = A4($author$project$Internal$Compiler$unifiableFields, vars, fieldsA, fieldsB, _List_Nil);
+							if (!_v26.b.$) {
+								var newVars = _v26.a;
+								var unifiedFields = _v26.b.a;
 								return _Utils_Tuple2(
 									newVars,
 									$elm$core$Result$Ok(
 										$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Record(unifiedFields)));
 							} else {
-								var newVars = _v21.a;
-								var err = _v21.b.a;
+								var newVars = _v26.a;
+								var err = _v26.b.a;
 								return _Utils_Tuple2(
 									newVars,
 									$elm$core$Result$Err(err));
@@ -5616,20 +5649,21 @@ var $author$project$Internal$Compiler$unifiableHelper = F3(
 									A2($author$project$Internal$Compiler$UnableToUnify, one, two)));
 					}
 				case 5:
-					var reVarName = one.a;
-					var _v22 = one.b;
-					var fieldsARange = _v22.a;
-					var fieldsA = _v22.b;
+					var _v27 = one.a;
+					var reVarName = _v27.b;
+					var _v28 = one.b;
+					var fieldsARange = _v28.a;
+					var fieldsA = _v28.b;
 					switch (two.$) {
 						case 0:
 							var b = two.a;
-							var _v24 = A2($elm$core$Dict$get, b, vars);
-							if (_v24.$ === 1) {
+							var _v30 = A2($elm$core$Dict$get, b, vars);
+							if (_v30.$ === 1) {
 								return _Utils_Tuple2(
 									A3($author$project$Internal$Compiler$addInference, b, one, vars),
 									$elm$core$Result$Ok(one));
 							} else {
-								var foundTwo = _v24.a;
+								var foundTwo = _v30.a;
 								var $temp$vars = vars,
 									$temp$one = one,
 									$temp$two = foundTwo;
@@ -5639,25 +5673,58 @@ var $author$project$Internal$Compiler$unifiableHelper = F3(
 								continue unifiableHelper;
 							}
 						case 5:
-							var twoRecName = two.a;
-							var fieldsB = two.b;
-							return _Utils_Tuple2(
-								vars,
-								$elm$core$Result$Err(
-									A2($author$project$Internal$Compiler$UnableToUnify, one, two)));
+							var _v31 = two.a;
+							var twoRecName = _v31.b;
+							var _v32 = two.b;
+							var fieldsB = _v32.b;
+							var _v33 = A2($elm$core$Dict$get, twoRecName, vars);
+							if (_v33.$ === 1) {
+								var _v34 = A4($author$project$Internal$Compiler$unifiableFields, vars, fieldsA, fieldsB, _List_Nil);
+								if (!_v34.b.$) {
+									var newVars = _v34.a;
+									var unifiedFields = _v34.b.a;
+									return _Utils_Tuple2(
+										newVars,
+										$elm$core$Result$Ok(
+											$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Record(unifiedFields)));
+								} else {
+									var newVars = _v34.a;
+									var err = _v34.b.a;
+									return _Utils_Tuple2(
+										newVars,
+										$elm$core$Result$Err(err));
+								}
+							} else {
+								var knownType = _v33.a;
+								var _v35 = A4($author$project$Internal$Compiler$unifiableFields, vars, fieldsA, fieldsB, _List_Nil);
+								if (!_v35.b.$) {
+									var newVars = _v35.a;
+									var unifiedFields = _v35.b.a;
+									return _Utils_Tuple2(
+										newVars,
+										$elm$core$Result$Ok(
+											$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Record(unifiedFields)));
+								} else {
+									var newVars = _v35.a;
+									var err = _v35.b.a;
+									return _Utils_Tuple2(
+										newVars,
+										$elm$core$Result$Err(err));
+								}
+							}
 						case 4:
 							var fieldsB = two.a;
-							var _v25 = A4($author$project$Internal$Compiler$unifiableFields, vars, fieldsA, fieldsB, _List_Nil);
-							if (!_v25.b.$) {
-								var newVars = _v25.a;
-								var unifiedFields = _v25.b.a;
+							var _v36 = A4($author$project$Internal$Compiler$unifiableFields, vars, fieldsA, fieldsB, _List_Nil);
+							if (!_v36.b.$) {
+								var newVars = _v36.a;
+								var unifiedFields = _v36.b.a;
 								return _Utils_Tuple2(
 									newVars,
 									$elm$core$Result$Ok(
 										$stil4m$elm_syntax$Elm$Syntax$TypeAnnotation$Record(unifiedFields)));
 							} else {
-								var newVars = _v25.a;
-								var err = _v25.b.a;
+								var newVars = _v36.a;
+								var err = _v36.b.a;
 								return _Utils_Tuple2(
 									newVars,
 									$elm$core$Result$Err(err));
@@ -5674,13 +5741,13 @@ var $author$project$Internal$Compiler$unifiableHelper = F3(
 					switch (two.$) {
 						case 0:
 							var b = two.a;
-							var _v27 = A2($elm$core$Dict$get, b, vars);
-							if (_v27.$ === 1) {
+							var _v38 = A2($elm$core$Dict$get, b, vars);
+							if (_v38.$ === 1) {
 								return _Utils_Tuple2(
 									A3($author$project$Internal$Compiler$addInference, b, one, vars),
 									$elm$core$Result$Ok(one));
 							} else {
-								var foundTwo = _v27.a;
+								var foundTwo = _v38.a;
 								var $temp$vars = vars,
 									$temp$one = one,
 									$temp$two = foundTwo;
@@ -5692,22 +5759,22 @@ var $author$project$Internal$Compiler$unifiableHelper = F3(
 						case 6:
 							var twoA = two.a;
 							var twoB = two.b;
-							var _v28 = A3(
+							var _v39 = A3(
 								$author$project$Internal$Compiler$unifiableHelper,
 								vars,
 								$author$project$Internal$Compiler$denode(oneA),
 								$author$project$Internal$Compiler$denode(twoA));
-							if (!_v28.b.$) {
-								var aVars = _v28.a;
-								var unifiedA = _v28.b.a;
-								var _v29 = A3(
+							if (!_v39.b.$) {
+								var aVars = _v39.a;
+								var unifiedA = _v39.b.a;
+								var _v40 = A3(
 									$author$project$Internal$Compiler$unifiableHelper,
 									aVars,
 									$author$project$Internal$Compiler$denode(oneB),
 									$author$project$Internal$Compiler$denode(twoB));
-								if (!_v29.b.$) {
-									var bVars = _v29.a;
-									var unifiedB = _v29.b.a;
+								if (!_v40.b.$) {
+									var bVars = _v40.a;
+									var unifiedB = _v40.b.a;
 									return _Utils_Tuple2(
 										bVars,
 										$elm$core$Result$Ok(
@@ -5716,11 +5783,11 @@ var $author$project$Internal$Compiler$unifiableHelper = F3(
 												$author$project$Internal$Compiler$nodify(unifiedA),
 												$author$project$Internal$Compiler$nodify(unifiedB))));
 								} else {
-									var otherwise = _v29;
+									var otherwise = _v40;
 									return otherwise;
 								}
 							} else {
-								var otherwise = _v28;
+								var otherwise = _v39;
 								return otherwise;
 							}
 						default:
