@@ -17,7 +17,7 @@ moduleName_ =
 
 {-| letIn: a -> Elm.Let.Let a -}
 letIn : Elm.Expression -> Elm.Expression
-letIn arg1 =
+letIn arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Let" ]
@@ -30,12 +30,12 @@ letIn arg1 =
                     )
             }
         )
-        [ arg1 ]
+        [ arg ]
 
 
 {-| value: String -> Elm.Expression -> Elm.Let.Let (Elm.Expression -> a) -> Elm.Let.Let a -}
 value : String -> Elm.Expression -> Elm.Expression -> Elm.Expression
-value arg1 arg2 arg3 =
+value arg arg0 arg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Let" ]
@@ -57,7 +57,7 @@ value arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.string arg1, arg2, arg3 ]
+        [ Elm.string arg, arg0, arg1 ]
 
 
 {-| tuple: String
@@ -67,7 +67,7 @@ value arg1 arg2 arg3 =
 -> Elm.Let.Let a
 -}
 tuple : String -> String -> Elm.Expression -> Elm.Expression -> Elm.Expression
-tuple arg1 arg2 arg3 arg4 =
+tuple arg arg0 arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Let" ]
@@ -93,7 +93,7 @@ tuple arg1 arg2 arg3 arg4 =
                     )
             }
         )
-        [ Elm.string arg1, Elm.string arg2, arg3, arg4 ]
+        [ Elm.string arg, Elm.string arg0, arg1, arg2 ]
 
 
 {-| record: List String
@@ -102,7 +102,7 @@ tuple arg1 arg2 arg3 arg4 =
 -> Elm.Let.Let a
 -}
 record : List String -> Elm.Expression -> Elm.Expression -> Elm.Expression
-record arg1 arg2 arg3 =
+record arg arg0 arg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Let" ]
@@ -126,12 +126,12 @@ record arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg1), arg2, arg3 ]
+        [ Elm.list (List.map Elm.string arg), arg0, arg1 ]
 
 
 {-| toExpression: Elm.Let.Let Elm.Expression -> Elm.Expression -}
 toExpression : Elm.Expression -> Elm.Expression
-toExpression arg1 =
+toExpression arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Let" ]
@@ -148,7 +148,7 @@ toExpression arg1 =
                     )
             }
         )
-        [ arg1 ]
+        [ arg ]
 
 
 call_ :
@@ -167,7 +167,7 @@ call_ :
     }
 call_ =
     { letIn =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Let" ]
@@ -184,9 +184,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , value =
-        \arg1 arg2 arg3 ->
+        \arg arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Let" ]
@@ -216,9 +216,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2, arg3 ]
+                [ arg, arg1, arg2 ]
     , tuple =
-        \arg1 arg2 arg3 arg4 ->
+        \arg arg2 arg3 arg4 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Let" ]
@@ -256,9 +256,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2, arg3, arg4 ]
+                [ arg, arg2, arg3, arg4 ]
     , record =
-        \arg1 arg2 arg3 ->
+        \arg arg3 arg4 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Let" ]
@@ -290,9 +290,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2, arg3 ]
+                [ arg, arg3, arg4 ]
     , toExpression =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Let" ]
@@ -309,7 +309,7 @@ call_ =
                             )
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     }
 
 

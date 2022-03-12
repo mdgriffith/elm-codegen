@@ -30,7 +30,7 @@ moduleName_ =
 isUpper: Char.Char -> Bool
 -}
 isUpper : Char.Char -> Elm.Expression
-isUpper arg1 =
+isUpper arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Char" ]
@@ -38,7 +38,7 @@ isUpper arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.bool)
             }
         )
-        [ Elm.char arg1 ]
+        [ Elm.char arg ]
 
 
 {-| Detect lower case ASCII characters.
@@ -56,7 +56,7 @@ isUpper arg1 =
 isLower: Char.Char -> Bool
 -}
 isLower : Char.Char -> Elm.Expression
-isLower arg1 =
+isLower arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Char" ]
@@ -64,7 +64,7 @@ isLower arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.bool)
             }
         )
-        [ Elm.char arg1 ]
+        [ Elm.char arg ]
 
 
 {-| Detect upper case and lower case ASCII characters.
@@ -81,7 +81,7 @@ isLower arg1 =
 isAlpha: Char.Char -> Bool
 -}
 isAlpha : Char.Char -> Elm.Expression
-isAlpha arg1 =
+isAlpha arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Char" ]
@@ -89,7 +89,7 @@ isAlpha arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.bool)
             }
         )
-        [ Elm.char arg1 ]
+        [ Elm.char arg ]
 
 
 {-| Detect upper case and lower case ASCII characters.
@@ -107,7 +107,7 @@ isAlpha arg1 =
 isAlphaNum: Char.Char -> Bool
 -}
 isAlphaNum : Char.Char -> Elm.Expression
-isAlphaNum arg1 =
+isAlphaNum arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Char" ]
@@ -115,7 +115,7 @@ isAlphaNum arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.bool)
             }
         )
-        [ Elm.char arg1 ]
+        [ Elm.char arg ]
 
 
 {-| Detect digits `0123456789`
@@ -132,7 +132,7 @@ isAlphaNum arg1 =
 isDigit: Char.Char -> Bool
 -}
 isDigit : Char.Char -> Elm.Expression
-isDigit arg1 =
+isDigit arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Char" ]
@@ -140,7 +140,7 @@ isDigit arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.bool)
             }
         )
-        [ Elm.char arg1 ]
+        [ Elm.char arg ]
 
 
 {-| Detect octal digits `01234567`
@@ -157,7 +157,7 @@ isDigit arg1 =
 isOctDigit: Char.Char -> Bool
 -}
 isOctDigit : Char.Char -> Elm.Expression
-isOctDigit arg1 =
+isOctDigit arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Char" ]
@@ -165,7 +165,7 @@ isOctDigit arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.bool)
             }
         )
-        [ Elm.char arg1 ]
+        [ Elm.char arg ]
 
 
 {-| Detect hexadecimal digits `0123456789abcdefABCDEF`
@@ -173,7 +173,7 @@ isOctDigit arg1 =
 isHexDigit: Char.Char -> Bool
 -}
 isHexDigit : Char.Char -> Elm.Expression
-isHexDigit arg1 =
+isHexDigit arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Char" ]
@@ -181,7 +181,7 @@ isHexDigit arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.bool)
             }
         )
-        [ Elm.char arg1 ]
+        [ Elm.char arg ]
 
 
 {-| Convert to upper case.
@@ -189,7 +189,7 @@ isHexDigit arg1 =
 toUpper: Char.Char -> Char.Char
 -}
 toUpper : Char.Char -> Elm.Expression
-toUpper arg1 =
+toUpper arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Char" ]
@@ -197,7 +197,7 @@ toUpper arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.char)
             }
         )
-        [ Elm.char arg1 ]
+        [ Elm.char arg ]
 
 
 {-| Convert to lower case.
@@ -205,7 +205,7 @@ toUpper arg1 =
 toLower: Char.Char -> Char.Char
 -}
 toLower : Char.Char -> Elm.Expression
-toLower arg1 =
+toLower arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Char" ]
@@ -213,7 +213,7 @@ toLower arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.char)
             }
         )
-        [ Elm.char arg1 ]
+        [ Elm.char arg ]
 
 
 {-| Convert to upper case, according to any locale-specific case mappings.
@@ -221,7 +221,7 @@ toLower arg1 =
 toLocaleUpper: Char.Char -> Char.Char
 -}
 toLocaleUpper : Char.Char -> Elm.Expression
-toLocaleUpper arg1 =
+toLocaleUpper arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Char" ]
@@ -229,7 +229,7 @@ toLocaleUpper arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.char)
             }
         )
-        [ Elm.char arg1 ]
+        [ Elm.char arg ]
 
 
 {-| Convert to lower case, according to any locale-specific case mappings.
@@ -237,7 +237,7 @@ toLocaleUpper arg1 =
 toLocaleLower: Char.Char -> Char.Char
 -}
 toLocaleLower : Char.Char -> Elm.Expression
-toLocaleLower arg1 =
+toLocaleLower arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Char" ]
@@ -245,7 +245,7 @@ toLocaleLower arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.char)
             }
         )
-        [ Elm.char arg1 ]
+        [ Elm.char arg ]
 
 
 {-| Convert to the corresponding Unicode [code point][cp].
@@ -261,7 +261,7 @@ toLocaleLower arg1 =
 toCode: Char.Char -> Int
 -}
 toCode : Char.Char -> Elm.Expression
-toCode arg1 =
+toCode arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Char" ]
@@ -269,7 +269,7 @@ toCode arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.int)
             }
         )
-        [ Elm.char arg1 ]
+        [ Elm.char arg ]
 
 
 {-| Convert a Unicode [code point][cp] to a character.
@@ -290,7 +290,7 @@ range, you get [the replacement character][fffd].
 fromCode: Int -> Char.Char
 -}
 fromCode : Int -> Elm.Expression
-fromCode arg1 =
+fromCode arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Char" ]
@@ -298,7 +298,7 @@ fromCode arg1 =
             , annotation = Just (Type.function [ Type.int ] Type.char)
             }
         )
-        [ Elm.int arg1 ]
+        [ Elm.int arg ]
 
 
 annotation_ : { char : Type.Annotation }
@@ -323,7 +323,7 @@ call_ :
     }
 call_ =
     { isUpper =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -331,9 +331,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.bool)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , isLower =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -341,9 +341,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.bool)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , isAlpha =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -351,9 +351,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.bool)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , isAlphaNum =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -361,9 +361,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.bool)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , isDigit =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -371,9 +371,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.bool)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , isOctDigit =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -381,9 +381,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.bool)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , isHexDigit =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -391,9 +391,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.bool)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , toUpper =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -401,9 +401,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.char)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , toLower =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -411,9 +411,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.char)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , toLocaleUpper =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -421,9 +421,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.char)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , toLocaleLower =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -431,9 +431,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.char)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , toCode =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -441,9 +441,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.char ] Type.int)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , fromCode =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Char" ]
@@ -451,7 +451,7 @@ call_ =
                     , annotation = Just (Type.function [ Type.int ] Type.char)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     }
 
 

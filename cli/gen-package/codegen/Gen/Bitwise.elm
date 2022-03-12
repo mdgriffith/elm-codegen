@@ -20,7 +20,7 @@ moduleName_ =
 and: Int -> Int -> Int
 -}
 and : Int -> Int -> Elm.Expression
-and arg1 arg2 =
+and arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Bitwise" ]
@@ -28,7 +28,7 @@ and arg1 arg2 =
             , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
             }
         )
-        [ Elm.int arg1, Elm.int arg2 ]
+        [ Elm.int arg, Elm.int arg0 ]
 
 
 {-| Bitwise OR
@@ -36,7 +36,7 @@ and arg1 arg2 =
 or: Int -> Int -> Int
 -}
 or : Int -> Int -> Elm.Expression
-or arg1 arg2 =
+or arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Bitwise" ]
@@ -44,7 +44,7 @@ or arg1 arg2 =
             , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
             }
         )
-        [ Elm.int arg1, Elm.int arg2 ]
+        [ Elm.int arg, Elm.int arg0 ]
 
 
 {-| Bitwise XOR
@@ -52,7 +52,7 @@ or arg1 arg2 =
 xor: Int -> Int -> Int
 -}
 xor : Int -> Int -> Elm.Expression
-xor arg1 arg2 =
+xor arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Bitwise" ]
@@ -60,7 +60,7 @@ xor arg1 arg2 =
             , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
             }
         )
-        [ Elm.int arg1, Elm.int arg2 ]
+        [ Elm.int arg, Elm.int arg0 ]
 
 
 {-| Flip each bit individually, often called bitwise NOT
@@ -68,7 +68,7 @@ xor arg1 arg2 =
 complement: Int -> Int
 -}
 complement : Int -> Elm.Expression
-complement arg1 =
+complement arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Bitwise" ]
@@ -76,7 +76,7 @@ complement arg1 =
             , annotation = Just (Type.function [ Type.int ] Type.int)
             }
         )
-        [ Elm.int arg1 ]
+        [ Elm.int arg ]
 
 
 {-| Shift bits to the left by a given offset, filling new bits with zeros.
@@ -88,7 +88,7 @@ This can be used to multiply numbers by powers of two.
 shiftLeftBy: Int -> Int -> Int
 -}
 shiftLeftBy : Int -> Int -> Elm.Expression
-shiftLeftBy arg1 arg2 =
+shiftLeftBy arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Bitwise" ]
@@ -96,7 +96,7 @@ shiftLeftBy arg1 arg2 =
             , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
             }
         )
-        [ Elm.int arg1, Elm.int arg2 ]
+        [ Elm.int arg, Elm.int arg0 ]
 
 
 {-| Shift bits to the right by a given offset, filling new bits with
@@ -115,7 +115,7 @@ with copies of the highest bit.
 shiftRightBy: Int -> Int -> Int
 -}
 shiftRightBy : Int -> Int -> Elm.Expression
-shiftRightBy arg1 arg2 =
+shiftRightBy arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Bitwise" ]
@@ -123,7 +123,7 @@ shiftRightBy arg1 arg2 =
             , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
             }
         )
-        [ Elm.int arg1, Elm.int arg2 ]
+        [ Elm.int arg, Elm.int arg0 ]
 
 
 {-| Shift bits to the right by a given offset, filling new bits with zeros.
@@ -141,7 +141,7 @@ zeros.
 shiftRightZfBy: Int -> Int -> Int
 -}
 shiftRightZfBy : Int -> Int -> Elm.Expression
-shiftRightZfBy arg1 arg2 =
+shiftRightZfBy arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Bitwise" ]
@@ -149,7 +149,7 @@ shiftRightZfBy arg1 arg2 =
             , annotation = Just (Type.function [ Type.int, Type.int ] Type.int)
             }
         )
-        [ Elm.int arg1, Elm.int arg2 ]
+        [ Elm.int arg, Elm.int arg0 ]
 
 
 call_ :
@@ -163,7 +163,7 @@ call_ :
     }
 call_ =
     { and =
-        \arg1 arg2 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Bitwise" ]
@@ -172,9 +172,9 @@ call_ =
                         Just (Type.function [ Type.int, Type.int ] Type.int)
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg0 ]
     , or =
-        \arg1 arg2 ->
+        \arg arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Bitwise" ]
@@ -183,9 +183,9 @@ call_ =
                         Just (Type.function [ Type.int, Type.int ] Type.int)
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg1 ]
     , xor =
-        \arg1 arg2 ->
+        \arg arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Bitwise" ]
@@ -194,9 +194,9 @@ call_ =
                         Just (Type.function [ Type.int, Type.int ] Type.int)
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg2 ]
     , complement =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Bitwise" ]
@@ -204,9 +204,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.int ] Type.int)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , shiftLeftBy =
-        \arg1 arg2 ->
+        \arg arg4 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Bitwise" ]
@@ -215,9 +215,9 @@ call_ =
                         Just (Type.function [ Type.int, Type.int ] Type.int)
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg4 ]
     , shiftRightBy =
-        \arg1 arg2 ->
+        \arg arg5 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Bitwise" ]
@@ -226,9 +226,9 @@ call_ =
                         Just (Type.function [ Type.int, Type.int ] Type.int)
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg5 ]
     , shiftRightZfBy =
-        \arg1 arg2 ->
+        \arg arg6 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Bitwise" ]
@@ -237,7 +237,7 @@ call_ =
                         Just (Type.function [ Type.int, Type.int ] Type.int)
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg6 ]
     }
 
 

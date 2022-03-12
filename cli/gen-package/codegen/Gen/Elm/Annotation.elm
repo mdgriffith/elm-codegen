@@ -20,7 +20,7 @@ moduleName_ =
 var: String -> Elm.Annotation.Annotation
 -}
 var : String -> Elm.Expression
-var arg1 =
+var arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Annotation" ]
@@ -33,7 +33,7 @@ var arg1 =
                     )
             }
         )
-        [ Elm.string arg1 ]
+        [ Elm.string arg ]
 
 
 {-| bool: Elm.Annotation.Annotation -}
@@ -104,7 +104,7 @@ unit =
 
 {-| named: List String -> String -> Elm.Annotation.Annotation -}
 named : List String -> String -> Elm.Expression
-named arg1 arg2 =
+named arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Annotation" ]
@@ -117,7 +117,7 @@ named arg1 arg2 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg1), Elm.string arg2 ]
+        [ Elm.list (List.map Elm.string arg), Elm.string arg0 ]
 
 
 {-| namedWith: List String
@@ -126,7 +126,7 @@ named arg1 arg2 =
 -> Elm.Annotation.Annotation
 -}
 namedWith : List String -> String -> List Elm.Expression -> Elm.Expression
-namedWith arg1 arg2 arg3 =
+namedWith arg arg0 arg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Annotation" ]
@@ -147,12 +147,12 @@ namedWith arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg1), Elm.string arg2, Elm.list arg3 ]
+        [ Elm.list (List.map Elm.string arg), Elm.string arg0, Elm.list arg1 ]
 
 
 {-| maybe: Elm.Annotation.Annotation -> Elm.Annotation.Annotation -}
 maybe : Elm.Expression -> Elm.Expression
-maybe arg1 =
+maybe arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Annotation" ]
@@ -166,12 +166,12 @@ maybe arg1 =
                     )
             }
         )
-        [ arg1 ]
+        [ arg ]
 
 
 {-| list: Elm.Annotation.Annotation -> Elm.Annotation.Annotation -}
 list : Elm.Expression -> Elm.Expression
-list arg1 =
+list arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Annotation" ]
@@ -185,7 +185,7 @@ list arg1 =
                     )
             }
         )
-        [ arg1 ]
+        [ arg ]
 
 
 {-| tuple: Elm.Annotation.Annotation
@@ -193,7 +193,7 @@ list arg1 =
 -> Elm.Annotation.Annotation
 -}
 tuple : Elm.Expression -> Elm.Expression -> Elm.Expression
-tuple arg1 arg2 =
+tuple arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Annotation" ]
@@ -208,7 +208,7 @@ tuple arg1 arg2 =
                     )
             }
         )
-        [ arg1, arg2 ]
+        [ arg, arg0 ]
 
 
 {-| triple: Elm.Annotation.Annotation
@@ -217,7 +217,7 @@ tuple arg1 arg2 =
 -> Elm.Annotation.Annotation
 -}
 triple : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
-triple arg1 arg2 arg3 =
+triple arg arg0 arg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Annotation" ]
@@ -233,12 +233,12 @@ triple arg1 arg2 arg3 =
                     )
             }
         )
-        [ arg1, arg2, arg3 ]
+        [ arg, arg0, arg1 ]
 
 
 {-| set: Elm.Annotation.Annotation -> Elm.Annotation.Annotation -}
 set : Elm.Expression -> Elm.Expression
-set arg1 =
+set arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Annotation" ]
@@ -252,7 +252,7 @@ set arg1 =
                     )
             }
         )
-        [ arg1 ]
+        [ arg ]
 
 
 {-| dict: Elm.Annotation.Annotation
@@ -260,7 +260,7 @@ set arg1 =
 -> Elm.Annotation.Annotation
 -}
 dict : Elm.Expression -> Elm.Expression -> Elm.Expression
-dict arg1 arg2 =
+dict arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Annotation" ]
@@ -275,7 +275,7 @@ dict arg1 arg2 =
                     )
             }
         )
-        [ arg1, arg2 ]
+        [ arg, arg0 ]
 
 
 {-| result: Elm.Annotation.Annotation
@@ -283,7 +283,7 @@ dict arg1 arg2 =
 -> Elm.Annotation.Annotation
 -}
 result : Elm.Expression -> Elm.Expression -> Elm.Expression
-result arg1 arg2 =
+result arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Annotation" ]
@@ -298,12 +298,12 @@ result arg1 arg2 =
                     )
             }
         )
-        [ arg1, arg2 ]
+        [ arg, arg0 ]
 
 
 {-| record: List ( String, Elm.Annotation.Annotation ) -> Elm.Annotation.Annotation -}
 record : List Elm.Expression -> Elm.Expression
-record arg1 =
+record arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Annotation" ]
@@ -325,7 +325,7 @@ record arg1 =
                     )
             }
         )
-        [ Elm.list arg1 ]
+        [ Elm.list arg ]
 
 
 {-| extensible: String
@@ -333,7 +333,7 @@ record arg1 =
 -> Elm.Annotation.Annotation
 -}
 extensible : String -> List Elm.Expression -> Elm.Expression
-extensible arg1 arg2 =
+extensible arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Annotation" ]
@@ -356,7 +356,7 @@ extensible arg1 arg2 =
                     )
             }
         )
-        [ Elm.string arg1, Elm.list arg2 ]
+        [ Elm.string arg, Elm.list arg0 ]
 
 
 {-| function: List Elm.Annotation.Annotation
@@ -364,7 +364,7 @@ extensible arg1 arg2 =
 -> Elm.Annotation.Annotation
 -}
 function : List Elm.Expression -> Elm.Expression -> Elm.Expression
-function arg1 arg2 =
+function arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Annotation" ]
@@ -384,12 +384,12 @@ function arg1 arg2 =
                     )
             }
         )
-        [ Elm.list arg1, arg2 ]
+        [ Elm.list arg, arg0 ]
 
 
 {-| toString: Elm.Annotation.Annotation -> String -}
 toString : Elm.Expression -> Elm.Expression
-toString arg1 =
+toString arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Annotation" ]
@@ -403,7 +403,7 @@ toString arg1 =
                     )
             }
         )
-        [ arg1 ]
+        [ arg ]
 
 
 annotation_ : { annotation : Type.Annotation }
@@ -431,7 +431,7 @@ call_ :
     }
 call_ =
     { var =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -448,9 +448,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , named =
-        \arg1 arg2 ->
+        \arg arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -467,9 +467,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg1 ]
     , namedWith =
-        \arg1 arg2 arg3 ->
+        \arg arg2 arg3 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -494,9 +494,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2, arg3 ]
+                [ arg, arg2, arg3 ]
     , maybe =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -517,9 +517,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , list =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -540,9 +540,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , tuple =
-        \arg1 arg2 ->
+        \arg arg5 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -567,9 +567,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg5 ]
     , triple =
-        \arg1 arg2 arg3 ->
+        \arg arg6 arg7 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -598,9 +598,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2, arg3 ]
+                [ arg, arg6, arg7 ]
     , set =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -621,9 +621,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , dict =
-        \arg1 arg2 ->
+        \arg arg8 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -648,9 +648,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg8 ]
     , result =
-        \arg1 arg2 ->
+        \arg arg9 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -675,9 +675,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg9 ]
     , record =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -703,9 +703,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , extensible =
-        \arg1 arg2 ->
+        \arg arg11 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -732,9 +732,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg11 ]
     , function =
-        \arg1 arg2 ->
+        \arg arg12 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -761,9 +761,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg12 ]
     , toString =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -780,7 +780,7 @@ call_ =
                             )
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     }
 
 

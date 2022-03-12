@@ -35,7 +35,7 @@ use `toString` because they may be used in `--optimize` mode.
 toString: a -> String
 -}
 toString : Elm.Expression -> Elm.Expression
-toString arg1 =
+toString arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Debug" ]
@@ -43,7 +43,7 @@ toString arg1 =
             , annotation = Just (Type.function [ Type.var "a" ] Type.string)
             }
         )
-        [ arg1 ]
+        [ arg ]
 
 
 {-| Log a tagged value on the developer console, and then return the value.
@@ -67,7 +67,7 @@ applications are the primary focus of platform development for now.
 log: String -> a -> a
 -}
 log : String -> Elm.Expression -> Elm.Expression
-log arg1 arg2 =
+log arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Debug" ]
@@ -77,7 +77,7 @@ log arg1 arg2 =
                     (Type.function [ Type.string, Type.var "a" ] (Type.var "a"))
             }
         )
-        [ Elm.string arg1, arg2 ]
+        [ Elm.string arg, arg0 ]
 
 
 {-| This is a placeholder for code that you will write later.
@@ -113,7 +113,7 @@ goes unhandled!
 todo: String -> a
 -}
 todo : String -> Elm.Expression
-todo arg1 =
+todo arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Debug" ]
@@ -121,7 +121,7 @@ todo arg1 =
             , annotation = Just (Type.function [ Type.string ] (Type.var "a"))
             }
         )
-        [ Elm.string arg1 ]
+        [ Elm.string arg ]
 
 
 call_ :
@@ -131,7 +131,7 @@ call_ :
     }
 call_ =
     { toString =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Debug" ]
@@ -140,9 +140,9 @@ call_ =
                         Just (Type.function [ Type.var "a" ] Type.string)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , log =
-        \arg1 arg2 ->
+        \arg arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Debug" ]
@@ -155,9 +155,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg1 ]
     , todo =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Debug" ]
@@ -166,7 +166,7 @@ call_ =
                         Just (Type.function [ Type.string ] (Type.var "a"))
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     }
 
 

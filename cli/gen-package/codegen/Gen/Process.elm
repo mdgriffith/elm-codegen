@@ -30,7 +30,7 @@ come in a later release!
 spawn: Task.Task x a -> Task.Task y Process.Id
 -}
 spawn : Elm.Expression -> Elm.Expression
-spawn arg1 =
+spawn arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Process" ]
@@ -53,7 +53,7 @@ spawn arg1 =
                     )
             }
         )
-        [ arg1 ]
+        [ arg ]
 
 
 {-| Block progress on the current process for the given number of milliseconds.
@@ -65,7 +65,7 @@ delay work until later.
 sleep: Float -> Task.Task x ()
 -}
 sleep : Float -> Elm.Expression
-sleep arg1 =
+sleep arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Process" ]
@@ -82,7 +82,7 @@ sleep arg1 =
                     )
             }
         )
-        [ Elm.float arg1 ]
+        [ Elm.float arg ]
 
 
 {-| Sometimes you `spawn` a process, but later decide it would be a waste to
@@ -93,7 +93,7 @@ flight, it will also abort the request.
 kill: Process.Id -> Task.Task x ()
 -}
 kill : Elm.Expression -> Elm.Expression
-kill arg1 =
+kill arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Process" ]
@@ -110,7 +110,7 @@ kill arg1 =
                     )
             }
         )
-        [ arg1 ]
+        [ arg ]
 
 
 annotation_ : { id : Type.Annotation }
@@ -125,7 +125,7 @@ call_ :
     }
 call_ =
     { spawn =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Process" ]
@@ -148,9 +148,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , sleep =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Process" ]
@@ -167,9 +167,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , kill =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Process" ]
@@ -186,7 +186,7 @@ call_ =
                             )
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     }
 
 

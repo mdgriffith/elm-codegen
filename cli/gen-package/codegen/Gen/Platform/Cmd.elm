@@ -40,7 +40,7 @@ all do the same thing.
 batch: List (Platform.Cmd.Cmd msg) -> Platform.Cmd.Cmd msg
 -}
 batch : List Elm.Expression -> Elm.Expression
-batch arg1 =
+batch arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Platform", "Cmd" ]
@@ -63,7 +63,7 @@ batch arg1 =
                     )
             }
         )
-        [ Elm.list arg1 ]
+        [ Elm.list arg ]
 
 
 {-| Transform the messages produced by a command.
@@ -77,7 +77,7 @@ section on [structure][] in the guide before reaching for this!
 map: (a -> msg) -> Platform.Cmd.Cmd a -> Platform.Cmd.Cmd msg
 -}
 map : (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression
-map arg1 arg2 =
+map arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Platform", "Cmd" ]
@@ -99,7 +99,7 @@ map arg1 arg2 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, arg2 ]
+        [ Elm.functionReduced "unpack" arg, arg0 ]
 
 
 annotation_ : { cmd : Type.Annotation -> Type.Annotation }
@@ -113,7 +113,7 @@ call_ :
     }
 call_ =
     { batch =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Platform", "Cmd" ]
@@ -136,9 +136,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , map =
-        \arg1 arg2 ->
+        \arg arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Platform", "Cmd" ]
@@ -162,7 +162,7 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg1 ]
     }
 
 

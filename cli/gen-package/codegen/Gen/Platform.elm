@@ -47,7 +47,7 @@ worker :
     , subscriptions : Elm.Expression -> Elm.Expression
     }
     -> Elm.Expression
-worker arg1 =
+worker arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Platform" ]
@@ -103,18 +103,17 @@ worker arg1 =
             }
         )
         [ Elm.record
-            [ Elm.field "init" (Elm.functionReduced "unpack" arg1.init)
+            [ Elm.field "init" (Elm.functionReduced "unpack" arg.init)
             , Elm.field
                 "update"
                 (Elm.functionReduced
                     "unpack"
-                    (\unpack ->
-                        Elm.functionReduced "unpack" (arg1.update unpack)
+                    (\unpack -> Elm.functionReduced "unpack" (arg.update unpack)
                     )
                 )
             , Elm.field
                 "subscriptions"
-                (Elm.functionReduced "unpack" arg1.subscriptions)
+                (Elm.functionReduced "unpack" arg.subscriptions)
             ]
         ]
 
@@ -125,7 +124,7 @@ be handled by the overall `update` function, just like events from `Html`.
 sendToApp: Platform.Router msg a -> msg -> Platform.Task x ()
 -}
 sendToApp : Elm.Expression -> Elm.Expression -> Elm.Expression
-sendToApp arg1 arg2 =
+sendToApp arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Platform" ]
@@ -147,7 +146,7 @@ sendToApp arg1 arg2 =
                     )
             }
         )
-        [ arg1, arg2 ]
+        [ arg, arg0 ]
 
 
 {-| Send the router a message for your effect manager. This message will
@@ -159,7 +158,7 @@ As an example, the effect manager for web sockets
 sendToSelf: Platform.Router a msg -> msg -> Platform.Task x ()
 -}
 sendToSelf : Elm.Expression -> Elm.Expression -> Elm.Expression
-sendToSelf arg1 arg2 =
+sendToSelf arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Platform" ]
@@ -181,7 +180,7 @@ sendToSelf arg1 arg2 =
                     )
             }
         )
-        [ arg1, arg2 ]
+        [ arg, arg0 ]
 
 
 annotation_ :
@@ -208,7 +207,7 @@ call_ :
     }
 call_ =
     { worker =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Platform" ]
@@ -263,9 +262,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , sendToApp =
-        \arg1 arg2 ->
+        \arg arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Platform" ]
@@ -287,9 +286,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg1 ]
     , sendToSelf =
-        \arg1 arg2 ->
+        \arg arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Platform" ]
@@ -311,7 +310,7 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg2 ]
     }
 
 

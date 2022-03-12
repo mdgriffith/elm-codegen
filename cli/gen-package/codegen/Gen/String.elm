@@ -23,7 +23,7 @@ moduleName_ =
 isEmpty: String -> Bool
 -}
 isEmpty : String -> Elm.Expression
-isEmpty arg1 =
+isEmpty arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -31,7 +31,7 @@ isEmpty arg1 =
             , annotation = Just (Type.function [ Type.string ] Type.bool)
             }
         )
-        [ Elm.string arg1 ]
+        [ Elm.string arg ]
 
 
 {-| Get the length of a string.
@@ -42,7 +42,7 @@ isEmpty arg1 =
 length: String -> Int
 -}
 length : String -> Elm.Expression
-length arg1 =
+length arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -50,7 +50,7 @@ length arg1 =
             , annotation = Just (Type.function [ Type.string ] Type.int)
             }
         )
-        [ Elm.string arg1 ]
+        [ Elm.string arg ]
 
 
 {-| Reverse a string.
@@ -60,7 +60,7 @@ length arg1 =
 reverse: String -> String
 -}
 reverse : String -> Elm.Expression
-reverse arg1 =
+reverse arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -68,7 +68,7 @@ reverse arg1 =
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
         )
-        [ Elm.string arg1 ]
+        [ Elm.string arg ]
 
 
 {-| Repeat a string *n* times.
@@ -78,7 +78,7 @@ reverse arg1 =
 repeat: Int -> String -> String
 -}
 repeat : Int -> String -> Elm.Expression
-repeat arg1 arg2 =
+repeat arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -87,7 +87,7 @@ repeat arg1 arg2 =
                 Just (Type.function [ Type.int, Type.string ] Type.string)
             }
         )
-        [ Elm.int arg1, Elm.string arg2 ]
+        [ Elm.int arg, Elm.string arg0 ]
 
 
 {-| Replace all occurrences of some substring.
@@ -104,7 +104,7 @@ repeat arg1 arg2 =
 replace: String -> String -> String -> String
 -}
 replace : String -> String -> String -> Elm.Expression
-replace arg1 arg2 arg3 =
+replace arg arg0 arg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -117,7 +117,7 @@ replace arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.string arg1, Elm.string arg2, Elm.string arg3 ]
+        [ Elm.string arg, Elm.string arg0, Elm.string arg1 ]
 
 
 {-| Append two strings. You can also use [the `(++)` operator](Basics#++)
@@ -128,7 +128,7 @@ to do this.
 append: String -> String -> String
 -}
 append : String -> String -> Elm.Expression
-append arg1 arg2 =
+append arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -137,7 +137,7 @@ append arg1 arg2 =
                 Just (Type.function [ Type.string, Type.string ] Type.string)
             }
         )
-        [ Elm.string arg1, Elm.string arg2 ]
+        [ Elm.string arg, Elm.string arg0 ]
 
 
 {-| Concatenate many strings into one.
@@ -147,7 +147,7 @@ append arg1 arg2 =
 concat: List String -> String
 -}
 concat : List String -> Elm.Expression
-concat arg1 =
+concat arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -156,7 +156,7 @@ concat arg1 =
                 Just (Type.function [ Type.list Type.string ] Type.string)
             }
         )
-        [ Elm.list (List.map Elm.string arg1) ]
+        [ Elm.list (List.map Elm.string arg) ]
 
 
 {-| Split a string using a given separator.
@@ -167,7 +167,7 @@ concat arg1 =
 split: String -> String -> List String
 -}
 split : String -> String -> Elm.Expression
-split arg1 arg2 =
+split arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -180,7 +180,7 @@ split arg1 arg2 =
                     )
             }
         )
-        [ Elm.string arg1, Elm.string arg2 ]
+        [ Elm.string arg, Elm.string arg0 ]
 
 
 {-| Put many strings together with a given separator.
@@ -192,7 +192,7 @@ split arg1 arg2 =
 join: String -> List String -> String
 -}
 join : String -> List String -> Elm.Expression
-join arg1 arg2 =
+join arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -205,7 +205,7 @@ join arg1 arg2 =
                     )
             }
         )
-        [ Elm.string arg1, Elm.list (List.map Elm.string arg2) ]
+        [ Elm.string arg, Elm.list (List.map Elm.string arg0) ]
 
 
 {-| Break a string into words, splitting on chunks of whitespace.
@@ -215,7 +215,7 @@ join arg1 arg2 =
 words: String -> List String
 -}
 words : String -> Elm.Expression
-words arg1 =
+words arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -224,7 +224,7 @@ words arg1 =
                 Just (Type.function [ Type.string ] (Type.list Type.string))
             }
         )
-        [ Elm.string arg1 ]
+        [ Elm.string arg ]
 
 
 {-| Break a string into lines, splitting on newlines.
@@ -234,7 +234,7 @@ words arg1 =
 lines: String -> List String
 -}
 lines : String -> Elm.Expression
-lines arg1 =
+lines arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -243,7 +243,7 @@ lines arg1 =
                 Just (Type.function [ Type.string ] (Type.list Type.string))
             }
         )
-        [ Elm.string arg1 ]
+        [ Elm.string arg ]
 
 
 {-| Take a substring given a start and end index. Negative indexes
@@ -257,7 +257,7 @@ are taken starting from the *end* of the list.
 slice: Int -> Int -> String -> String
 -}
 slice : Int -> Int -> String -> Elm.Expression
-slice arg1 arg2 arg3 =
+slice arg arg0 arg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -270,7 +270,7 @@ slice arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.int arg1, Elm.int arg2, Elm.string arg3 ]
+        [ Elm.int arg, Elm.int arg0, Elm.string arg1 ]
 
 
 {-| Take *n* characters from the left side of a string.
@@ -280,7 +280,7 @@ slice arg1 arg2 arg3 =
 left: Int -> String -> String
 -}
 left : Int -> String -> Elm.Expression
-left arg1 arg2 =
+left arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -289,7 +289,7 @@ left arg1 arg2 =
                 Just (Type.function [ Type.int, Type.string ] Type.string)
             }
         )
-        [ Elm.int arg1, Elm.string arg2 ]
+        [ Elm.int arg, Elm.string arg0 ]
 
 
 {-| Take *n* characters from the right side of a string.
@@ -299,7 +299,7 @@ left arg1 arg2 =
 right: Int -> String -> String
 -}
 right : Int -> String -> Elm.Expression
-right arg1 arg2 =
+right arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -308,7 +308,7 @@ right arg1 arg2 =
                 Just (Type.function [ Type.int, Type.string ] Type.string)
             }
         )
-        [ Elm.int arg1, Elm.string arg2 ]
+        [ Elm.int arg, Elm.string arg0 ]
 
 
 {-| Drop *n* characters from the left side of a string.
@@ -318,7 +318,7 @@ right arg1 arg2 =
 dropLeft: Int -> String -> String
 -}
 dropLeft : Int -> String -> Elm.Expression
-dropLeft arg1 arg2 =
+dropLeft arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -327,7 +327,7 @@ dropLeft arg1 arg2 =
                 Just (Type.function [ Type.int, Type.string ] Type.string)
             }
         )
-        [ Elm.int arg1, Elm.string arg2 ]
+        [ Elm.int arg, Elm.string arg0 ]
 
 
 {-| Drop *n* characters from the right side of a string.
@@ -337,7 +337,7 @@ dropLeft arg1 arg2 =
 dropRight: Int -> String -> String
 -}
 dropRight : Int -> String -> Elm.Expression
-dropRight arg1 arg2 =
+dropRight arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -346,7 +346,7 @@ dropRight arg1 arg2 =
                 Just (Type.function [ Type.int, Type.string ] Type.string)
             }
         )
-        [ Elm.int arg1, Elm.string arg2 ]
+        [ Elm.int arg, Elm.string arg0 ]
 
 
 {-| See if the second string contains the first one.
@@ -358,7 +358,7 @@ dropRight arg1 arg2 =
 contains: String -> String -> Bool
 -}
 contains : String -> String -> Elm.Expression
-contains arg1 arg2 =
+contains arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -367,7 +367,7 @@ contains arg1 arg2 =
                 Just (Type.function [ Type.string, Type.string ] Type.bool)
             }
         )
-        [ Elm.string arg1, Elm.string arg2 ]
+        [ Elm.string arg, Elm.string arg0 ]
 
 
 {-| See if the second string starts with the first one.
@@ -378,7 +378,7 @@ contains arg1 arg2 =
 startsWith: String -> String -> Bool
 -}
 startsWith : String -> String -> Elm.Expression
-startsWith arg1 arg2 =
+startsWith arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -387,7 +387,7 @@ startsWith arg1 arg2 =
                 Just (Type.function [ Type.string, Type.string ] Type.bool)
             }
         )
-        [ Elm.string arg1, Elm.string arg2 ]
+        [ Elm.string arg, Elm.string arg0 ]
 
 
 {-| See if the second string ends with the first one.
@@ -398,7 +398,7 @@ startsWith arg1 arg2 =
 endsWith: String -> String -> Bool
 -}
 endsWith : String -> String -> Elm.Expression
-endsWith arg1 arg2 =
+endsWith arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -407,7 +407,7 @@ endsWith arg1 arg2 =
                 Just (Type.function [ Type.string, Type.string ] Type.bool)
             }
         )
-        [ Elm.string arg1, Elm.string arg2 ]
+        [ Elm.string arg, Elm.string arg0 ]
 
 
 {-| Get all of the indexes for a substring in another string.
@@ -419,7 +419,7 @@ endsWith arg1 arg2 =
 indexes: String -> String -> List Int
 -}
 indexes : String -> String -> Elm.Expression
-indexes arg1 arg2 =
+indexes arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -432,7 +432,7 @@ indexes arg1 arg2 =
                     )
             }
         )
-        [ Elm.string arg1, Elm.string arg2 ]
+        [ Elm.string arg, Elm.string arg0 ]
 
 
 {-| Alias for `indexes`.
@@ -440,7 +440,7 @@ indexes arg1 arg2 =
 indices: String -> String -> List Int
 -}
 indices : String -> String -> Elm.Expression
-indices arg1 arg2 =
+indices arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -453,7 +453,7 @@ indices arg1 arg2 =
                     )
             }
         )
-        [ Elm.string arg1, Elm.string arg2 ]
+        [ Elm.string arg, Elm.string arg0 ]
 
 
 {-| Try to convert a string into an int, failing on improperly formatted strings.
@@ -472,7 +472,7 @@ want to use [`Maybe.withDefault`](Maybe#withDefault) to handle bad data:
 toInt: String -> Maybe Int
 -}
 toInt : String -> Elm.Expression
-toInt arg1 =
+toInt arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -481,7 +481,7 @@ toInt arg1 =
                 Just (Type.function [ Type.string ] (Type.maybe Type.int))
             }
         )
-        [ Elm.string arg1 ]
+        [ Elm.string arg ]
 
 
 {-| Convert an `Int` to a `String`.
@@ -495,7 +495,7 @@ for debugging purposes.
 fromInt: Int -> String
 -}
 fromInt : Int -> Elm.Expression
-fromInt arg1 =
+fromInt arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -503,7 +503,7 @@ fromInt arg1 =
             , annotation = Just (Type.function [ Type.int ] Type.string)
             }
         )
-        [ Elm.int arg1 ]
+        [ Elm.int arg ]
 
 
 {-| Try to convert a string into a float, failing on improperly formatted strings.
@@ -522,7 +522,7 @@ want to use [`Maybe.withDefault`](Maybe#withDefault) to handle bad data:
 toFloat: String -> Maybe Float
 -}
 toFloat : String -> Elm.Expression
-toFloat arg1 =
+toFloat arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -531,7 +531,7 @@ toFloat arg1 =
                 Just (Type.function [ Type.string ] (Type.maybe Type.float))
             }
         )
-        [ Elm.string arg1 ]
+        [ Elm.string arg ]
 
 
 {-| Convert a `Float` to a `String`.
@@ -546,7 +546,7 @@ for debugging purposes.
 fromFloat: Float -> String
 -}
 fromFloat : Float -> Elm.Expression
-fromFloat arg1 =
+fromFloat arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -554,7 +554,7 @@ fromFloat arg1 =
             , annotation = Just (Type.function [ Type.float ] Type.string)
             }
         )
-        [ Elm.float arg1 ]
+        [ Elm.float arg ]
 
 
 {-| Create a string from a given character.
@@ -564,7 +564,7 @@ fromFloat arg1 =
 fromChar: Char.Char -> String
 -}
 fromChar : Char.Char -> Elm.Expression
-fromChar arg1 =
+fromChar arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -572,7 +572,7 @@ fromChar arg1 =
             , annotation = Just (Type.function [ Type.char ] Type.string)
             }
         )
-        [ Elm.char arg1 ]
+        [ Elm.char arg ]
 
 
 {-| Add a character to the beginning of a string.
@@ -582,7 +582,7 @@ fromChar arg1 =
 cons: Char.Char -> String -> String
 -}
 cons : Char.Char -> String -> Elm.Expression
-cons arg1 arg2 =
+cons arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -591,7 +591,7 @@ cons arg1 arg2 =
                 Just (Type.function [ Type.char, Type.string ] Type.string)
             }
         )
-        [ Elm.char arg1, Elm.string arg2 ]
+        [ Elm.char arg, Elm.string arg0 ]
 
 
 {-| Split a non-empty string into its head and tail. This lets you
@@ -603,7 +603,7 @@ pattern match on strings exactly as you would with lists.
 uncons: String -> Maybe ( Char.Char, String )
 -}
 uncons : String -> Elm.Expression
-uncons arg1 =
+uncons arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -616,7 +616,7 @@ uncons arg1 =
                     )
             }
         )
-        [ Elm.string arg1 ]
+        [ Elm.string arg ]
 
 
 {-| Convert a string to a list of characters.
@@ -627,7 +627,7 @@ uncons arg1 =
 toList: String -> List Char.Char
 -}
 toList : String -> Elm.Expression
-toList arg1 =
+toList arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -636,7 +636,7 @@ toList arg1 =
                 Just (Type.function [ Type.string ] (Type.list Type.char))
             }
         )
-        [ Elm.string arg1 ]
+        [ Elm.string arg ]
 
 
 {-| Convert a list of characters into a String. Can be useful if you
@@ -649,7 +649,7 @@ something.
 fromList: List Char.Char -> String
 -}
 fromList : List Char.Char -> Elm.Expression
-fromList arg1 =
+fromList arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -658,7 +658,7 @@ fromList arg1 =
                 Just (Type.function [ Type.list Type.char ] Type.string)
             }
         )
-        [ Elm.list (List.map Elm.char arg1) ]
+        [ Elm.list (List.map Elm.char arg) ]
 
 
 {-| Convert a string to all upper case. Useful for case-insensitive comparisons
@@ -669,7 +669,7 @@ and VIRTUAL YELLING.
 toUpper: String -> String
 -}
 toUpper : String -> Elm.Expression
-toUpper arg1 =
+toUpper arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -677,7 +677,7 @@ toUpper arg1 =
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
         )
-        [ Elm.string arg1 ]
+        [ Elm.string arg ]
 
 
 {-| Convert a string to all lower case. Useful for case-insensitive comparisons.
@@ -687,7 +687,7 @@ toUpper arg1 =
 toLower: String -> String
 -}
 toLower : String -> Elm.Expression
-toLower arg1 =
+toLower arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -695,7 +695,7 @@ toLower arg1 =
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
         )
-        [ Elm.string arg1 ]
+        [ Elm.string arg ]
 
 
 {-| Pad a string on both sides until it has a given length.
@@ -707,7 +707,7 @@ toLower arg1 =
 pad: Int -> Char.Char -> String -> String
 -}
 pad : Int -> Char.Char -> String -> Elm.Expression
-pad arg1 arg2 arg3 =
+pad arg arg0 arg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -720,7 +720,7 @@ pad arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.int arg1, Elm.char arg2, Elm.string arg3 ]
+        [ Elm.int arg, Elm.char arg0, Elm.string arg1 ]
 
 
 {-| Pad a string on the left until it has a given length.
@@ -732,7 +732,7 @@ pad arg1 arg2 arg3 =
 padLeft: Int -> Char.Char -> String -> String
 -}
 padLeft : Int -> Char.Char -> String -> Elm.Expression
-padLeft arg1 arg2 arg3 =
+padLeft arg arg0 arg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -745,7 +745,7 @@ padLeft arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.int arg1, Elm.char arg2, Elm.string arg3 ]
+        [ Elm.int arg, Elm.char arg0, Elm.string arg1 ]
 
 
 {-| Pad a string on the right until it has a given length.
@@ -757,7 +757,7 @@ padLeft arg1 arg2 arg3 =
 padRight: Int -> Char.Char -> String -> String
 -}
 padRight : Int -> Char.Char -> String -> Elm.Expression
-padRight arg1 arg2 arg3 =
+padRight arg arg0 arg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -770,7 +770,7 @@ padRight arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.int arg1, Elm.char arg2, Elm.string arg3 ]
+        [ Elm.int arg, Elm.char arg0, Elm.string arg1 ]
 
 
 {-| Get rid of whitespace on both sides of a string.
@@ -780,7 +780,7 @@ padRight arg1 arg2 arg3 =
 trim: String -> String
 -}
 trim : String -> Elm.Expression
-trim arg1 =
+trim arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -788,7 +788,7 @@ trim arg1 =
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
         )
-        [ Elm.string arg1 ]
+        [ Elm.string arg ]
 
 
 {-| Get rid of whitespace on the left of a string.
@@ -798,7 +798,7 @@ trim arg1 =
 trimLeft: String -> String
 -}
 trimLeft : String -> Elm.Expression
-trimLeft arg1 =
+trimLeft arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -806,7 +806,7 @@ trimLeft arg1 =
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
         )
-        [ Elm.string arg1 ]
+        [ Elm.string arg ]
 
 
 {-| Get rid of whitespace on the right of a string.
@@ -816,7 +816,7 @@ trimLeft arg1 =
 trimRight: String -> String
 -}
 trimRight : String -> Elm.Expression
-trimRight arg1 =
+trimRight arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -824,7 +824,7 @@ trimRight arg1 =
             , annotation = Just (Type.function [ Type.string ] Type.string)
             }
         )
-        [ Elm.string arg1 ]
+        [ Elm.string arg ]
 
 
 {-| Transform every character in a string
@@ -834,7 +834,7 @@ trimRight arg1 =
 map: (Char.Char -> Char.Char) -> String -> String
 -}
 map : (Elm.Expression -> Elm.Expression) -> String -> Elm.Expression
-map arg1 arg2 =
+map arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -847,7 +847,7 @@ map arg1 arg2 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, Elm.string arg2 ]
+        [ Elm.functionReduced "unpack" arg, Elm.string arg0 ]
 
 
 {-| Keep only the characters that pass the test.
@@ -857,7 +857,7 @@ map arg1 arg2 =
 filter: (Char.Char -> Bool) -> String -> String
 -}
 filter : (Elm.Expression -> Elm.Expression) -> String -> Elm.Expression
-filter arg1 arg2 =
+filter arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -870,7 +870,7 @@ filter arg1 arg2 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, Elm.string arg2 ]
+        [ Elm.functionReduced "unpack" arg, Elm.string arg0 ]
 
 
 {-| Reduce a string from the left.
@@ -884,7 +884,7 @@ foldl :
     -> Elm.Expression
     -> String
     -> Elm.Expression
-foldl arg1 arg2 arg3 =
+foldl arg arg0 arg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -904,9 +904,9 @@ foldl arg1 arg2 arg3 =
         )
         [ Elm.functionReduced
             "unpack"
-            (\unpack -> Elm.functionReduced "unpack" (arg1 unpack))
-        , arg2
-        , Elm.string arg3
+            (\unpack -> Elm.functionReduced "unpack" (arg unpack))
+        , arg0
+        , Elm.string arg1
         ]
 
 
@@ -921,7 +921,7 @@ foldr :
     -> Elm.Expression
     -> String
     -> Elm.Expression
-foldr arg1 arg2 arg3 =
+foldr arg arg0 arg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -941,9 +941,9 @@ foldr arg1 arg2 arg3 =
         )
         [ Elm.functionReduced
             "unpack"
-            (\unpack -> Elm.functionReduced "unpack" (arg1 unpack))
-        , arg2
-        , Elm.string arg3
+            (\unpack -> Elm.functionReduced "unpack" (arg unpack))
+        , arg0
+        , Elm.string arg1
         ]
 
 
@@ -956,7 +956,7 @@ foldr arg1 arg2 arg3 =
 any: (Char.Char -> Bool) -> String -> Bool
 -}
 any : (Elm.Expression -> Elm.Expression) -> String -> Elm.Expression
-any arg1 arg2 =
+any arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -969,7 +969,7 @@ any arg1 arg2 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, Elm.string arg2 ]
+        [ Elm.functionReduced "unpack" arg, Elm.string arg0 ]
 
 
 {-| Determine whether *all* characters pass the test.
@@ -981,7 +981,7 @@ any arg1 arg2 =
 all: (Char.Char -> Bool) -> String -> Bool
 -}
 all : (Elm.Expression -> Elm.Expression) -> String -> Elm.Expression
-all arg1 arg2 =
+all arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "String" ]
@@ -994,7 +994,7 @@ all arg1 arg2 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1, Elm.string arg2 ]
+        [ Elm.functionReduced "unpack" arg, Elm.string arg0 ]
 
 
 annotation_ : { string : Type.Annotation }
@@ -1056,7 +1056,7 @@ call_ :
     }
 call_ =
     { isEmpty =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1065,9 +1065,9 @@ call_ =
                         Just (Type.function [ Type.string ] Type.bool)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , length =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1075,9 +1075,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.string ] Type.int)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , reverse =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1086,9 +1086,9 @@ call_ =
                         Just (Type.function [ Type.string ] Type.string)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , repeat =
-        \arg1 arg2 ->
+        \arg arg3 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1099,9 +1099,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg3 ]
     , replace =
-        \arg1 arg2 arg3 ->
+        \arg arg4 arg5 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1114,9 +1114,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2, arg3 ]
+                [ arg, arg4, arg5 ]
     , append =
-        \arg1 arg2 ->
+        \arg arg5 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1129,9 +1129,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg5 ]
     , concat =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1142,9 +1142,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , split =
-        \arg1 arg2 ->
+        \arg arg7 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1157,9 +1157,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg7 ]
     , join =
-        \arg1 arg2 ->
+        \arg arg8 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1172,9 +1172,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg8 ]
     , words =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1187,9 +1187,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , lines =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1202,9 +1202,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , slice =
-        \arg1 arg2 arg3 ->
+        \arg arg11 arg12 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1217,9 +1217,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2, arg3 ]
+                [ arg, arg11, arg12 ]
     , left =
-        \arg1 arg2 ->
+        \arg arg12 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1230,9 +1230,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg12 ]
     , right =
-        \arg1 arg2 ->
+        \arg arg13 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1243,9 +1243,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg13 ]
     , dropLeft =
-        \arg1 arg2 ->
+        \arg arg14 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1256,9 +1256,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg14 ]
     , dropRight =
-        \arg1 arg2 ->
+        \arg arg15 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1269,9 +1269,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg15 ]
     , contains =
-        \arg1 arg2 ->
+        \arg arg16 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1284,9 +1284,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg16 ]
     , startsWith =
-        \arg1 arg2 ->
+        \arg arg17 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1299,9 +1299,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg17 ]
     , endsWith =
-        \arg1 arg2 ->
+        \arg arg18 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1314,9 +1314,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg18 ]
     , indexes =
-        \arg1 arg2 ->
+        \arg arg19 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1329,9 +1329,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg19 ]
     , indices =
-        \arg1 arg2 ->
+        \arg arg20 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1344,9 +1344,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg20 ]
     , toInt =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1357,9 +1357,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , fromInt =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1367,9 +1367,9 @@ call_ =
                     , annotation = Just (Type.function [ Type.int ] Type.string)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , toFloat =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1382,9 +1382,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , fromFloat =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1393,9 +1393,9 @@ call_ =
                         Just (Type.function [ Type.float ] Type.string)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , fromChar =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1404,9 +1404,9 @@ call_ =
                         Just (Type.function [ Type.char ] Type.string)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , cons =
-        \arg1 arg2 ->
+        \arg arg26 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1419,9 +1419,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg26 ]
     , uncons =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1434,9 +1434,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , toList =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1447,9 +1447,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , fromList =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1458,9 +1458,9 @@ call_ =
                         Just (Type.function [ Type.list Type.char ] Type.string)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , toUpper =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1469,9 +1469,9 @@ call_ =
                         Just (Type.function [ Type.string ] Type.string)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , toLower =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1480,9 +1480,9 @@ call_ =
                         Just (Type.function [ Type.string ] Type.string)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , pad =
-        \arg1 arg2 arg3 ->
+        \arg arg32 arg33 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1495,9 +1495,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2, arg3 ]
+                [ arg, arg32, arg33 ]
     , padLeft =
-        \arg1 arg2 arg3 ->
+        \arg arg33 arg34 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1510,9 +1510,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2, arg3 ]
+                [ arg, arg33, arg34 ]
     , padRight =
-        \arg1 arg2 arg3 ->
+        \arg arg34 arg35 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1525,9 +1525,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2, arg3 ]
+                [ arg, arg34, arg35 ]
     , trim =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1536,9 +1536,9 @@ call_ =
                         Just (Type.function [ Type.string ] Type.string)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , trimLeft =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1547,9 +1547,9 @@ call_ =
                         Just (Type.function [ Type.string ] Type.string)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , trimRight =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1558,9 +1558,9 @@ call_ =
                         Just (Type.function [ Type.string ] Type.string)
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , map =
-        \arg1 arg2 ->
+        \arg arg38 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1575,9 +1575,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg38 ]
     , filter =
-        \arg1 arg2 ->
+        \arg arg39 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1592,9 +1592,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg39 ]
     , foldl =
-        \arg1 arg2 arg3 ->
+        \arg arg40 arg41 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1612,9 +1612,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2, arg3 ]
+                [ arg, arg40, arg41 ]
     , foldr =
-        \arg1 arg2 arg3 ->
+        \arg arg41 arg42 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1632,9 +1632,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2, arg3 ]
+                [ arg, arg41, arg42 ]
     , any =
-        \arg1 arg2 ->
+        \arg arg42 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1649,9 +1649,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg42 ]
     , all =
-        \arg1 arg2 ->
+        \arg arg43 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1666,7 +1666,7 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg43 ]
     }
 
 

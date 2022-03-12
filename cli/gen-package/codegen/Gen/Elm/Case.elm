@@ -42,7 +42,7 @@ maybe :
     Elm.Expression
     -> { nothing : Elm.Expression, just : Elm.Expression -> Elm.Expression }
     -> Elm.Expression
-maybe arg1 arg2 =
+maybe arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -66,10 +66,10 @@ maybe arg1 arg2 =
                     )
             }
         )
-        [ arg1
+        [ arg
         , Elm.record
-            [ Elm.field "nothing" arg2.nothing
-            , Elm.field "just" (Elm.functionReduced "unpack" arg2.just)
+            [ Elm.field "nothing" arg0.nothing
+            , Elm.field "just" (Elm.functionReduced "unpack" arg0.just)
             ]
         ]
 
@@ -107,7 +107,7 @@ result :
     , ok : Elm.Expression -> Elm.Expression
     }
     -> Elm.Expression
-result arg1 arg2 =
+result arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -133,10 +133,10 @@ result arg1 arg2 =
                     )
             }
         )
-        [ arg1
+        [ arg
         , Elm.record
-            [ Elm.field "err" (Elm.functionReduced "unpack" arg2.err)
-            , Elm.field "ok" (Elm.functionReduced "unpack" arg2.ok)
+            [ Elm.field "err" (Elm.functionReduced "unpack" arg0.err)
+            , Elm.field "ok" (Elm.functionReduced "unpack" arg0.ok)
             ]
         ]
 
@@ -172,7 +172,7 @@ list :
     , nonEmpty : Elm.Expression -> Elm.Expression -> Elm.Expression
     }
     -> Elm.Expression
-list arg1 arg2 =
+list arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -198,15 +198,15 @@ list arg1 arg2 =
                     )
             }
         )
-        [ arg1
+        [ arg
         , Elm.record
-            [ Elm.field "empty" arg2.empty
+            [ Elm.field "empty" arg0.empty
             , Elm.field
                 "nonEmpty"
                 (Elm.functionReduced
                     "unpack"
                     (\unpack ->
-                        Elm.functionReduced "unpack" (arg2.nonEmpty unpack)
+                        Elm.functionReduced "unpack" (arg0.nonEmpty unpack)
                     )
                 )
             ]
@@ -237,7 +237,7 @@ tuple :
     Elm.Expression
     -> (Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
-tuple arg1 arg2 =
+tuple arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -256,10 +256,10 @@ tuple arg1 arg2 =
                     )
             }
         )
-        [ arg1
+        [ arg
         , Elm.functionReduced
             "unpack"
-            (\unpack -> Elm.functionReduced "unpack" (arg2 unpack))
+            (\unpack -> Elm.functionReduced "unpack" (arg0 unpack))
         ]
 
 
@@ -287,7 +287,7 @@ triple :
     Elm.Expression
     -> (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
-triple arg1 arg2 =
+triple arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -307,14 +307,14 @@ triple arg1 arg2 =
                     )
             }
         )
-        [ arg1
+        [ arg
         , Elm.functionReduced
             "unpack"
             (\unpack ->
                 Elm.functionReduced
                     "unpack"
                     (\unpack0 ->
-                        Elm.functionReduced "unpack" (arg2 unpack unpack0)
+                        Elm.functionReduced "unpack" (arg0 unpack unpack0)
                     )
             )
         ]
@@ -344,7 +344,7 @@ Generates
 custom: Elm.Expression -> List Elm.Case.Branch -> Elm.Expression
 -}
 custom : Elm.Expression -> List Elm.Expression -> Elm.Expression
-custom arg1 arg2 =
+custom arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -360,7 +360,7 @@ custom arg1 arg2 =
                     )
             }
         )
-        [ arg1, Elm.list arg2 ]
+        [ arg, Elm.list arg0 ]
 
 
 {-| A catchall branch in case you want the case to be nonexhaustive.
@@ -368,7 +368,7 @@ custom arg1 arg2 =
 otherwise: (Elm.Expression -> Elm.Expression) -> Elm.Case.Branch
 -}
 otherwise : (Elm.Expression -> Elm.Expression) -> Elm.Expression
-otherwise arg1 =
+otherwise arg =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -384,12 +384,12 @@ otherwise arg1 =
                     )
             }
         )
-        [ Elm.functionReduced "unpack" arg1 ]
+        [ Elm.functionReduced "unpack" arg ]
 
 
 {-| branch0: List String -> String -> Elm.Expression -> Elm.Case.Branch -}
 branch0 : List String -> String -> Elm.Expression -> Elm.Expression
-branch0 arg1 arg2 arg3 =
+branch0 arg arg0 arg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -405,7 +405,7 @@ branch0 arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg1), Elm.string arg2, arg3 ]
+        [ Elm.list (List.map Elm.string arg), Elm.string arg0, arg1 ]
 
 
 {-| branch1: List String -> String -> (Elm.Expression -> Elm.Expression) -> Elm.Case.Branch -}
@@ -414,7 +414,7 @@ branch1 :
     -> String
     -> (Elm.Expression -> Elm.Expression)
     -> Elm.Expression
-branch1 arg1 arg2 arg3 =
+branch1 arg arg0 arg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -432,9 +432,9 @@ branch1 arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg1)
-        , Elm.string arg2
-        , Elm.functionReduced "unpack" arg3
+        [ Elm.list (List.map Elm.string arg)
+        , Elm.string arg0
+        , Elm.functionReduced "unpack" arg1
         ]
 
 
@@ -448,7 +448,7 @@ branch2 :
     -> String
     -> (Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
-branch2 arg1 arg2 arg3 =
+branch2 arg arg0 arg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -468,11 +468,11 @@ branch2 arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg1)
-        , Elm.string arg2
+        [ Elm.list (List.map Elm.string arg)
+        , Elm.string arg0
         , Elm.functionReduced
             "unpack"
-            (\unpack -> Elm.functionReduced "unpack" (arg3 unpack))
+            (\unpack -> Elm.functionReduced "unpack" (arg1 unpack))
         ]
 
 
@@ -486,7 +486,7 @@ branch3 :
     -> String
     -> (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
-branch3 arg1 arg2 arg3 =
+branch3 arg arg0 arg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -507,15 +507,15 @@ branch3 arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg1)
-        , Elm.string arg2
+        [ Elm.list (List.map Elm.string arg)
+        , Elm.string arg0
         , Elm.functionReduced
             "unpack"
             (\unpack ->
                 Elm.functionReduced
                     "unpack"
                     (\unpack0 ->
-                        Elm.functionReduced "unpack" (arg3 unpack unpack0)
+                        Elm.functionReduced "unpack" (arg1 unpack unpack0)
                     )
             )
         ]
@@ -539,7 +539,7 @@ branch4 :
     -> Elm.Expression
     -> Elm.Expression)
     -> Elm.Expression
-branch4 arg1 arg2 arg3 =
+branch4 arg arg0 arg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -561,8 +561,8 @@ branch4 arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg1)
-        , Elm.string arg2
+        [ Elm.list (List.map Elm.string arg)
+        , Elm.string arg0
         , Elm.functionReduced
             "unpack"
             (\unpack ->
@@ -574,7 +574,7 @@ branch4 arg1 arg2 arg3 =
                             (\unpack_4_3_5_3_0 ->
                                 Elm.functionReduced
                                     "unpack"
-                                    (arg3 unpack unpack0 unpack_4_3_5_3_0)
+                                    (arg1 unpack unpack0 unpack_4_3_5_3_0)
                             )
                     )
             )
@@ -601,7 +601,7 @@ branch5 :
     -> Elm.Expression
     -> Elm.Expression)
     -> Elm.Expression
-branch5 arg1 arg2 arg3 =
+branch5 arg arg0 arg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -624,8 +624,8 @@ branch5 arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg1)
-        , Elm.string arg2
+        [ Elm.list (List.map Elm.string arg)
+        , Elm.string arg0
         , Elm.functionReduced
             "unpack"
             (\unpack ->
@@ -640,7 +640,7 @@ branch5 arg1 arg2 arg3 =
                                     (\unpack_4_4_3_5_3_0 ->
                                         Elm.functionReduced
                                             "unpack"
-                                            (arg3 unpack unpack0
+                                            (arg1 unpack unpack0
                                                  unpack_4_3_5_3_0
                                                 unpack_4_4_3_5_3_0
                                             )
@@ -673,7 +673,7 @@ branch6 :
     -> Elm.Expression
     -> Elm.Expression)
     -> Elm.Expression
-branch6 arg1 arg2 arg3 =
+branch6 arg arg0 arg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -697,8 +697,8 @@ branch6 arg1 arg2 arg3 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg1)
-        , Elm.string arg2
+        [ Elm.list (List.map Elm.string arg)
+        , Elm.string arg0
         , Elm.functionReduced
             "unpack"
             (\unpack ->
@@ -716,7 +716,7 @@ branch6 arg1 arg2 arg3 =
                                             (\unpack_4_4_4_3_5_3_0 ->
                                                 Elm.functionReduced
                                                     "unpack"
-                                                    (arg3 unpack unpack0
+                                                    (arg1 unpack unpack0
                                                          unpack_4_3_5_3_0
                                                          unpack_4_4_3_5_3_0
                                                         unpack_4_4_4_3_5_3_0
@@ -741,7 +741,7 @@ branchWith :
     -> Int
     -> (Elm.Expression -> Elm.Expression)
     -> Elm.Expression
-branchWith arg1 arg2 arg3 arg4 =
+branchWith arg arg0 arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -762,16 +762,16 @@ branchWith arg1 arg2 arg3 arg4 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg1)
-        , Elm.string arg2
-        , Elm.int arg3
-        , Elm.functionReduced "unpack" arg4
+        [ Elm.list (List.map Elm.string arg)
+        , Elm.string arg0
+        , Elm.int arg1
+        , Elm.functionReduced "unpack" arg2
         ]
 
 
 {-| listBranch: Int -> (List Elm.Expression -> Elm.Expression) -> Elm.Case.Branch -}
 listBranch : Int -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
-listBranch arg1 arg2 =
+listBranch arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -790,7 +790,7 @@ listBranch arg1 arg2 =
                     )
             }
         )
-        [ Elm.int arg1, Elm.functionReduced "unpack" arg2 ]
+        [ Elm.int arg, Elm.functionReduced "unpack" arg0 ]
 
 
 annotation_ : { branch : Type.Annotation }
@@ -830,7 +830,7 @@ call_ :
     }
 call_ =
     { maybe =
-        \arg1 arg2 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -862,9 +862,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg0 ]
     , result =
-        \arg1 arg2 ->
+        \arg arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -906,9 +906,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg1 ]
     , list =
-        \arg1 arg2 ->
+        \arg arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -944,9 +944,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg2 ]
     , tuple =
-        \arg1 arg2 ->
+        \arg arg3 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -965,9 +965,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg3 ]
     , triple =
-        \arg1 arg2 ->
+        \arg arg4 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -987,9 +987,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg4 ]
     , custom =
-        \arg1 arg2 ->
+        \arg arg5 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -1009,9 +1009,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg5 ]
     , otherwise =
-        \arg1 ->
+        \arg ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -1027,9 +1027,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1 ]
+                [ arg ]
     , branch0 =
-        \arg1 arg2 arg3 ->
+        \arg arg7 arg8 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -1045,9 +1045,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2, arg3 ]
+                [ arg, arg7, arg8 ]
     , branch1 =
-        \arg1 arg2 arg3 ->
+        \arg arg8 arg9 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -1065,9 +1065,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2, arg3 ]
+                [ arg, arg8, arg9 ]
     , branch2 =
-        \arg1 arg2 arg3 ->
+        \arg arg9 arg10 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -1087,9 +1087,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2, arg3 ]
+                [ arg, arg9, arg10 ]
     , branch3 =
-        \arg1 arg2 arg3 ->
+        \arg arg10 arg11 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -1110,9 +1110,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2, arg3 ]
+                [ arg, arg10, arg11 ]
     , branch4 =
-        \arg1 arg2 arg3 ->
+        \arg arg11 arg12 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -1134,9 +1134,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2, arg3 ]
+                [ arg, arg11, arg12 ]
     , branch5 =
-        \arg1 arg2 arg3 ->
+        \arg arg12 arg13 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -1159,9 +1159,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2, arg3 ]
+                [ arg, arg12, arg13 ]
     , branch6 =
-        \arg1 arg2 arg3 ->
+        \arg arg13 arg14 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -1185,9 +1185,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2, arg3 ]
+                [ arg, arg13, arg14 ]
     , branchWith =
-        \arg1 arg2 arg3 arg4 ->
+        \arg arg14 arg15 arg16 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -1212,9 +1212,9 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2, arg3, arg4 ]
+                [ arg, arg14, arg15, arg16 ]
     , listBranch =
-        \arg1 arg2 ->
+        \arg arg15 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -1237,7 +1237,7 @@ call_ =
                             )
                     }
                 )
-                [ arg1, arg2 ]
+                [ arg, arg15 ]
     }
 
 
