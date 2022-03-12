@@ -256,10 +256,10 @@ blockToCall thisModule block =
                     let
                         captured =
                             captureFunction value.name
-                                two
+                                value.tipe
                                 { arguments =
-                                    [ asArgument one
-                                    ]
+                                    []
+                                , unpackers = []
                                 }
 
                         arguments =
@@ -781,10 +781,11 @@ generateBlocks thisModule block =
                     let
                         captured =
                             captureFunction value.name
-                                two
+                                value.tipe
                                 { arguments =
-                                    [ asArgument one
-                                    ]
+                                    []
+                                , unpackers =
+                                    []
                                 }
                     in
                     [ Elm.function
@@ -800,7 +801,12 @@ generateBlocks thisModule block =
                                             |> Elm.maybe
                                     }
                                 )
-                                (unpack value.tipe [] vars)
+                                -- (unpack value.tipe [] vars)
+                                (List.map2
+                                    (<|)
+                                    (List.reverse (List.drop 1 captured.unpackers))
+                                    vars
+                                )
                         )
                         |> Elm.declaration value.name
                         |> Elm.withDocumentation (value.name ++ ": " ++ typeToString value.tipe)
@@ -856,28 +862,228 @@ captureFunction :
     -> Elm.Type.Type
     ->
         { arguments : List ( String, Maybe Annotation.Annotation )
+        , unpackers : List (Elm.Expression -> Elm.Expression)
         }
     ->
         { arguments : List ( String, Maybe Annotation.Annotation )
+        , unpackers : List (Elm.Expression -> Elm.Expression)
         }
 captureFunction baseName tipe captured =
     case tipe of
         Elm.Type.Lambda one two ->
+            let
+                unpacked =
+                    unpackArg one
+            in
             captureFunction baseName
                 two
-                { arguments = asArgument one :: captured.arguments
+                { arguments = ( "arg", Just unpacked.annotation ) :: captured.arguments
+                , unpackers = unpacked.unpacker :: captured.unpackers
                 }
 
         _ ->
-            { arguments = asArgument tipe :: captured.arguments
+            let
+                unpacked =
+                    unpackArg tipe
+            in
+            { arguments = ( "arg", Just unpacked.annotation ) :: captured.arguments
+            , unpackers = unpacked.unpacker :: captured.unpackers
             }
 
 
-asArgument : Elm.Type.Type -> ( String, Maybe Annotation.Annotation )
-asArgument tipe =
-    ( "arg"
-    , Just (asArgumentTypeHelper tipe)
-    )
+unpackArgForLambdas :
+    Elm.Type.Type
+    ->
+        { annotation : Annotation.Annotation
+        , unpacker : Elm.Expression -> Elm.Expression
+        }
+unpackArgForLambdas tipe =
+    case tipe of
+        Elm.Type.Lambda one two ->
+            let
+                unpacked =
+                    unpackArgForLambdas two
+            in
+            { annotation =
+                Annotation.function [ expressionType ]
+                    unpacked.annotation
+            , unpacker =
+                \renderer ->
+                    Gen.Elm.functionReduced
+                        "unpack"
+                        (\val ->
+                            let
+                                full =
+                                    val
+                                        |> Elm.withType (typeToGeneratedAnnotationExpression one)
+                            in
+                            unpackFunction "unpack"
+                                (Elm.apply renderer [ full ])
+                                two
+                        )
+            }
+
+        _ ->
+            { annotation = expressionType
+            , unpacker = identity
+            }
+
+
+unpackArg :
+    Elm.Type.Type
+    ->
+        { annotation : Annotation.Annotation
+        , unpacker : Elm.Expression -> Elm.Expression
+        }
+unpackArg tipe =
+    case tipe of
+        Elm.Type.Lambda one two ->
+            let
+                unpacked =
+                    unpackArgForLambdas two
+            in
+            { annotation =
+                Annotation.function
+                    [ expressionType
+                    ]
+                    unpacked.annotation
+            , unpacker =
+                \value ->
+                    Gen.Elm.functionReduced
+                        "unpack"
+                        (\val ->
+                            unpacked.unpacker
+                                (Elm.apply value [ val ])
+                        )
+            }
+
+        Elm.Type.Type "List.List" [ inner ] ->
+            if needsUnpacking inner then
+                let
+                    unpacked =
+                        unpackArg inner
+                in
+                { annotation =
+                    Annotation.list
+                        unpacked.annotation
+                , unpacker =
+                    \value ->
+                        Gen.List.call_.map
+                            (Elm.functionReduced "unpack"
+                                unpacked.unpacker
+                            )
+                            value
+                            |> Gen.Elm.call_.list
+                }
+
+            else
+                { annotation =
+                    Annotation.list
+                        expressionType
+                , unpacker =
+                    Gen.Elm.call_.list
+                }
+
+        -- let
+        --     unpacked =
+        --         unpackArg inner
+        -- in
+        -- { annotation =
+        --     Annotation.list
+        --         unpacked.annotation
+        -- , unpacker =
+        --     \value ->
+        --         if needsUnpacking inner then
+        --             Gen.List.call_.map
+        --                 (Elm.functionReduced "unpack"
+        --                     unpacked.unpacker
+        --                 )
+        --                 value
+        --                 |> Gen.Elm.call_.list
+        --         else
+        --             Gen.Elm.call_.list value
+        -- }
+        Elm.Type.Type "Basics.Bool" [] ->
+            { annotation = Annotation.bool
+            , unpacker = Gen.Elm.call_.bool
+            }
+
+        Elm.Type.Type "Basics.Float" [] ->
+            { annotation = Annotation.float
+            , unpacker = Gen.Elm.call_.float
+            }
+
+        Elm.Type.Type "Basics.Int" [] ->
+            { annotation = Annotation.int
+            , unpacker = Gen.Elm.call_.int
+            }
+
+        Elm.Type.Type "String.String" [] ->
+            { annotation = Annotation.string
+            , unpacker = Gen.Elm.call_.string
+            }
+
+        Elm.Type.Type "Char.Char" [] ->
+            { annotation = Annotation.char
+            , unpacker = Gen.Elm.call_.char
+            }
+
+        Elm.Type.Type modAndName typeVars ->
+            { annotation = expressionType
+            , unpacker = identity
+            }
+
+        Elm.Type.Record fields Nothing ->
+            let
+                unpackedFields =
+                    List.map
+                        (Tuple.mapSecond unpackArg)
+                        fields
+            in
+            { annotation =
+                List.map (Tuple.mapSecond .annotation) unpackedFields
+                    |> Annotation.record
+            , unpacker =
+                \rec ->
+                    List.map
+                        (\( fieldName, unpacked ) ->
+                            Gen.Elm.field fieldName
+                                (unpacked.unpacker (Elm.get fieldName rec))
+                        )
+                        unpackedFields
+                        |> Gen.Elm.record
+            }
+
+        Elm.Type.Record fields (Just genName) ->
+            let
+                unpackedFields =
+                    List.map
+                        (Tuple.mapSecond unpackArg)
+                        fields
+            in
+            { annotation =
+                List.map (Tuple.mapSecond .annotation) unpackedFields
+                    |> Annotation.extensible genName
+            , unpacker =
+                \rec ->
+                    List.map
+                        (\( fieldName, unpacked ) ->
+                            Gen.Elm.field fieldName
+                                (unpacked.unpacker (Elm.get fieldName rec))
+                        )
+                        unpackedFields
+                        |> Gen.Elm.record
+            }
+
+        Elm.Type.Tuple tuples ->
+            { annotation = expressionType
+            , unpacker = identity
+            }
+
+        Elm.Type.Var name ->
+            { annotation = expressionType
+            , unpacker = identity
+            }
 
 
 asArgumentTypeHelper : Elm.Type.Type -> Annotation.Annotation
