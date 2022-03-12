@@ -90,10 +90,11 @@ insert arg arg0 arg1 =
 
 {-| Update the value of a dictionary for a specific key with a given function.
 
-update: comparable
--> (Maybe v -> Maybe v)
--> Dict.Dict comparable v
--> Dict.Dict comparable v
+update: 
+    comparable
+    -> (Maybe v -> Maybe v)
+    -> Dict.Dict comparable v
+    -> Dict.Dict comparable v
 -}
 update :
     Elm.Expression
@@ -571,9 +572,10 @@ filter arg arg0 =
 contains all key-value pairs which passed the test, and the second contains
 the pairs that did not.
 
-partition: (comparable -> v -> Bool)
--> Dict.Dict comparable v
--> ( Dict.Dict comparable v, Dict.Dict comparable v )
+partition: 
+    (comparable -> v -> Bool)
+    -> Dict.Dict comparable v
+    -> ( Dict.Dict comparable v, Dict.Dict comparable v )
 -}
 partition :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
@@ -728,13 +730,14 @@ accumulators for when a given key appears:
 You then traverse all the keys from lowest to highest, building up whatever
 you want.
 
-merge: (comparable -> a -> result -> result)
--> (comparable -> a -> b -> result -> result)
--> (comparable -> b -> result -> result)
--> Dict.Dict comparable a
--> Dict.Dict comparable b
--> result
--> result
+merge: 
+    (comparable -> a -> result -> result)
+    -> (comparable -> a -> b -> result -> result)
+    -> (comparable -> b -> result -> result)
+    -> Dict.Dict comparable a
+    -> Dict.Dict comparable b
+    -> result
+    -> result
 -}
 merge :
     (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)

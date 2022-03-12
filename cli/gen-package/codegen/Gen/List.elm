@@ -704,12 +704,13 @@ map3 arg arg0 arg1 arg2 =
         ]
 
 
-{-| map4: (a -> b -> c -> d -> result)
--> List a
--> List b
--> List c
--> List d
--> List result
+{-| map4: 
+    (a -> b -> c -> d -> result)
+    -> List a
+    -> List b
+    -> List c
+    -> List d
+    -> List result
 -}
 map4 :
     (Elm.Expression
@@ -768,13 +769,14 @@ map4 arg arg0 arg1 arg2 arg3 =
         ]
 
 
-{-| map5: (a -> b -> c -> d -> e -> result)
--> List a
--> List b
--> List c
--> List d
--> List e
--> List result
+{-| map5: 
+    (a -> b -> c -> d -> e -> result)
+    -> List a
+    -> List b
+    -> List c
+    -> List d
+    -> List e
+    -> List result
 -}
 map5 :
     (Elm.Expression

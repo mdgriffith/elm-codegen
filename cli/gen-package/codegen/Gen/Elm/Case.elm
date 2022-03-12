@@ -34,9 +34,10 @@ Generates
             Just just ->
                 just + 5
 
-maybe: Elm.Expression
--> { nothing : Elm.Expression, just : Elm.Expression -> Elm.Expression }
--> Elm.Expression
+maybe: 
+    Elm.Expression
+    -> { nothing : Elm.Expression, just : Elm.Expression -> Elm.Expression }
+    -> Elm.Expression
 -}
 maybe :
     Elm.Expression
@@ -95,11 +96,12 @@ Generates
             Err err ->
                 err
 
-result: Elm.Expression
--> { err : Elm.Expression -> Elm.Expression
-, ok : Elm.Expression -> Elm.Expression
-}
--> Elm.Expression
+result: 
+    Elm.Expression
+    -> { err : Elm.Expression -> Elm.Expression
+    , ok : Elm.Expression -> Elm.Expression
+    }
+    -> Elm.Expression
 -}
 result :
     Elm.Expression
@@ -160,11 +162,12 @@ Generates
             top :: remaining ->
                 top + 5
 
-list: Elm.Expression
--> { empty : Elm.Expression
-, nonEmpty : Elm.Expression -> Elm.Expression -> Elm.Expression
-}
--> Elm.Expression
+list: 
+    Elm.Expression
+    -> { empty : Elm.Expression
+    , nonEmpty : Elm.Expression -> Elm.Expression -> Elm.Expression
+    }
+    -> Elm.Expression
 -}
 list :
     Elm.Expression
@@ -229,9 +232,10 @@ Generates
             ( one, two ) ->
                 5 + two
 
-tuple: Elm.Expression
--> (Elm.Expression -> Elm.Expression -> Elm.Expression)
--> Elm.Expression
+tuple: 
+    Elm.Expression
+    -> (Elm.Expression -> Elm.Expression -> Elm.Expression)
+    -> Elm.Expression
 -}
 tuple :
     Elm.Expression
@@ -279,9 +283,10 @@ Generates
             ( one, two, three ) ->
                 5 + two
 
-triple: Elm.Expression
--> (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
--> Elm.Expression
+triple: 
+    Elm.Expression
+    -> (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
+    -> Elm.Expression
 -}
 triple :
     Elm.Expression
@@ -438,10 +443,11 @@ branch1 arg arg0 arg1 =
         ]
 
 
-{-| branch2: List String
--> String
--> (Elm.Expression -> Elm.Expression -> Elm.Expression)
--> Elm.Case.Branch
+{-| branch2: 
+    List String
+    -> String
+    -> (Elm.Expression -> Elm.Expression -> Elm.Expression)
+    -> Elm.Case.Branch
 -}
 branch2 :
     List String
@@ -476,10 +482,11 @@ branch2 arg arg0 arg1 =
         ]
 
 
-{-| branch3: List String
--> String
--> (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
--> Elm.Case.Branch
+{-| branch3: 
+    List String
+    -> String
+    -> (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
+    -> Elm.Case.Branch
 -}
 branch3 :
     List String
@@ -521,14 +528,15 @@ branch3 arg arg0 arg1 =
         ]
 
 
-{-| branch4: List String
--> String
--> (Elm.Expression
--> Elm.Expression
--> Elm.Expression
--> Elm.Expression
--> Elm.Expression)
--> Elm.Case.Branch
+{-| branch4: 
+    List String
+    -> String
+    -> (Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression)
+    -> Elm.Case.Branch
 -}
 branch4 :
     List String
@@ -581,15 +589,16 @@ branch4 arg arg0 arg1 =
         ]
 
 
-{-| branch5: List String
--> String
--> (Elm.Expression
--> Elm.Expression
--> Elm.Expression
--> Elm.Expression
--> Elm.Expression
--> Elm.Expression)
--> Elm.Case.Branch
+{-| branch5: 
+    List String
+    -> String
+    -> (Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression)
+    -> Elm.Case.Branch
 -}
 branch5 :
     List String
@@ -651,16 +660,17 @@ branch5 arg arg0 arg1 =
         ]
 
 
-{-| branch6: List String
--> String
--> (Elm.Expression
--> Elm.Expression
--> Elm.Expression
--> Elm.Expression
--> Elm.Expression
--> Elm.Expression
--> Elm.Expression)
--> Elm.Case.Branch
+{-| branch6: 
+    List String
+    -> String
+    -> (Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression)
+    -> Elm.Case.Branch
 -}
 branch6 :
     List String
@@ -729,11 +739,12 @@ branch6 arg arg0 arg1 =
         ]
 
 
-{-| branchWith: List String
--> String
--> Int
--> (List Elm.Expression -> Elm.Expression)
--> Elm.Case.Branch
+{-| branchWith: 
+    List String
+    -> String
+    -> Int
+    -> (List Elm.Expression -> Elm.Expression)
+    -> Elm.Case.Branch
 -}
 branchWith :
     List String

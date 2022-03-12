@@ -474,9 +474,10 @@ filter arg arg0 =
 {-| Create two new sets. The first contains all the elements that passed the
 given test, and the second contains all the elements that did not.
 
-partition: (comparable -> Bool)
--> Set.Set comparable
--> ( Set.Set comparable, Set.Set comparable )
+partition: 
+    (comparable -> Bool)
+    -> Set.Set comparable
+    -> ( Set.Set comparable, Set.Set comparable )
 -}
 partition :
     (Elm.Expression -> Elm.Expression) -> Elm.Expression -> Elm.Expression

@@ -272,7 +272,7 @@ triple arg arg0 arg1 =
     import Elm.Annotation as Type
 
     Elm.value "myString"
-        |> Elm.withType (Type.string)
+        |> Elm.withType Type.string
 
 Though be sure `elm-codegen` isn't already doing this automatically for you!
 
@@ -547,9 +547,10 @@ expose arg =
 
 For precise control over what is rendered for the module comment, use [fileWith](#fileWith)
 
-exposeWith: { exposeConstructor : Bool, group : Maybe String }
--> Elm.Declaration
--> Elm.Declaration
+exposeWith: 
+    { exposeConstructor : Bool, group : Maybe String }
+    -> Elm.Declaration
+    -> Elm.Declaration
 -}
 exposeWith :
     { exposeConstructor : Bool, group : Elm.Expression }
@@ -599,12 +600,13 @@ would make an import statement like
 
 All values rendered in this file that are from this module would also automatically respect this alias as well.
 
-fileWith: List String
--> { docs : List { group : Maybe String, members : List String } -> List String
-, aliases : List ( List String, String )
-}
--> List Elm.Declaration
--> Elm.File
+fileWith: 
+    List String
+    -> { docs : List { group : Maybe String, members : List String } -> List String
+    , aliases : List ( List String, String )
+    }
+    -> List Elm.Declaration
+    -> Elm.File
 -}
 fileWith :
     List String
@@ -780,10 +782,11 @@ fn arg arg0 =
         [ Elm.string arg, Elm.functionReduced "unpack" arg0 ]
 
 
-{-| fn2: String
--> String
--> (Elm.Expression -> Elm.Expression -> Elm.Expression)
--> Elm.Expression
+{-| fn2: 
+    String
+    -> String
+    -> (Elm.Expression -> Elm.Expression -> Elm.Expression)
+    -> Elm.Expression
 -}
 fn2 :
     String
@@ -818,11 +821,12 @@ fn2 arg arg0 arg1 =
         ]
 
 
-{-| fn3: String
--> String
--> String
--> (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
--> Elm.Expression
+{-| fn3: 
+    String
+    -> String
+    -> String
+    -> (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
+    -> Elm.Expression
 -}
 fn3 :
     String
@@ -867,16 +871,17 @@ fn3 arg arg0 arg1 arg2 =
         ]
 
 
-{-| fn4: String
--> String
--> String
--> String
--> (Elm.Expression
--> Elm.Expression
--> Elm.Expression
--> Elm.Expression
--> Elm.Expression)
--> Elm.Expression
+{-| fn4: 
+    String
+    -> String
+    -> String
+    -> String
+    -> (Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression)
+    -> Elm.Expression
 -}
 fn4 :
     String
@@ -935,18 +940,19 @@ fn4 arg arg0 arg1 arg2 arg3 =
         ]
 
 
-{-| fn5: String
--> String
--> String
--> String
--> String
--> (Elm.Expression
--> Elm.Expression
--> Elm.Expression
--> Elm.Expression
--> Elm.Expression
--> Elm.Expression)
--> Elm.Expression
+{-| fn5: 
+    String
+    -> String
+    -> String
+    -> String
+    -> String
+    -> (Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression)
+    -> Elm.Expression
 -}
 fn5 :
     String
@@ -1017,20 +1023,21 @@ fn5 arg arg0 arg1 arg2 arg3 arg4 =
         ]
 
 
-{-| fn6: String
--> String
--> String
--> String
--> String
--> String
--> (Elm.Expression
--> Elm.Expression
--> Elm.Expression
--> Elm.Expression
--> Elm.Expression
--> Elm.Expression
--> Elm.Expression)
--> Elm.Expression
+{-| fn6: 
+    String
+    -> String
+    -> String
+    -> String
+    -> String
+    -> String
+    -> (Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression)
+    -> Elm.Expression
 -}
 fn6 :
     String
@@ -1120,9 +1127,10 @@ Provide it with —
   - A list of argument names and an optional type
   - A function which will be given all the input arguments as `Expression`s.
 
-function: List ( String, Maybe Elm.Annotation.Annotation )
--> (List Elm.Expression -> Elm.Expression)
--> Elm.Expression
+function: 
+    List ( String, Maybe Elm.Annotation.Annotation )
+    -> (List Elm.Expression -> Elm.Expression)
+    -> Elm.Expression
 -}
 function :
     List Elm.Expression -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
@@ -2013,11 +2021,12 @@ apply arg arg0 =
         [ arg, Elm.list arg0 ]
 
 
-{-| value: { importFrom : List String
-, name : String
-, annotation : Maybe Elm.Annotation.Annotation
-}
--> Elm.Expression
+{-| value: 
+    { importFrom : List String
+    , name : String
+    , annotation : Maybe Elm.Annotation.Annotation
+    }
+    -> Elm.Expression
 -}
 value :
     { importFrom : List String, name : String, annotation : Elm.Expression }

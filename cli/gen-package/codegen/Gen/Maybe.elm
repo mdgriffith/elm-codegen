@@ -163,12 +163,13 @@ map3 arg arg0 arg1 arg2 =
         ]
 
 
-{-| map4: (a -> b -> c -> d -> value)
--> Maybe a
--> Maybe b
--> Maybe c
--> Maybe d
--> Maybe value
+{-| map4: 
+    (a -> b -> c -> d -> value)
+    -> Maybe a
+    -> Maybe b
+    -> Maybe c
+    -> Maybe d
+    -> Maybe value
 -}
 map4 :
     (Elm.Expression
@@ -227,13 +228,14 @@ map4 arg arg0 arg1 arg2 arg3 =
         ]
 
 
-{-| map5: (a -> b -> c -> d -> e -> value)
--> Maybe a
--> Maybe b
--> Maybe c
--> Maybe d
--> Maybe e
--> Maybe value
+{-| map5: 
+    (a -> b -> c -> d -> e -> value)
+    -> Maybe a
+    -> Maybe b
+    -> Maybe c
+    -> Maybe d
+    -> Maybe e
+    -> Maybe value
 -}
 map5 :
     (Elm.Expression

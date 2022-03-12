@@ -120,10 +120,11 @@ named arg arg0 =
         [ Elm.list (List.map Elm.string arg), Elm.string arg0 ]
 
 
-{-| namedWith: List String
--> String
--> List Elm.Annotation.Annotation
--> Elm.Annotation.Annotation
+{-| namedWith: 
+    List String
+    -> String
+    -> List Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
 -}
 namedWith : List String -> String -> List Elm.Expression -> Elm.Expression
 namedWith arg arg0 arg1 =
@@ -188,9 +189,10 @@ list arg =
         [ arg ]
 
 
-{-| tuple: Elm.Annotation.Annotation
--> Elm.Annotation.Annotation
--> Elm.Annotation.Annotation
+{-| tuple: 
+    Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
 -}
 tuple : Elm.Expression -> Elm.Expression -> Elm.Expression
 tuple arg arg0 =
@@ -211,10 +213,11 @@ tuple arg arg0 =
         [ arg, arg0 ]
 
 
-{-| triple: Elm.Annotation.Annotation
--> Elm.Annotation.Annotation
--> Elm.Annotation.Annotation
--> Elm.Annotation.Annotation
+{-| triple: 
+    Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
 -}
 triple : Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
 triple arg arg0 arg1 =
@@ -255,9 +258,10 @@ set arg =
         [ arg ]
 
 
-{-| dict: Elm.Annotation.Annotation
--> Elm.Annotation.Annotation
--> Elm.Annotation.Annotation
+{-| dict: 
+    Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
 -}
 dict : Elm.Expression -> Elm.Expression -> Elm.Expression
 dict arg arg0 =
@@ -278,9 +282,10 @@ dict arg arg0 =
         [ arg, arg0 ]
 
 
-{-| result: Elm.Annotation.Annotation
--> Elm.Annotation.Annotation
--> Elm.Annotation.Annotation
+{-| result: 
+    Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
 -}
 result : Elm.Expression -> Elm.Expression -> Elm.Expression
 result arg arg0 =
@@ -328,9 +333,10 @@ record arg =
         [ Elm.list arg ]
 
 
-{-| extensible: String
--> List ( String, Elm.Annotation.Annotation )
--> Elm.Annotation.Annotation
+{-| extensible: 
+    String
+    -> List ( String, Elm.Annotation.Annotation )
+    -> Elm.Annotation.Annotation
 -}
 extensible : String -> List Elm.Expression -> Elm.Expression
 extensible arg arg0 =
@@ -359,9 +365,10 @@ extensible arg arg0 =
         [ Elm.string arg, Elm.list arg0 ]
 
 
-{-| function: List Elm.Annotation.Annotation
--> Elm.Annotation.Annotation
--> Elm.Annotation.Annotation
+{-| function: 
+    List Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
 -}
 function : List Elm.Expression -> Elm.Expression -> Elm.Expression
 function arg arg0 =

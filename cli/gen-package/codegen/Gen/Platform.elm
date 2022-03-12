@@ -35,11 +35,12 @@ module has a few ways to create that kind of `Program` instead!
 [headless]: https://en.wikipedia.org/wiki/Headless_software
 [browser]: /packages/elm/browser/latest/Browser
 
-worker: { init : flags -> ( model, Platform.Cmd.Cmd msg )
-, update : msg -> model -> ( model, Platform.Cmd.Cmd msg )
-, subscriptions : model -> Platform.Sub.Sub msg
-}
--> Platform.Program flags model msg
+worker: 
+    { init : flags -> ( model, Platform.Cmd.Cmd msg )
+    , update : msg -> model -> ( model, Platform.Cmd.Cmd msg )
+    , subscriptions : model -> Platform.Sub.Sub msg
+    }
+    -> Platform.Program flags model msg
 -}
 worker :
     { init : Elm.Expression -> Elm.Expression

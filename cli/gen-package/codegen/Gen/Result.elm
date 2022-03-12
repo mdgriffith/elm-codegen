@@ -61,10 +61,11 @@ propagate through.
 This can be useful if you have two computations that may fail, and you want
 to put them together quickly.
 
-map2: (a -> b -> value)
--> Result.Result x a
--> Result.Result x b
--> Result.Result x value
+map2: 
+    (a -> b -> value)
+    -> Result.Result x a
+    -> Result.Result x b
+    -> Result.Result x value
 -}
 map2 :
     (Elm.Expression -> Elm.Expression -> Elm.Expression)
@@ -107,11 +108,12 @@ map2 arg arg0 arg1 =
         ]
 
 
-{-| map3: (a -> b -> c -> value)
--> Result.Result x a
--> Result.Result x b
--> Result.Result x c
--> Result.Result x value
+{-| map3: 
+    (a -> b -> c -> value)
+    -> Result.Result x a
+    -> Result.Result x b
+    -> Result.Result x c
+    -> Result.Result x value
 -}
 map3 :
     (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
@@ -166,12 +168,13 @@ map3 arg arg0 arg1 arg2 =
         ]
 
 
-{-| map4: (a -> b -> c -> d -> value)
--> Result.Result x a
--> Result.Result x b
--> Result.Result x c
--> Result.Result x d
--> Result.Result x value
+{-| map4: 
+    (a -> b -> c -> d -> value)
+    -> Result.Result x a
+    -> Result.Result x b
+    -> Result.Result x c
+    -> Result.Result x d
+    -> Result.Result x value
 -}
 map4 :
     (Elm.Expression
@@ -246,13 +249,14 @@ map4 arg arg0 arg1 arg2 arg3 =
         ]
 
 
-{-| map5: (a -> b -> c -> d -> e -> value)
--> Result.Result x a
--> Result.Result x b
--> Result.Result x c
--> Result.Result x d
--> Result.Result x e
--> Result.Result x value
+{-| map5: 
+    (a -> b -> c -> d -> e -> value)
+    -> Result.Result x a
+    -> Result.Result x b
+    -> Result.Result x c
+    -> Result.Result x d
+    -> Result.Result x e
+    -> Result.Result x value
 -}
 map5 :
     (Elm.Expression

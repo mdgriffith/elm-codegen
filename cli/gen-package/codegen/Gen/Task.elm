@@ -377,11 +377,12 @@ map2 arg arg0 arg1 =
         ]
 
 
-{-| map3: (a -> b -> c -> result)
--> Task.Task x a
--> Task.Task x b
--> Task.Task x c
--> Task.Task x result
+{-| map3: 
+    (a -> b -> c -> result)
+    -> Task.Task x a
+    -> Task.Task x b
+    -> Task.Task x c
+    -> Task.Task x result
 -}
 map3 :
     (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
@@ -436,12 +437,13 @@ map3 arg arg0 arg1 arg2 =
         ]
 
 
-{-| map4: (a -> b -> c -> d -> result)
--> Task.Task x a
--> Task.Task x b
--> Task.Task x c
--> Task.Task x d
--> Task.Task x result
+{-| map4: 
+    (a -> b -> c -> d -> result)
+    -> Task.Task x a
+    -> Task.Task x b
+    -> Task.Task x c
+    -> Task.Task x d
+    -> Task.Task x result
 -}
 map4 :
     (Elm.Expression
@@ -516,13 +518,14 @@ map4 arg arg0 arg1 arg2 arg3 =
         ]
 
 
-{-| map5: (a -> b -> c -> d -> e -> result)
--> Task.Task x a
--> Task.Task x b
--> Task.Task x c
--> Task.Task x d
--> Task.Task x e
--> Task.Task x result
+{-| map5: 
+    (a -> b -> c -> d -> e -> result)
+    -> Task.Task x a
+    -> Task.Task x b
+    -> Task.Task x c
+    -> Task.Task x d
+    -> Task.Task x e
+    -> Task.Task x result
 -}
 map5 :
     (Elm.Expression

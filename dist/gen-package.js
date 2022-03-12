@@ -18360,6 +18360,7 @@ var $author$project$Generate$docTypeToAnnotation = function (tipe) {
 					$author$project$Generate$docTypeToAnnotation(two)));
 	}
 };
+var $elm$core$String$lines = _String_lines;
 var $author$project$Internal$Write$noAliases = _List_Nil;
 var $author$project$Internal$Write$writeAnnotation = function (sig) {
 	return A2(
@@ -18368,8 +18369,20 @@ var $author$project$Internal$Write$writeAnnotation = function (sig) {
 		A2($author$project$Internal$Write$prettyTypeAnnotation, $author$project$Internal$Write$noAliases, sig));
 };
 var $author$project$Generate$typeToString = function (type_) {
-	return $author$project$Internal$Write$writeAnnotation(
-		$author$project$Generate$docTypeToAnnotation(type_));
+	var lines = $elm$core$String$lines(
+		$author$project$Internal$Write$writeAnnotation(
+			$author$project$Generate$docTypeToAnnotation(type_)));
+	if (!lines.b) {
+		return '';
+	} else {
+		if (!lines.b.b) {
+			var one = lines.a;
+			return one;
+		} else {
+			var many = lines;
+			return '\n    ' + A2($elm$core$String$join, '\n    ', many);
+		}
+	}
 };
 var $stil4m$elm_syntax$Elm$Syntax$Declaration$AliasDeclaration = function (a) {
 	return {$: 1, a: a};

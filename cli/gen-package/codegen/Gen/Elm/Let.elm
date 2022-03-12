@@ -60,11 +60,12 @@ value arg arg0 arg1 =
         [ Elm.string arg, arg0, arg1 ]
 
 
-{-| tuple: String
--> String
--> Elm.Expression
--> Elm.Let.Let (( Elm.Expression, Elm.Expression ) -> a)
--> Elm.Let.Let a
+{-| tuple: 
+    String
+    -> String
+    -> Elm.Expression
+    -> Elm.Let.Let (( Elm.Expression, Elm.Expression ) -> a)
+    -> Elm.Let.Let a
 -}
 tuple : String -> String -> Elm.Expression -> Elm.Expression -> Elm.Expression
 tuple arg arg0 arg1 arg2 =
@@ -96,10 +97,11 @@ tuple arg arg0 arg1 arg2 =
         [ Elm.string arg, Elm.string arg0, arg1, arg2 ]
 
 
-{-| record: List String
--> Elm.Expression
--> Elm.Let.Let (List Elm.Expression -> a)
--> Elm.Let.Let a
+{-| record: 
+    List String
+    -> Elm.Expression
+    -> Elm.Let.Let (List Elm.Expression -> a)
+    -> Elm.Let.Let a
 -}
 record : List String -> Elm.Expression -> Elm.Expression -> Elm.Expression
 record arg arg0 arg1 =
