@@ -1344,8 +1344,21 @@ namedWithType thisModule name types =
 
 typeToString : Elm.Type.Type -> String
 typeToString type_ =
-    docTypeToAnnotation type_
-        |> Write.writeAnnotation
+    let
+        lines =
+            docTypeToAnnotation type_
+                |> Write.writeAnnotation
+                |> String.lines
+    in
+    case lines of
+        [] ->
+            ""
+
+        [ one ] ->
+            one
+
+        many ->
+            "\n    " ++ String.join "\n    " many
 
 
 docTypeToAnnotation : Elm.Type.Type -> Elm.Syntax.TypeAnnotation.TypeAnnotation
