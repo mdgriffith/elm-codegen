@@ -4,7 +4,7 @@ module Elm exposing
     , bool, int, float, char, string, hex, unit
     , maybe, just, nothing
     , list, tuple, triple
-    , withType
+    , withType, withAlias
     , record, field, Field, get, updateRecord
     , letIn, ifThen
     , Declaration
@@ -44,7 +44,7 @@ module Elm exposing
 
 @docs list, tuple, triple
 
-@docs withType
+@docs withType, withAlias
 
 
 ## Records
@@ -553,7 +553,7 @@ valueWithHelper mod name ann =
     import Elm.Annotation as Type
 
     Elm.value "myString"
-        |> Elm.withType (Type.string)
+        |> Elm.withType Type.string
 
 Though be sure `elm-codegen` isn't already doing this automatically for you!
 
@@ -570,6 +570,35 @@ withType ann (Compiler.Expression toExp) =
                 | annotation =
                     Compiler.unifyOn ann exp.annotation
                 , imports = exp.imports ++ Compiler.getAnnotationImports ann
+            }
+
+
+{-| -}
+withAlias : List String -> String -> Expression -> Expression
+withAlias mod name (Compiler.Expression toExp) =
+    Compiler.Expression <|
+        \index ->
+            let
+                exp =
+                    toExp index
+            in
+            { exp
+                | annotation =
+                    Ok
+                        { type_ =
+                            Annotation.Typed
+                                (Compiler.nodify
+                                    ( mod, Compiler.formatType name )
+                                )
+                                []
+                        , inferences = Dict.empty
+                        }
+                , imports =
+                    if List.isEmpty mod then
+                        []
+
+                    else
+                        [ mod ]
             }
 
 

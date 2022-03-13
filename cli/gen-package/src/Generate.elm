@@ -674,6 +674,7 @@ typeCreation thisModule block =
                                             (Elm.get fieldName arg)
                                     )
                                 |> Gen.Elm.record
+                                |> Gen.Elm.withAlias thisModule alias.name
                         )
                         |> Elm.field alias.name
                     ]
