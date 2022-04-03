@@ -20,6 +20,8 @@ type Annotation
 type alias AnnotationDetails =
     { imports : List Module
     , annotation : Annotation.TypeAnnotation
+    , aliases :
+        AliasCache
     }
 
 
@@ -44,10 +46,83 @@ type alias ExpressionDetails =
     }
 
 
+{-|
+
+    type_ = What type this expression is declared to be
+    inferences = facts we know about the expression.
+    aliases =
+
+-}
 type alias Inference =
     { type_ : Annotation.TypeAnnotation
     , inferences : Dict String Annotation.TypeAnnotation
+    , aliases : AliasCache
     }
+
+
+type alias AliasCache =
+    Dict
+        String
+        { variables : List String
+        , target : Annotation.TypeAnnotation
+        }
+
+
+emptyAliases : AliasCache
+emptyAliases =
+    Dict.empty
+
+
+mergeAliases :
+    AliasCache
+    -> AliasCache
+    -> AliasCache
+mergeAliases =
+    Dict.union
+
+
+getAliases : Annotation -> AliasCache
+getAliases (Annotation ann) =
+    ann.aliases
+
+
+addAlias : List String -> String -> Annotation -> AliasCache -> AliasCache
+addAlias mod name ((Annotation annDetails) as ann) aliasCache =
+    Dict.insert (String.join "." mod ++ "." ++ name)
+        { variables =
+            getGenerics ann
+                |> List.map Node.value
+                |> unique
+        , target = annDetails.annotation
+        }
+        aliasCache
+
+
+{-| Remove duplicate values, keeping the first instance of each element which appears more than once.
+unique [ 0, 1, 1, 0, 1 ]
+--> [ 0, 1 ]
+-}
+unique : List a -> List a
+unique list =
+    uniqueHelp identity [] list []
+
+
+uniqueHelp : (a -> b) -> List b -> List a -> List a -> List a
+uniqueHelp f existing remaining accumulator =
+    case remaining of
+        [] ->
+            List.reverse accumulator
+
+        first :: rest ->
+            let
+                computedFirst =
+                    f first
+            in
+            if List.member computedFirst existing then
+                uniqueHelp f existing rest accumulator
+
+            else
+                uniqueHelp f (computedFirst :: existing) rest (first :: accumulator)
 
 
 {-| Indexes to make type checking work!
@@ -185,6 +260,8 @@ var index name =
                                 (name ++ indexToString existingIndex_)
                             )
                     , inferences = Dict.empty
+                    , aliases =
+                        emptyAliases
                     }
             , imports =
                 []
@@ -227,6 +304,7 @@ inference : Annotation.TypeAnnotation -> Inference
 inference type_ =
     { type_ = type_
     , inferences = Dict.empty
+    , aliases = emptyAliases
     }
 
 
@@ -384,6 +462,7 @@ noImports tipe =
     Annotation
         { annotation = tipe
         , imports = []
+        , aliases = emptyAliases
         }
 
 
@@ -401,6 +480,7 @@ getInnerInference index (Annotation details) =
     -- So, there's a bug to debug
     --protectAnnotation index details.annotation
     , inferences = Dict.empty
+    , aliases = details.aliases
     }
 
 
@@ -1400,6 +1480,7 @@ applyTypeHelper cache fn args =
                     Ok
                         { type_ = fn
                         , inferences = cache
+                        , aliases = emptyAliases
                         }
 
                 top :: rest ->
@@ -1421,6 +1502,7 @@ applyTypeHelper cache fn args =
                     Ok
                         { type_ = fn
                         , inferences = cache
+                        , aliases = emptyAliases
                         }
 
                 _ ->
@@ -1430,6 +1512,7 @@ applyTypeHelper cache fn args =
                     in
                     Ok
                         { type_ = resultType
+                        , aliases = emptyAliases
                         , inferences =
                             cache
                                 |> addInference varName
@@ -1445,6 +1528,7 @@ applyTypeHelper cache fn args =
                     Ok
                         { type_ = fn
                         , inferences = cache
+                        , aliases = emptyAliases
                         }
 
                 _ ->
@@ -1503,6 +1587,7 @@ unify exps =
             Ok
                 { type_ = Annotation.GenericType "a"
                 , inferences = Dict.empty
+                , aliases = emptyAliases
                 }
 
         top :: remain ->
@@ -1537,6 +1622,7 @@ unifyHelper exps existing =
                                 remain
                                 { type_ = new
                                 , inferences = mergeInferences existing.inferences cache
+                                , aliases = existing.aliases
                                 }
 
                 Err err ->
@@ -1568,6 +1654,7 @@ unifyOn (Annotation annDetails) res =
                     Ok
                         { type_ = finalType
                         , inferences = newInferences
+                        , aliases = mergeAliases annDetails.aliases inf.aliases
                         }
 
                 Err err ->
@@ -1575,33 +1662,13 @@ unifyOn (Annotation annDetails) res =
                         [ err ]
 
 
-{-| This is definitely not correct, but will do for now!
-
-    type TypeAnnotation
-        = GenericType String
-        | Typed (Node ( ModuleName, String )) (List (Node TypeAnnotation))
-        | Unit
-        | Tupled (List (Node TypeAnnotation))
-        | Record RecordDefinition
-        | GenericRecord (Node String) (Node RecordDefinition)
-        | FunctionTypeAnnotation (Node TypeAnnotation) (Node TypeAnnotation)
-
--}
+{-| -}
 unifiable :
     VariableCache
     -> Annotation.TypeAnnotation
     -> Annotation.TypeAnnotation
     -> ( VariableCache, Result InferenceError Annotation.TypeAnnotation )
-unifiable cache one two =
-    unifiableHelper cache one two
-
-
-unifiableHelper :
-    VariableCache
-    -> Annotation.TypeAnnotation
-    -> Annotation.TypeAnnotation
-    -> ( VariableCache, Result InferenceError Annotation.TypeAnnotation )
-unifiableHelper vars one two =
+unifiable vars one two =
     case one of
         Annotation.GenericType varName ->
             case Dict.get varName vars of
@@ -1631,10 +1698,10 @@ unifiableHelper vars one two =
                                     )
 
                                 Just foundTwo ->
-                                    unifiableHelper vars found foundTwo
+                                    unifiable vars found foundTwo
 
                         _ ->
-                            unifiableHelper vars found two
+                            unifiable vars found two
 
         Annotation.Typed oneName oneContents ->
             case two of
@@ -1668,7 +1735,7 @@ unifiableHelper vars one two =
                             )
 
                         Just foundTwo ->
-                            unifiableHelper vars one foundTwo
+                            unifiable vars one foundTwo
 
                 Annotation.Unit ->
                     ( vars, Ok Annotation.Unit )
@@ -1686,7 +1753,7 @@ unifiableHelper vars one two =
                             )
 
                         Just foundTwo ->
-                            unifiableHelper vars one foundTwo
+                            unifiable vars one foundTwo
 
                 Annotation.Tupled valsB ->
                     case unifiableLists vars valsA valsB [] of
@@ -1712,7 +1779,7 @@ unifiableHelper vars one two =
                             )
 
                         Just foundTwo ->
-                            unifiableHelper vars one foundTwo
+                            unifiable vars one foundTwo
 
                 Annotation.GenericRecord (Node.Node _ twoRecName) (Node.Node _ fieldsB) ->
                     case Dict.get twoRecName vars of
@@ -1760,7 +1827,7 @@ unifiableHelper vars one two =
                             )
 
                         Just foundTwo ->
-                            unifiableHelper vars one foundTwo
+                            unifiable vars one foundTwo
 
                 Annotation.GenericRecord (Node.Node _ twoRecName) (Node.Node _ fieldsB) ->
                     case Dict.get twoRecName vars of
@@ -1811,12 +1878,12 @@ unifiableHelper vars one two =
                             )
 
                         Just foundTwo ->
-                            unifiableHelper vars one foundTwo
+                            unifiable vars one foundTwo
 
                 Annotation.FunctionTypeAnnotation twoA twoB ->
-                    case unifiableHelper vars (denode oneA) (denode twoA) of
+                    case unifiable vars (denode oneA) (denode twoA) of
                         ( aVars, Ok unifiedA ) ->
-                            case unifiableHelper aVars (denode oneB) (denode twoB) of
+                            case unifiable aVars (denode oneB) (denode twoB) of
                                 ( bVars, Ok unifiedB ) ->
                                     ( bVars
                                     , Ok
@@ -1867,7 +1934,7 @@ unifiableFields vars one two unified =
                 Ok ( matchingFieldVal, remainingTwo ) ->
                     let
                         ( newVars, unifiedFieldResult ) =
-                            unifiableHelper vars oneVal matchingFieldVal
+                            unifiable vars oneVal matchingFieldVal
                     in
                     case unifiedFieldResult of
                         Ok unifiedField ->
@@ -1918,7 +1985,7 @@ unifiableLists vars one two unified =
             ( vars, Ok (nodifyAll (List.reverse unified)) )
 
         ( [ oneX ], [ twoX ] ) ->
-            case unifiableHelper vars (denode oneX) (denode twoX) of
+            case unifiable vars (denode oneX) (denode twoX) of
                 ( newVars, Ok un ) ->
                     ( newVars, Ok (nodifyAll (List.reverse (un :: unified))) )
 
@@ -1926,7 +1993,7 @@ unifiableLists vars one two unified =
                     ( newVars, Err err )
 
         ( oneX :: oneRemain, twoX :: twoRemain ) ->
-            case unifiableHelper vars (denode oneX) (denode twoX) of
+            case unifiable vars (denode oneX) (denode twoX) of
                 ( newVars, Ok un ) ->
                     unifiableLists newVars oneRemain twoRemain (un :: unified)
 
@@ -2131,6 +2198,8 @@ inferRecordField index { nameOfRecord, fieldName } =
     in
     Ok
         { type_ = fieldType
+        , aliases =
+            emptyAliases
         , inferences =
             Dict.empty
                 |> addInference
@@ -2147,6 +2216,7 @@ inferRecordField index { nameOfRecord, fieldName } =
         }
 
 
+protectInference : Index -> Result (List InferenceError) Inference -> Result (List InferenceError) Inference
 protectInference index infResult =
     case infResult of
         Ok inf ->
@@ -2154,6 +2224,7 @@ protectInference index infResult =
                 { type_ =
                     protectAnnotation index inf.type_
                 , inferences = Dict.empty
+                , aliases = emptyAliases
                 }
 
         Err err ->

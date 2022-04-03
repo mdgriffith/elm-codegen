@@ -515,6 +515,7 @@ value details =
                                 Annotation.GenericType
                                     (Compiler.protectTypeName details.name index)
                             , inferences = Dict.empty
+                            , aliases = Compiler.emptyAliases
                             }
 
                     Just ann ->
@@ -592,6 +593,7 @@ withAlias mod name (Compiler.Expression toExp) =
                                 )
                                 []
                         , inferences = Dict.empty
+                        , aliases = Debug.todo "This thing needs to be rethought now that we have proper alias support!"
                         }
                 , imports =
                     if List.isEmpty mod then
@@ -663,6 +665,7 @@ unwrapper modName typename =
                             (Compiler.nodify (Annotation.GenericType arg1Name))
                             (Compiler.nodify (Annotation.GenericType unwrappedName))
                     , inferences = Dict.empty
+                    , aliases = Compiler.emptyAliases
                     }
             , imports =
                 case modName of
@@ -721,6 +724,7 @@ bool on =
                 Ok
                     { inferences = Dict.empty
                     , type_ = Internal.Types.bool
+                    , aliases = Compiler.emptyAliases
                     }
             , imports = []
             }
@@ -736,6 +740,7 @@ int intVal =
                 Ok
                     { inferences = Dict.empty
                     , type_ = Internal.Types.int
+                    , aliases = Compiler.emptyAliases
                     }
             , imports = []
             }
@@ -751,6 +756,7 @@ hex hexVal =
                 Ok
                     { inferences = Dict.empty
                     , type_ = Internal.Types.int
+                    , aliases = Compiler.emptyAliases
                     }
             , imports = []
             }
@@ -766,6 +772,7 @@ float floatVal =
                 Ok
                     { inferences = Dict.empty
                     , type_ = Internal.Types.float
+                    , aliases = Compiler.emptyAliases
                     }
             , imports = []
             }
@@ -781,6 +788,7 @@ string literal =
                 Ok
                     { inferences = Dict.empty
                     , type_ = Internal.Types.string
+                    , aliases = Compiler.emptyAliases
                     }
             , imports = []
             }
@@ -796,6 +804,7 @@ char charVal =
                 Ok
                     { inferences = Dict.empty
                     , type_ = Internal.Types.char
+                    , aliases = Compiler.emptyAliases
                     }
             , imports = [ [ "Char" ] ]
             }
@@ -837,6 +846,9 @@ tuple oneExp twoExp =
                         , inferences =
                             oneA.inferences
                                 |> Compiler.mergeInferences twoA.inferences
+                        , aliases =
+                            oneA.aliases
+                                |> Compiler.mergeAliases twoA.aliases
                         }
                     )
                     one.annotation
@@ -878,6 +890,10 @@ triple oneExp twoExp threeExp =
                             oneA.inferences
                                 |> Compiler.mergeInferences twoA.inferences
                                 |> Compiler.mergeInferences threeA.inferences
+                        , aliases =
+                            oneA.aliases
+                                |> Compiler.mergeAliases twoA.aliases
+                                |> Compiler.mergeAliases threeA.aliases
                         }
                     )
                     one.annotation
@@ -941,6 +957,8 @@ maybe maybeContent =
                                         [ Compiler.nodify ann.type_ ]
                                 , inferences =
                                     ann.inferences
+                                , aliases =
+                                    ann.aliases
                                 }
                             )
                             (Compiler.getAnnotation content)
@@ -972,6 +990,7 @@ list exprs =
                                     [ Compiler.nodify inner.type_ ]
                             , inferences =
                                 inner.inferences
+                            , aliases = inner.aliases
                             }
                         )
             , imports = List.concatMap Compiler.getImports exprDetails
@@ -1088,6 +1107,7 @@ updateRecord recordExpression fields =
                                         -- We can attempt to infer that his is a record
                                         Ok
                                             { type_ = recordAnn.type_
+                                            , aliases = recordAnn.aliases
                                             , inferences =
                                                 recordAnn.inferences
                                                     |> Compiler.addInference
@@ -1205,16 +1225,19 @@ record fields =
                                     |> Compiler.nodifyAll
                                     |> Annotation.Record
                             , inferences =
-                                let
-                                    infs =
-                                        List.foldl
-                                            (\( name, ann ) gathered ->
-                                                Compiler.mergeInferences ann.inferences gathered
-                                            )
-                                            Dict.empty
-                                            unified.fieldAnnotations
-                                in
-                                infs
+                                List.foldl
+                                    (\( name, ann ) gathered ->
+                                        Compiler.mergeInferences ann.inferences gathered
+                                    )
+                                    Dict.empty
+                                    unified.fieldAnnotations
+                            , aliases =
+                                List.foldl
+                                    (\( name, ann ) gathered ->
+                                        Compiler.mergeAliases ann.aliases gathered
+                                    )
+                                    Compiler.emptyAliases
+                                    unified.fieldAnnotations
                             }
 
                     errs ->
@@ -1364,7 +1387,11 @@ get unformattedFieldName recordExpression =
                             Annotation.Record fields ->
                                 case getField fieldName fields of
                                     Just ann ->
-                                        Ok { type_ = ann, inferences = recordAnn.inferences }
+                                        Ok
+                                            { type_ = ann
+                                            , inferences = recordAnn.inferences
+                                            , aliases = recordAnn.aliases
+                                            }
 
                                     Nothing ->
                                         Err [ Compiler.CouldNotFindField fieldName ]
@@ -1372,7 +1399,11 @@ get unformattedFieldName recordExpression =
                             Annotation.GenericRecord name fields ->
                                 case getField fieldName (Compiler.denode fields) of
                                     Just ann ->
-                                        Ok { type_ = ann, inferences = recordAnn.inferences }
+                                        Ok
+                                            { type_ = ann
+                                            , inferences = recordAnn.inferences
+                                            , aliases = recordAnn.aliases
+                                            }
 
                                     Nothing ->
                                         Err [ Compiler.CouldNotFindField fieldName ]
@@ -1833,19 +1864,6 @@ fn arg1BaseName toExpression =
             }
 
 
-extractAnnotation : Compiler.Annotation -> Compiler.ExpressionDetails -> Compiler.Annotation
-extractAnnotation ann expr =
-    case expr.annotation of
-        Err _ ->
-            ann
-
-        Ok inference ->
-            Compiler.Annotation
-                { imports = []
-                , annotation = inference.type_
-                }
-
-
 {-| This is a special case of function declaration which will _reduce_ itself if possible.
 
 Meaning, if this would generate the following code
@@ -2068,6 +2086,15 @@ fnTypeApply annotation args =
                                 (Compiler.nodify fnbody)
                         )
                         return.type_
+                        args
+                , aliases =
+                    List.foldl
+                        (\ann aliases ->
+                            Compiler.mergeAliases
+                                (Compiler.getAliases ann)
+                                aliases
+                        )
+                        return.aliases
                         args
                 , inferences =
                     return.inferences
@@ -2571,6 +2598,13 @@ functionAdvanced args fullExpression =
                                             return.type_
                                             args
                                     , inferences = return.inferences
+                                    , aliases =
+                                        List.foldl
+                                            (\( _, ann ) gathered ->
+                                                Compiler.mergeAliases (Compiler.getAliases ann) gathered
+                                            )
+                                            return.aliases
+                                            args
                                     }
                     , imports = expr.imports
                     }
@@ -2610,6 +2644,7 @@ function initialArgList toFullExpression =
                                             Maybe.withDefault
                                                 (Compiler.Annotation
                                                     { imports = []
+                                                    , aliases = Compiler.emptyAliases
                                                     , annotation =
                                                         Annotation.GenericType
                                                             (Compiler.protectTypeName
@@ -2675,6 +2710,20 @@ function initialArgList toFullExpression =
                                         return.type_
                                         args.types
                                 , inferences = return.inferences
+                                , aliases =
+                                    List.foldl
+                                        (\( _, maybeAnn ) aliases ->
+                                            case maybeAnn of
+                                                Nothing ->
+                                                    aliases
+
+                                                Just ann ->
+                                                    aliases
+                                                        |> Compiler.mergeAliases
+                                                            (Compiler.getAliases ann)
+                                        )
+                                        return.aliases
+                                        initialArgList
                                 }
                                     |> Ok
                     , imports = expr.imports
@@ -3221,6 +3270,7 @@ applyInfix2 (BinOp symbol dir _) infixAnnotation l r =
                     (Ok
                         { type_ = infixAnnotation
                         , inferences = Dict.empty
+                        , aliases = Compiler.emptyAliases
                         }
                     )
                     [ left
@@ -3258,6 +3308,7 @@ applyNumber symbol dir l r =
                 Compiler.applyType
                     (Ok
                         { inferences = Dict.empty
+                        , aliases = Compiler.emptyAliases
                         , type_ =
                             Annotation.FunctionTypeAnnotation
                                 (Compiler.nodify

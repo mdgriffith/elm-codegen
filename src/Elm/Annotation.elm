@@ -2,7 +2,7 @@ module Elm.Annotation exposing
     ( Annotation, var, bool, int, float, string, char, unit
     , named, namedWith
     , maybe, list, tuple, triple, set, dict, result
-    , record, extensible
+    , record, extensible, alias
     , function
     , toString
     )
@@ -15,7 +15,7 @@ module Elm.Annotation exposing
 
 @docs maybe, list, tuple, triple, set, dict, result
 
-@docs record, extensible
+@docs record, extensible, alias
 
 @docs function
 
@@ -47,6 +47,7 @@ var a =
     Compiler.Annotation
         { annotation = Annotation.GenericType (Compiler.formatValue a)
         , imports = []
+        , aliases = Compiler.emptyAliases
         }
 
 
@@ -86,6 +87,7 @@ unit =
     Compiler.Annotation
         { annotation = Annotation.Unit
         , imports = []
+        , aliases = Compiler.emptyAliases
         }
 
 
@@ -115,7 +117,14 @@ tuple one two =
         , imports =
             Compiler.getAnnotationImports one
                 ++ Compiler.getAnnotationImports two
+        , aliases =
+            Compiler.mergeAliases (getAliases one) (getAliases two)
         }
+
+
+getAliases : Annotation -> Compiler.AliasCache
+getAliases (Compiler.Annotation ann) =
+    ann.aliases
 
 
 {-| -}
@@ -134,6 +143,13 @@ triple one two three =
             Compiler.getAnnotationImports one
                 ++ Compiler.getAnnotationImports two
                 ++ Compiler.getAnnotationImports three
+        , aliases =
+            Compiler.mergeAliases
+                (Compiler.mergeAliases
+                    (getAliases one)
+                    (getAliases two)
+                )
+                (getAliases three)
         }
 
 
@@ -156,6 +172,24 @@ maybe maybeArg =
 
 
 {-| -}
+alias : List String -> String -> Annotation -> Annotation
+alias mod name target =
+    Compiler.Annotation
+        { annotation =
+            Annotation.Typed
+                (Compiler.nodify
+                    ( mod, Compiler.formatType name )
+                )
+                []
+        , imports =
+            [ mod ] ++ Compiler.getAnnotationImports target
+        , aliases =
+            Compiler.getAliases target
+                |> Compiler.addAlias mod name target
+        }
+
+
+{-| -}
 record : List ( String, Annotation ) -> Annotation
 record fields =
     Compiler.Annotation
@@ -172,6 +206,13 @@ record fields =
         , imports =
             fields
                 |> List.concatMap (Tuple.second >> Compiler.getAnnotationImports)
+        , aliases =
+            List.foldl
+                (\( _, ann ) aliases ->
+                    Compiler.mergeAliases (getAliases ann) aliases
+                )
+                Compiler.emptyAliases
+                fields
         }
 
 
@@ -193,6 +234,13 @@ extensible base fields =
         , imports =
             fields
                 |> List.concatMap (Tuple.second >> Compiler.getAnnotationImports)
+        , aliases =
+            List.foldl
+                (\( _, ann ) aliases ->
+                    Compiler.mergeAliases (getAliases ann) aliases
+                )
+                Compiler.emptyAliases
+                fields
         }
 
 
@@ -206,7 +254,14 @@ named mod name =
                     ( mod, Compiler.formatType name )
                 )
                 []
-        , imports = [ mod ]
+        , imports =
+            case mod of
+                [] ->
+                    []
+
+                _ ->
+                    [ mod ]
+        , aliases = Compiler.emptyAliases
         }
 
 
@@ -230,6 +285,13 @@ namedWith mod name args =
             mod
                 :: List.concatMap Compiler.getAnnotationImports
                     args
+        , aliases =
+            List.foldl
+                (\ann aliases ->
+                    Compiler.mergeAliases (getAliases ann) aliases
+                )
+                Compiler.emptyAliases
+                args
         }
 
 
@@ -244,6 +306,13 @@ typed mod name args =
                     (List.map Compiler.getInnerAnnotation args)
                 )
         , imports = List.concatMap Compiler.getAnnotationImports args
+        , aliases =
+            List.foldl
+                (\ann aliases ->
+                    Compiler.mergeAliases (getAliases ann) aliases
+                )
+                Compiler.emptyAliases
+                args
         }
 
 
@@ -263,4 +332,11 @@ function anns return =
         , imports =
             Compiler.getAnnotationImports return
                 ++ List.concatMap Compiler.getAnnotationImports anns
+        , aliases =
+            List.foldl
+                (\ann aliases ->
+                    Compiler.mergeAliases (getAliases ann) aliases
+                )
+                Compiler.emptyAliases
+                (return :: anns)
         }

@@ -93,6 +93,7 @@ captureCaseHelper (Branch toBranch) accum =
                 Compiler.unifyOn
                     (Compiler.Annotation
                         { annotation = gatheredAnnotation.type_
+                        , aliases = gatheredAnnotation.aliases
                         , imports = []
                         }
                     )
