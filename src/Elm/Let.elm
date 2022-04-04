@@ -160,6 +160,7 @@ unpackTuple index desiredNameOne desiredNameTwo sourceExpression =
                                         Ok
                                             { type_ = oneType
                                             , inferences = Dict.empty
+                                            , aliases = inference.aliases
                                             }
 
                                     _ ->
@@ -187,6 +188,7 @@ unpackTuple index desiredNameOne desiredNameTwo sourceExpression =
                                         Ok
                                             { type_ = twoType
                                             , inferences = Dict.empty
+                                            , aliases = inference.aliases
                                             }
 
                                     _ ->
@@ -262,7 +264,13 @@ getFieldReference index name details =
                                 )
 
                         Just fieldType ->
-                            toRef name (Ok { type_ = fieldType, inferences = Dict.empty })
+                            toRef name
+                                (Ok
+                                    { type_ = fieldType
+                                    , inferences = Dict.empty
+                                    , aliases = recordDetails.aliases
+                                    }
+                                )
 
                 Annotation.GenericRecord (Node.Node _ nameOfRecord) (Node.Node _ recordDefinition) ->
                     case getField name recordDefinition of
@@ -275,7 +283,13 @@ getFieldReference index name details =
                                 )
 
                         Just fieldType ->
-                            toRef name (Ok { type_ = fieldType, inferences = Dict.empty })
+                            toRef name
+                                (Ok
+                                    { type_ = fieldType
+                                    , inferences = Dict.empty
+                                    , aliases = recordDetails.aliases
+                                    }
+                                )
 
                 Annotation.GenericType typename ->
                     toRef name

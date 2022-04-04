@@ -55,9 +55,13 @@ type alias ExpressionDetails =
 -}
 type alias Inference =
     { type_ : Annotation.TypeAnnotation
-    , inferences : Dict String Annotation.TypeAnnotation
+    , inferences : VariableCache
     , aliases : AliasCache
     }
+
+
+type alias VariableCache =
+    Dict.Dict String Annotation.TypeAnnotation
 
 
 type alias AliasCache =
@@ -81,14 +85,31 @@ mergeAliases =
     Dict.union
 
 
+getAlias :
+    Node ( ModuleName.ModuleName, String )
+    -> AliasCache
+    ->
+        Maybe
+            { variables : List String
+            , target : Annotation.TypeAnnotation
+            }
+getAlias (Node.Node _ ( modName, name )) cache =
+    Dict.get (formatAliasKey modName name) cache
+
+
 getAliases : Annotation -> AliasCache
 getAliases (Annotation ann) =
     ann.aliases
 
 
+formatAliasKey : List String -> String -> String
+formatAliasKey mod name =
+    String.join "." mod ++ "." ++ name
+
+
 addAlias : List String -> String -> Annotation -> AliasCache -> AliasCache
 addAlias mod name ((Annotation annDetails) as ann) aliasCache =
-    Dict.insert (String.join "." mod ++ "." ++ name)
+    Dict.insert (formatAliasKey mod name)
         { variables =
             getGenerics ann
                 |> List.map Node.value
@@ -1058,10 +1079,6 @@ threadHelper index exps rendered =
                 (toExpDetails index :: rendered)
 
 
-type alias VariableCache =
-    Dict.Dict String Annotation.TypeAnnotation
-
-
 resolve : VariableCache -> Annotation.TypeAnnotation -> Result String Annotation.TypeAnnotation
 resolve cache annotation =
     let
@@ -1458,7 +1475,9 @@ applyType annotation args =
         Ok topAnnotation ->
             case extractListAnnotation args [] topAnnotation.inferences of
                 Ok extracted ->
-                    applyTypeHelper extracted.inferences
+                    applyTypeHelper
+                        topAnnotation.aliases
+                        extracted.inferences
                         topAnnotation.type_
                         extracted.types
 
@@ -1468,11 +1487,12 @@ applyType annotation args =
 
 {-| -}
 applyTypeHelper :
-    VariableCache
+    AliasCache
+    -> VariableCache
     -> Annotation.TypeAnnotation
     -> List Annotation.TypeAnnotation
     -> Result (List InferenceError) Inference
-applyTypeHelper cache fn args =
+applyTypeHelper aliases cache fn args =
     case fn of
         Annotation.FunctionTypeAnnotation one two ->
             case args of
@@ -1484,9 +1504,10 @@ applyTypeHelper cache fn args =
                         }
 
                 top :: rest ->
-                    case unifiable cache (denode one) top of
+                    case unifiable aliases cache (denode one) top of
                         ( variableCache, Ok _ ) ->
                             applyTypeHelper
+                                aliases
                                 variableCache
                                 (denode two)
                                 rest
@@ -1611,7 +1632,7 @@ unifyHelper exps existing =
         top :: remain ->
             case top.annotation of
                 Ok ann ->
-                    case unifiable ann.inferences ann.type_ existing.type_ of
+                    case unifiable ann.aliases ann.inferences ann.type_ existing.type_ of
                         ( _, Err err ) ->
                             Err
                                 [ MismatchedList ann.type_ existing.type_
@@ -1647,7 +1668,7 @@ unifyOn (Annotation annDetails) res =
         Ok inf ->
             let
                 ( newInferences, finalResult ) =
-                    unifiable inf.inferences annDetails.annotation inf.type_
+                    unifiable inf.aliases inf.inferences annDetails.annotation inf.type_
             in
             case finalResult of
                 Ok finalType ->
@@ -1662,13 +1683,60 @@ unifyOn (Annotation annDetails) res =
                         [ err ]
 
 
+unifyWithAlias aliases vars typename typeVars typeToUnifyWith =
+    case getAlias typename aliases of
+        Nothing ->
+            Nothing
+
+        Just foundAlias ->
+            let
+                fullAliasedType =
+                    case foundAlias.variables of
+                        [] ->
+                            foundAlias.target
+
+                        _ ->
+                            let
+                                makeAliasVarCache varName (Node.Node _ varType) =
+                                    ( varName, varType )
+                            in
+                            case
+                                resolveVariables
+                                    (Dict.fromList (List.map2 makeAliasVarCache foundAlias.variables typeVars))
+                                    foundAlias.target
+                            of
+                                Ok resolvedType ->
+                                    resolvedType
+
+                                Err _ ->
+                                    -- Whew, this is way wrong
+                                    foundAlias.target
+
+                ( returnedVars, unifiedResult ) =
+                    unifiable
+                        aliases
+                        vars
+                        fullAliasedType
+                        typeToUnifyWith
+            in
+            case unifiedResult of
+                Ok finalInference ->
+                    -- We want to maintain the declared alias in the type signature
+                    -- So, we are using `unifiable` to check that
+                    Just ( returnedVars, Ok fullAliasedType )
+
+                Err err ->
+                    Nothing
+
+
 {-| -}
 unifiable :
-    VariableCache
+    AliasCache
+    -> VariableCache
     -> Annotation.TypeAnnotation
     -> Annotation.TypeAnnotation
     -> ( VariableCache, Result InferenceError Annotation.TypeAnnotation )
-unifiable vars one two =
+unifiable aliases vars one two =
     case one of
         Annotation.GenericType varName ->
             case Dict.get varName vars of
@@ -1698,16 +1766,16 @@ unifiable vars one two =
                                     )
 
                                 Just foundTwo ->
-                                    unifiable vars found foundTwo
+                                    unifiable aliases vars found foundTwo
 
                         _ ->
-                            unifiable vars found two
+                            unifiable aliases vars found two
 
-        Annotation.Typed oneName oneContents ->
+        Annotation.Typed oneName oneVars ->
             case two of
                 Annotation.Typed twoName twoContents ->
                     if denode oneName == denode twoName then
-                        case unifiableLists vars oneContents twoContents [] of
+                        case unifiableLists aliases vars oneVars twoContents [] of
                             ( newVars, Ok unifiedContent ) ->
                                 ( newVars, Ok (Annotation.Typed twoName unifiedContent) )
 
@@ -1723,7 +1791,12 @@ unifiable vars one two =
                     )
 
                 _ ->
-                    ( vars, Err (UnableToUnify one two) )
+                    case unifyWithAlias aliases vars oneName oneVars two of
+                        Nothing ->
+                            ( vars, Err (UnableToUnify one two) )
+
+                        Just unified ->
+                            unified
 
         Annotation.Unit ->
             case two of
@@ -1735,7 +1808,7 @@ unifiable vars one two =
                             )
 
                         Just foundTwo ->
-                            unifiable vars one foundTwo
+                            unifiable aliases vars one foundTwo
 
                 Annotation.Unit ->
                     ( vars, Ok Annotation.Unit )
@@ -1753,10 +1826,10 @@ unifiable vars one two =
                             )
 
                         Just foundTwo ->
-                            unifiable vars one foundTwo
+                            unifiable aliases vars one foundTwo
 
                 Annotation.Tupled valsB ->
-                    case unifiableLists vars valsA valsB [] of
+                    case unifiableLists aliases vars valsA valsB [] of
                         ( newVars, Ok unified ) ->
                             ( newVars
                             , Ok
@@ -1779,12 +1852,12 @@ unifiable vars one two =
                             )
 
                         Just foundTwo ->
-                            unifiable vars one foundTwo
+                            unifiable aliases vars one foundTwo
 
                 Annotation.GenericRecord (Node.Node _ twoRecName) (Node.Node _ fieldsB) ->
                     case Dict.get twoRecName vars of
                         Nothing ->
-                            case unifiableFields vars fieldsA fieldsB [] of
+                            case unifiableFields aliases vars fieldsA fieldsB [] of
                                 ( newVars, Ok unifiedFields ) ->
                                     ( newVars
                                     , Ok (Annotation.Record unifiedFields)
@@ -1795,7 +1868,7 @@ unifiable vars one two =
 
                         Just knownType ->
                             -- NOTE: we should probably check knownType in some way?
-                            case unifiableFields vars fieldsA fieldsB [] of
+                            case unifiableFields aliases vars fieldsA fieldsB [] of
                                 ( newVars, Ok unifiedFields ) ->
                                     ( newVars
                                     , Ok (Annotation.Record unifiedFields)
@@ -1805,7 +1878,7 @@ unifiable vars one two =
                                     ( newVars, Err err )
 
                 Annotation.Record fieldsB ->
-                    case unifiableFields vars fieldsA fieldsB [] of
+                    case unifiableFields aliases vars fieldsA fieldsB [] of
                         ( newVars, Ok unifiedFields ) ->
                             ( newVars
                             , Ok (Annotation.Record unifiedFields)
@@ -1813,6 +1886,14 @@ unifiable vars one two =
 
                         ( newVars, Err err ) ->
                             ( newVars, Err err )
+
+                Annotation.Typed twoName twoVars ->
+                    case unifyWithAlias aliases vars twoName twoVars one of
+                        Nothing ->
+                            ( vars, Err (UnableToUnify one two) )
+
+                        Just unified ->
+                            unified
 
                 _ ->
                     ( vars, Err (UnableToUnify one two) )
@@ -1827,7 +1908,7 @@ unifiable vars one two =
                             )
 
                         Just foundTwo ->
-                            unifiable vars one foundTwo
+                            unifiable aliases vars one foundTwo
 
                 Annotation.GenericRecord (Node.Node _ twoRecName) (Node.Node _ fieldsB) ->
                     case Dict.get twoRecName vars of
@@ -1835,7 +1916,7 @@ unifiable vars one two =
                             -- Here, I think we need an inference that
                             -- reVarName == twoRecName
                             -- Also, do we care if the fields match up, or do we grow the record?
-                            case unifiableFields vars fieldsA fieldsB [] of
+                            case unifiableFields aliases vars fieldsA fieldsB [] of
                                 ( newVars, Ok unifiedFields ) ->
                                     ( newVars
                                     , Ok (Annotation.Record unifiedFields)
@@ -1846,7 +1927,7 @@ unifiable vars one two =
 
                         Just knownType ->
                             -- NOTE: we should probably check knownType in some way?
-                            case unifiableFields vars fieldsA fieldsB [] of
+                            case unifiableFields aliases vars fieldsA fieldsB [] of
                                 ( newVars, Ok unifiedFields ) ->
                                     ( newVars
                                     , Ok (Annotation.Record unifiedFields)
@@ -1856,7 +1937,7 @@ unifiable vars one two =
                                     ( newVars, Err err )
 
                 Annotation.Record fieldsB ->
-                    case unifiableFields vars fieldsA fieldsB [] of
+                    case unifiableFields aliases vars fieldsA fieldsB [] of
                         ( newVars, Ok unifiedFields ) ->
                             ( newVars
                             , Ok (Annotation.Record unifiedFields)
@@ -1864,6 +1945,14 @@ unifiable vars one two =
 
                         ( newVars, Err err ) ->
                             ( newVars, Err err )
+
+                Annotation.Typed twoName twoVars ->
+                    case unifyWithAlias aliases vars twoName twoVars one of
+                        Nothing ->
+                            ( vars, Err (UnableToUnify one two) )
+
+                        Just unified ->
+                            unified
 
                 _ ->
                     ( vars, Err (UnableToUnify one two) )
@@ -1878,12 +1967,12 @@ unifiable vars one two =
                             )
 
                         Just foundTwo ->
-                            unifiable vars one foundTwo
+                            unifiable aliases vars one foundTwo
 
                 Annotation.FunctionTypeAnnotation twoA twoB ->
-                    case unifiable vars (denode oneA) (denode twoA) of
+                    case unifiable aliases vars (denode oneA) (denode twoA) of
                         ( aVars, Ok unifiedA ) ->
-                            case unifiable aVars (denode oneB) (denode twoB) of
+                            case unifiable aliases aVars (denode oneB) (denode twoB) of
                                 ( bVars, Ok unifiedB ) ->
                                     ( bVars
                                     , Ok
@@ -1906,7 +1995,8 @@ unifiable vars one two =
 {-| Checks that all fields in `one` are in `two` and are unifiable.
 -}
 unifiableFields :
-    VariableCache
+    AliasCache
+    -> VariableCache
     -> List (Node ( Node String, Node Annotation.TypeAnnotation ))
     -> List (Node ( Node String, Node Annotation.TypeAnnotation ))
     -> List Annotation.RecordField
@@ -1914,7 +2004,7 @@ unifiableFields :
         ( VariableCache
         , Result InferenceError Annotation.RecordDefinition
         )
-unifiableFields vars one two unified =
+unifiableFields aliases vars one two unified =
     case ( one, two ) of
         ( [], [] ) ->
             ( vars, Ok (nodifyAll (List.reverse unified)) )
@@ -1934,11 +2024,12 @@ unifiableFields vars one two unified =
                 Ok ( matchingFieldVal, remainingTwo ) ->
                     let
                         ( newVars, unifiedFieldResult ) =
-                            unifiable vars oneVal matchingFieldVal
+                            unifiable aliases vars oneVal matchingFieldVal
                     in
                     case unifiedFieldResult of
                         Ok unifiedField ->
-                            unifiableFields newVars
+                            unifiableFields aliases
+                                newVars
                                 oneRemain
                                 remainingTwo
                                 (( nodify oneName, nodify unifiedField ) :: unified)
@@ -1979,13 +2070,13 @@ getField name val fields captured =
                 getField name val remain (top :: captured)
 
 
-unifiableLists vars one two unified =
+unifiableLists aliases vars one two unified =
     case ( one, two ) of
         ( [], [] ) ->
             ( vars, Ok (nodifyAll (List.reverse unified)) )
 
         ( [ oneX ], [ twoX ] ) ->
-            case unifiable vars (denode oneX) (denode twoX) of
+            case unifiable aliases vars (denode oneX) (denode twoX) of
                 ( newVars, Ok un ) ->
                     ( newVars, Ok (nodifyAll (List.reverse (un :: unified))) )
 
@@ -1993,9 +2084,9 @@ unifiableLists vars one two unified =
                     ( newVars, Err err )
 
         ( oneX :: oneRemain, twoX :: twoRemain ) ->
-            case unifiable vars (denode oneX) (denode twoX) of
+            case unifiable aliases vars (denode oneX) (denode twoX) of
                 ( newVars, Ok un ) ->
-                    unifiableLists newVars oneRemain twoRemain (un :: unified)
+                    unifiableLists aliases newVars oneRemain twoRemain (un :: unified)
 
                 ( newVars, Err err ) ->
                     ( vars, Err err )

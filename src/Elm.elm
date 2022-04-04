@@ -593,7 +593,8 @@ withAlias mod name (Compiler.Expression toExp) =
                                 )
                                 []
                         , inferences = Dict.empty
-                        , aliases = Debug.todo "This thing needs to be rethought now that we have proper alias support!"
+                        , aliases =
+                            Compiler.emptyAliases
                         }
                 , imports =
                     if List.isEmpty mod then
