@@ -575,8 +575,13 @@ withType ann (Compiler.Expression toExp) =
 
 
 {-| -}
-withAlias : List String -> String -> Expression -> Expression
-withAlias mod name (Compiler.Expression toExp) =
+withAlias :
+    List String
+    -> String
+    -> List Elm.Annotation.Annotation
+    -> Expression
+    -> Expression
+withAlias mod name vars (Compiler.Expression toExp) =
     Compiler.Expression <|
         \index ->
             let
@@ -585,17 +590,31 @@ withAlias mod name (Compiler.Expression toExp) =
             in
             { exp
                 | annotation =
-                    Ok
-                        { type_ =
-                            Annotation.Typed
-                                (Compiler.nodify
-                                    ( mod, Compiler.formatType name )
-                                )
-                                []
-                        , inferences = Dict.empty
-                        , aliases =
-                            Compiler.emptyAliases
-                        }
+                    case exp.annotation of
+                        Ok ann ->
+                            Ok
+                                { type_ =
+                                    Annotation.Typed
+                                        (Compiler.nodify
+                                            ( mod, Compiler.formatType name )
+                                        )
+                                        (List.map
+                                            (Compiler.getInnerAnnotation
+                                                >> Compiler.nodify
+                                            )
+                                            vars
+                                        )
+                                , inferences = Dict.empty
+                                , aliases =
+                                    Compiler.emptyAliases
+                                        |> Compiler.addAlias
+                                            mod
+                                            name
+                                            (Compiler.noImports ann.type_)
+                                }
+
+                        Err err ->
+                            Err err
                 , imports =
                     if List.isEmpty mod then
                         []
