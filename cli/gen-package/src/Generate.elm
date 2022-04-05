@@ -193,51 +193,6 @@ expressionType =
     Annotation.named elm "Expression"
 
 
-annotationNamed : String -> List String -> Elm.Expression
-annotationNamed name tags =
-    case tags of
-        [] ->
-            localType name []
-
-        nonEmpty ->
-            Elm.function
-                (List.indexedMap
-                    (\i arg ->
-                        ( "arg" ++ String.fromInt i
-                        , Just (Annotation.named elmAnnotation "Annotation")
-                        )
-                    )
-                    nonEmpty
-                )
-                (\args ->
-                    localType name args
-                )
-
-
-localType : String -> List Elm.Expression -> Elm.Expression
-localType name args =
-    Elm.apply
-        (Elm.value
-            { importFrom = [ "Elm", "Annotation" ]
-            , name = "namedWith"
-            , annotation =
-                Just
-                    (Annotation.function
-                        [ Annotation.list Annotation.string
-                        , Annotation.string
-                        , Annotation.list
-                            (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                        ]
-                        (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                    )
-            }
-        )
-        [ thisModuleName
-        , Elm.string name
-        , Elm.list args
-        ]
-
-
 blockToCall : List String -> Elm.Docs.Block -> Maybe Elm.Field
 blockToCall thisModule block =
     case block of
@@ -588,7 +543,7 @@ annotation thisModule block =
 
         Elm.Docs.AliasBlock alias ->
             Elm.field alias.name
-                (annotationNamed alias.name alias.args)
+                (aliasNamed alias)
                 |> Just
 
         Elm.Docs.ValueBlock value ->
@@ -599,6 +554,82 @@ annotation thisModule block =
 
         Elm.Docs.UnknownBlock str ->
             Nothing
+
+
+annotationNamed : String -> List String -> Elm.Expression
+annotationNamed name tags =
+    case tags of
+        [] ->
+            localType name []
+
+        nonEmpty ->
+            Elm.function
+                (List.indexedMap
+                    (\i arg ->
+                        ( "arg" ++ String.fromInt i
+                        , Just (Annotation.named elmAnnotation "Annotation")
+                        )
+                    )
+                    nonEmpty
+                )
+                (\args ->
+                    localType name args
+                )
+
+
+localType : String -> List Elm.Expression -> Elm.Expression
+localType name args =
+    Elm.apply
+        (Elm.value
+            { importFrom = [ "Elm", "Annotation" ]
+            , name = "namedWith"
+            , annotation =
+                Just
+                    (Annotation.function
+                        [ Annotation.list Annotation.string
+                        , Annotation.string
+                        , Annotation.list
+                            (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                        ]
+                        (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                    )
+            }
+        )
+        [ thisModuleName
+        , Elm.string name
+        , Elm.list args
+        ]
+
+
+aliasNamed : Elm.Docs.Alias -> Elm.Expression
+aliasNamed docAlias =
+    case docAlias.args of
+        [] ->
+            GenType.call_.alias
+                thisModuleName
+                (Elm.string docAlias.name)
+                (Elm.list [])
+                (typeToExpression []
+                    docAlias.tipe
+                )
+
+        nonEmpty ->
+            Elm.function
+                (List.indexedMap
+                    (\i arg ->
+                        ( "arg" ++ String.fromInt i
+                        , Just (Annotation.named elmAnnotation "Annotation")
+                        )
+                    )
+                    nonEmpty
+                )
+                (\args ->
+                    GenType.call_.alias
+                        thisModuleName
+                        (Elm.string docAlias.name)
+                        (Elm.list args)
+                        (typeToExpression [] docAlias.tipe)
+                )
 
 
 typeCreation : List String -> Elm.Docs.Block -> List Elm.Field
@@ -674,7 +705,9 @@ typeCreation thisModule block =
                                             (Elm.get fieldName arg)
                                     )
                                 |> Gen.Elm.record
-                                |> Gen.Elm.withAlias thisModule alias.name
+                                |> Gen.Elm.withAlias thisModule
+                                    alias.name
+                                    (List.map GenType.var alias.args)
                         )
                         |> Elm.field alias.name
                     ]
@@ -690,78 +723,6 @@ typeCreation thisModule block =
 
         Elm.Docs.UnknownBlock str ->
             []
-
-
-{-| Types are referenced via a big record.
-
-    types =
-        { mutation :
-            { annotation: arg1 -> Elm.Annotation }
-        , make :
-            { ...variants that can be made
-            }
-
-        }
-
-This creates that record
-
--}
-generateTypeRecord : List String -> List Elm.Docs.Block -> Elm.Declaration
-generateTypeRecord thisModule blocks =
-    blocks
-        |> List.filterMap (generateTypeRecordHelper thisModule)
-        |> Elm.record
-        |> Elm.declaration "types_"
-        |> Elm.expose
-
-
-generateTypeRecordHelper : List String -> Elm.Docs.Block -> Maybe Elm.Field
-generateTypeRecordHelper thisModule block =
-    case block of
-        Elm.Docs.MarkdownBlock str ->
-            Nothing
-
-        Elm.Docs.UnionBlock union ->
-            Elm.field union.name
-                (Elm.record
-                    (List.filterMap identity
-                        [ Elm.field "annotation"
-                            (annotationNamed union.name union.args)
-                            |> Just
-                        , Maybe.map
-                            (Elm.field "create")
-                            (block2Maker thisModule block)
-                        , Maybe.map
-                            (Elm.field "caseOf")
-                            (block2Case thisModule union)
-                        ]
-                    )
-                )
-                |> Just
-
-        Elm.Docs.AliasBlock alias ->
-            Elm.field alias.name
-                (Elm.record
-                    (List.filterMap identity
-                        [ Elm.field "annotation"
-                            (annotationNamed alias.name alias.args)
-                            |> Just
-                        , Maybe.map
-                            (Elm.field "create")
-                            (block2Maker thisModule block)
-                        ]
-                    )
-                )
-                |> Just
-
-        Elm.Docs.ValueBlock value ->
-            Nothing
-
-        Elm.Docs.BinopBlock binop ->
-            Nothing
-
-        Elm.Docs.UnknownBlock str ->
-            Nothing
 
 
 generateBlocks : List String -> Elm.Docs.Block -> List Elm.Declaration
