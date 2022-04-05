@@ -172,19 +172,37 @@ maybe maybeArg =
 
 
 {-| -}
-alias : List String -> String -> Annotation -> Annotation
-alias mod name target =
+alias :
+    List String
+    -> String
+    -> List Annotation
+    -> Annotation
+    -> Annotation
+alias mod name vars target =
     Compiler.Annotation
         { annotation =
             Annotation.Typed
                 (Compiler.nodify
                     ( mod, Compiler.formatType name )
                 )
-                []
+                (List.map (Compiler.nodify << Compiler.getInnerAnnotation) vars)
         , imports =
-            [ mod ] ++ Compiler.getAnnotationImports target
+            case mod of
+                [] ->
+                    Compiler.getAnnotationImports target
+                        ++ List.concatMap Compiler.getAnnotationImports vars
+
+                _ ->
+                    [ mod ]
+                        ++ Compiler.getAnnotationImports target
+                        ++ List.concatMap Compiler.getAnnotationImports vars
         , aliases =
-            Compiler.getAliases target
+            List.foldl
+                (\ann aliases ->
+                    Compiler.mergeAliases (Compiler.getAliases ann) aliases
+                )
+                (Compiler.getAliases target)
+                vars
                 |> Compiler.addAlias mod name target
         }
 
