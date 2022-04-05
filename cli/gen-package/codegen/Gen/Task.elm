@@ -704,7 +704,18 @@ mapError arg arg0 =
 
 annotation_ : { task : Type.Annotation -> Type.Annotation -> Type.Annotation }
 annotation_ =
-    { task = \arg0 arg1 -> Type.namedWith moduleName_ "Task" [ arg0, arg1 ] }
+    { task =
+        \arg0 arg1 ->
+            Type.alias
+                moduleName_
+                "Task"
+                [ arg0, arg1 ]
+                (Type.namedWith
+                    [ "Platform" ]
+                    "Task"
+                    [ Type.var "x", Type.var "a" ]
+                )
+    }
 
 
 call_ :

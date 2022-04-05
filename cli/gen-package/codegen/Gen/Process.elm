@@ -115,7 +115,13 @@ kill arg =
 
 annotation_ : { id : Type.Annotation }
 annotation_ =
-    { id = Type.namedWith moduleName_ "Id" [] }
+    { id =
+        Type.alias
+            moduleName_
+            "Id"
+            []
+            (Type.namedWith [ "Platform" ] "ProcessId" [])
+    }
 
 
 call_ :

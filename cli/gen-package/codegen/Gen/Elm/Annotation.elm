@@ -1,7 +1,7 @@
-module Gen.Elm.Annotation exposing (annotation_, bool, call_, char, dict, extensible, float, function, int, list, maybe, moduleName_, named, namedWith, record, result, set, string, toString, triple, tuple, unit, values_, var)
+module Gen.Elm.Annotation exposing (alias, annotation_, bool, call_, char, dict, extensible, float, function, int, list, maybe, moduleName_, named, namedWith, record, result, set, string, toString, triple, tuple, unit, values_, var)
 
 {-| 
-@docs moduleName_, var, bool, int, float, string, char, unit, named, namedWith, maybe, list, tuple, triple, set, dict, result, record, extensible, function, toString, annotation_, call_, values_
+@docs moduleName_, var, bool, int, float, string, char, unit, named, namedWith, maybe, list, tuple, triple, set, dict, result, record, extensible, alias, function, toString, annotation_, call_, values_
 -}
 
 
@@ -365,6 +365,48 @@ extensible arg arg0 =
         [ Elm.string arg, Elm.list arg0 ]
 
 
+{-| alias: 
+    List String
+    -> String
+    -> List Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+    -> Elm.Annotation.Annotation
+-}
+alias :
+    List String
+    -> String
+    -> List Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+alias arg arg0 arg1 arg2 =
+    Elm.apply
+        (Elm.value
+            { importFrom = [ "Elm", "Annotation" ]
+            , name = "alias"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.list Type.string
+                        , Type.string
+                        , Type.list
+                            (Type.namedWith
+                                [ "Elm", "Annotation" ]
+                                "Annotation"
+                                []
+                            )
+                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
+                        ]
+                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                    )
+            }
+        )
+        [ Elm.list (List.map Elm.string arg)
+        , Elm.string arg0
+        , Elm.list arg1
+        , arg2
+        ]
+
+
 {-| function: 
     List Elm.Annotation.Annotation
     -> Elm.Annotation.Annotation
@@ -415,7 +457,13 @@ toString arg =
 
 annotation_ : { annotation : Type.Annotation }
 annotation_ =
-    { annotation = Type.namedWith moduleName_ "Annotation" [] }
+    { annotation =
+        Type.alias
+            moduleName_
+            "Annotation"
+            []
+            (Type.namedWith [ "Internal", "Compiler" ] "Annotation" [])
+    }
 
 
 call_ :
@@ -433,6 +481,12 @@ call_ :
     , result : Elm.Expression -> Elm.Expression -> Elm.Expression
     , record : Elm.Expression -> Elm.Expression
     , extensible : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , alias :
+        Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
     , function : Elm.Expression -> Elm.Expression -> Elm.Expression
     , toString : Elm.Expression -> Elm.Expression
     }
@@ -740,8 +794,39 @@ call_ =
                     }
                 )
                 [ arg, arg11 ]
+    , alias =
+        \arg arg12 arg13 arg14 ->
+            Elm.apply
+                (Elm.value
+                    { importFrom = [ "Elm", "Annotation" ]
+                    , name = "alias"
+                    , annotation =
+                        Just
+                            (Type.function
+                                [ Type.list Type.string
+                                , Type.string
+                                , Type.list
+                                    (Type.namedWith
+                                        [ "Elm", "Annotation" ]
+                                        "Annotation"
+                                        []
+                                    )
+                                , Type.namedWith
+                                    [ "Elm", "Annotation" ]
+                                    "Annotation"
+                                    []
+                                ]
+                                (Type.namedWith
+                                    [ "Elm", "Annotation" ]
+                                    "Annotation"
+                                    []
+                                )
+                            )
+                    }
+                )
+                [ arg, arg12, arg13, arg14 ]
     , function =
-        \arg arg12 ->
+        \arg arg13 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -768,7 +853,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg12 ]
+                [ arg, arg13 ]
     , toString =
         \arg ->
             Elm.apply
@@ -810,6 +895,7 @@ values_ :
     , result : Elm.Expression
     , record : Elm.Expression
     , extensible : Elm.Expression
+    , alias : Elm.Expression
     , function : Elm.Expression
     , toString : Elm.Expression
     }
@@ -1023,6 +1109,26 @@ values_ =
                                     []
                                 )
                             )
+                        ]
+                        (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                    )
+            }
+    , alias =
+        Elm.value
+            { importFrom = [ "Elm", "Annotation" ]
+            , name = "alias"
+            , annotation =
+                Just
+                    (Type.function
+                        [ Type.list Type.string
+                        , Type.string
+                        , Type.list
+                            (Type.namedWith
+                                [ "Elm", "Annotation" ]
+                                "Annotation"
+                                []
+                            )
+                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
                         ]
                         (Type.namedWith [ "Elm", "Annotation" ] "Annotation" [])
                     )

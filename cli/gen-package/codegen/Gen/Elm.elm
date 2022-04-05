@@ -297,9 +297,20 @@ withType arg arg0 =
         [ arg, arg0 ]
 
 
-{-| withAlias: List String -> String -> Elm.Expression -> Elm.Expression -}
-withAlias : List String -> String -> Elm.Expression -> Elm.Expression
-withAlias arg arg0 arg1 =
+{-| withAlias: 
+    List String
+    -> String
+    -> List Elm.Annotation.Annotation
+    -> Elm.Expression
+    -> Elm.Expression
+-}
+withAlias :
+    List String
+    -> String
+    -> List Elm.Expression
+    -> Elm.Expression
+    -> Elm.Expression
+withAlias arg arg0 arg1 arg2 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm" ]
@@ -309,13 +320,23 @@ withAlias arg arg0 arg1 =
                     (Type.function
                         [ Type.list Type.string
                         , Type.string
+                        , Type.list
+                            (Type.namedWith
+                                [ "Elm", "Annotation" ]
+                                "Annotation"
+                                []
+                            )
                         , Type.namedWith [ "Elm" ] "Expression" []
                         ]
                         (Type.namedWith [ "Elm" ] "Expression" [])
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg), Elm.string arg0, arg1 ]
+        [ Elm.list (List.map Elm.string arg)
+        , Elm.string arg0
+        , Elm.list arg1
+        , arg2
+        ]
 
 
 {-| Elm.record
@@ -2159,10 +2180,27 @@ annotation_ :
     , variant : Type.Annotation
     }
 annotation_ =
-    { file = Type.namedWith moduleName_ "File" []
-    , expression = Type.namedWith moduleName_ "Expression" []
+    { file =
+        Type.alias
+            moduleName_
+            "File"
+            []
+            (Type.record
+                [ ( "path", Type.string ), ( "contents", Type.string ) ]
+            )
+    , expression =
+        Type.alias
+            moduleName_
+            "Expression"
+            []
+            (Type.namedWith [ "Internal", "Compiler" ] "Expression" [])
     , field = Type.namedWith moduleName_ "Field" []
-    , declaration = Type.namedWith moduleName_ "Declaration" []
+    , declaration =
+        Type.alias
+            moduleName_
+            "Declaration"
+            []
+            (Type.namedWith [ "Internal", "Compiler" ] "Declaration" [])
     , variant = Type.namedWith moduleName_ "Variant" []
     }
 
@@ -2177,6 +2215,7 @@ make_ =
             Elm.withAlias
                 [ "Elm" ]
                 "File"
+                []
                 (Elm.record
                     [ Elm.field "path" arg.path
                     , Elm.field "contents" arg.contents
@@ -2201,7 +2240,11 @@ call_ :
         Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
     , withType : Elm.Expression -> Elm.Expression -> Elm.Expression
     , withAlias :
-        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+        Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
+        -> Elm.Expression
     , record : Elm.Expression -> Elm.Expression
     , field : Elm.Expression -> Elm.Expression -> Elm.Expression
     , get : Elm.Expression -> Elm.Expression -> Elm.Expression
@@ -2504,7 +2547,7 @@ call_ =
                 )
                 [ arg, arg12 ]
     , withAlias =
-        \arg arg13 arg14 ->
+        \arg arg13 arg14 arg15 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -2514,13 +2557,19 @@ call_ =
                             (Type.function
                                 [ Type.list Type.string
                                 , Type.string
+                                , Type.list
+                                    (Type.namedWith
+                                        [ "Elm", "Annotation" ]
+                                        "Annotation"
+                                        []
+                                    )
                                 , Type.namedWith [ "Elm" ] "Expression" []
                                 ]
                                 (Type.namedWith [ "Elm" ] "Expression" [])
                             )
                     }
                 )
-                [ arg, arg13, arg14 ]
+                [ arg, arg13, arg14, arg15 ]
     , record =
         \arg ->
             Elm.apply
@@ -3890,6 +3939,12 @@ values_ =
                     (Type.function
                         [ Type.list Type.string
                         , Type.string
+                        , Type.list
+                            (Type.namedWith
+                                [ "Elm", "Annotation" ]
+                                "Annotation"
+                                []
+                            )
                         , Type.namedWith [ "Elm" ] "Expression" []
                         ]
                         (Type.namedWith [ "Elm" ] "Expression" [])
