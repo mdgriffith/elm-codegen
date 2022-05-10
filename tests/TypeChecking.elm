@@ -111,11 +111,13 @@ suite =
 
 So `map func [ a, b, c ]` is the same as `[ func a, func b, func c ]`
 
+map: (a -> b) -> List a -> List b
+
 -}
 listMap : (Elm.Expression -> Elm.Expression) -> List Elm.Expression -> Elm.Expression
-listMap arg1 arg2 =
+listMap arg arg0 =
     Elm.apply
-        (Elm.valueWith
+        (Elm.value
             { importFrom = [ "List" ]
             , name = "map"
             , annotation =
@@ -128,15 +130,4 @@ listMap arg1 arg2 =
                     )
             }
         )
-        [ Elm.functionAdvanced
-            [ ( "ar1", Type.var "a" ) ]
-            (arg1
-                (Elm.valueWith
-                    { importFrom = []
-                    , name = "ar1"
-                    , annotation = Just (Type.var "a")
-                    }
-                )
-            )
-        , Elm.list arg2
-        ]
+        [ Elm.functionReduced "unpack" arg, Elm.list arg0 ]
