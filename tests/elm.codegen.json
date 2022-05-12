@@ -1,0 +1,10 @@
+{
+  "elm-codegen-version": "0.1.0",
+  "codegen-helpers": {
+    "packages": {
+      "elm/core": "1.0.5",
+      "mdgriffith/elm-ui": "1.1.8"
+    },
+    "local": []
+  }
+}
