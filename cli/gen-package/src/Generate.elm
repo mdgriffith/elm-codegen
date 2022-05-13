@@ -691,7 +691,7 @@ typeCreation thisModule block =
                                 |> List.map (\( fieldName, _ ) -> ( fieldName, expressionType ))
                                 |> Annotation.record
                     in
-                    [ Elm.fn "arg"
+                    [ Elm.fn (alias.name ++ "_args")
                         (\val ->
                             let
                                 arg =
@@ -701,13 +701,26 @@ typeCreation thisModule block =
                             fields
                                 |> List.map
                                     (\( fieldName, _ ) ->
+                                        let
+                                            builder =
+                                                Elm.get fieldName arg
+                                        in
                                         Gen.Elm.field fieldName
-                                            (Elm.get fieldName arg)
+                                            builder
                                     )
                                 |> Gen.Elm.record
                                 |> Gen.Elm.withAlias thisModule
                                     alias.name
-                                    (List.map GenType.var alias.args)
+                                    (List.map
+                                        (\t ->
+                                            -- we need to prefix every type variable with the alias name
+                                            -- or else the type variables may collide with type variables from other entries in this record
+                                            -- and cause some pretty bizarre stuff.
+                                            GenType.var
+                                                (alias.name ++ "_" ++ t)
+                                        )
+                                        alias.args
+                                    )
                         )
                         |> Elm.field alias.name
                     ]
