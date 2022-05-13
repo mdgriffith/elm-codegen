@@ -1,4 +1,4 @@
-module TypeChecking exposing (..)
+module TypeChecking exposing (generatedCode, suite)
 
 import Elm
 import Elm.Annotation as Type
@@ -23,6 +23,18 @@ successfullyInferredType expression =
                     ++ String.join "\n"
                         (List.map Compiler.inferenceErrorToString errs)
                 )
+
+
+renderedAs expression str =
+    Expect.equal
+        (Elm.toString expression)
+        str
+
+
+declarationAs decl str =
+    Expect.equal
+        (Elm.declarationToString decl)
+        str
 
 
 suite : Test
@@ -131,3 +143,37 @@ listMap arg arg0 =
             }
         )
         [ Elm.functionReduced "unpack" arg, Elm.list arg0 ]
+
+
+
+{- Exact output! -}
+
+
+generatedCode : Test
+generatedCode =
+    describe "Exact Output"
+        [ test "Strings" <|
+            \_ ->
+                renderedAs
+                    (Elm.string "Hello!")
+                    "\"Hello!\""
+        , test "Function, arg order isn't reversed" <|
+            \_ ->
+                declarationAs
+                    (Elm.function
+                        [ ( "str", Just Type.string )
+                        , ( "int", Just Type.int )
+                        , ( "bool", Just Type.bool )
+                        ]
+                        (\args ->
+                            case args of
+                                [ one, two, three ] ->
+                                    Elm.triple one two three
+
+                                _ ->
+                                    Elm.unit
+                        )
+                        |> Elm.declaration "myFunc"
+                    )
+                    "myFunc : String -> Int -> Bool -> ( String, Int, Bool )\nmyFunc str int bool =\n    ( str, int, bool )"
+        ]
