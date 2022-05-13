@@ -194,13 +194,17 @@ dive (Index top tail scope) =
 
 getName : String -> Index -> ( String, Index )
 getName desiredName ((Index top tail scope) as index) =
-    if not (Set.member desiredName scope) then
-        ( desiredName, Index top tail (Set.insert desiredName scope) )
+    let
+        formattedName =
+            formatValue desiredName
+    in
+    if not (Set.member formattedName scope) then
+        ( formattedName, Index top tail (Set.insert formattedName scope) )
 
     else
         let
             protectedName =
-                desiredName ++ String.fromInt top
+                formattedName ++ String.fromInt top
         in
         if not (Set.member protectedName scope) then
             ( protectedName
@@ -210,7 +214,7 @@ getName desiredName ((Index top tail scope) as index) =
         else
             let
                 protectedNameLevel2 =
-                    desiredName ++ indexToString index
+                    formattedName ++ indexToString index
             in
             ( protectedNameLevel2
             , Index (top + 1) tail (Set.insert protectedNameLevel2 scope)
