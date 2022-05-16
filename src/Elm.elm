@@ -27,6 +27,7 @@ module Elm exposing
     , declarationToString, declarationImports
     , apply, value
     , unwrap, unwrapper
+    , facts
     )
 
 {-|
@@ -143,6 +144,7 @@ import Elm.Syntax.Range as Range
 import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Comments
 import Internal.Compiler as Compiler
+import Internal.Debug
 import Internal.Types
 import Internal.Write
 import Set
@@ -708,7 +710,7 @@ unwrapper modName typename =
 Results in the following lambda
 
     myFunction val =
-        ((MyType val) -> val) val
+        (\(MyType val) -> val) val
 
 -}
 unwrap : List String -> String -> Expression -> Expression
@@ -1677,12 +1679,12 @@ parens expr =
 
 {-| -}
 apply : Expression -> List Expression -> Expression
-apply express argExpressions =
+apply fnExp argExpressions =
     Compiler.Expression
         (\index ->
             let
-                ( annotationIndex, exp ) =
-                    Compiler.toExpressionDetails index express
+                ( annotationIndex, fnDetails ) =
+                    Compiler.toExpressionDetails index fnExp
 
                 nextIndex =
                     Compiler.next annotationIndex
@@ -1691,8 +1693,11 @@ apply express argExpressions =
                     Compiler.thread nextIndex argExpressions
 
                 protectedAnnotation =
-                    Compiler.protectInference annotationIndex
-                        exp.annotation
+                    fnDetails.annotation
+
+                -- Compiler.protectInference annotationIndex
+                --     (Debug.log "    -> INF TO PROTECT" fnDetails.annotation)
+                --     |> Debug.log "  -> PROTECTED"
             in
             { expression =
                 -- Disabling autopipe for now.
@@ -1700,13 +1705,16 @@ apply express argExpressions =
                 -- autopipe False exp.expression (List.map getExpression args)
                 Exp.Application
                     (Compiler.nodifyAll
-                        (exp.expression
+                        (fnDetails.expression
                             :: List.map (parens << .expression) args
                         )
                     )
             , annotation =
                 Compiler.applyType protectedAnnotation args
-            , imports = exp.imports ++ List.concatMap Compiler.getImports args
+
+            -- BUGBUG -- It feels like this is the right place for variable protection, but maybe not?
+            -- |> Compiler.protectInference annotationIndex
+            , imports = fnDetails.imports ++ List.concatMap Compiler.getImports args
             }
         )
 
@@ -1845,42 +1853,44 @@ In this case you can use [`withType`](#withType) to manually attach a type to a 
 
 -}
 fn : String -> (Expression -> Expression) -> Expression
-fn arg1BaseName toExpression =
+fn oneBaseName toExpression =
     Compiler.Expression <|
         \index ->
             let
                 childIndex =
                     Compiler.dive index
 
-                ( arg1Name, newIndex ) =
-                    Compiler.getName arg1BaseName childIndex
-
-                arg1Type =
-                    Elm.Annotation.var arg1Name
-
-                arg1 =
-                    value
-                        { importFrom = []
-                        , name = arg1Name
-                        , annotation = Just arg1Type
-                        }
+                one =
+                    Compiler.toVar childIndex oneBaseName
 
                 (Compiler.Expression toExpr) =
-                    toExpression arg1
+                    toExpression one.val
 
-                expr =
-                    toExpr newIndex
+                return =
+                    toExpr one.index
             in
             { expression =
                 Exp.LambdaExpression
-                    { args = [ Compiler.nodify (Pattern.VarPattern arg1Name) ]
-                    , expression = Compiler.nodify expr.expression
+                    { args = [ Compiler.nodify (Pattern.VarPattern one.name) ]
+                    , expression = Compiler.nodify return.expression
                     }
             , annotation =
-                fnTypeApply expr.annotation
-                    [ arg1Type
-                    ]
-            , imports = expr.imports
+                case return.annotation of
+                    Err err ->
+                        return.annotation
+
+                    Ok returnAnnotation ->
+                        Ok
+                            { type_ =
+                                Annotation.FunctionTypeAnnotation
+                                    (Compiler.nodify (Annotation.GenericType one.typename))
+                                    (Compiler.nodify
+                                        returnAnnotation.type_
+                                    )
+                            , inferences = returnAnnotation.inferences
+                            , aliases = returnAnnotation.aliases
+                            }
+            , imports = return.imports
             }
 
 
@@ -1921,20 +1931,32 @@ functionReduced argBaseName toExpression =
                 (Compiler.Expression toExpr) =
                     toExpression arg1
 
-                expr =
+                return =
                     toExpr newIndex
             in
             { expression =
                 betaReduce <|
                     Exp.LambdaExpression
                         { args = [ Compiler.nodify (Pattern.VarPattern arg1Name) ]
-                        , expression = Compiler.nodify expr.expression
+                        , expression = Compiler.nodify return.expression
                         }
             , annotation =
-                fnTypeApply expr.annotation
-                    [ argType
-                    ]
-            , imports = expr.imports
+                case return.annotation of
+                    Err err ->
+                        return.annotation
+
+                    Ok returnAnnotation ->
+                        Ok
+                            { type_ =
+                                Annotation.FunctionTypeAnnotation
+                                    (Compiler.nodify (Annotation.GenericType arg1Name))
+                                    (Compiler.nodify
+                                        returnAnnotation.type_
+                                    )
+                            , inferences = returnAnnotation.inferences
+                            , aliases = returnAnnotation.aliases
+                            }
+            , imports = return.imports
             }
 
 
@@ -2054,7 +2076,11 @@ fn2 oneBaseName twoBaseName toExpression =
                     Elm.Annotation.var oneName
 
                 arg1 =
-                    valueWithHelper [] oneName oneType
+                    value
+                        { importFrom = []
+                        , name = oneName
+                        , annotation = Just oneType
+                        }
 
                 ( twoName, twoIndex ) =
                     Compiler.getName twoBaseName oneIndex
@@ -2063,9 +2089,13 @@ fn2 oneBaseName twoBaseName toExpression =
                     Elm.Annotation.var twoName
 
                 arg2 =
-                    valueWithHelper [] twoName twoType
+                    value
+                        { importFrom = []
+                        , name = twoName
+                        , annotation = Just twoType
+                        }
 
-                ( newIndex, expr ) =
+                ( newIndex, return ) =
                     Compiler.toExpressionDetails twoIndex (toExpression arg1 arg2)
             in
             { expression =
@@ -2074,51 +2104,31 @@ fn2 oneBaseName twoBaseName toExpression =
                         [ Compiler.nodify (Pattern.VarPattern oneName)
                         , Compiler.nodify (Pattern.VarPattern twoName)
                         ]
-                    , expression = Compiler.nodify expr.expression
+                    , expression = Compiler.nodify return.expression
                     }
             , annotation =
-                fnTypeApply expr.annotation
-                    [ oneType
-                    , twoType
-                    ]
-            , imports = expr.imports
+                case return.annotation of
+                    Err err ->
+                        return.annotation
+
+                    Ok returnAnnotation ->
+                        Ok
+                            { type_ =
+                                Annotation.FunctionTypeAnnotation
+                                    (Compiler.nodify (Annotation.GenericType oneName))
+                                    (Compiler.nodify
+                                        (Annotation.FunctionTypeAnnotation
+                                            (Compiler.nodify (Annotation.GenericType twoName))
+                                            (Compiler.nodify
+                                                returnAnnotation.type_
+                                            )
+                                        )
+                                    )
+                            , inferences = returnAnnotation.inferences
+                            , aliases = returnAnnotation.aliases
+                            }
+            , imports = return.imports
             }
-
-
-fnTypeApply :
-    Result
-        (List Compiler.InferenceError)
-        Compiler.Inference
-    -> List Compiler.Annotation
-    -> Result (List Compiler.InferenceError) Compiler.Inference
-fnTypeApply annotation args =
-    case annotation of
-        Err err ->
-            Err err
-
-        Ok return ->
-            Ok
-                { type_ =
-                    List.foldr
-                        (\ann fnbody ->
-                            Annotation.FunctionTypeAnnotation
-                                (Compiler.nodify (Compiler.getInnerAnnotation ann))
-                                (Compiler.nodify fnbody)
-                        )
-                        return.type_
-                        args
-                , aliases =
-                    List.foldl
-                        (\ann aliases ->
-                            Compiler.mergeAliases
-                                (Compiler.getAliases ann)
-                                aliases
-                        )
-                        return.aliases
-                        args
-                , inferences =
-                    return.inferences
-                }
 
 
 {-| -}
@@ -2162,7 +2172,7 @@ fn3 oneBaseName twoBaseName threeBaseName toExpression =
                 arg3 =
                     valueWithHelper [] threeName threeType
 
-                ( newIndex, expr ) =
+                ( newIndex, return ) =
                     Compiler.toExpressionDetails threeIndex (toExpression arg1 arg2 arg3)
             in
             { expression =
@@ -2172,15 +2182,35 @@ fn3 oneBaseName twoBaseName threeBaseName toExpression =
                         , Compiler.nodify (Pattern.VarPattern twoName)
                         , Compiler.nodify (Pattern.VarPattern threeName)
                         ]
-                    , expression = Compiler.nodify expr.expression
+                    , expression = Compiler.nodify return.expression
                     }
             , annotation =
-                fnTypeApply expr.annotation
-                    [ oneType
-                    , twoType
-                    , threeType
-                    ]
-            , imports = expr.imports
+                case return.annotation of
+                    Err err ->
+                        return.annotation
+
+                    Ok returnAnnotation ->
+                        Ok
+                            { type_ =
+                                Annotation.FunctionTypeAnnotation
+                                    (Compiler.nodify (Annotation.GenericType oneName))
+                                    (Compiler.nodify
+                                        (Annotation.FunctionTypeAnnotation
+                                            (Compiler.nodify (Annotation.GenericType twoName))
+                                            (Compiler.nodify
+                                                (Annotation.FunctionTypeAnnotation
+                                                    (Compiler.nodify (Annotation.GenericType threeName))
+                                                    (Compiler.nodify
+                                                        returnAnnotation.type_
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    )
+                            , inferences = returnAnnotation.inferences
+                            , aliases = returnAnnotation.aliases
+                            }
+            , imports = return.imports
             }
 
 
@@ -2235,7 +2265,7 @@ fn4 oneBaseName twoBaseName threeBaseName fourBaseName toExpression =
                 arg4 =
                     valueWithHelper [] fourName fourType
 
-                ( newIndex, expr ) =
+                ( newIndex, return ) =
                     Compiler.toExpressionDetails fourIndex (toExpression arg1 arg2 arg3 arg4)
             in
             { expression =
@@ -2246,16 +2276,40 @@ fn4 oneBaseName twoBaseName threeBaseName fourBaseName toExpression =
                         , Compiler.nodify (Pattern.VarPattern threeName)
                         , Compiler.nodify (Pattern.VarPattern fourName)
                         ]
-                    , expression = Compiler.nodify expr.expression
+                    , expression = Compiler.nodify return.expression
                     }
             , annotation =
-                fnTypeApply expr.annotation
-                    [ oneType
-                    , twoType
-                    , threeType
-                    , fourType
-                    ]
-            , imports = expr.imports
+                case return.annotation of
+                    Err err ->
+                        return.annotation
+
+                    Ok returnAnnotation ->
+                        Ok
+                            { type_ =
+                                Annotation.FunctionTypeAnnotation
+                                    (Compiler.nodify (Annotation.GenericType oneName))
+                                    (Compiler.nodify
+                                        (Annotation.FunctionTypeAnnotation
+                                            (Compiler.nodify (Annotation.GenericType twoName))
+                                            (Compiler.nodify
+                                                (Annotation.FunctionTypeAnnotation
+                                                    (Compiler.nodify (Annotation.GenericType threeName))
+                                                    (Compiler.nodify
+                                                        (Annotation.FunctionTypeAnnotation
+                                                            (Compiler.nodify (Annotation.GenericType fourName))
+                                                            (Compiler.nodify
+                                                                returnAnnotation.type_
+                                                            )
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    )
+                            , inferences = returnAnnotation.inferences
+                            , aliases = returnAnnotation.aliases
+                            }
+            , imports = return.imports
             }
 
 
@@ -2320,7 +2374,7 @@ fn5 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName toExpression
                 arg5 =
                     valueWithHelper [] fiveName fiveType
 
-                ( newIndex, expr ) =
+                ( newIndex, return ) =
                     Compiler.toExpressionDetails fiveIndex (toExpression arg1 arg2 arg3 arg4 arg5)
             in
             { expression =
@@ -2332,17 +2386,45 @@ fn5 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName toExpression
                         , Compiler.nodify (Pattern.VarPattern fourName)
                         , Compiler.nodify (Pattern.VarPattern fiveName)
                         ]
-                    , expression = Compiler.nodify expr.expression
+                    , expression = Compiler.nodify return.expression
                     }
             , annotation =
-                fnTypeApply expr.annotation
-                    [ oneType
-                    , twoType
-                    , threeType
-                    , fourType
-                    , fiveType
-                    ]
-            , imports = expr.imports
+                case return.annotation of
+                    Err err ->
+                        return.annotation
+
+                    Ok returnAnnotation ->
+                        Ok
+                            { type_ =
+                                Annotation.FunctionTypeAnnotation
+                                    (Compiler.nodify (Annotation.GenericType oneName))
+                                    (Compiler.nodify
+                                        (Annotation.FunctionTypeAnnotation
+                                            (Compiler.nodify (Annotation.GenericType twoName))
+                                            (Compiler.nodify
+                                                (Annotation.FunctionTypeAnnotation
+                                                    (Compiler.nodify (Annotation.GenericType threeName))
+                                                    (Compiler.nodify
+                                                        (Annotation.FunctionTypeAnnotation
+                                                            (Compiler.nodify (Annotation.GenericType fourName))
+                                                            (Compiler.nodify
+                                                                (Annotation.FunctionTypeAnnotation
+                                                                    (Compiler.nodify (Annotation.GenericType fiveName))
+                                                                    (Compiler.nodify
+                                                                        returnAnnotation.type_
+                                                                    )
+                                                                )
+                                                            )
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    )
+                            , inferences = returnAnnotation.inferences
+                            , aliases = returnAnnotation.aliases
+                            }
+            , imports = return.imports
             }
 
 
@@ -2417,7 +2499,7 @@ fn6 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName sixBaseName 
                 arg6 =
                     valueWithHelper [] sixName sixType
 
-                ( newIndex, expr ) =
+                ( newIndex, return ) =
                     Compiler.toExpressionDetails sixIndex (toExpression arg1 arg2 arg3 arg4 arg5 arg6)
             in
             { expression =
@@ -2430,18 +2512,50 @@ fn6 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName sixBaseName 
                         , Compiler.nodify (Pattern.VarPattern fiveName)
                         , Compiler.nodify (Pattern.VarPattern sixName)
                         ]
-                    , expression = Compiler.nodify expr.expression
+                    , expression = Compiler.nodify return.expression
                     }
             , annotation =
-                fnTypeApply expr.annotation
-                    [ oneType
-                    , twoType
-                    , threeType
-                    , fourType
-                    , fiveType
-                    , sixType
-                    ]
-            , imports = expr.imports
+                case return.annotation of
+                    Err err ->
+                        return.annotation
+
+                    Ok returnAnnotation ->
+                        Ok
+                            { type_ =
+                                Annotation.FunctionTypeAnnotation
+                                    (Compiler.nodify (Annotation.GenericType oneName))
+                                    (Compiler.nodify
+                                        (Annotation.FunctionTypeAnnotation
+                                            (Compiler.nodify (Annotation.GenericType twoName))
+                                            (Compiler.nodify
+                                                (Annotation.FunctionTypeAnnotation
+                                                    (Compiler.nodify (Annotation.GenericType threeName))
+                                                    (Compiler.nodify
+                                                        (Annotation.FunctionTypeAnnotation
+                                                            (Compiler.nodify (Annotation.GenericType fourName))
+                                                            (Compiler.nodify
+                                                                (Annotation.FunctionTypeAnnotation
+                                                                    (Compiler.nodify (Annotation.GenericType fiveName))
+                                                                    (Compiler.nodify
+                                                                        (Annotation.FunctionTypeAnnotation
+                                                                            (Compiler.nodify (Annotation.GenericType sixName))
+                                                                            (Compiler.nodify
+                                                                                returnAnnotation.type_
+                                                                            )
+                                                                        )
+                                                                    )
+                                                                )
+                                                            )
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    )
+                            , inferences = returnAnnotation.inferences
+                            , aliases = returnAnnotation.aliases
+                            }
+            , imports = return.imports
             }
 
 
