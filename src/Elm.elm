@@ -642,24 +642,11 @@ unwrapper modName typename =
     Compiler.Expression <|
         \index ->
             let
-                childIndex =
-                    Compiler.dive index
+                arg =
+                    Compiler.toVar index "val"
 
-                ( arg1Name, newIndex ) =
-                    Compiler.getName "val" childIndex
-
-                ( unwrappedName, newIndex2 ) =
-                    Compiler.getName "unwrapped" newIndex
-
-                arg1Type =
-                    Elm.Annotation.var arg1Name
-
-                arg1 =
-                    value
-                        { importFrom = []
-                        , name = arg1Name
-                        , annotation = Just arg1Type
-                        }
+                return =
+                    Compiler.toVar arg.index "unwrapped"
             in
             { expression =
                 Exp.LambdaExpression
@@ -669,7 +656,7 @@ unwrapper modName typename =
                                 { moduleName = modName
                                 , name = typename
                                 }
-                                [ Pattern.VarPattern arg1Name
+                                [ Pattern.VarPattern arg.name
                                     |> Compiler.nodify
                                 ]
                             )
@@ -677,15 +664,15 @@ unwrapper modName typename =
                     , expression =
                         Compiler.nodify
                             (Exp.FunctionOrValue []
-                                arg1Name
+                                arg.name
                             )
                     }
             , annotation =
                 Ok
                     { type_ =
                         Annotation.FunctionTypeAnnotation
-                            (Compiler.nodify (Annotation.GenericType arg1Name))
-                            (Compiler.nodify (Annotation.GenericType unwrappedName))
+                            (Compiler.nodify (Annotation.GenericType arg.typename))
+                            (Compiler.nodify (Annotation.GenericType return.typename))
                     , inferences = Dict.empty
                     , aliases = Compiler.emptyAliases
                     }
@@ -1023,13 +1010,10 @@ list exprs =
 updateRecord : Expression -> List Field -> Expression
 updateRecord recordExpression fields =
     Compiler.Expression <|
-        \sourceIndex ->
+        \index ->
             let
-                index =
-                    Compiler.dive sourceIndex
-
                 ( recordIndex, recordExp ) =
-                    Compiler.toExpressionDetails index recordExpression
+                    Compiler.toExpressionDetails (Compiler.dive index) recordExpression
 
                 ( fieldIndex, fieldAnnotationsGathered, fieldDetails ) =
                     fields
@@ -1857,17 +1841,14 @@ fn oneBaseName toExpression =
     Compiler.Expression <|
         \index ->
             let
-                childIndex =
-                    Compiler.dive index
-
                 one =
-                    Compiler.toVar childIndex oneBaseName
+                    Compiler.toVar index oneBaseName
 
                 (Compiler.Expression toExpr) =
                     toExpression one.val
 
                 return =
-                    toExpr one.index
+                    toExpr (Compiler.dive one.index)
             in
             { expression =
                 Exp.LambdaExpression
@@ -2067,42 +2048,22 @@ fn2 oneBaseName twoBaseName toExpression =
         \index ->
             let
                 childIndex =
-                    Compiler.dive index
+                    index
 
-                ( oneName, oneIndex ) =
-                    Compiler.getName oneBaseName childIndex
+                one =
+                    Compiler.toVar childIndex oneBaseName
 
-                oneType =
-                    Elm.Annotation.var oneName
+                two =
+                    Compiler.toVar one.index twoBaseName
 
-                arg1 =
-                    value
-                        { importFrom = []
-                        , name = oneName
-                        , annotation = Just oneType
-                        }
-
-                ( twoName, twoIndex ) =
-                    Compiler.getName twoBaseName oneIndex
-
-                twoType =
-                    Elm.Annotation.var twoName
-
-                arg2 =
-                    value
-                        { importFrom = []
-                        , name = twoName
-                        , annotation = Just twoType
-                        }
-
-                ( newIndex, return ) =
-                    Compiler.toExpressionDetails twoIndex (toExpression arg1 arg2)
+                ( newIndex_, return ) =
+                    Compiler.toExpressionDetails (Compiler.dive two.index) (toExpression one.val two.val)
             in
             { expression =
                 Exp.LambdaExpression
                     { args =
-                        [ Compiler.nodify (Pattern.VarPattern oneName)
-                        , Compiler.nodify (Pattern.VarPattern twoName)
+                        [ Compiler.nodify (Pattern.VarPattern one.name)
+                        , Compiler.nodify (Pattern.VarPattern two.name)
                         ]
                     , expression = Compiler.nodify return.expression
                     }
@@ -2115,10 +2076,10 @@ fn2 oneBaseName twoBaseName toExpression =
                         Ok
                             { type_ =
                                 Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify (Annotation.GenericType oneName))
+                                    (Compiler.nodify (Annotation.GenericType one.typename))
                                     (Compiler.nodify
                                         (Annotation.FunctionTypeAnnotation
-                                            (Compiler.nodify (Annotation.GenericType twoName))
+                                            (Compiler.nodify (Annotation.GenericType two.typename))
                                             (Compiler.nodify
                                                 returnAnnotation.type_
                                             )
@@ -2142,45 +2103,24 @@ fn3 oneBaseName twoBaseName threeBaseName toExpression =
     Compiler.Expression <|
         \index ->
             let
-                childIndex =
-                    Compiler.dive index
+                one =
+                    Compiler.toVar index oneBaseName
 
-                ( oneName, oneIndex ) =
-                    Compiler.getName oneBaseName childIndex
+                two =
+                    Compiler.toVar one.index twoBaseName
 
-                oneType =
-                    Elm.Annotation.var oneName
-
-                arg1 =
-                    valueWithHelper [] oneName oneType
-
-                ( twoName, twoIndex ) =
-                    Compiler.getName twoBaseName oneIndex
-
-                twoType =
-                    Elm.Annotation.var twoName
-
-                arg2 =
-                    valueWithHelper [] twoName twoType
-
-                ( threeName, threeIndex ) =
-                    Compiler.getName threeBaseName twoIndex
-
-                threeType =
-                    Elm.Annotation.var threeName
-
-                arg3 =
-                    valueWithHelper [] threeName threeType
+                three =
+                    Compiler.toVar two.index threeBaseName
 
                 ( newIndex, return ) =
-                    Compiler.toExpressionDetails threeIndex (toExpression arg1 arg2 arg3)
+                    Compiler.toExpressionDetails (Compiler.dive three.index) (toExpression one.val two.val three.val)
             in
             { expression =
                 Exp.LambdaExpression
                     { args =
-                        [ Compiler.nodify (Pattern.VarPattern oneName)
-                        , Compiler.nodify (Pattern.VarPattern twoName)
-                        , Compiler.nodify (Pattern.VarPattern threeName)
+                        [ Compiler.nodify (Pattern.VarPattern one.name)
+                        , Compiler.nodify (Pattern.VarPattern two.name)
+                        , Compiler.nodify (Pattern.VarPattern three.name)
                         ]
                     , expression = Compiler.nodify return.expression
                     }
@@ -2193,13 +2133,13 @@ fn3 oneBaseName twoBaseName threeBaseName toExpression =
                         Ok
                             { type_ =
                                 Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify (Annotation.GenericType oneName))
+                                    (Compiler.nodify (Annotation.GenericType one.typename))
                                     (Compiler.nodify
                                         (Annotation.FunctionTypeAnnotation
-                                            (Compiler.nodify (Annotation.GenericType twoName))
+                                            (Compiler.nodify (Annotation.GenericType two.typename))
                                             (Compiler.nodify
                                                 (Annotation.FunctionTypeAnnotation
-                                                    (Compiler.nodify (Annotation.GenericType threeName))
+                                                    (Compiler.nodify (Annotation.GenericType three.typename))
                                                     (Compiler.nodify
                                                         returnAnnotation.type_
                                                     )
@@ -2226,55 +2166,28 @@ fn4 oneBaseName twoBaseName threeBaseName fourBaseName toExpression =
     Compiler.Expression <|
         \index ->
             let
-                childIndex =
-                    Compiler.dive index
+                one =
+                    Compiler.toVar index oneBaseName
 
-                ( oneName, oneIndex ) =
-                    Compiler.getName oneBaseName childIndex
+                two =
+                    Compiler.toVar one.index twoBaseName
 
-                oneType =
-                    Elm.Annotation.var oneName
+                three =
+                    Compiler.toVar two.index threeBaseName
 
-                arg1 =
-                    valueWithHelper [] oneName oneType
-
-                ( twoName, twoIndex ) =
-                    Compiler.getName twoBaseName oneIndex
-
-                twoType =
-                    Elm.Annotation.var twoName
-
-                arg2 =
-                    valueWithHelper [] twoName twoType
-
-                ( threeName, threeIndex ) =
-                    Compiler.getName threeBaseName twoIndex
-
-                threeType =
-                    Elm.Annotation.var threeName
-
-                arg3 =
-                    valueWithHelper [] threeName threeType
-
-                ( fourName, fourIndex ) =
-                    Compiler.getName fourBaseName threeIndex
-
-                fourType =
-                    Elm.Annotation.var fourName
-
-                arg4 =
-                    valueWithHelper [] fourName fourType
+                four =
+                    Compiler.toVar three.index fourBaseName
 
                 ( newIndex, return ) =
-                    Compiler.toExpressionDetails fourIndex (toExpression arg1 arg2 arg3 arg4)
+                    Compiler.toExpressionDetails (Compiler.dive four.index) (toExpression one.val two.val three.val four.val)
             in
             { expression =
                 Exp.LambdaExpression
                     { args =
-                        [ Compiler.nodify (Pattern.VarPattern oneName)
-                        , Compiler.nodify (Pattern.VarPattern twoName)
-                        , Compiler.nodify (Pattern.VarPattern threeName)
-                        , Compiler.nodify (Pattern.VarPattern fourName)
+                        [ Compiler.nodify (Pattern.VarPattern one.name)
+                        , Compiler.nodify (Pattern.VarPattern two.name)
+                        , Compiler.nodify (Pattern.VarPattern three.name)
+                        , Compiler.nodify (Pattern.VarPattern four.name)
                         ]
                     , expression = Compiler.nodify return.expression
                     }
@@ -2287,16 +2200,16 @@ fn4 oneBaseName twoBaseName threeBaseName fourBaseName toExpression =
                         Ok
                             { type_ =
                                 Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify (Annotation.GenericType oneName))
+                                    (Compiler.nodify (Annotation.GenericType one.typename))
                                     (Compiler.nodify
                                         (Annotation.FunctionTypeAnnotation
-                                            (Compiler.nodify (Annotation.GenericType twoName))
+                                            (Compiler.nodify (Annotation.GenericType two.typename))
                                             (Compiler.nodify
                                                 (Annotation.FunctionTypeAnnotation
-                                                    (Compiler.nodify (Annotation.GenericType threeName))
+                                                    (Compiler.nodify (Annotation.GenericType three.typename))
                                                     (Compiler.nodify
                                                         (Annotation.FunctionTypeAnnotation
-                                                            (Compiler.nodify (Annotation.GenericType fourName))
+                                                            (Compiler.nodify (Annotation.GenericType four.typename))
                                                             (Compiler.nodify
                                                                 returnAnnotation.type_
                                                             )
@@ -2326,65 +2239,32 @@ fn5 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName toExpression
     Compiler.Expression <|
         \index ->
             let
-                childIndex =
-                    Compiler.dive index
+                one =
+                    Compiler.toVar index oneBaseName
 
-                ( oneName, oneIndex ) =
-                    Compiler.getName oneBaseName childIndex
+                two =
+                    Compiler.toVar one.index twoBaseName
 
-                oneType =
-                    Elm.Annotation.var oneName
+                three =
+                    Compiler.toVar two.index threeBaseName
 
-                arg1 =
-                    valueWithHelper [] oneName oneType
+                four =
+                    Compiler.toVar three.index fourBaseName
 
-                ( twoName, twoIndex ) =
-                    Compiler.getName twoBaseName oneIndex
-
-                twoType =
-                    Elm.Annotation.var twoName
-
-                arg2 =
-                    valueWithHelper [] twoName twoType
-
-                ( threeName, threeIndex ) =
-                    Compiler.getName threeBaseName twoIndex
-
-                threeType =
-                    Elm.Annotation.var threeName
-
-                arg3 =
-                    valueWithHelper [] threeName threeType
-
-                ( fourName, fourIndex ) =
-                    Compiler.getName fourBaseName threeIndex
-
-                fourType =
-                    Elm.Annotation.var fourName
-
-                arg4 =
-                    valueWithHelper [] fourName fourType
-
-                ( fiveName, fiveIndex ) =
-                    Compiler.getName fiveBaseName fourIndex
-
-                fiveType =
-                    Elm.Annotation.var fiveName
-
-                arg5 =
-                    valueWithHelper [] fiveName fiveType
+                five =
+                    Compiler.toVar four.index fiveBaseName
 
                 ( newIndex, return ) =
-                    Compiler.toExpressionDetails fiveIndex (toExpression arg1 arg2 arg3 arg4 arg5)
+                    Compiler.toExpressionDetails (Compiler.dive five.index) (toExpression one.val two.val three.val four.val five.val)
             in
             { expression =
                 Exp.LambdaExpression
                     { args =
-                        [ Compiler.nodify (Pattern.VarPattern oneName)
-                        , Compiler.nodify (Pattern.VarPattern twoName)
-                        , Compiler.nodify (Pattern.VarPattern threeName)
-                        , Compiler.nodify (Pattern.VarPattern fourName)
-                        , Compiler.nodify (Pattern.VarPattern fiveName)
+                        [ Compiler.nodify (Pattern.VarPattern one.name)
+                        , Compiler.nodify (Pattern.VarPattern two.name)
+                        , Compiler.nodify (Pattern.VarPattern three.name)
+                        , Compiler.nodify (Pattern.VarPattern four.name)
+                        , Compiler.nodify (Pattern.VarPattern five.name)
                         ]
                     , expression = Compiler.nodify return.expression
                     }
@@ -2397,19 +2277,19 @@ fn5 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName toExpression
                         Ok
                             { type_ =
                                 Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify (Annotation.GenericType oneName))
+                                    (Compiler.nodify (Annotation.GenericType one.typename))
                                     (Compiler.nodify
                                         (Annotation.FunctionTypeAnnotation
-                                            (Compiler.nodify (Annotation.GenericType twoName))
+                                            (Compiler.nodify (Annotation.GenericType two.typename))
                                             (Compiler.nodify
                                                 (Annotation.FunctionTypeAnnotation
-                                                    (Compiler.nodify (Annotation.GenericType threeName))
+                                                    (Compiler.nodify (Annotation.GenericType three.typename))
                                                     (Compiler.nodify
                                                         (Annotation.FunctionTypeAnnotation
-                                                            (Compiler.nodify (Annotation.GenericType fourName))
+                                                            (Compiler.nodify (Annotation.GenericType four.typename))
                                                             (Compiler.nodify
                                                                 (Annotation.FunctionTypeAnnotation
-                                                                    (Compiler.nodify (Annotation.GenericType fiveName))
+                                                                    (Compiler.nodify (Annotation.GenericType five.typename))
                                                                     (Compiler.nodify
                                                                         returnAnnotation.type_
                                                                     )
@@ -2442,75 +2322,36 @@ fn6 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName sixBaseName 
     Compiler.Expression <|
         \index ->
             let
-                childIndex =
-                    Compiler.dive index
+                one =
+                    Compiler.toVar index oneBaseName
 
-                ( oneName, oneIndex ) =
-                    Compiler.getName oneBaseName childIndex
+                two =
+                    Compiler.toVar one.index twoBaseName
 
-                oneType =
-                    Elm.Annotation.var oneName
+                three =
+                    Compiler.toVar two.index threeBaseName
 
-                arg1 =
-                    valueWithHelper [] oneName oneType
+                four =
+                    Compiler.toVar three.index fourBaseName
 
-                ( twoName, twoIndex ) =
-                    Compiler.getName twoBaseName oneIndex
+                five =
+                    Compiler.toVar four.index fiveBaseName
 
-                twoType =
-                    Elm.Annotation.var twoName
-
-                arg2 =
-                    valueWithHelper [] twoName twoType
-
-                ( threeName, threeIndex ) =
-                    Compiler.getName threeBaseName twoIndex
-
-                threeType =
-                    Elm.Annotation.var threeName
-
-                arg3 =
-                    valueWithHelper [] threeName threeType
-
-                ( fourName, fourIndex ) =
-                    Compiler.getName fourBaseName threeIndex
-
-                fourType =
-                    Elm.Annotation.var fourName
-
-                arg4 =
-                    valueWithHelper [] fourName fourType
-
-                ( fiveName, fiveIndex ) =
-                    Compiler.getName fiveBaseName fourIndex
-
-                fiveType =
-                    Elm.Annotation.var fiveName
-
-                arg5 =
-                    valueWithHelper [] fiveName fiveType
-
-                ( sixName, sixIndex ) =
-                    Compiler.getName sixBaseName fiveIndex
-
-                sixType =
-                    Elm.Annotation.var sixName
-
-                arg6 =
-                    valueWithHelper [] sixName sixType
+                six =
+                    Compiler.toVar five.index sixBaseName
 
                 ( newIndex, return ) =
-                    Compiler.toExpressionDetails sixIndex (toExpression arg1 arg2 arg3 arg4 arg5 arg6)
+                    Compiler.toExpressionDetails (Compiler.dive five.index) (toExpression one.val two.val three.val four.val five.val six.val)
             in
             { expression =
                 Exp.LambdaExpression
                     { args =
-                        [ Compiler.nodify (Pattern.VarPattern oneName)
-                        , Compiler.nodify (Pattern.VarPattern twoName)
-                        , Compiler.nodify (Pattern.VarPattern threeName)
-                        , Compiler.nodify (Pattern.VarPattern fourName)
-                        , Compiler.nodify (Pattern.VarPattern fiveName)
-                        , Compiler.nodify (Pattern.VarPattern sixName)
+                        [ Compiler.nodify (Pattern.VarPattern one.name)
+                        , Compiler.nodify (Pattern.VarPattern two.name)
+                        , Compiler.nodify (Pattern.VarPattern three.name)
+                        , Compiler.nodify (Pattern.VarPattern four.name)
+                        , Compiler.nodify (Pattern.VarPattern five.name)
+                        , Compiler.nodify (Pattern.VarPattern six.name)
                         ]
                     , expression = Compiler.nodify return.expression
                     }
@@ -2523,22 +2364,22 @@ fn6 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName sixBaseName 
                         Ok
                             { type_ =
                                 Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify (Annotation.GenericType oneName))
+                                    (Compiler.nodify (Annotation.GenericType one.typename))
                                     (Compiler.nodify
                                         (Annotation.FunctionTypeAnnotation
-                                            (Compiler.nodify (Annotation.GenericType twoName))
+                                            (Compiler.nodify (Annotation.GenericType two.typename))
                                             (Compiler.nodify
                                                 (Annotation.FunctionTypeAnnotation
-                                                    (Compiler.nodify (Annotation.GenericType threeName))
+                                                    (Compiler.nodify (Annotation.GenericType three.typename))
                                                     (Compiler.nodify
                                                         (Annotation.FunctionTypeAnnotation
-                                                            (Compiler.nodify (Annotation.GenericType fourName))
+                                                            (Compiler.nodify (Annotation.GenericType four.typename))
                                                             (Compiler.nodify
                                                                 (Annotation.FunctionTypeAnnotation
-                                                                    (Compiler.nodify (Annotation.GenericType fiveName))
+                                                                    (Compiler.nodify (Annotation.GenericType five.typename))
                                                                     (Compiler.nodify
                                                                         (Annotation.FunctionTypeAnnotation
-                                                                            (Compiler.nodify (Annotation.GenericType sixName))
+                                                                            (Compiler.nodify (Annotation.GenericType six.typename))
                                                                             (Compiler.nodify
                                                                                 returnAnnotation.type_
                                                                             )
@@ -2699,13 +2540,10 @@ functionAdvanced args fullExpression =
             Compiler.Expression <|
                 \index ->
                     let
-                        childIndex =
-                            Compiler.dive index
-
                         expr =
                             case fullExpression of
                                 Compiler.Expression toExpr ->
-                                    toExpr childIndex
+                                    toExpr (Compiler.dive index)
                     in
                     { expression =
                         Exp.LambdaExpression
@@ -2764,9 +2602,6 @@ function initialArgList toFullExpression =
             Compiler.Expression <|
                 \index ->
                     let
-                        childIndex =
-                            Compiler.dive index
-
                         args =
                             List.foldl
                                 (\( nameBase, maybeType ) found ->
@@ -2815,7 +2650,7 @@ function initialArgList toFullExpression =
                         expr =
                             case fullExpression of
                                 Compiler.Expression toExpr ->
-                                    toExpr childIndex
+                                    toExpr (Compiler.dive index)
                     in
                     { expression =
                         Exp.LambdaExpression

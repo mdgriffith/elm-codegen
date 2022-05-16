@@ -261,9 +261,14 @@ getName desiredName ((Index top tail scope) as index) =
 
 
 protectTypeName : String -> Index -> String
-protectTypeName base index =
-    formatValue
-        (base ++ indexToString index)
+protectTypeName base ((Index top tail scope) as index) =
+    case tail of
+        [] ->
+            formatValue base
+
+        _ ->
+            formatValue
+                (base ++ indexToString index)
 
 
 indexToString : Index -> String
