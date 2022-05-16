@@ -192,6 +192,45 @@ dive (Index top tail scope) =
     Index 0 (top :: tail) scope
 
 
+toVar :
+    Index
+    -> String
+    ->
+        { name : String
+        , typename : String
+        , val : Expression
+        , index : Index
+        }
+toVar index desiredName =
+    let
+        ( name, newIndex ) =
+            getName desiredName index
+
+        typename =
+            protectTypeName desiredName index
+    in
+    { name = name
+    , typename = typename
+    , index = newIndex
+    , val =
+        Expression <|
+            \ignoredIndex_ ->
+                { expression =
+                    Exp.FunctionOrValue []
+                        name
+                , annotation =
+                    Ok
+                        { type_ =
+                            Annotation.GenericType typename
+                        , inferences = Dict.empty
+                        , aliases = emptyAliases
+                        }
+                , imports =
+                    []
+                }
+    }
+
+
 getName : String -> Index -> ( String, Index )
 getName desiredName ((Index top tail scope) as index) =
     let
@@ -1010,35 +1049,6 @@ formatType str =
     String.toUpper (String.left 1 str) ++ String.dropLeft 1 str
 
 
-extractListAnnotation :
-    List ExpressionDetails
-    -> List Annotation.TypeAnnotation
-    -> Dict String Annotation.TypeAnnotation
-    ->
-        Result
-            (List InferenceError)
-            { types : List Annotation.TypeAnnotation
-            , inferences : Dict String Annotation.TypeAnnotation
-            }
-extractListAnnotation expressions annotations inferences =
-    case expressions of
-        [] ->
-            Ok
-                { types = List.reverse annotations
-                , inferences = inferences
-                }
-
-        top :: remain ->
-            case top.annotation of
-                Ok ann ->
-                    extractListAnnotation remain
-                        (ann.type_ :: annotations)
-                        (mergeInferences inferences ann.inferences)
-
-                Err err ->
-                    Err err
-
-
 
 --
 --autoReduce : Int -> Expression -> Expression
@@ -1476,14 +1486,43 @@ applyType annotation args =
         Err err ->
             Err err
 
-        Ok topAnnotation ->
-            case extractListAnnotation args [] topAnnotation.inferences of
-                Ok extracted ->
+        Ok fnAnnotation ->
+            case mergeArgInferences args [] fnAnnotation.inferences of
+                Ok mergedArgs ->
                     applyTypeHelper
-                        topAnnotation.aliases
-                        extracted.inferences
-                        topAnnotation.type_
-                        extracted.types
+                        fnAnnotation.aliases
+                        mergedArgs.inferences
+                        fnAnnotation.type_
+                        mergedArgs.types
+
+                Err err ->
+                    Err err
+
+
+mergeArgInferences :
+    List ExpressionDetails
+    -> List Annotation.TypeAnnotation
+    -> Dict String Annotation.TypeAnnotation
+    ->
+        Result
+            (List InferenceError)
+            { types : List Annotation.TypeAnnotation
+            , inferences : Dict String Annotation.TypeAnnotation
+            }
+mergeArgInferences expressions annotations inferences =
+    case expressions of
+        [] ->
+            Ok
+                { types = List.reverse annotations
+                , inferences = inferences
+                }
+
+        top :: remain ->
+            case top.annotation of
+                Ok ann ->
+                    mergeArgInferences remain
+                        (ann.type_ :: annotations)
+                        (mergeInferences inferences ann.inferences)
 
                 Err err ->
                     Err err
