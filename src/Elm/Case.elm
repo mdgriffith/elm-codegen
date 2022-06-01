@@ -28,6 +28,7 @@ import Elm.Syntax.Node as Node
 import Elm.Syntax.Pattern as Pattern
 import Elm.Syntax.TypeAnnotation as Annotation
 import Internal.Compiler as Compiler
+import Internal.Debug as Debug
 
 
 captureCase :
@@ -46,16 +47,32 @@ captureCase mainExpression index branches =
     let
         ( branchIndex, mainExpressionDetails ) =
             Compiler.toExpressionDetails index mainExpression
+
+        caseExp =
+            List.foldl
+                captureCaseHelper
+                { index = branchIndex
+                , cases = []
+                , imports = []
+                , annotation = Nothing
+                }
+                branches
     in
     ( mainExpressionDetails
-    , List.foldl
-        captureCaseHelper
-        { index = branchIndex
-        , cases = []
-        , imports = []
-        , annotation = Nothing
-        }
-        branches
+    , { caseExp
+        | annotation =
+            case caseExp.annotation of
+                Just (Ok inference) ->
+                    case mainExpressionDetails.annotation of
+                        Err err ->
+                            Just (Err err)
+
+                        Ok mainAnn ->
+                            Just (Ok (inference |> Compiler.importInferences mainAnn))
+
+                _ ->
+                    caseExp.annotation
+      }
     )
 
 
@@ -159,7 +176,11 @@ maybe mainExpression branches =
                         [ Branch
                             (\branchIndex ->
                                 ( branchIndex
-                                , Pattern.NamedPattern { moduleName = [], name = "Nothing" } []
+                                , Pattern.NamedPattern
+                                    { moduleName = []
+                                    , name = "Nothing"
+                                    }
+                                    []
                                 , branches.nothing
                                 )
                             )
@@ -170,7 +191,11 @@ maybe mainExpression branches =
                                         Compiler.var branchIndex "just"
                                 in
                                 ( justIndex
-                                , Pattern.NamedPattern { moduleName = [], name = "Just" } [ Compiler.nodify (Pattern.VarPattern justName) ]
+                                , Pattern.NamedPattern
+                                    { moduleName = []
+                                    , name = "Just"
+                                    }
+                                    [ Compiler.nodify (Pattern.VarPattern justName) ]
                                 , branches.just justExp
                                 )
                             )
@@ -512,14 +537,18 @@ Generates
 -}
 custom :
     Expression
+    -> Type.Annotation
     -> List Branch
     -> Expression
-custom mainExpression branches =
+custom mainExpression annotation branches =
     Compiler.Expression <|
         \index ->
             let
+                myMain =
+                    mainExpression |> Elm.withType annotation
+
                 ( expr, gathered ) =
-                    captureCase mainExpression
+                    captureCase myMain
                         (Compiler.dive index)
                         branches
             in

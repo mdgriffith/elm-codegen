@@ -307,72 +307,75 @@ block2Case thisModule union =
                     "tags"
                     (\express tagRecord ->
                         Gen.Elm.Case.custom express
+                            (unionToAnnotation thisModule union)
                             (List.filterMap
-                                (\( tagname, subtypes ) ->
-                                    let
-                                        moduleName =
-                                            Elm.list (List.map Elm.string thisModule)
-
-                                        tagString =
-                                            Elm.string tagname
-                                    in
-                                    case subtypes of
-                                        [] ->
-                                            Gen.Elm.Case.call_.branch0
-                                                moduleName
-                                                tagString
-                                                (Elm.get tagname tagRecord)
-                                                |> Just
-
-                                        [ _ ] ->
-                                            Gen.Elm.Case.call_.branch1
-                                                moduleName
-                                                tagString
-                                                (Elm.get tagname tagRecord)
-                                                |> Just
-
-                                        [ _, _ ] ->
-                                            Gen.Elm.Case.call_.branch2
-                                                moduleName
-                                                tagString
-                                                (Elm.get tagname tagRecord)
-                                                |> Just
-
-                                        [ _, _, _ ] ->
-                                            Gen.Elm.Case.call_.branch3
-                                                moduleName
-                                                tagString
-                                                (Elm.get tagname tagRecord)
-                                                |> Just
-
-                                        [ _, _, _, _ ] ->
-                                            Gen.Elm.Case.call_.branch4
-                                                moduleName
-                                                tagString
-                                                (Elm.get tagname tagRecord)
-                                                |> Just
-
-                                        [ _, _, _, _, _ ] ->
-                                            Gen.Elm.Case.call_.branch5
-                                                moduleName
-                                                tagString
-                                                (Elm.get tagname tagRecord)
-                                                |> Just
-
-                                        [ _, _, _, _, _, _ ] ->
-                                            Gen.Elm.Case.call_.branch6
-                                                moduleName
-                                                tagString
-                                                (Elm.get tagname tagRecord)
-                                                |> Just
-
-                                        _ ->
-                                            Nothing
-                                )
+                                (toBranch thisModule tagRecord)
                                 union.tags
                             )
                     )
                 )
+
+
+toBranch thisModule tagRecord ( tagname, subtypes ) =
+    let
+        moduleName =
+            Elm.list (List.map Elm.string thisModule)
+
+        tagString =
+            Elm.string tagname
+    in
+    case subtypes of
+        [] ->
+            Gen.Elm.Case.call_.branch0
+                moduleName
+                tagString
+                (Elm.get tagname tagRecord)
+                |> Just
+
+        [ _ ] ->
+            Gen.Elm.Case.call_.branch1
+                moduleName
+                tagString
+                (Elm.get tagname tagRecord)
+                |> Just
+
+        [ _, _ ] ->
+            Gen.Elm.Case.call_.branch2
+                moduleName
+                tagString
+                (Elm.get tagname tagRecord)
+                |> Just
+
+        [ _, _, _ ] ->
+            Gen.Elm.Case.call_.branch3
+                moduleName
+                tagString
+                (Elm.get tagname tagRecord)
+                |> Just
+
+        [ _, _, _, _ ] ->
+            Gen.Elm.Case.call_.branch4
+                moduleName
+                tagString
+                (Elm.get tagname tagRecord)
+                |> Just
+
+        [ _, _, _, _, _ ] ->
+            Gen.Elm.Case.call_.branch5
+                moduleName
+                tagString
+                (Elm.get tagname tagRecord)
+                |> Just
+
+        [ _, _, _, _, _, _ ] ->
+            Gen.Elm.Case.call_.branch6
+                moduleName
+                tagString
+                (Elm.get tagname tagRecord)
+                |> Just
+
+        _ ->
+            Nothing
 
 
 block2Maker : List String -> Elm.Docs.Block -> Maybe Elm.Expression
@@ -1196,6 +1199,13 @@ chompLambdas thisModule exps tipe =
             GenType.function
                 (List.reverse exps)
                 (typeToExpression thisModule tipe)
+
+
+unionToAnnotation : List String -> Elm.Docs.Union -> Elm.Expression
+unionToAnnotation thisModule union =
+    GenType.namedWith thisModule
+        union.name
+        (List.map GenType.var union.args)
 
 
 typeToExpression : List String -> Elm.Type.Type -> Elm.Expression

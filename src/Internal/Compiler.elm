@@ -60,6 +60,14 @@ type alias Inference =
     }
 
 
+importInferences : Inference -> Inference -> Inference
+importInferences one two =
+    { type_ = two.type_
+    , inferences = mergeInferences one.inferences two.inferences
+    , aliases = mergeAliases one.aliases two.aliases
+    }
+
+
 type alias VariableCache =
     Dict.Dict String Annotation.TypeAnnotation
 
@@ -544,10 +552,11 @@ getInnerInference : Index -> Annotation -> Inference
 getInnerInference index (Annotation details) =
     { type_ =
         details.annotation
+            -- running protectAnnotation will cause the typechecking to fail :/
+            -- So, there's a bug to debug
+            |> protectAnnotation index
 
-    -- running protectAnnotation will cause the typechecking to fail :/
-    -- So, there's a bug to debug
-    --protectAnnotation index details.annotation
+    --details.annotation
     , inferences = Dict.empty
     , aliases = details.aliases
     }
@@ -1647,6 +1656,11 @@ makeFunctionReversedHelper last reversedArgs =
                     (Node.Node Range.emptyRange last)
                 )
                 remain
+
+
+reduce : Inference -> Inference
+reduce inf =
+    inf
 
 
 unify : List ExpressionDetails -> Result (List InferenceError) Inference
