@@ -507,15 +507,22 @@ value details =
     Compiler.Expression <|
         \index ->
             { expression =
+                -- This *must* be an un-protected name, where we only use
+                -- literally what the dev gives us, because we are trying
+                -- to refer to something that already exists.
                 Exp.FunctionOrValue details.importFrom
                     (Compiler.sanitize details.name)
             , annotation =
                 case details.annotation of
                     Nothing ->
+                        let
+                            typename =
+                                Compiler.protectTypeName details.name index
+                        in
                         Ok
                             { type_ =
                                 Annotation.GenericType
-                                    (Compiler.protectTypeName details.name index)
+                                    typename
                             , inferences = Dict.empty
                             , aliases = Compiler.emptyAliases
                             }
@@ -540,15 +547,6 @@ value details =
                             _ ->
                                 details.importFrom :: Compiler.getAnnotationImports ann
             }
-
-
-valueWithHelper : List String -> String -> Elm.Annotation.Annotation -> Expression
-valueWithHelper mod name ann =
-    value
-        { importFrom = mod
-        , name = name
-        , annotation = Just ann
-        }
 
 
 {-| Sometimes you may need to add a manual type annotation.
@@ -1448,7 +1446,10 @@ getField selector fields =
                         getField selector remain
 
 
-verifyFields : List ( String, Compiler.Inference ) -> List (Node.Node Annotation.RecordField) -> Maybe Compiler.InferenceError
+verifyFields :
+    List ( String, Compiler.Inference )
+    -> List (Node.Node Annotation.RecordField)
+    -> Maybe Compiler.InferenceError
 verifyFields updatedFields existingFields =
     if verifyFieldsHelper existingFields updatedFields then
         Nothing
@@ -1675,13 +1676,6 @@ apply fnExp argExpressions =
 
                 args =
                     Compiler.thread nextIndex argExpressions
-
-                protectedAnnotation =
-                    fnDetails.annotation
-
-                -- Compiler.protectInference annotationIndex
-                --     (Debug.log "    -> INF TO PROTECT" fnDetails.annotation)
-                --     |> Debug.log "  -> PROTECTED"
             in
             { expression =
                 -- Disabling autopipe for now.
@@ -1694,7 +1688,7 @@ apply fnExp argExpressions =
                         )
                     )
             , annotation =
-                Compiler.applyType protectedAnnotation args
+                Compiler.applyType fnDetails.annotation args
 
             -- BUGBUG -- It feels like this is the right place for variable protection, but maybe not?
             -- |> Compiler.protectInference annotationIndex
