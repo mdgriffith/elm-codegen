@@ -346,10 +346,15 @@ Generates
             Just just ->
                 "Actually, it's " ++ just
 
-custom: Elm.Expression -> List Elm.Case.Branch -> Elm.Expression
+custom: 
+    Elm.Expression
+    -> Elm.Annotation.Annotation
+    -> List Elm.Case.Branch
+    -> Elm.Expression
 -}
-custom : Elm.Expression -> List Elm.Expression -> Elm.Expression
-custom arg arg0 =
+custom :
+    Elm.Expression -> Elm.Expression -> List Elm.Expression -> Elm.Expression
+custom arg arg0 arg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -358,6 +363,7 @@ custom arg arg0 =
                 Just
                     (Type.function
                         [ Type.namedWith [ "Elm" ] "Expression" []
+                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
                         , Type.list
                             (Type.namedWith [ "Elm", "Case" ] "Branch" [])
                         ]
@@ -365,7 +371,7 @@ custom arg arg0 =
                     )
             }
         )
-        [ arg, Elm.list arg0 ]
+        [ arg, arg0, Elm.list arg1 ]
 
 
 {-| A catchall branch in case you want the case to be nonexhaustive.
@@ -815,7 +821,8 @@ call_ :
     , list : Elm.Expression -> Elm.Expression -> Elm.Expression
     , tuple : Elm.Expression -> Elm.Expression -> Elm.Expression
     , triple : Elm.Expression -> Elm.Expression -> Elm.Expression
-    , custom : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , custom :
+        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
     , otherwise : Elm.Expression -> Elm.Expression
     , branch0 :
         Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
@@ -1000,7 +1007,7 @@ call_ =
                 )
                 [ arg, arg4 ]
     , custom =
-        \arg arg5 ->
+        \arg arg5 arg6 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -1009,6 +1016,10 @@ call_ =
                         Just
                             (Type.function
                                 [ Type.namedWith [ "Elm" ] "Expression" []
+                                , Type.namedWith
+                                    [ "Elm", "Annotation" ]
+                                    "Annotation"
+                                    []
                                 , Type.list
                                     (Type.namedWith
                                         [ "Elm", "Case" ]
@@ -1020,7 +1031,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg5 ]
+                [ arg, arg5, arg6 ]
     , otherwise =
         \arg ->
             Elm.apply
@@ -1384,6 +1395,7 @@ values_ =
                 Just
                     (Type.function
                         [ Type.namedWith [ "Elm" ] "Expression" []
+                        , Type.namedWith [ "Elm", "Annotation" ] "Annotation" []
                         , Type.list
                             (Type.namedWith [ "Elm", "Case" ] "Branch" [])
                         ]

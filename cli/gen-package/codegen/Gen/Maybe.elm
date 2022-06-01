@@ -390,7 +390,7 @@ make_ =
 caseOf_ :
     { maybe :
         Elm.Expression
-        -> { tags
+        -> { tags_0
             | just : Elm.Expression -> Elm.Expression
             , nothing : Elm.Expression
         }

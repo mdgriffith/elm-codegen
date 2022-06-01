@@ -888,23 +888,15 @@ make_ =
 caseOf_ :
     { order :
         Elm.Expression
-        -> { tags
+        -> { tags_0
             | lt : Elm.Expression
             , eq : Elm.Expression
             , gt : Elm.Expression
-            , true : Elm.Expression
-            , false : Elm.Expression
         }
         -> Elm.Expression
     , bool :
         Elm.Expression
-        -> { tags
-            | lt : Elm.Expression
-            , eq : Elm.Expression
-            , gt : Elm.Expression
-            , true : Elm.Expression
-            , false : Elm.Expression
-        }
+        -> { tags_1_0 | true : Elm.Expression, false : Elm.Expression }
         -> Elm.Expression
     }
 caseOf_ =

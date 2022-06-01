@@ -599,7 +599,7 @@ make_ =
 caseOf_ :
     { result :
         Elm.Expression
-        -> { tags
+        -> { tags_0
             | ok : Elm.Expression -> Elm.Expression
             , err : Elm.Expression -> Elm.Expression
         }

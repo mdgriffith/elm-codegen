@@ -2119,7 +2119,7 @@ value arg =
 Results in the following lambda
 
     myFunction val =
-        ((MyType val) -> val) val
+        (\(MyType val) -> val) val
 
 unwrap: List String -> String -> Elm.Expression -> Elm.Expression
 -}
@@ -2211,14 +2211,14 @@ make_ :
     }
 make_ =
     { file =
-        \arg ->
+        \file_args ->
             Elm.withAlias
                 [ "Elm" ]
                 "File"
                 []
                 (Elm.record
-                    [ Elm.field "path" arg.path
-                    , Elm.field "contents" arg.contents
+                    [ Elm.field "path" file_args.path
+                    , Elm.field "contents" file_args.contents
                     ]
                 )
     }
