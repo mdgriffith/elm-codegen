@@ -1,4 +1,4 @@
-module Internal.Debug exposing (everything, facts)
+module Internal.Debug exposing (annotationFormatted, everything, everythingFormatted, facts)
 
 import Dict
 import Internal.Compiler as Compiler
@@ -41,6 +41,73 @@ facts (Compiler.Expression exp) =
                 |> Err
 
 
+everythingFormatted :
+    (String -> String)
+    -> Compiler.Expression
+    -> List String
+everythingFormatted log exp =
+    let
+        every =
+            everything exp
+
+        _ =
+            log "    ---"
+    in
+    case every of
+        Err err ->
+            [ err ]
+
+        Ok e ->
+            List.concatMap
+                identity
+                [ [ "Signature"
+                  , "  " ++ e.signature
+                  ]
+                , List.map
+                    (\( key, val ) ->
+                        "  " ++ key ++ ": " ++ val
+                    )
+                    e.facts
+                ]
+                |> List.reverse
+                |> List.map log
+
+
+annotationFormatted :
+    (String -> String)
+    ->
+        Result
+            (List Compiler.InferenceError)
+            Compiler.Inference
+    -> List String
+annotationFormatted log ann =
+    let
+        every =
+            annotation ann
+
+        _ =
+            log "    ---"
+    in
+    case every of
+        Err err ->
+            [ err ]
+
+        Ok e ->
+            List.concatMap
+                identity
+                [ [ "Signature"
+                  , "  " ++ e.signature
+                  ]
+                , List.map
+                    (\( key, val ) ->
+                        "  " ++ key ++ ": " ++ val
+                    )
+                    e.facts
+                ]
+                |> List.reverse
+                |> List.map log
+
+
 {-| -}
 everything :
     Compiler.Expression
@@ -56,7 +123,23 @@ everything (Compiler.Expression exp) =
         expresh =
             exp Compiler.startIndex
     in
-    case expresh.annotation of
+    annotation expresh.annotation
+
+
+{-| -}
+annotation :
+    Result
+        (List Compiler.InferenceError)
+        Compiler.Inference
+    ->
+        Result
+            String
+            { facts : List ( String, String )
+            , signature : String
+            , aliases : List ( String, String )
+            }
+annotation ann =
+    case ann of
         Ok sig ->
             let
                 allFacts =
