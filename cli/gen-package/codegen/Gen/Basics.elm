@@ -905,17 +905,17 @@ caseOf_ =
             Elm.Case.custom
                 expresssion
                 (Type.namedWith [ "Basics" ] "Order" [])
-                [ Elm.Case.branch0 [ "Basics" ] "LT" tags.lt
-                , Elm.Case.branch0 [ "Basics" ] "EQ" tags.eq
-                , Elm.Case.branch0 [ "Basics" ] "GT" tags.gt
+                [ Elm.Case.branch0 "LT" tags.lt
+                , Elm.Case.branch0 "EQ" tags.eq
+                , Elm.Case.branch0 "GT" tags.gt
                 ]
     , bool =
         \expresssion tags ->
             Elm.Case.custom
                 expresssion
                 (Type.namedWith [ "Basics" ] "Bool" [])
-                [ Elm.Case.branch0 [ "Basics" ] "True" tags.true
-                , Elm.Case.branch0 [ "Basics" ] "False" tags.false
+                [ Elm.Case.branch0 "True" tags.true
+                , Elm.Case.branch0 "False" tags.false
                 ]
     }
 

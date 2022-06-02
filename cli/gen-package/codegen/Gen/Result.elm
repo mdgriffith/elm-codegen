@@ -615,8 +615,8 @@ caseOf_ =
                     "Result"
                     [ Type.var "error", Type.var "value" ]
                 )
-                [ Elm.Case.branch1 [ "Result" ] "Ok" tags.ok
-                , Elm.Case.branch1 [ "Result" ] "Err" tags.err
+                [ Elm.Case.branch1 "Ok" ( "value", Type.var "value" ) tags.ok
+                , Elm.Case.branch1 "Err" ( "error", Type.var "error" ) tags.err
                 ]
     }
 
