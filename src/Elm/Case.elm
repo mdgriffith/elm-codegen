@@ -33,6 +33,7 @@ import Internal.Debug as Debug
 
 captureCase :
     Compiler.Expression
+    -> List String
     -> Compiler.Index
     -> List Branch
     ->
@@ -43,14 +44,16 @@ captureCase :
           , annotation : Maybe (Result (List Compiler.InferenceError) Compiler.Inference)
           }
         )
-captureCase mainExpression index branches =
+captureCase mainExpression mainExpressionTypeModule index branches =
     let
+        -- mainExpressionTypeModule is the module name of the type of the main expression
+        -- We use this to add the module name to each branch so the user doesn't have to specify that manually
         ( branchIndex, mainExpressionDetails ) =
             Compiler.toExpressionDetails index mainExpression
 
         caseExp =
             List.foldl
-                captureCaseHelper
+                (captureCaseHelper mainExpressionTypeModule)
                 { index = branchIndex
                 , cases = []
                 , imports = []
@@ -77,7 +80,8 @@ captureCase mainExpression index branches =
 
 
 captureCaseHelper :
-    Branch
+    List String
+    -> Branch
     ->
         { index : Compiler.Index
         , cases : List ( Node.Node Pattern.Pattern, Node.Node Exp.Expression )
@@ -90,10 +94,27 @@ captureCaseHelper :
         , imports : List Compiler.Module
         , annotation : Maybe (Result (List Compiler.InferenceError) Compiler.Inference)
         }
-captureCaseHelper (Branch toBranch) accum =
+captureCaseHelper mainCaseExpressionModule (Branch toBranch) accum =
     let
-        ( branchIndex, pattern, caseExpression ) =
+        ( branchIndex, originalPattern, caseExpression ) =
             toBranch accum.index
+
+        pattern =
+            case mainCaseExpressionModule of
+                [] ->
+                    originalPattern
+
+                _ ->
+                    case originalPattern of
+                        Pattern.NamedPattern named vars ->
+                            Pattern.NamedPattern
+                                { moduleName = mainCaseExpressionModule
+                                , name = named.name
+                                }
+                                vars
+
+                        _ ->
+                            originalPattern
 
         ( newIndex, exp ) =
             Compiler.toExpressionDetails branchIndex caseExpression
@@ -172,6 +193,7 @@ maybe mainExpression branches =
             let
                 ( expr, gathered ) =
                     captureCase mainExpression
+                        []
                         index
                         [ Branch
                             (\branchIndex ->
@@ -247,6 +269,7 @@ tuple mainExpression branches =
             let
                 ( expr, gathered ) =
                     captureCase mainExpression
+                        []
                         (Compiler.dive index)
                         [ Branch
                             (\branchIndex ->
@@ -312,6 +335,7 @@ triple mainExpression branches =
             let
                 ( expr, gathered ) =
                     captureCase mainExpression
+                        []
                         index
                         [ Branch
                             (\branchIndex ->
@@ -389,6 +413,7 @@ result mainExpression branches =
             let
                 ( expr, gathered ) =
                     captureCase mainExpression
+                        []
                         (Compiler.dive index)
                         [ Branch
                             (\branchIndex ->
@@ -467,6 +492,7 @@ list mainExpression branches =
             let
                 ( expr, gathered ) =
                     captureCase mainExpression
+                        []
                         (Compiler.dive index)
                         [ Branch
                             (\branchIndex ->
@@ -549,6 +575,7 @@ custom mainExpression annotation branches =
 
                 ( expr, gathered ) =
                     captureCase myMain
+                        (Compiler.getTypeModule annotation)
                         (Compiler.dive index)
                         branches
             in
@@ -574,12 +601,12 @@ type Branch
 
 
 {-| -}
-branch0 : List String -> String -> Expression -> Branch
-branch0 mod name exp =
+branch0 : String -> Expression -> Branch
+branch0 name exp =
     Branch
         (\index ->
             ( index
-            , Pattern.NamedPattern { moduleName = mod, name = name } []
+            , Pattern.NamedPattern { moduleName = [], name = name } []
             , exp
             )
         )
@@ -603,8 +630,8 @@ otherwise toExp =
 
 
 {-| -}
-branch1 : List String -> String -> (Expression -> Expression) -> Branch
-branch1 moduleName name toExp =
+branch1 : String -> (Expression -> Expression) -> Branch
+branch1 name toExp =
     Branch
         (\index ->
             let
@@ -612,7 +639,7 @@ branch1 moduleName name toExp =
                     Compiler.var index "one"
             in
             ( oneIndex
-            , Pattern.NamedPattern { moduleName = moduleName, name = name }
+            , Pattern.NamedPattern { moduleName = [], name = name }
                 [ Compiler.nodify (Pattern.VarPattern oneName) ]
             , toExp oneExp
             )
@@ -620,8 +647,8 @@ branch1 moduleName name toExp =
 
 
 {-| -}
-branch2 : List String -> String -> (Expression -> Expression -> Expression) -> Branch
-branch2 moduleName name toExp =
+branch2 : String -> (Expression -> Expression -> Expression) -> Branch
+branch2 name toExp =
     Branch
         (\index ->
             let
@@ -642,8 +669,8 @@ branch2 moduleName name toExp =
 
 
 {-| -}
-branch3 : List String -> String -> (Expression -> Expression -> Expression -> Expression) -> Branch
-branch3 moduleName name toExp =
+branch3 : String -> (Expression -> Expression -> Expression -> Expression) -> Branch
+branch3 name toExp =
     Branch
         (\index ->
             let
@@ -657,7 +684,7 @@ branch3 moduleName name toExp =
                     Compiler.var twoIndex "three"
             in
             ( threeIndex
-            , Pattern.NamedPattern { moduleName = moduleName, name = name }
+            , Pattern.NamedPattern { moduleName = [], name = name }
                 [ Compiler.nodify (Pattern.VarPattern oneName)
                 , Compiler.nodify (Pattern.VarPattern twoName)
                 , Compiler.nodify (Pattern.VarPattern threeName)
@@ -668,8 +695,8 @@ branch3 moduleName name toExp =
 
 
 {-| -}
-branch4 : List String -> String -> (Expression -> Expression -> Expression -> Expression -> Expression) -> Branch
-branch4 moduleName name toExp =
+branch4 : String -> (Expression -> Expression -> Expression -> Expression -> Expression) -> Branch
+branch4 name toExp =
     Branch
         (\index ->
             let
@@ -686,7 +713,7 @@ branch4 moduleName name toExp =
                     Compiler.var threeIndex "four"
             in
             ( fourIndex
-            , Pattern.NamedPattern { moduleName = moduleName, name = name }
+            , Pattern.NamedPattern { moduleName = [], name = name }
                 [ Compiler.nodify (Pattern.VarPattern oneName)
                 , Compiler.nodify (Pattern.VarPattern twoName)
                 , Compiler.nodify (Pattern.VarPattern threeName)
@@ -699,8 +726,7 @@ branch4 moduleName name toExp =
 
 {-| -}
 branch5 :
-    List String
-    -> String
+    String
     ->
         (Expression
          -> Expression
@@ -710,7 +736,7 @@ branch5 :
          -> Expression
         )
     -> Branch
-branch5 moduleName name toExp =
+branch5 name toExp =
     Branch
         (\index ->
             let
@@ -730,7 +756,7 @@ branch5 moduleName name toExp =
                     Compiler.var fourIndex "five"
             in
             ( fiveIndex
-            , Pattern.NamedPattern { moduleName = moduleName, name = name }
+            , Pattern.NamedPattern { moduleName = [], name = name }
                 [ Compiler.nodify (Pattern.VarPattern oneName)
                 , Compiler.nodify (Pattern.VarPattern twoName)
                 , Compiler.nodify (Pattern.VarPattern threeName)
@@ -744,8 +770,7 @@ branch5 moduleName name toExp =
 
 {-| -}
 branch6 :
-    List String
-    -> String
+    String
     ->
         (Expression
          -> Expression
@@ -756,7 +781,7 @@ branch6 :
          -> Expression
         )
     -> Branch
-branch6 moduleName name toExp =
+branch6 name toExp =
     Branch
         (\index ->
             let
@@ -779,7 +804,7 @@ branch6 moduleName name toExp =
                     Compiler.var fiveIndex "six"
             in
             ( sixIndex
-            , Pattern.NamedPattern { moduleName = moduleName, name = name }
+            , Pattern.NamedPattern { moduleName = [], name = name }
                 [ Compiler.nodify (Pattern.VarPattern oneName)
                 , Compiler.nodify (Pattern.VarPattern twoName)
                 , Compiler.nodify (Pattern.VarPattern threeName)
@@ -793,8 +818,8 @@ branch6 moduleName name toExp =
 
 
 {-| -}
-branchWith : List String -> String -> Int -> (List Expression -> Expression) -> Branch
-branchWith moduleName name arity toExp =
+branchWith : String -> Int -> (List Expression -> Expression) -> Branch
+branchWith name arity toExp =
     Branch
         (\index ->
             let
@@ -813,7 +838,7 @@ branchWith moduleName name arity toExp =
                         |> List.unzip
             in
             ( Compiler.next index
-            , Pattern.NamedPattern { moduleName = moduleName, name = name } patterns
+            , Pattern.NamedPattern { moduleName = [], name = name } patterns
             , toExp args
             )
         )
