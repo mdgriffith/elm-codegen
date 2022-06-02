@@ -1,7 +1,7 @@
-module Gen.Elm exposing (alias, and, annotation_, append, apply, bool, call_, char, comment, cons, customType, declaration, declarationImports, declarationToString, divide, docs, equal, expose, exposeWith, expressionImports, field, file, fileWith, float, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, get, gt, gte, hex, ifThen, int, intDivide, just, keep, letIn, list, lt, lte, make_, maybe, minus, moduleName_, multiply, notEqual, nothing, or, parse, plus, portIncoming, portOutgoing, power, query, record, signature, skip, slash, string, toString, triple, tuple, unit, unsafe, unwrap, unwrapper, updateRecord, value, values_, variant, variantWith, withDocumentation, withType)
+module Gen.Elm exposing (alias, and, annotation_, append, apply, bool, call_, char, comment, cons, customType, declaration, divide, docs, equal, expose, exposeWith, field, file, fileWith, float, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, get, gt, gte, hex, ifThen, int, intDivide, just, keep, letIn, list, lt, lte, make_, maybe, minus, moduleName_, multiply, notEqual, nothing, or, parse, plus, portIncoming, portOutgoing, power, query, record, skip, slash, string, triple, tuple, unit, unsafe, unwrap, unwrapper, updateRecord, value, values_, variant, variantWith, withDocumentation, withType)
 
 {-| 
-@docs moduleName_, file, bool, int, float, char, string, hex, unit, maybe, just, nothing, list, tuple, triple, withType, record, field, get, updateRecord, letIn, ifThen, comment, declaration, withDocumentation, expose, exposeWith, fileWith, docs, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, customType, variant, variantWith, alias, equal, notEqual, append, cons, plus, minus, multiply, divide, intDivide, power, lt, gt, lte, gte, and, or, keep, skip, slash, query, portIncoming, portOutgoing, parse, unsafe, toString, signature, expressionImports, declarationToString, declarationImports, apply, value, unwrap, unwrapper, annotation_, make_, call_, values_
+@docs moduleName_, file, bool, int, float, char, string, hex, unit, maybe, just, nothing, list, tuple, triple, withType, record, field, get, updateRecord, letIn, ifThen, comment, declaration, withDocumentation, expose, exposeWith, fileWith, docs, fn, fn2, fn3, fn4, fn5, fn6, function, functionReduced, customType, variant, variantWith, alias, equal, notEqual, append, cons, plus, minus, multiply, divide, intDivide, power, lt, gt, lte, gte, and, or, keep, skip, slash, query, portIncoming, portOutgoing, parse, unsafe, apply, value, unwrap, unwrapper, annotation_, make_, call_, values_
 -}
 
 
@@ -1911,96 +1911,6 @@ unsafe arg =
         [ Elm.string arg ]
 
 
-{-| toString: Elm.Expression -> String -}
-toString : Elm.Expression -> Elm.Expression
-toString arg =
-    Elm.apply
-        (Elm.value
-            { importFrom = [ "Elm" ]
-            , name = "toString"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                        Type.string
-                    )
-            }
-        )
-        [ arg ]
-
-
-{-| signature: Elm.Expression -> String -}
-signature : Elm.Expression -> Elm.Expression
-signature arg =
-    Elm.apply
-        (Elm.value
-            { importFrom = [ "Elm" ]
-            , name = "signature"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                        Type.string
-                    )
-            }
-        )
-        [ arg ]
-
-
-{-| expressionImports: Elm.Expression -> String -}
-expressionImports : Elm.Expression -> Elm.Expression
-expressionImports arg =
-    Elm.apply
-        (Elm.value
-            { importFrom = [ "Elm" ]
-            , name = "expressionImports"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                        Type.string
-                    )
-            }
-        )
-        [ arg ]
-
-
-{-| declarationToString: Elm.Declaration -> String -}
-declarationToString : Elm.Expression -> Elm.Expression
-declarationToString arg =
-    Elm.apply
-        (Elm.value
-            { importFrom = [ "Elm" ]
-            , name = "declarationToString"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Declaration" [] ]
-                        Type.string
-                    )
-            }
-        )
-        [ arg ]
-
-
-{-| declarationImports: Elm.Declaration -> String -}
-declarationImports : Elm.Expression -> Elm.Expression
-declarationImports arg =
-    Elm.apply
-        (Elm.value
-            { importFrom = [ "Elm" ]
-            , name = "declarationImports"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Declaration" [] ]
-                        Type.string
-                    )
-            }
-        )
-        [ arg ]
-
-
 {-| apply: Elm.Expression -> List Elm.Expression -> Elm.Expression -}
 apply : Elm.Expression -> List Elm.Expression -> Elm.Expression
 apply arg arg0 =
@@ -2279,11 +2189,6 @@ call_ :
     , portOutgoing : Elm.Expression -> Elm.Expression -> Elm.Expression
     , parse : Elm.Expression -> Elm.Expression
     , unsafe : Elm.Expression -> Elm.Expression
-    , toString : Elm.Expression -> Elm.Expression
-    , signature : Elm.Expression -> Elm.Expression
-    , expressionImports : Elm.Expression -> Elm.Expression
-    , declarationToString : Elm.Expression -> Elm.Expression
-    , declarationImports : Elm.Expression -> Elm.Expression
     , apply : Elm.Expression -> Elm.Expression -> Elm.Expression
     , value : Elm.Expression -> Elm.Expression
     , unwrap :
@@ -3465,83 +3370,8 @@ call_ =
                     }
                 )
                 [ arg ]
-    , toString =
-        \arg ->
-            Elm.apply
-                (Elm.value
-                    { importFrom = [ "Elm" ]
-                    , name = "toString"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                                Type.string
-                            )
-                    }
-                )
-                [ arg ]
-    , signature =
-        \arg ->
-            Elm.apply
-                (Elm.value
-                    { importFrom = [ "Elm" ]
-                    , name = "signature"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                                Type.string
-                            )
-                    }
-                )
-                [ arg ]
-    , expressionImports =
-        \arg ->
-            Elm.apply
-                (Elm.value
-                    { importFrom = [ "Elm" ]
-                    , name = "expressionImports"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                                Type.string
-                            )
-                    }
-                )
-                [ arg ]
-    , declarationToString =
-        \arg ->
-            Elm.apply
-                (Elm.value
-                    { importFrom = [ "Elm" ]
-                    , name = "declarationToString"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Declaration" [] ]
-                                Type.string
-                            )
-                    }
-                )
-                [ arg ]
-    , declarationImports =
-        \arg ->
-            Elm.apply
-                (Elm.value
-                    { importFrom = [ "Elm" ]
-                    , name = "declarationImports"
-                    , annotation =
-                        Just
-                            (Type.function
-                                [ Type.namedWith [ "Elm" ] "Declaration" [] ]
-                                Type.string
-                            )
-                    }
-                )
-                [ arg ]
     , apply =
-        \arg arg67 ->
+        \arg arg62 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -3557,7 +3387,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg67 ]
+                [ arg, arg62 ]
     , value =
         \arg ->
             Elm.apply
@@ -3586,7 +3416,7 @@ call_ =
                 )
                 [ arg ]
     , unwrap =
-        \arg arg69 arg70 ->
+        \arg arg64 arg65 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -3602,9 +3432,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg69, arg70 ]
+                [ arg, arg64, arg65 ]
     , unwrapper =
-        \arg arg70 ->
+        \arg arg65 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm" ]
@@ -3617,7 +3447,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg70 ]
+                [ arg, arg65 ]
     }
 
 
@@ -3686,11 +3516,6 @@ values_ :
     , portOutgoing : Elm.Expression
     , parse : Elm.Expression
     , unsafe : Elm.Expression
-    , toString : Elm.Expression
-    , signature : Elm.Expression
-    , expressionImports : Elm.Expression
-    , declarationToString : Elm.Expression
-    , declarationImports : Elm.Expression
     , apply : Elm.Expression
     , value : Elm.Expression
     , unwrap : Elm.Expression
@@ -4607,61 +4432,6 @@ values_ =
                     (Type.function
                         [ Type.string ]
                         (Type.namedWith [ "Elm" ] "Declaration" [])
-                    )
-            }
-    , toString =
-        Elm.value
-            { importFrom = [ "Elm" ]
-            , name = "toString"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                        Type.string
-                    )
-            }
-    , signature =
-        Elm.value
-            { importFrom = [ "Elm" ]
-            , name = "signature"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                        Type.string
-                    )
-            }
-    , expressionImports =
-        Elm.value
-            { importFrom = [ "Elm" ]
-            , name = "expressionImports"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Expression" [] ]
-                        Type.string
-                    )
-            }
-    , declarationToString =
-        Elm.value
-            { importFrom = [ "Elm" ]
-            , name = "declarationToString"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Declaration" [] ]
-                        Type.string
-                    )
-            }
-    , declarationImports =
-        Elm.value
-            { importFrom = [ "Elm" ]
-            , name = "declarationImports"
-            , annotation =
-                Just
-                    (Type.function
-                        [ Type.namedWith [ "Elm" ] "Declaration" [] ]
-                        Type.string
                     )
             }
     , apply =

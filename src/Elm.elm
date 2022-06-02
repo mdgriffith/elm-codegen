@@ -23,8 +23,6 @@ module Elm exposing
     , slash, query
     , portIncoming, portOutgoing
     , parse, unsafe
-    , toString, signature, expressionImports
-    , declarationToString, declarationImports
     , apply, value
     , unwrap, unwrapper
     )
@@ -113,13 +111,6 @@ module Elm exposing
 @docs parse, unsafe
 
 
-# Rendering to string
-
-@docs toString, signature, expressionImports
-
-@docs declarationToString, declarationImports
-
-
 # Low-level
 
 @docs apply, value
@@ -155,23 +146,6 @@ type alias Expression =
 
 
 {-| -}
-expressionImports : Expression -> String
-expressionImports exp =
-    exp
-        |> Compiler.toExpressionDetails Compiler.startIndex
-        |> Tuple.second
-        |> Compiler.getImports
-        |> List.filterMap (Compiler.makeImport [])
-        |> Internal.Write.writeImports
-
-
-{-| -}
-toString : Expression -> String
-toString (Compiler.Expression exp) =
-    Internal.Write.writeExpression (exp Compiler.startIndex |> .expression)
-
-
-{-| -}
 facts : Expression -> Result String (List ( String, String ))
 facts (Compiler.Expression exp) =
     let
@@ -201,57 +175,6 @@ facts (Compiler.Expression exp) =
                 ""
                 inferenceError
                 |> Err
-
-
-{-| -}
-signature : Expression -> String
-signature (Compiler.Expression exp) =
-    let
-        expresh =
-            exp Compiler.startIndex
-    in
-    case expresh.annotation of
-        Ok sig ->
-            case Compiler.resolve sig.inferences sig.type_ of
-                Ok finalType ->
-                    Internal.Write.writeAnnotation finalType
-
-                Err errMsg ->
-                    errMsg
-
-        Err inferenceError ->
-            List.foldl
-                (\err str ->
-                    case str of
-                        "" ->
-                            Compiler.inferenceErrorToString err
-
-                        _ ->
-                            str ++ "\n\n" ++ Compiler.inferenceErrorToString err
-                )
-                "Err: "
-                inferenceError
-
-
-{-| -}
-declarationImports : Declaration -> String
-declarationImports decl =
-    case decl of
-        Compiler.Declaration _ imps _ ->
-            List.filterMap (Compiler.makeImport []) imps
-                |> Internal.Write.writeImports
-
-        Compiler.Comment _ ->
-            ""
-
-        Compiler.Block _ ->
-            ""
-
-
-{-| -}
-declarationToString : Declaration -> String
-declarationToString dec =
-    Internal.Write.writeDeclaration dec
 
 
 {-| Build a file!
