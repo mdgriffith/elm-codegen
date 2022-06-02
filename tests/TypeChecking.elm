@@ -3,6 +3,7 @@ module TypeChecking exposing (generatedCode, suite)
 import Elm
 import Elm.Annotation as Type
 import Elm.Case
+import Elm.ToString
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
 import Internal.Compiler as Compiler
@@ -29,13 +30,17 @@ successfullyInferredType expression =
 
 renderedAs expression str =
     Expect.equal
-        (Elm.toString expression)
+        (Elm.ToString.expression expression
+            |> .body
+        )
         str
 
 
 declarationAs decl str =
     Expect.equal
-        (Elm.declarationToString decl)
+        (Elm.ToString.declaration decl
+            |> .body
+        )
         (String.trim str)
 
 
@@ -195,19 +200,14 @@ map fn optional =
     Present (fn optional)
 
 """
-        , only <|
-            test "Map function generates corrections " <|
-                \_ ->
-                    let
-                        _ =
-                            Debug.everythingFormatted (Debug.log "   COOK") myMap
-                    in
-                    -- declarationAs
-                    -- (Elm.declaration "map" myMap)
-                    Expect.equal
-                        (Elm.signature myMap)
-                        (String.trim """
-(a -> b) -> Optional a -> Optional b
+        , test "Map function generates corrections " <|
+            \_ ->
+                Expect.equal
+                    (Elm.ToString.expression myMap
+                        |> .signature
+                    )
+                    (String.trim """
+(a -> fn_result) -> Optional a -> Optional fn_result
 """)
         ]
 
@@ -230,14 +230,12 @@ myMap =
                 (Type.namedWith [] "Optional" [ Type.var "a" ])
                 [ Elm.Case.branch1
                     "Present"
+                    ( "present", Type.var "a" )
                     (\a ->
                         let
                             result =
                                 present []
                                     (Elm.apply fn [ a ])
-
-                            _ =
-                                Debug.everythingFormatted (Debug.log "   INNER") result
                         in
                         result
                     )
