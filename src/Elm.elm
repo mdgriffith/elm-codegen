@@ -4,7 +4,7 @@ module Elm exposing
     , bool, int, float, char, string, hex, unit
     , maybe, just, nothing
     , list, tuple, triple
-    , withType, withAlias
+    , withType
     , record, field, Field, get, updateRecord
     , letIn, ifThen
     , Declaration
@@ -27,7 +27,6 @@ module Elm exposing
     , declarationToString, declarationImports
     , apply, value
     , unwrap, unwrapper
-    , facts
     )
 
 {-|
@@ -45,7 +44,7 @@ module Elm exposing
 
 @docs list, tuple, triple
 
-@docs withType, withAlias
+@docs withType
 
 
 ## Records
@@ -571,56 +570,6 @@ withType ann (Compiler.Expression toExp) =
                 | annotation =
                     Compiler.unifyOn ann exp.annotation
                 , imports = exp.imports ++ Compiler.getAnnotationImports ann
-            }
-
-
-{-| -}
-withAlias :
-    List String
-    -> String
-    -> List Elm.Annotation.Annotation
-    -> Expression
-    -> Expression
-withAlias mod name vars (Compiler.Expression toExp) =
-    Compiler.Expression <|
-        \index ->
-            let
-                exp =
-                    toExp index
-            in
-            { exp
-                | annotation =
-                    case exp.annotation of
-                        Ok ann ->
-                            Ok
-                                { type_ =
-                                    Annotation.Typed
-                                        (Compiler.nodify
-                                            ( mod, Compiler.formatType name )
-                                        )
-                                        (List.map
-                                            (Compiler.getInnerAnnotation
-                                                >> Compiler.nodify
-                                            )
-                                            vars
-                                        )
-                                , inferences = Dict.empty
-                                , aliases =
-                                    Compiler.emptyAliases
-                                        |> Compiler.addAlias
-                                            mod
-                                            name
-                                            (Compiler.noImports ann.type_)
-                                }
-
-                        Err err ->
-                            Err err
-                , imports =
-                    if List.isEmpty mod then
-                        []
-
-                    else
-                        [ mod ]
             }
 
 
