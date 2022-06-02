@@ -327,49 +327,42 @@ toBranch thisModule tagRecord ( tagname, subtypes ) =
     case subtypes of
         [] ->
             Gen.Elm.Case.call_.branch0
-                moduleName
                 tagString
                 (Elm.get tagname tagRecord)
                 |> Just
 
         [ _ ] ->
             Gen.Elm.Case.call_.branch1
-                moduleName
                 tagString
                 (Elm.get tagname tagRecord)
                 |> Just
 
         [ _, _ ] ->
             Gen.Elm.Case.call_.branch2
-                moduleName
                 tagString
                 (Elm.get tagname tagRecord)
                 |> Just
 
         [ _, _, _ ] ->
             Gen.Elm.Case.call_.branch3
-                moduleName
                 tagString
                 (Elm.get tagname tagRecord)
                 |> Just
 
         [ _, _, _, _ ] ->
             Gen.Elm.Case.call_.branch4
-                moduleName
                 tagString
                 (Elm.get tagname tagRecord)
                 |> Just
 
         [ _, _, _, _, _ ] ->
             Gen.Elm.Case.call_.branch5
-                moduleName
                 tagString
                 (Elm.get tagname tagRecord)
                 |> Just
 
         [ _, _, _, _, _, _ ] ->
             Gen.Elm.Case.call_.branch6
-                moduleName
                 tagString
                 (Elm.get tagname tagRecord)
                 |> Just

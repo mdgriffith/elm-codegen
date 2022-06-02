@@ -2,9 +2,11 @@ module TypeChecking exposing (generatedCode, suite)
 
 import Elm
 import Elm.Annotation as Type
+import Elm.Case
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
 import Internal.Compiler as Compiler
+import Internal.Debug as Debug
 import Test exposing (..)
 
 
@@ -34,7 +36,7 @@ renderedAs expression str =
 declarationAs decl str =
     Expect.equal
         (Elm.declarationToString decl)
-        str
+        (String.trim str)
 
 
 suite : Test
@@ -176,4 +178,108 @@ generatedCode =
                         |> Elm.declaration "myFunc"
                     )
                     "myFunc : String -> Int -> Bool -> ( String, Int, Bool )\nmyFunc str int bool =\n    ( str, int, bool )"
+        , test "Simplified version of map generates the correct signature" <|
+            \_ ->
+                let
+                    _ =
+                        Debug.log "FACT CHECK!"
+                            (Debug.everything
+                                myMap2
+                            )
+                in
+                declarationAs
+                    (Elm.declaration "map" myMap2)
+                    """
+map : (optional -> fn_result) -> optional -> Optional fn_result
+map fn optional =
+    Present (fn optional)
+
+"""
+        , only <|
+            test "Map function generates corrections " <|
+                \_ ->
+                    let
+                        _ =
+                            Debug.everythingFormatted (Debug.log "   COOK") myMap
+                    in
+                    -- declarationAs
+                    -- (Elm.declaration "map" myMap)
+                    Expect.equal
+                        (Elm.signature myMap)
+                        (String.trim """
+(a -> b) -> Optional a -> Optional b
+""")
         ]
+
+
+myMap2 =
+    Elm.fn2
+        "fn"
+        "optional"
+        (\fn a ->
+            present [] (Elm.apply fn [ a ])
+        )
+
+
+myMap =
+    Elm.fn2
+        "fn"
+        "optional"
+        (\fn optional ->
+            Elm.Case.custom optional
+                (Type.namedWith [] "Optional" [ Type.var "a" ])
+                [ Elm.Case.branch1
+                    "Present"
+                    (\a ->
+                        let
+                            result =
+                                present []
+                                    (Elm.apply fn [ a ])
+
+                            _ =
+                                Debug.everythingFormatted (Debug.log "   INNER") result
+                        in
+                        result
+                    )
+                , Elm.Case.branch0 "Null" (null [])
+                , Elm.Case.branch0 "Absent" (absent [])
+                ]
+        )
+
+
+present : List String -> Elm.Expression -> Elm.Expression
+present optionalModuleName a =
+    let
+        val =
+            Elm.apply
+                (Elm.value
+                    { importFrom = optionalModuleName
+                    , name = "Present"
+                    , annotation =
+                        Just
+                            (Type.function [ Type.var "a2" ] (Type.namedWith optionalModuleName "Optional" [ Type.var "a2" ]))
+
+                    -- Nothing
+                    }
+                )
+                [ a ]
+    in
+    val
+
+
+null : List String -> Elm.Expression
+null optionalModuleName =
+    Elm.value
+        { importFrom = optionalModuleName
+        , name = "Null"
+        , annotation = Just (Type.namedWith optionalModuleName "Optional" [ Type.var "a" ])
+        }
+
+
+absent : List String -> Elm.Expression
+absent optionalModuleName =
+    Elm.value
+        { importFrom = []
+        , name = "Absent"
+        , annotation = Just (Type.namedWith optionalModuleName "Optional" [ Type.var "a" ])
+        }

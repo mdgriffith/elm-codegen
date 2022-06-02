@@ -610,6 +610,11 @@ caseOf_ =
         \expresssion tags ->
             Elm.Case.custom
                 expresssion
+                (Type.namedWith
+                    [ "Result" ]
+                    "Result"
+                    [ Type.var "error", Type.var "value" ]
+                )
                 [ Elm.Case.branch1 [ "Result" ] "Ok" tags.ok
                 , Elm.Case.branch1 [ "Result" ] "Err" tags.err
                 ]

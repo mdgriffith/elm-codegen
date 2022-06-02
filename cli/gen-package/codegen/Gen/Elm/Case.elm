@@ -398,9 +398,9 @@ otherwise arg =
         [ Elm.functionReduced "unpack" arg ]
 
 
-{-| branch0: List String -> String -> Elm.Expression -> Elm.Case.Branch -}
-branch0 : List String -> String -> Elm.Expression -> Elm.Expression
-branch0 arg arg0 arg1 =
+{-| branch0: String -> Elm.Expression -> Elm.Case.Branch -}
+branch0 : String -> Elm.Expression -> Elm.Expression
+branch0 arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -408,24 +408,19 @@ branch0 arg arg0 arg1 =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list Type.string
-                        , Type.string
+                        [ Type.string
                         , Type.namedWith [ "Elm" ] "Expression" []
                         ]
                         (Type.namedWith [ "Elm", "Case" ] "Branch" [])
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg), Elm.string arg0, arg1 ]
+        [ Elm.string arg, arg0 ]
 
 
-{-| branch1: List String -> String -> (Elm.Expression -> Elm.Expression) -> Elm.Case.Branch -}
-branch1 :
-    List String
-    -> String
-    -> (Elm.Expression -> Elm.Expression)
-    -> Elm.Expression
-branch1 arg arg0 arg1 =
+{-| branch1: String -> (Elm.Expression -> Elm.Expression) -> Elm.Case.Branch -}
+branch1 : String -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
+branch1 arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -433,8 +428,7 @@ branch1 arg arg0 arg1 =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list Type.string
-                        , Type.string
+                        [ Type.string
                         , Type.function
                             [ Type.namedWith [ "Elm" ] "Expression" [] ]
                             (Type.namedWith [ "Elm" ] "Expression" [])
@@ -443,24 +437,19 @@ branch1 arg arg0 arg1 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg)
-        , Elm.string arg0
-        , Elm.functionReduced "unpack" arg1
-        ]
+        [ Elm.string arg, Elm.functionReduced "unpack" arg0 ]
 
 
 {-| branch2: 
-    List String
-    -> String
+    String
     -> (Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Case.Branch
 -}
 branch2 :
-    List String
-    -> String
+    String
     -> (Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
-branch2 arg arg0 arg1 =
+branch2 arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -468,8 +457,7 @@ branch2 arg arg0 arg1 =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list Type.string
-                        , Type.string
+                        [ Type.string
                         , Type.function
                             [ Type.namedWith [ "Elm" ] "Expression" []
                             , Type.namedWith [ "Elm" ] "Expression" []
@@ -480,26 +468,23 @@ branch2 arg arg0 arg1 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg)
-        , Elm.string arg0
+        [ Elm.string arg
         , Elm.functionReduced
             "unpack"
-            (\unpack -> Elm.functionReduced "unpack" (arg1 unpack))
+            (\unpack -> Elm.functionReduced "unpack" (arg0 unpack))
         ]
 
 
 {-| branch3: 
-    List String
-    -> String
+    String
     -> (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Case.Branch
 -}
 branch3 :
-    List String
-    -> String
+    String
     -> (Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression)
     -> Elm.Expression
-branch3 arg arg0 arg1 =
+branch3 arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -507,8 +492,7 @@ branch3 arg arg0 arg1 =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list Type.string
-                        , Type.string
+                        [ Type.string
                         , Type.function
                             [ Type.namedWith [ "Elm" ] "Expression" []
                             , Type.namedWith [ "Elm" ] "Expression" []
@@ -520,23 +504,21 @@ branch3 arg arg0 arg1 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg)
-        , Elm.string arg0
+        [ Elm.string arg
         , Elm.functionReduced
             "unpack"
             (\unpack ->
                 Elm.functionReduced
                     "unpack"
                     (\unpack0 ->
-                        Elm.functionReduced "unpack" (arg1 unpack unpack0)
+                        Elm.functionReduced "unpack" (arg0 unpack unpack0)
                     )
             )
         ]
 
 
 {-| branch4: 
-    List String
-    -> String
+    String
     -> (Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
@@ -545,15 +527,14 @@ branch3 arg arg0 arg1 =
     -> Elm.Case.Branch
 -}
 branch4 :
-    List String
-    -> String
+    String
     -> (Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
     -> Elm.Expression)
     -> Elm.Expression
-branch4 arg arg0 arg1 =
+branch4 arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -561,8 +542,7 @@ branch4 arg arg0 arg1 =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list Type.string
-                        , Type.string
+                        [ Type.string
                         , Type.function
                             [ Type.namedWith [ "Elm" ] "Expression" []
                             , Type.namedWith [ "Elm" ] "Expression" []
@@ -575,8 +555,7 @@ branch4 arg arg0 arg1 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg)
-        , Elm.string arg0
+        [ Elm.string arg
         , Elm.functionReduced
             "unpack"
             (\unpack ->
@@ -585,10 +564,10 @@ branch4 arg arg0 arg1 =
                     (\unpack0 ->
                         Elm.functionReduced
                             "unpack"
-                            (\unpack_4_3_5_3_0 ->
+                            (\unpack_4_3_4_3_0 ->
                                 Elm.functionReduced
                                     "unpack"
-                                    (arg1 unpack unpack0 unpack_4_3_5_3_0)
+                                    (arg0 unpack unpack0 unpack_4_3_4_3_0)
                             )
                     )
             )
@@ -596,8 +575,7 @@ branch4 arg arg0 arg1 =
 
 
 {-| branch5: 
-    List String
-    -> String
+    String
     -> (Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
@@ -607,8 +585,7 @@ branch4 arg arg0 arg1 =
     -> Elm.Case.Branch
 -}
 branch5 :
-    List String
-    -> String
+    String
     -> (Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
@@ -616,7 +593,7 @@ branch5 :
     -> Elm.Expression
     -> Elm.Expression)
     -> Elm.Expression
-branch5 arg arg0 arg1 =
+branch5 arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -624,8 +601,7 @@ branch5 arg arg0 arg1 =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list Type.string
-                        , Type.string
+                        [ Type.string
                         , Type.function
                             [ Type.namedWith [ "Elm" ] "Expression" []
                             , Type.namedWith [ "Elm" ] "Expression" []
@@ -639,8 +615,7 @@ branch5 arg arg0 arg1 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg)
-        , Elm.string arg0
+        [ Elm.string arg
         , Elm.functionReduced
             "unpack"
             (\unpack ->
@@ -649,15 +624,15 @@ branch5 arg arg0 arg1 =
                     (\unpack0 ->
                         Elm.functionReduced
                             "unpack"
-                            (\unpack_4_3_5_3_0 ->
+                            (\unpack_4_3_4_3_0 ->
                                 Elm.functionReduced
                                     "unpack"
-                                    (\unpack_4_4_3_5_3_0 ->
+                                    (\unpack_4_4_3_4_3_0 ->
                                         Elm.functionReduced
                                             "unpack"
-                                            (arg1 unpack unpack0
-                                                 unpack_4_3_5_3_0
-                                                unpack_4_4_3_5_3_0
+                                            (arg0 unpack unpack0
+                                                 unpack_4_3_4_3_0
+                                                unpack_4_4_3_4_3_0
                                             )
                                     )
                             )
@@ -667,8 +642,7 @@ branch5 arg arg0 arg1 =
 
 
 {-| branch6: 
-    List String
-    -> String
+    String
     -> (Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
@@ -679,8 +653,7 @@ branch5 arg arg0 arg1 =
     -> Elm.Case.Branch
 -}
 branch6 :
-    List String
-    -> String
+    String
     -> (Elm.Expression
     -> Elm.Expression
     -> Elm.Expression
@@ -689,7 +662,7 @@ branch6 :
     -> Elm.Expression
     -> Elm.Expression)
     -> Elm.Expression
-branch6 arg arg0 arg1 =
+branch6 arg arg0 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -697,8 +670,7 @@ branch6 arg arg0 arg1 =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list Type.string
-                        , Type.string
+                        [ Type.string
                         , Type.function
                             [ Type.namedWith [ "Elm" ] "Expression" []
                             , Type.namedWith [ "Elm" ] "Expression" []
@@ -713,8 +685,7 @@ branch6 arg arg0 arg1 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg)
-        , Elm.string arg0
+        [ Elm.string arg
         , Elm.functionReduced
             "unpack"
             (\unpack ->
@@ -723,19 +694,19 @@ branch6 arg arg0 arg1 =
                     (\unpack0 ->
                         Elm.functionReduced
                             "unpack"
-                            (\unpack_4_3_5_3_0 ->
+                            (\unpack_4_3_4_3_0 ->
                                 Elm.functionReduced
                                     "unpack"
-                                    (\unpack_4_4_3_5_3_0 ->
+                                    (\unpack_4_4_3_4_3_0 ->
                                         Elm.functionReduced
                                             "unpack"
-                                            (\unpack_4_4_4_3_5_3_0 ->
+                                            (\unpack_4_4_4_3_4_3_0 ->
                                                 Elm.functionReduced
                                                     "unpack"
-                                                    (arg1 unpack unpack0
-                                                         unpack_4_3_5_3_0
-                                                         unpack_4_4_3_5_3_0
-                                                        unpack_4_4_4_3_5_3_0
+                                                    (arg0 unpack unpack0
+                                                         unpack_4_3_4_3_0
+                                                         unpack_4_4_3_4_3_0
+                                                        unpack_4_4_4_3_4_3_0
                                                     )
                                             )
                                     )
@@ -745,20 +716,10 @@ branch6 arg arg0 arg1 =
         ]
 
 
-{-| branchWith: 
-    List String
-    -> String
-    -> Int
-    -> (List Elm.Expression -> Elm.Expression)
-    -> Elm.Case.Branch
--}
+{-| branchWith: String -> Int -> (List Elm.Expression -> Elm.Expression) -> Elm.Case.Branch -}
 branchWith :
-    List String
-    -> String
-    -> Int
-    -> (Elm.Expression -> Elm.Expression)
-    -> Elm.Expression
-branchWith arg arg0 arg1 arg2 =
+    String -> Int -> (Elm.Expression -> Elm.Expression) -> Elm.Expression
+branchWith arg arg0 arg1 =
     Elm.apply
         (Elm.value
             { importFrom = [ "Elm", "Case" ]
@@ -766,8 +727,7 @@ branchWith arg arg0 arg1 arg2 =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list Type.string
-                        , Type.string
+                        [ Type.string
                         , Type.int
                         , Type.function
                             [ Type.list
@@ -779,11 +739,7 @@ branchWith arg arg0 arg1 arg2 =
                     )
             }
         )
-        [ Elm.list (List.map Elm.string arg)
-        , Elm.string arg0
-        , Elm.int arg1
-        , Elm.functionReduced "unpack" arg2
-        ]
+        [ Elm.string arg, Elm.int arg0, Elm.functionReduced "unpack" arg1 ]
 
 
 {-| listBranch: Int -> (List Elm.Expression -> Elm.Expression) -> Elm.Case.Branch -}
@@ -824,26 +780,15 @@ call_ :
     , custom :
         Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
     , otherwise : Elm.Expression -> Elm.Expression
-    , branch0 :
-        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
-    , branch1 :
-        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
-    , branch2 :
-        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
-    , branch3 :
-        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
-    , branch4 :
-        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
-    , branch5 :
-        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
-    , branch6 :
-        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
+    , branch0 : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , branch1 : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , branch2 : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , branch3 : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , branch4 : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , branch5 : Elm.Expression -> Elm.Expression -> Elm.Expression
+    , branch6 : Elm.Expression -> Elm.Expression -> Elm.Expression
     , branchWith :
-        Elm.Expression
-        -> Elm.Expression
-        -> Elm.Expression
-        -> Elm.Expression
-        -> Elm.Expression
+        Elm.Expression -> Elm.Expression -> Elm.Expression -> Elm.Expression
     , listBranch : Elm.Expression -> Elm.Expression -> Elm.Expression
     }
 call_ =
@@ -1051,7 +996,7 @@ call_ =
                 )
                 [ arg ]
     , branch0 =
-        \arg arg7 arg8 ->
+        \arg arg7 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -1059,17 +1004,16 @@ call_ =
                     , annotation =
                         Just
                             (Type.function
-                                [ Type.list Type.string
-                                , Type.string
+                                [ Type.string
                                 , Type.namedWith [ "Elm" ] "Expression" []
                                 ]
                                 (Type.namedWith [ "Elm", "Case" ] "Branch" [])
                             )
                     }
                 )
-                [ arg, arg7, arg8 ]
+                [ arg, arg7 ]
     , branch1 =
-        \arg arg8 arg9 ->
+        \arg arg8 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -1077,8 +1021,7 @@ call_ =
                     , annotation =
                         Just
                             (Type.function
-                                [ Type.list Type.string
-                                , Type.string
+                                [ Type.string
                                 , Type.function
                                     [ Type.namedWith [ "Elm" ] "Expression" [] ]
                                     (Type.namedWith [ "Elm" ] "Expression" [])
@@ -1087,9 +1030,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg8, arg9 ]
+                [ arg, arg8 ]
     , branch2 =
-        \arg arg9 arg10 ->
+        \arg arg9 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -1097,8 +1040,7 @@ call_ =
                     , annotation =
                         Just
                             (Type.function
-                                [ Type.list Type.string
-                                , Type.string
+                                [ Type.string
                                 , Type.function
                                     [ Type.namedWith [ "Elm" ] "Expression" []
                                     , Type.namedWith [ "Elm" ] "Expression" []
@@ -1109,9 +1051,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg9, arg10 ]
+                [ arg, arg9 ]
     , branch3 =
-        \arg arg10 arg11 ->
+        \arg arg10 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -1119,8 +1061,7 @@ call_ =
                     , annotation =
                         Just
                             (Type.function
-                                [ Type.list Type.string
-                                , Type.string
+                                [ Type.string
                                 , Type.function
                                     [ Type.namedWith [ "Elm" ] "Expression" []
                                     , Type.namedWith [ "Elm" ] "Expression" []
@@ -1132,9 +1073,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg10, arg11 ]
+                [ arg, arg10 ]
     , branch4 =
-        \arg arg11 arg12 ->
+        \arg arg11 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -1142,8 +1083,7 @@ call_ =
                     , annotation =
                         Just
                             (Type.function
-                                [ Type.list Type.string
-                                , Type.string
+                                [ Type.string
                                 , Type.function
                                     [ Type.namedWith [ "Elm" ] "Expression" []
                                     , Type.namedWith [ "Elm" ] "Expression" []
@@ -1156,9 +1096,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg11, arg12 ]
+                [ arg, arg11 ]
     , branch5 =
-        \arg arg12 arg13 ->
+        \arg arg12 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -1166,8 +1106,7 @@ call_ =
                     , annotation =
                         Just
                             (Type.function
-                                [ Type.list Type.string
-                                , Type.string
+                                [ Type.string
                                 , Type.function
                                     [ Type.namedWith [ "Elm" ] "Expression" []
                                     , Type.namedWith [ "Elm" ] "Expression" []
@@ -1181,9 +1120,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg12, arg13 ]
+                [ arg, arg12 ]
     , branch6 =
-        \arg arg13 arg14 ->
+        \arg arg13 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -1191,8 +1130,7 @@ call_ =
                     , annotation =
                         Just
                             (Type.function
-                                [ Type.list Type.string
-                                , Type.string
+                                [ Type.string
                                 , Type.function
                                     [ Type.namedWith [ "Elm" ] "Expression" []
                                     , Type.namedWith [ "Elm" ] "Expression" []
@@ -1207,9 +1145,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg13, arg14 ]
+                [ arg, arg13 ]
     , branchWith =
-        \arg arg14 arg15 arg16 ->
+        \arg arg14 arg15 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Case" ]
@@ -1217,8 +1155,7 @@ call_ =
                     , annotation =
                         Just
                             (Type.function
-                                [ Type.list Type.string
-                                , Type.string
+                                [ Type.string
                                 , Type.int
                                 , Type.function
                                     [ Type.list
@@ -1234,7 +1171,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg14, arg15, arg16 ]
+                [ arg, arg14, arg15 ]
     , listBranch =
         \arg arg15 ->
             Elm.apply
@@ -1423,8 +1360,7 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list Type.string
-                        , Type.string
+                        [ Type.string
                         , Type.namedWith [ "Elm" ] "Expression" []
                         ]
                         (Type.namedWith [ "Elm", "Case" ] "Branch" [])
@@ -1437,8 +1373,7 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list Type.string
-                        , Type.string
+                        [ Type.string
                         , Type.function
                             [ Type.namedWith [ "Elm" ] "Expression" [] ]
                             (Type.namedWith [ "Elm" ] "Expression" [])
@@ -1453,8 +1388,7 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list Type.string
-                        , Type.string
+                        [ Type.string
                         , Type.function
                             [ Type.namedWith [ "Elm" ] "Expression" []
                             , Type.namedWith [ "Elm" ] "Expression" []
@@ -1471,8 +1405,7 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list Type.string
-                        , Type.string
+                        [ Type.string
                         , Type.function
                             [ Type.namedWith [ "Elm" ] "Expression" []
                             , Type.namedWith [ "Elm" ] "Expression" []
@@ -1490,8 +1423,7 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list Type.string
-                        , Type.string
+                        [ Type.string
                         , Type.function
                             [ Type.namedWith [ "Elm" ] "Expression" []
                             , Type.namedWith [ "Elm" ] "Expression" []
@@ -1510,8 +1442,7 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list Type.string
-                        , Type.string
+                        [ Type.string
                         , Type.function
                             [ Type.namedWith [ "Elm" ] "Expression" []
                             , Type.namedWith [ "Elm" ] "Expression" []
@@ -1531,8 +1462,7 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list Type.string
-                        , Type.string
+                        [ Type.string
                         , Type.function
                             [ Type.namedWith [ "Elm" ] "Expression" []
                             , Type.namedWith [ "Elm" ] "Expression" []
@@ -1553,8 +1483,7 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list Type.string
-                        , Type.string
+                        [ Type.string
                         , Type.int
                         , Type.function
                             [ Type.list

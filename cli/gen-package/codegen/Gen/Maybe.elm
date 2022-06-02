@@ -401,6 +401,7 @@ caseOf_ =
         \expresssion tags ->
             Elm.Case.custom
                 expresssion
+                (Type.namedWith [ "Maybe" ] "Maybe" [ Type.var "a" ])
                 [ Elm.Case.branch1 [ "Maybe" ] "Just" tags.just
                 , Elm.Case.branch0 [ "Maybe" ] "Nothing" tags.nothing
                 ]

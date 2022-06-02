@@ -25,6 +25,16 @@ type alias AnnotationDetails =
     }
 
 
+getTypeModule : Annotation -> List String
+getTypeModule (Annotation annotation) =
+    case annotation.annotation of
+        Annotation.Typed (Node _ ( mod, typeName )) _ ->
+            mod
+
+        _ ->
+            []
+
+
 type Declaration
     = Declaration Expose (List Module) Declaration.Declaration
     | Comment String
