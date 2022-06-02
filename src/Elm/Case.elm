@@ -630,96 +630,112 @@ otherwise toExp =
 
 
 {-| -}
-branch1 : String -> (Expression -> Expression) -> Branch
-branch1 name toExp =
+branch1 : String -> ( String, Type.Annotation ) -> (Expression -> Expression) -> Branch
+branch1 name ( argName, argType ) toExp =
     Branch
         (\index ->
             let
-                ( oneIndex, oneName, oneExp ) =
-                    Compiler.var index "one"
+                var =
+                    Compiler.toVarWithType index argName argType
             in
-            ( oneIndex
-            , Pattern.NamedPattern { moduleName = [], name = name }
-                [ Compiler.nodify (Pattern.VarPattern oneName) ]
-            , toExp oneExp
+            ( var.index
+            , Pattern.NamedPattern
+                { moduleName = []
+                , name = name
+                }
+                [ Compiler.nodify (Pattern.VarPattern var.name) ]
+            , toExp var.exp
             )
         )
 
 
 {-| -}
-branch2 : String -> (Expression -> Expression -> Expression) -> Branch
-branch2 name toExp =
+branch2 : String -> ( String, Type.Annotation ) -> ( String, Type.Annotation ) -> (Expression -> Expression -> Expression) -> Branch
+branch2 name ( oneName, oneType ) ( twoName, twoType ) toExp =
     Branch
         (\index ->
             let
-                ( oneIndex, oneName, oneExp ) =
-                    Compiler.var index "one"
+                one =
+                    Compiler.toVarWithType index oneName oneType
 
-                ( twoIndex, twoName, twoExp ) =
-                    Compiler.var oneIndex "two"
+                two =
+                    Compiler.toVarWithType one.index twoName twoType
             in
-            ( twoIndex
+            ( two.index
             , Pattern.NamedPattern { moduleName = [], name = name }
-                [ Compiler.nodify (Pattern.VarPattern oneName)
-                , Compiler.nodify (Pattern.VarPattern twoName)
+                [ Compiler.nodify (Pattern.VarPattern one.name)
+                , Compiler.nodify (Pattern.VarPattern two.name)
                 ]
-            , toExp oneExp twoExp
+            , toExp one.exp two.exp
             )
         )
 
 
 {-| -}
-branch3 : String -> (Expression -> Expression -> Expression -> Expression) -> Branch
-branch3 name toExp =
+branch3 :
+    String
+    -> ( String, Type.Annotation )
+    -> ( String, Type.Annotation )
+    -> ( String, Type.Annotation )
+    -> (Expression -> Expression -> Expression -> Expression)
+    -> Branch
+branch3 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) toExp =
     Branch
         (\index ->
             let
-                ( oneIndex, oneName, oneExp ) =
-                    Compiler.var index "one"
+                one =
+                    Compiler.toVarWithType index oneName oneType
 
-                ( twoIndex, twoName, twoExp ) =
-                    Compiler.var oneIndex "two"
+                two =
+                    Compiler.toVarWithType one.index twoName twoType
 
-                ( threeIndex, threeName, threeExp ) =
-                    Compiler.var twoIndex "three"
+                three =
+                    Compiler.toVarWithType two.index threeName threeType
             in
-            ( threeIndex
+            ( three.index
             , Pattern.NamedPattern { moduleName = [], name = name }
-                [ Compiler.nodify (Pattern.VarPattern oneName)
-                , Compiler.nodify (Pattern.VarPattern twoName)
-                , Compiler.nodify (Pattern.VarPattern threeName)
+                [ Compiler.nodify (Pattern.VarPattern one.name)
+                , Compiler.nodify (Pattern.VarPattern two.name)
+                , Compiler.nodify (Pattern.VarPattern three.name)
                 ]
-            , toExp oneExp twoExp threeExp
+            , toExp one.exp two.exp three.exp
             )
         )
 
 
 {-| -}
-branch4 : String -> (Expression -> Expression -> Expression -> Expression -> Expression) -> Branch
-branch4 name toExp =
+branch4 :
+    String
+    -> ( String, Type.Annotation )
+    -> ( String, Type.Annotation )
+    -> ( String, Type.Annotation )
+    -> ( String, Type.Annotation )
+    -> (Expression -> Expression -> Expression -> Expression -> Expression)
+    -> Branch
+branch4 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fourName, fourType ) toExp =
     Branch
         (\index ->
             let
-                ( oneIndex, oneName, oneExp ) =
-                    Compiler.var index "one"
+                one =
+                    Compiler.toVarWithType index oneName oneType
 
-                ( twoIndex, twoName, twoExp ) =
-                    Compiler.var oneIndex "two"
+                two =
+                    Compiler.toVarWithType one.index twoName twoType
 
-                ( threeIndex, threeName, threeExp ) =
-                    Compiler.var twoIndex "three"
+                three =
+                    Compiler.toVarWithType two.index threeName threeType
 
-                ( fourIndex, fourName, fourExp ) =
-                    Compiler.var threeIndex "four"
+                four =
+                    Compiler.toVarWithType three.index fourName fourType
             in
-            ( fourIndex
+            ( four.index
             , Pattern.NamedPattern { moduleName = [], name = name }
-                [ Compiler.nodify (Pattern.VarPattern oneName)
-                , Compiler.nodify (Pattern.VarPattern twoName)
-                , Compiler.nodify (Pattern.VarPattern threeName)
-                , Compiler.nodify (Pattern.VarPattern fourName)
+                [ Compiler.nodify (Pattern.VarPattern one.name)
+                , Compiler.nodify (Pattern.VarPattern two.name)
+                , Compiler.nodify (Pattern.VarPattern three.name)
+                , Compiler.nodify (Pattern.VarPattern four.name)
                 ]
-            , toExp oneExp twoExp threeExp fourExp
+            , toExp one.exp two.exp three.exp four.exp
             )
         )
 
@@ -727,6 +743,11 @@ branch4 name toExp =
 {-| -}
 branch5 :
     String
+    -> ( String, Type.Annotation )
+    -> ( String, Type.Annotation )
+    -> ( String, Type.Annotation )
+    -> ( String, Type.Annotation )
+    -> ( String, Type.Annotation )
     ->
         (Expression
          -> Expression
@@ -736,34 +757,34 @@ branch5 :
          -> Expression
         )
     -> Branch
-branch5 name toExp =
+branch5 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fourName, fourType ) ( fiveName, fiveType ) toExp =
     Branch
         (\index ->
             let
-                ( oneIndex, oneName, oneExp ) =
-                    Compiler.var index "one"
+                one =
+                    Compiler.toVarWithType index oneName oneType
 
-                ( twoIndex, twoName, twoExp ) =
-                    Compiler.var oneIndex "two"
+                two =
+                    Compiler.toVarWithType one.index twoName twoType
 
-                ( threeIndex, threeName, threeExp ) =
-                    Compiler.var twoIndex "three"
+                three =
+                    Compiler.toVarWithType two.index threeName threeType
 
-                ( fourIndex, fourName, fourExp ) =
-                    Compiler.var threeIndex "four"
+                four =
+                    Compiler.toVarWithType three.index fourName fourType
 
-                ( fiveIndex, fiveName, fiveExp ) =
-                    Compiler.var fourIndex "five"
+                five =
+                    Compiler.toVarWithType four.index fiveName fiveType
             in
-            ( fiveIndex
+            ( five.index
             , Pattern.NamedPattern { moduleName = [], name = name }
-                [ Compiler.nodify (Pattern.VarPattern oneName)
-                , Compiler.nodify (Pattern.VarPattern twoName)
-                , Compiler.nodify (Pattern.VarPattern threeName)
-                , Compiler.nodify (Pattern.VarPattern fourName)
-                , Compiler.nodify (Pattern.VarPattern fiveName)
+                [ Compiler.nodify (Pattern.VarPattern one.name)
+                , Compiler.nodify (Pattern.VarPattern two.name)
+                , Compiler.nodify (Pattern.VarPattern three.name)
+                , Compiler.nodify (Pattern.VarPattern four.name)
+                , Compiler.nodify (Pattern.VarPattern five.name)
                 ]
-            , toExp oneExp twoExp threeExp fourExp fiveExp
+            , toExp one.exp two.exp three.exp four.exp five.exp
             )
         )
 
@@ -771,6 +792,12 @@ branch5 name toExp =
 {-| -}
 branch6 :
     String
+    -> ( String, Type.Annotation )
+    -> ( String, Type.Annotation )
+    -> ( String, Type.Annotation )
+    -> ( String, Type.Annotation )
+    -> ( String, Type.Annotation )
+    -> ( String, Type.Annotation )
     ->
         (Expression
          -> Expression
@@ -781,38 +808,38 @@ branch6 :
          -> Expression
         )
     -> Branch
-branch6 name toExp =
+branch6 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) ( fourName, fourType ) ( fiveName, fiveType ) ( sixName, sixType ) toExp =
     Branch
         (\index ->
             let
-                ( oneIndex, oneName, oneExp ) =
-                    Compiler.var index "one"
+                one =
+                    Compiler.toVarWithType index oneName oneType
 
-                ( twoIndex, twoName, twoExp ) =
-                    Compiler.var oneIndex "two"
+                two =
+                    Compiler.toVarWithType one.index twoName twoType
 
-                ( threeIndex, threeName, threeExp ) =
-                    Compiler.var twoIndex "three"
+                three =
+                    Compiler.toVarWithType two.index threeName threeType
 
-                ( fourIndex, fourName, fourExp ) =
-                    Compiler.var threeIndex "four"
+                four =
+                    Compiler.toVarWithType three.index fourName fourType
 
-                ( fiveIndex, fiveName, fiveExp ) =
-                    Compiler.var fourIndex "five"
+                five =
+                    Compiler.toVarWithType four.index fiveName fiveType
 
-                ( sixIndex, sixName, sixExp ) =
-                    Compiler.var fiveIndex "six"
+                six =
+                    Compiler.toVarWithType four.index sixName sixType
             in
-            ( sixIndex
+            ( six.index
             , Pattern.NamedPattern { moduleName = [], name = name }
-                [ Compiler.nodify (Pattern.VarPattern oneName)
-                , Compiler.nodify (Pattern.VarPattern twoName)
-                , Compiler.nodify (Pattern.VarPattern threeName)
-                , Compiler.nodify (Pattern.VarPattern fourName)
-                , Compiler.nodify (Pattern.VarPattern fiveName)
-                , Compiler.nodify (Pattern.VarPattern sixName)
+                [ Compiler.nodify (Pattern.VarPattern one.name)
+                , Compiler.nodify (Pattern.VarPattern two.name)
+                , Compiler.nodify (Pattern.VarPattern three.name)
+                , Compiler.nodify (Pattern.VarPattern four.name)
+                , Compiler.nodify (Pattern.VarPattern five.name)
+                , Compiler.nodify (Pattern.VarPattern six.name)
                 ]
-            , toExp oneExp twoExp threeExp fourExp fiveExp sixExp
+            , toExp one.exp two.exp three.exp four.exp five.exp six.exp
             )
         )
 

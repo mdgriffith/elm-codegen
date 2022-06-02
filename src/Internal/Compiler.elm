@@ -249,6 +249,40 @@ toVar index desiredName =
     }
 
 
+toVarWithType :
+    Index
+    -> String
+    -> Annotation
+    ->
+        { name : String
+        , exp : Expression
+        , index : Index
+        }
+toVarWithType index desiredName (Annotation ann) =
+    let
+        ( name, newIndex ) =
+            getName desiredName index
+    in
+    { name = name
+    , index = newIndex
+    , exp =
+        Expression <|
+            \ignoredIndex_ ->
+                { expression =
+                    Exp.FunctionOrValue []
+                        name
+                , annotation =
+                    Ok
+                        { inferences = Dict.empty
+                        , aliases = ann.aliases
+                        , type_ = ann.annotation
+                        }
+                , imports =
+                    ann.imports
+                }
+    }
+
+
 getName : String -> Index -> ( String, Index )
 getName desiredName ((Index top tail scope) as index) =
     let
