@@ -831,17 +831,23 @@ typeCreation thisModule block =
                                             builder
                                     )
                                 |> Gen.Elm.record
-                                |> Gen.Elm.withAlias thisModule
-                                    alias.name
-                                    (List.map
-                                        (\t ->
-                                            -- we need to prefix every type variable with the alias name
-                                            -- or else the type variables may collide with type variables from other entries in this record
-                                            -- and cause some pretty bizarre stuff.
+                                |> Gen.Elm.withType
+                                    (GenType.alias thisModule
+                                        alias.name
+                                        (List.map
                                             GenType.var
-                                                (alias.name ++ "_" ++ t)
+                                            alias.args
                                         )
-                                        alias.args
+                                        (GenType.record
+                                            (fields
+                                                |> List.map
+                                                    (\( fieldName, fieldType ) ->
+                                                        Elm.tuple
+                                                            (Elm.string fieldName)
+                                                            (typeToExpression thisModule fieldType)
+                                                    )
+                                            )
+                                        )
                                     )
                         )
                         |> Elm.field alias.name

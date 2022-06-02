@@ -2212,10 +2212,15 @@ make_ :
 make_ =
     { file =
         \file_args ->
-            Elm.withAlias
-                [ "Elm" ]
-                "File"
-                []
+            Elm.withType
+                (Type.alias
+                    [ "Elm" ]
+                    "File"
+                    []
+                    (Type.record
+                        [ ( "path", Type.string ), ( "contents", Type.string ) ]
+                    )
+                )
                 (Elm.record
                     [ Elm.field "path" file_args.path
                     , Elm.field "contents" file_args.contents
