@@ -302,11 +302,19 @@ export async function init(desiredInstallDir: string | null) {
 
   fs.mkdirSync(base)
   fs.mkdirSync(path.join(base, "Elm"))
+  fs.mkdirSync(path.join(base, "helpers"))
 
   fs.writeFileSync(path.join(base, "elm.json"), templates.init.elmJson())
   fs.writeFileSync(path.join(base, "Generate.elm"), templates.init.starter())
   fs.writeFileSync(path.join(base, "Elm", "Gen.elm"), templates.init.elmGen())
-  const updatedCodeGenJson = await install_package("elm/core", install_dir, null, codeGenJson)
+  fs.writeFileSync(path.join(base, "helpers", "Helper.elm"), templates.init.helper())
+  const codeGenJsonWithElmCore = await install_package("elm/core", install_dir, null, codeGenJson)
+  const updatedCodeGenJson = await install_package(
+    path.join(base, "helpers") + path.sep,
+    install_dir,
+    null,
+    codeGenJsonWithElmCore
+  )
 
   fs.writeFileSync(path.join(base, "elm.codegen.json"), codeGenJsonToString(updatedCodeGenJson))
 
@@ -345,7 +353,7 @@ async function reinstall_everything(install_dir: string, codeGenJson: CodeGenJso
       run_package_generator(install_dir, { docs: docs })
     } else if (item.endsWith(".elm")) {
       elmSources.push(fs.readFileSync(item).toString())
-    } else if (item.endsWith("/")) {
+    } else if (item.endsWith(path.sep)) {
       getFilesWithin(item, ".elm").forEach((elmPath) => {
         elmSources.push(fs.readFileSync(elmPath).toString())
       })
@@ -388,7 +396,7 @@ function clear(dir: string) {
 }
 
 function isLocal(pkg: string) {
-  return pkg.endsWith(".json") || pkg.endsWith("/") || pkg.endsWith(".elm")
+  return pkg.endsWith(".json") || pkg.endsWith(path.sep) || pkg.endsWith(".elm")
 }
 
 export async function run_install(pkg: string, version: string | null) {
@@ -416,7 +424,7 @@ export async function run_install(pkg: string, version: string | null) {
       run_package_generator(install_dir, { docs: docs })
       codeGenJson.dependencies.local.push(pkg)
       fs.writeFileSync(codeGenJsonPath, codeGenJsonToString(codeGenJson))
-    } else if (pkg.endsWith("/")) {
+    } else if (pkg.endsWith(path.sep)) {
       //
       // Install all files within the pkg directory
       console.log(format_block(["Adding the " + chalk.cyan(pkg) + " directory to local dependencies and installing."]))
