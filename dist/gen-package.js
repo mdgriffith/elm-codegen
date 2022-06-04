@@ -25847,8 +25847,23 @@ var $author$project$DocsFromSource$toDocType = function (annotation) {
 			var typeName = function () {
 				var _v1 = $author$project$Internal$Compiler$denode(modName);
 				if (!_v1.a.b) {
-					var valName = _v1.b;
-					return valName;
+					switch (_v1.b) {
+						case 'Int':
+							return 'Basics.Int';
+						case 'Float':
+							return 'Basics.Float';
+						case 'String':
+							return 'String.String';
+						case 'Char':
+							return 'Char.Char';
+						case 'Bool':
+							return 'Basics.Bool';
+						case 'List':
+							return 'List.List';
+						default:
+							var valName = _v1.b;
+							return valName;
+					}
 				} else {
 					var mod = _v1.a;
 					var valName = _v1.b;

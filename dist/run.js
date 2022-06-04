@@ -91,7 +91,7 @@ var gen_package = require("./gen-package");
 // @ts-ignore
 globalThis["XMLHttpRequest"] = XMLHttpRequest_1.XMLHttpRequest.XMLHttpRequest;
 var currentVersion = require("../package.json").version;
-function run_generator(base, moduleName, elm_source, flags) {
+function run_generator(output_dir, moduleName, elm_source, flags) {
     return __awaiter(this, void 0, void 0, function () {
         var promise;
         var _this = this;
@@ -113,15 +113,15 @@ function run_generator(base, moduleName, elm_source, flags) {
                 .then(function (files) {
                 for (var _i = 0, files_1 = files; _i < files_1.length; _i++) {
                     var file = files_1[_i];
-                    var fullpath = path.join(base, file.path);
+                    var fullpath = path.join(output_dir, file.path);
                     fs.mkdirSync(path.dirname(fullpath), { recursive: true });
                     fs.writeFileSync(fullpath, file.contents);
                 }
                 if (files.length == 1) {
-                    console.log(format_block(["" + chalk_1.default.cyan(base + path.sep) + chalk_1.default.yellow(files[0].path) + " was generated!"]));
+                    console.log(format_block(["" + chalk_1.default.cyan(output_dir + path.sep) + chalk_1.default.yellow(files[0].path) + " was generated!"]));
                 }
                 else {
-                    console.log(format_block([chalk_1.default.yellow(files.length) + " files generated in " + chalk_1.default.cyan(base) + "!"]));
+                    console.log(format_block([chalk_1.default.yellow(files.length) + " files generated in " + chalk_1.default.cyan(output_dir) + "!"]));
                 }
             })
                 .catch(function (errors) {
@@ -146,15 +146,15 @@ function run_generator(base, moduleName, elm_source, flags) {
         });
     });
 }
-function generate(debug, elm_file, moduleName, target_dir, base, flags) {
+function generate(debug, elm_file, moduleName, output_dir, cwd, flags) {
     try {
         var data = elm_compiler.compileToStringSync([elm_file], {
-            cwd: base,
+            cwd: cwd,
             optimize: !debug,
             processOpts: { stdio: [null, null, "inherit"] },
         });
         // @ts-ignore
-        return new run_generator(target_dir, moduleName, data.toString(), flags);
+        return new run_generator(output_dir, moduleName, data.toString(), flags);
     }
     catch (error) {
         // This is generally an elm make error from the elm_compiler
@@ -582,7 +582,7 @@ function run_generation_from_cli(desiredElmFile, options) {
                 elmFile = desiredElmFile;
             }
             fullSourcePath = path.join(cwd, elmFile);
-            output = path.join(cwd, options.output);
+            output = options.output;
             if (!fs.existsSync(fullSourcePath)) {
                 console.log(format_block([
                     "I wasn't able to find " + chalk_1.default.yellow(fullSourcePath) + ".",
