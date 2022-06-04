@@ -344,7 +344,7 @@ function codeGenJsonDefault() {
 //    Generates some files and installs `core`
 function init(desiredInstallDir) {
     return __awaiter(this, void 0, void 0, function () {
-        var install_dir, base, codeGenJson, codeGenJsonWithElmCore, updatedCodeGenJson;
+        var install_dir, base, codeGenJson, updatedCodeGenJson, helperPath, elmSources;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -370,10 +370,14 @@ function init(desiredInstallDir) {
                     fs.writeFileSync(path.join(base, "helpers", "Helper.elm"), templates_1.default.init.helper());
                     return [4 /*yield*/, install_package("elm/core", install_dir, null, codeGenJson)];
                 case 1:
-                    codeGenJsonWithElmCore = _a.sent();
-                    return [4 /*yield*/, install_package(path.join(base, "helpers") + path.sep, install_dir, null, codeGenJsonWithElmCore)];
-                case 2:
                     updatedCodeGenJson = _a.sent();
+                    helperPath = path.join(base, "helpers") + path.sep;
+                    elmSources = [];
+                    getFilesWithin(helperPath, ".elm").forEach(function (elmPath) {
+                        elmSources.push(fs.readFileSync(elmPath).toString());
+                    });
+                    run_package_generator(install_dir, { elmSource: elmSources });
+                    updatedCodeGenJson.dependencies.local.push(helperPath);
                     fs.writeFileSync(path.join(base, "elm.codegen.json"), codeGenJsonToString(updatedCodeGenJson));
                     console.log(format_block([
                         "Welcome to " + chalk_1.default.yellow("elm-codegen") + "!",
@@ -463,6 +467,8 @@ function isLocal(pkg) {
     return pkg.endsWith(".json") || pkg.endsWith(path.sep) || pkg.endsWith(".elm");
 }
 function copyHelpers(codeGenJson, options) {
+    // create output directory if it doesn't exist
+    fs.mkdirSync(options.output, { recursive: true });
     var _loop_1 = function (item) {
         if (item.endsWith(".elm")) {
             fs.writeFileSync(path.join(options.output, item), fs.readFileSync(item).toString());
@@ -474,6 +480,7 @@ function copyHelpers(codeGenJson, options) {
             });
         }
     };
+    // copy over all local dependencies
     for (var _i = 0, _a = codeGenJson.dependencies.local; _i < _a.length; _i++) {
         var item = _a[_i];
         _loop_1(item);

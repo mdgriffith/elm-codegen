@@ -309,13 +309,16 @@ export async function init(desiredInstallDir: string | null) {
   fs.writeFileSync(path.join(base, "Generate.elm"), templates.init.starter())
   fs.writeFileSync(path.join(base, "Gen", "CodeGen", "Generate.elm"), templates.init.codegenProgram())
   fs.writeFileSync(path.join(base, "helpers", "Helper.elm"), templates.init.helper())
-  const codeGenJsonWithElmCore = await install_package("elm/core", install_dir, null, codeGenJson)
-  const updatedCodeGenJson = await install_package(
-    path.join(base, "helpers") + path.sep,
-    install_dir,
-    null,
-    codeGenJsonWithElmCore
-  )
+  const updatedCodeGenJson = await install_package("elm/core", install_dir, null, codeGenJson)
+
+  let helperPath = path.join(base, "helpers") + path.sep
+  // install local helpers
+  let elmSources: string[] = []
+  getFilesWithin(helperPath, ".elm").forEach((elmPath) => {
+    elmSources.push(fs.readFileSync(elmPath).toString())
+  })
+  run_package_generator(install_dir, { elmSource: elmSources })
+  updatedCodeGenJson.dependencies.local.push(helperPath)
 
   fs.writeFileSync(path.join(base, "elm.codegen.json"), codeGenJsonToString(updatedCodeGenJson))
 
@@ -383,6 +386,9 @@ function isLocal(pkg: string) {
 }
 
 function copyHelpers(codeGenJson: CodeGenJson, options: Options) {
+  // create output directory if it doesn't exist
+  fs.mkdirSync(options.output, { recursive: true })
+  // copy over all local dependencies
   for (const item of codeGenJson.dependencies.local) {
     if (item.endsWith(".elm")) {
       fs.writeFileSync(path.join(options.output, item), fs.readFileSync(item).toString())
