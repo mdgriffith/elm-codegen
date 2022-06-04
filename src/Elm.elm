@@ -151,7 +151,7 @@ type alias Expression =
 
 -}
 toString : Expression -> String
-toString (Expression exp) =
+toString (Compiler.Expression toExp) =
     let
         expresh =
             toExp Compiler.startIndex
