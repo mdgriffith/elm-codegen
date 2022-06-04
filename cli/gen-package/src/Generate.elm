@@ -754,6 +754,16 @@ aliasNamed docAlias =
                 )
 
 
+withBuiltInModules : List String -> List String
+withBuiltInModules modName =
+    case modName of
+        [ "Maybe" ] ->
+            []
+
+        _ ->
+            modName
+
+
 typeCreation : List String -> Elm.Docs.Block -> List Elm.Field
 typeCreation thisModule block =
     case block of
@@ -772,7 +782,10 @@ typeCreation thisModule block =
                             case tags of
                                 [] ->
                                     Elm.field name
-                                        (valueWith thisModule
+                                        (valueWith
+                                            (withBuiltInModules
+                                                thisModule
+                                            )
                                             name
                                             (Elm.Type.Type union.name
                                                 (List.map Elm.Type.Var union.args)
@@ -792,7 +805,7 @@ typeCreation thisModule block =
                                             )
                                             (\vars ->
                                                 apply
-                                                    (valueWith thisModule
+                                                    (valueWith (withBuiltInModules thisModule)
                                                         name
                                                         (Elm.Type.Type union.name
                                                             (List.map Elm.Type.Var union.args)

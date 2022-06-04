@@ -185,13 +185,6 @@ generatedCode =
                     "myFunc : String -> Int -> Bool -> ( String, Int, Bool )\nmyFunc str int bool =\n    ( str, int, bool )"
         , test "Simplified version of map generates the correct signature" <|
             \_ ->
-                let
-                    _ =
-                        Debug.log "FACT CHECK!"
-                            (Debug.everything
-                                myMap2
-                            )
-                in
                 declarationAs
                     (Elm.declaration "map" myMap2)
                     """
