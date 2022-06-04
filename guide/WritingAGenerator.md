@@ -88,6 +88,6 @@ eightyFour =
 
 There's a bunch more, but it's probably better covered by the [elm-codegen package documentation](https://elm-doc-preview.netlify.app/?repo=mdgriffith/elm-codegen).
 
-Let's take a look at one final thing before you go!
+The next step is making using Elm _packages_ super easy. What does that mean? Well, let's find out.
 
 💁 [Using packages](https://github.com/mdgriffith/elm-codegen/tree/main/guide/UsingPackages.md)
