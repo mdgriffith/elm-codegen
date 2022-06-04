@@ -355,7 +355,28 @@ toDocType annotation =
         Elm.Syntax.TypeAnnotation.Typed modName inner ->
             let
                 typeName =
+                    -- Note!
+                    -- There's an issue in that the names from elm-syntax are not canonicalized
+                    -- This is a stopgap to match up with `Generate.unpackArg`, but not a full solution.
                     case Compiler.denode modName of
+                        ( [], "Int" ) ->
+                            "Basics.Int"
+
+                        ( [], "Float" ) ->
+                            "Basics.Float"
+
+                        ( [], "String" ) ->
+                            "String.String"
+
+                        ( [], "Char" ) ->
+                            "Char.Char"
+
+                        ( [], "Bool" ) ->
+                            "Basics.Bool"
+
+                        ( [], "List" ) ->
+                            "List.List"
+
                         ( [], valName ) ->
                             valName
 
