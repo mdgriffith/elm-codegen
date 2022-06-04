@@ -82,6 +82,10 @@ which would generate
 MyFile.add5 20
 ```
 
+Cool!
+
+**Note!** any helpers that are in the `helpers` directory will be copied over into your target directory.
+
 ## What's in the box?
 
 Let's take a peak into the `Gen/Html.elm` file. The hope is that it's not too hard to read once you get used to it.

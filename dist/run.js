@@ -446,30 +446,6 @@ function reinstall_everything(install_dir, codeGenJson) {
         });
     });
 }
-// INIT
-//    Start a new elm-codegen project
-//    Generates some files and installs `core`
-function make(elm_file, moduleName, target_dir, base, flags) {
-    return __awaiter(this, void 0, void 0, function () {
-        var data;
-        return __generator(this, function (_a) {
-            try {
-                data = elm_compiler.compileToStringSync([elm_file], {
-                    cwd: base,
-                    optimize: true,
-                    processOpts: { stdio: [null, null, "inherit"] },
-                });
-                // @ts-ignore
-                return [2 /*return*/, new run_generator(target_dir, moduleName, data.toString(), flags)];
-            }
-            catch (error) {
-                // This is generally an elm make error from the elm_compiler
-                console.log(error);
-            }
-            return [2 /*return*/];
-        });
-    });
-}
 function clear(dir) {
     fs.readdir(dir, function (err, files) {
         if (err)
@@ -485,6 +461,23 @@ function clear(dir) {
 }
 function isLocal(pkg) {
     return pkg.endsWith(".json") || pkg.endsWith(path.sep) || pkg.endsWith(".elm");
+}
+function copyHelpers(codeGenJson, options) {
+    var _loop_1 = function (item) {
+        if (item.endsWith(".elm")) {
+            fs.writeFileSync(path.join(options.output, item), fs.readFileSync(item).toString());
+        }
+        else if (item.endsWith(path.sep)) {
+            getFilesWithin(item, ".elm").forEach(function (elmPath) {
+                var relative = path.relative(item, elmPath);
+                fs.writeFileSync(path.join(options.output, relative), fs.readFileSync(elmPath).toString());
+            });
+        }
+    };
+    for (var _i = 0, _a = codeGenJson.dependencies.local; _i < _a.length; _i++) {
+        var item = _a[_i];
+        _loop_1(item);
+    }
 }
 function run_install(pkg, version) {
     return __awaiter(this, void 0, void 0, function () {
@@ -559,9 +552,12 @@ function run_install(pkg, version) {
 exports.run_install = run_install;
 function run(elmFile, options) {
     return __awaiter(this, void 0, void 0, function () {
-        var moduleName;
+        var moduleName, install_dir, codeGenJson;
         return __generator(this, function (_a) {
             moduleName = path.parse(elmFile).name;
+            install_dir = getCodeGenJsonDir();
+            codeGenJson = getCodeGenJson(install_dir);
+            copyHelpers(codeGenJson, options);
             generate(options.debug, elmFile, moduleName, options.output, options.cwd || ".", options.flags);
             return [2 /*return*/];
         });
@@ -570,7 +566,7 @@ function run(elmFile, options) {
 exports.run = run;
 function run_generation_from_cli(desiredElmFile, options) {
     return __awaiter(this, void 0, void 0, function () {
-        var elmFile, cwd, fullSourcePath, output, flags, moduleName;
+        var elmFile, cwd, fullSourcePath, output, flags, moduleName, install_dir, codeGenJson;
         return __generator(this, function (_a) {
             elmFile = "Generate.elm";
             cwd = "./codegen";
@@ -600,6 +596,14 @@ function run_generation_from_cli(desiredElmFile, options) {
                 flags = JSON.parse(options.flags);
             }
             moduleName = path.parse(elmFile).name;
+            install_dir = getCodeGenJsonDir();
+            codeGenJson = getCodeGenJson(install_dir);
+            copyHelpers(codeGenJson, {
+                debug: options.debug,
+                output: options.output,
+                flags: flags,
+                cwd: null,
+            });
             if (options.watch) {
                 //         clear(output)
                 generate(options.debug, elmFile, moduleName, output, cwd, flags);

@@ -367,25 +367,6 @@ async function reinstall_everything(install_dir: string, codeGenJson: CodeGenJso
   console.log(chalk.green("Success!"))
 }
 
-// INIT
-//    Start a new elm-codegen project
-//    Generates some files and installs `core`
-async function make(elm_file: string, moduleName: string, target_dir: string, base: string, flags: any) {
-  try {
-    const data = elm_compiler.compileToStringSync([elm_file], {
-      cwd: base,
-      optimize: true,
-      processOpts: { stdio: [null, null, "inherit"] },
-    })
-
-    // @ts-ignore
-    return new run_generator(target_dir, moduleName, data.toString(), flags)
-  } catch (error: unknown) {
-    // This is generally an elm make error from the elm_compiler
-    console.log(error)
-  }
-}
-
 function clear(dir: string) {
   fs.readdir(dir, (err, files) => {
     if (err) throw err
@@ -399,6 +380,19 @@ function clear(dir: string) {
 
 function isLocal(pkg: string) {
   return pkg.endsWith(".json") || pkg.endsWith(path.sep) || pkg.endsWith(".elm")
+}
+
+function copyHelpers(codeGenJson: CodeGenJson, options: Options) {
+  for (const item of codeGenJson.dependencies.local) {
+    if (item.endsWith(".elm")) {
+      fs.writeFileSync(path.join(options.output, item), fs.readFileSync(item).toString())
+    } else if (item.endsWith(path.sep)) {
+      getFilesWithin(item, ".elm").forEach((elmPath) => {
+        const relative = path.relative(item, elmPath)
+        fs.writeFileSync(path.join(options.output, relative), fs.readFileSync(elmPath).toString())
+      })
+    }
+  }
 }
 
 export async function run_install(pkg: string, version: string | null) {
@@ -468,6 +462,9 @@ export type Options = {
 
 export async function run(elmFile: string, options: Options) {
   const moduleName = path.parse(elmFile).name
+  const install_dir = getCodeGenJsonDir()
+  let codeGenJson = getCodeGenJson(install_dir)
+  copyHelpers(codeGenJson, options)
   generate(options.debug, elmFile, moduleName, options.output, options.cwd || ".", options.flags)
 }
 
@@ -514,8 +511,19 @@ export async function run_generation_from_cli(desiredElmFile: string | null, opt
 
   const moduleName = path.parse(elmFile).name
 
+  // Copy locally installed helpers
+  const install_dir = getCodeGenJsonDir()
+  let codeGenJson = getCodeGenJson(install_dir)
+  copyHelpers(codeGenJson, {
+    debug: options.debug,
+    output: options.output,
+    flags: flags,
+    cwd: null,
+  })
+
   if (options.watch) {
     //         clear(output)
+
     generate(options.debug, elmFile, moduleName, output, cwd, flags)
     Chokidar.watch(path.join(cwd, "**", "*.elm"), { ignored: path.join(output, "**") }).on("all", (event, path) => {
       console.log("\nFile changed, regenerating")
