@@ -5,7 +5,7 @@ module Generate exposing (main)
 
 import Elm
 import Elm.Annotation as Type
-import Elm.Gen
+import Gen.CodeGen.Generate as Generate
 import Gen.Helper
 
 
@@ -15,7 +15,7 @@ main =
         { init =
             \\json ->
                 ( ()
-                , Elm.Gen.files
+                , Generate.files
                     [ file
                     ]
                 )
@@ -33,7 +33,7 @@ file =
             (Elm.string "World!")
 
         -- Here's an example of using a helper file!
-        -- Add functions to elm-codegen/helper/{Whatever}.elm
+        -- Add functions to codegen/helpers/{Whatever}.elm
         -- run elm-codegen install
         -- Then you can call those functions using import Gen.{Whatever}
         , Elm.declaration "usingAHelper"

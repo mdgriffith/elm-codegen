@@ -301,12 +301,13 @@ export async function init(desiredInstallDir: string | null) {
   const codeGenJson = codeGenJsonDefault()
 
   fs.mkdirSync(base)
-  fs.mkdirSync(path.join(base, "Elm"))
+  fs.mkdirSync(path.join(base, "Gen"))
+  fs.mkdirSync(path.join(base, "Gen", "CodeGen"))
   fs.mkdirSync(path.join(base, "helpers"))
 
   fs.writeFileSync(path.join(base, "elm.json"), templates.init.elmJson())
   fs.writeFileSync(path.join(base, "Generate.elm"), templates.init.starter())
-  fs.writeFileSync(path.join(base, "Elm", "Gen.elm"), templates.init.elmGen())
+  fs.writeFileSync(path.join(base, "Gen", "CodeGen", "Generate.elm"), templates.init.codegenProgram())
   fs.writeFileSync(path.join(base, "helpers", "Helper.elm"), templates.init.helper())
   const codeGenJsonWithElmCore = await install_package("elm/core", install_dir, null, codeGenJson)
   const updatedCodeGenJson = await install_package(
@@ -343,8 +344,9 @@ async function reinstall_everything(install_dir: string, codeGenJson: CodeGenJso
     // @ts-ignore
     await install_package(key, install_dir, version, emptyCodeGenJson)
   }
-  const elmSources = []
 
+  fs.writeFileSync(path.join(install_dir, "Gen", "CodeGen", "Generate.elm"), templates.init.codegenProgram())
+  const elmSources = []
   for (const item of codeGenJson.dependencies.local) {
     console.log("Installing " + item)
     if (item.endsWith(".json")) {

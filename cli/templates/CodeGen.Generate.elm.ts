@@ -1,6 +1,6 @@
 export default () =>
   `
-port module Elm.Gen exposing (File, files, error, info)
+port module Gen.CodeGen.Generate exposing (File, files, error, info)
 
 
 import Json.Encode as Json

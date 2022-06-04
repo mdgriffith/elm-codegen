@@ -344,7 +344,7 @@ function codeGenJsonDefault() {
 //    Generates some files and installs `core`
 function init(desiredInstallDir) {
     return __awaiter(this, void 0, void 0, function () {
-        var install_dir, base, codeGenJson, updatedCodeGenJson;
+        var install_dir, base, codeGenJson, codeGenJsonWithElmCore, updatedCodeGenJson;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -361,12 +361,18 @@ function init(desiredInstallDir) {
                     }
                     codeGenJson = codeGenJsonDefault();
                     fs.mkdirSync(base);
-                    fs.mkdirSync(path.join(base, "Elm"));
+                    fs.mkdirSync(path.join(base, "Gen"));
+                    fs.mkdirSync(path.join(base, "Gen", "CodeGen"));
+                    fs.mkdirSync(path.join(base, "helpers"));
                     fs.writeFileSync(path.join(base, "elm.json"), templates_1.default.init.elmJson());
                     fs.writeFileSync(path.join(base, "Generate.elm"), templates_1.default.init.starter());
-                    fs.writeFileSync(path.join(base, "Elm", "Gen.elm"), templates_1.default.init.elmGen());
+                    fs.writeFileSync(path.join(base, "Gen", "CodeGen", "Generate.elm"), templates_1.default.init.codegenProgram());
+                    fs.writeFileSync(path.join(base, "helpers", "Helper.elm"), templates_1.default.init.helper());
                     return [4 /*yield*/, install_package("elm/core", install_dir, null, codeGenJson)];
                 case 1:
+                    codeGenJsonWithElmCore = _a.sent();
+                    return [4 /*yield*/, install_package(path.join(base, "helpers") + path.sep, install_dir, null, codeGenJsonWithElmCore)];
+                case 2:
                     updatedCodeGenJson = _a.sent();
                     fs.writeFileSync(path.join(base, "elm.codegen.json"), codeGenJsonToString(updatedCodeGenJson));
                     console.log(format_block([
@@ -412,6 +418,7 @@ function reinstall_everything(install_dir, codeGenJson) {
                     _i++;
                     return [3 /*break*/, 1];
                 case 4:
+                    fs.writeFileSync(path.join(install_dir, "Gen", "CodeGen", "Generate.elm"), templates_1.default.init.codegenProgram());
                     elmSources = [];
                     for (_c = 0, _d = codeGenJson.dependencies.local; _c < _d.length; _c++) {
                         item = _d[_c];
@@ -424,7 +431,7 @@ function reinstall_everything(install_dir, codeGenJson) {
                         else if (item.endsWith(".elm")) {
                             elmSources.push(fs.readFileSync(item).toString());
                         }
-                        else if (item.endsWith("/")) {
+                        else if (item.endsWith(path.sep)) {
                             getFilesWithin(item, ".elm").forEach(function (elmPath) {
                                 elmSources.push(fs.readFileSync(elmPath).toString());
                             });
@@ -477,7 +484,7 @@ function clear(dir) {
     });
 }
 function isLocal(pkg) {
-    return pkg.endsWith(".json") || pkg.endsWith("/") || pkg.endsWith(".elm");
+    return pkg.endsWith(".json") || pkg.endsWith(path.sep) || pkg.endsWith(".elm");
 }
 function run_install(pkg, version) {
     return __awaiter(this, void 0, void 0, function () {
@@ -508,7 +515,7 @@ function run_install(pkg, version) {
                     fs.writeFileSync(codeGenJsonPath, codeGenJsonToString(codeGenJson));
                     return [3 /*break*/, 5];
                 case 1:
-                    if (!pkg.endsWith("/")) return [3 /*break*/, 2];
+                    if (!pkg.endsWith(path.sep)) return [3 /*break*/, 2];
                     //
                     // Install all files within the pkg directory
                     console.log(format_block(["Adding the " + chalk_1.default.cyan(pkg) + " directory to local dependencies and installing."]));
