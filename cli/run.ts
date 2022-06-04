@@ -99,6 +99,20 @@ function generate(debug: boolean, elm_file: string, moduleName: string, target_d
   }
 }
 
+function getFilesWithin(dir: string, endsWith: string) {
+  let files: string[] = []
+  fs.readdirSync(dir).forEach((file) => {
+    const absolute = path.join(dir, file)
+    if (fs.statSync(absolute).isDirectory()) {
+      files.concat(getFilesWithin(absolute, endsWith))
+    } else {
+      if (absolute.endsWith(endsWith)) {
+        files.push(absolute)
+      }
+    }
+  })
+  return files
+}
 const docs_generator = { cwd: "cli/gen-package", file: "src/Generate.elm", moduleName: "Generate" }
 
 function format_title(title: string): string {
@@ -331,6 +345,10 @@ async function reinstall_everything(install_dir: string, codeGenJson: CodeGenJso
       run_package_generator(install_dir, { docs: docs })
     } else if (item.endsWith(".elm")) {
       elmSources.push(fs.readFileSync(item).toString())
+    } else if (item.endsWith("/")) {
+      getFilesWithin(item, ".elm").forEach((elmPath) => {
+        elmSources.push(fs.readFileSync(elmPath).toString())
+      })
     }
   }
   if (elmSources.length > 0) {
@@ -369,31 +387,50 @@ function clear(dir: string) {
   })
 }
 
+function isLocal(pkg: string) {
+  return pkg.endsWith(".json") || pkg.endsWith("/") || pkg.endsWith(".elm")
+}
+
 export async function run_install(pkg: string, version: string | null) {
   const install_dir = getCodeGenJsonDir()
   let codeGenJson = getCodeGenJson(install_dir)
   const codeGenJsonPath = path.join(install_dir, "elm.codegen.json")
   if (!!pkg) {
-    // Package specified
+    // Is it already installed?
+    // If it is and they want a reinstall, they should run `elm-codegen install`
+    if (isLocal(pkg) && pkg in codeGenJson.dependencies.local) {
+      console.log(
+        format_block([
+          chalk.cyan(pkg) + " is already installed!",
+          "Run " + chalk.yellow("elm-codegen install") + " if you want to refresh the helper files.",
+        ])
+      )
+      process.exit(1)
+    }
+
     if (pkg.endsWith(".json")) {
       //
       // Install local docs file
-      if (codeGenJson.dependencies.local.includes(pkg)) {
-        console.log(format_block([chalk.cyan(pkg) + " is already installed!"]))
-        process.exit(1)
-      }
       console.log(format_block(["Adding " + chalk.cyan(pkg) + " to local dependencies and installing."]))
       let docs = JSON.parse(fs.readFileSync(pkg).toString())
       run_package_generator(install_dir, { docs: docs })
       codeGenJson.dependencies.local.push(pkg)
       fs.writeFileSync(codeGenJsonPath, codeGenJsonToString(codeGenJson))
+    } else if (pkg.endsWith("/")) {
+      //
+      // Install all files within the pkg directory
+      console.log(format_block(["Adding the " + chalk.cyan(pkg) + " directory to local dependencies and installing."]))
+      let elmSources: string[] = []
+      getFilesWithin(pkg, ".elm").forEach((elmPath) => {
+        elmSources.push(fs.readFileSync(elmPath).toString())
+      })
+
+      run_package_generator(install_dir, { elmSource: elmSources })
+      codeGenJson.dependencies.local.push(pkg)
+      fs.writeFileSync(codeGenJsonPath, codeGenJsonToString(codeGenJson))
     } else if (pkg.endsWith(".elm")) {
       //
       // Install local elm file
-      if (pkg in codeGenJson.dependencies.local) {
-        console.log(format_block([chalk.cyan(pkg) + " is already installed!"]))
-        process.exit(1)
-      }
       run_package_generator(install_dir, { elmSource: [fs.readFileSync(pkg).toString()] })
       codeGenJson.dependencies.local.push(pkg)
       fs.writeFileSync(codeGenJsonPath, codeGenJsonToString(codeGenJson))

@@ -161,6 +161,21 @@ function generate(debug, elm_file, moduleName, target_dir, base, flags) {
         console.log(error);
     }
 }
+function getFilesWithin(dir, endsWith) {
+    var files = [];
+    fs.readdirSync(dir).forEach(function (file) {
+        var absolute = path.join(dir, file);
+        if (fs.statSync(absolute).isDirectory()) {
+            files.concat(getFilesWithin(absolute, endsWith));
+        }
+        else {
+            if (absolute.endsWith(endsWith)) {
+                files.push(absolute);
+            }
+        }
+    });
+    return files;
+}
 var docs_generator = { cwd: "cli/gen-package", file: "src/Generate.elm", moduleName: "Generate" };
 function format_title(title) {
     var tail = "-".repeat(80 - (title.length + 2));
@@ -409,6 +424,11 @@ function reinstall_everything(install_dir, codeGenJson) {
                         else if (item.endsWith(".elm")) {
                             elmSources.push(fs.readFileSync(item).toString());
                         }
+                        else if (item.endsWith("/")) {
+                            getFilesWithin(item, ".elm").forEach(function (elmPath) {
+                                elmSources.push(fs.readFileSync(elmPath).toString());
+                            });
+                        }
                     }
                     if (elmSources.length > 0) {
                         run_package_generator(install_dir, { elmSource: elmSources });
@@ -456,58 +476,75 @@ function clear(dir) {
         }
     });
 }
+function isLocal(pkg) {
+    return pkg.endsWith(".json") || pkg.endsWith("/") || pkg.endsWith(".elm");
+}
 function run_install(pkg, version) {
     return __awaiter(this, void 0, void 0, function () {
-        var install_dir, codeGenJson, codeGenJsonPath, docs, updatedCodeGenJson;
+        var install_dir, codeGenJson, codeGenJsonPath, docs, elmSources_1, updatedCodeGenJson;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     install_dir = getCodeGenJsonDir();
                     codeGenJson = getCodeGenJson(install_dir);
                     codeGenJsonPath = path.join(install_dir, "elm.codegen.json");
-                    if (!!!pkg) return [3 /*break*/, 5];
+                    if (!!!pkg) return [3 /*break*/, 6];
+                    // Is it already installed?
+                    // If it is and they want a reinstall, they should run `elm-codegen install`
+                    if (isLocal(pkg) && pkg in codeGenJson.dependencies.local) {
+                        console.log(format_block([
+                            chalk_1.default.cyan(pkg) + " is already installed!",
+                            "Run " + chalk_1.default.yellow("elm-codegen install") + " if you want to refresh the helper files.",
+                        ]));
+                        process.exit(1);
+                    }
                     if (!pkg.endsWith(".json")) return [3 /*break*/, 1];
                     //
                     // Install local docs file
-                    if (codeGenJson.dependencies.local.includes(pkg)) {
-                        console.log(format_block([chalk_1.default.cyan(pkg) + " is already installed!"]));
-                        process.exit(1);
-                    }
                     console.log(format_block(["Adding " + chalk_1.default.cyan(pkg) + " to local dependencies and installing."]));
                     docs = JSON.parse(fs.readFileSync(pkg).toString());
                     run_package_generator(install_dir, { docs: docs });
                     codeGenJson.dependencies.local.push(pkg);
                     fs.writeFileSync(codeGenJsonPath, codeGenJsonToString(codeGenJson));
-                    return [3 /*break*/, 4];
+                    return [3 /*break*/, 5];
                 case 1:
-                    if (!pkg.endsWith(".elm")) return [3 /*break*/, 2];
+                    if (!pkg.endsWith("/")) return [3 /*break*/, 2];
+                    //
+                    // Install all files within the pkg directory
+                    console.log(format_block(["Adding the " + chalk_1.default.cyan(pkg) + " directory to local dependencies and installing."]));
+                    elmSources_1 = [];
+                    getFilesWithin(pkg, ".elm").forEach(function (elmPath) {
+                        elmSources_1.push(fs.readFileSync(elmPath).toString());
+                    });
+                    run_package_generator(install_dir, { elmSource: elmSources_1 });
+                    codeGenJson.dependencies.local.push(pkg);
+                    fs.writeFileSync(codeGenJsonPath, codeGenJsonToString(codeGenJson));
+                    return [3 /*break*/, 5];
+                case 2:
+                    if (!pkg.endsWith(".elm")) return [3 /*break*/, 3];
                     //
                     // Install local elm file
-                    if (pkg in codeGenJson.dependencies.local) {
-                        console.log(format_block([chalk_1.default.cyan(pkg) + " is already installed!"]));
-                        process.exit(1);
-                    }
                     run_package_generator(install_dir, { elmSource: [fs.readFileSync(pkg).toString()] });
                     codeGenJson.dependencies.local.push(pkg);
                     fs.writeFileSync(codeGenJsonPath, codeGenJsonToString(codeGenJson));
-                    return [3 /*break*/, 4];
-                case 2:
+                    return [3 /*break*/, 5];
+                case 3:
                     //
                     // Install from elm package
                     console.log("Installing " + chalk_1.default.cyan(pkg) + " in " + chalk_1.default.yellow(install_dir));
                     return [4 /*yield*/, install_package(pkg, install_dir, version, codeGenJson)];
-                case 3:
+                case 4:
                     updatedCodeGenJson = _a.sent();
                     fs.writeFileSync(codeGenJsonPath, codeGenJsonToString(updatedCodeGenJson));
                     console.log(chalk_1.default.green("Success!"));
-                    _a.label = 4;
-                case 4: return [3 /*break*/, 6];
-                case 5:
+                    _a.label = 5;
+                case 5: return [3 /*break*/, 7];
+                case 6:
                     // elm-codegen install
                     // means reinstall all packages
                     reinstall_everything(install_dir, codeGenJson);
-                    _a.label = 6;
-                case 6: return [2 /*return*/];
+                    _a.label = 7;
+                case 7: return [2 /*return*/];
             }
         });
     });
