@@ -90,4 +90,4 @@ There's a bunch more, but it's probably better covered by the [elm-codegen packa
 
 The next step is making using Elm _packages_ super easy. What does that mean? Well, let's find out.
 
-💁 [Using packages](https://github.com/mdgriffith/elm-codegen/tree/main/guide/UsingPackages.md)
+💁 [Using helpers](https://github.com/mdgriffith/elm-codegen/tree/main/guide/UsingHelpers.md)

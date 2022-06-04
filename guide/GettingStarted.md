@@ -5,7 +5,7 @@ Elm CodeGen is an Elm package and CLI tool.
 The `elm-codegen` CLI tool mainly helps with two things.
 
 - Running the generator and creating the actual files.
-- [Installing package helpers](https://github.com/mdgriffith/elm-codegen/tree/main/guide/UsingPackages.md), which we'll cover a little later.
+- [Installing package helpers](https://github.com/mdgriffith/elm-codegen/tree/main/guide/UsingHelpers.md), which we'll cover a little later.
 
 First to get you started, let's initialize a new project.
 
@@ -21,8 +21,8 @@ In a fresh directory, run `elm-codegen init` which will —
 
    - An `elm.json` file.
    - `Generate.elm` — This is your new generator and where you'll be working!
-   - `Elm.Gen.elm` — This has a few ports that `elm-codegen` is expecting when it runs your generator. Take a peek inside, it's not very scary.
    - We'll also install helpers for `elm/core`.
+   - A file called `helpers/Helper.elm`. We'll cover what this is in [Using Helpers](https://github.com/mdgriffith/elm-codegen/tree/main/guide/UsingHelpers.md)
 
 Now that we've done that, we can run `elm-codegen run`!
 
