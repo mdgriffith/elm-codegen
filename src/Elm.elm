@@ -1,6 +1,6 @@
 module Elm exposing
     ( File, file
-    , Expression
+    , Expression, toString
     , bool, int, float, char, string, hex, unit
     , maybe, just, nothing
     , list, tuple, triple
@@ -34,7 +34,7 @@ module Elm exposing
 
 ## Basics
 
-@docs Expression
+@docs Expression, toString
 
 @docs bool, int, float, char, string, hex, unit
 
@@ -143,6 +143,20 @@ import Set
 {-| -}
 type alias Expression =
     Compiler.Expression
+
+
+{-| See what code this expression would generate!
+
+**Note** - Check out the `Elm.ToString` if this doesn't quite meet your needs!
+
+-}
+toString : Expression -> String
+toString (Expression exp) =
+    let
+        expresh =
+            toExp Compiler.startIndex
+    in
+    Internal.Write.writeExpression expresh.expression
 
 
 {-| -}
