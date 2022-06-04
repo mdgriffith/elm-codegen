@@ -7,7 +7,8 @@
     "elm-codegen": "./bin/elm-codegen"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npm run test:install ; elm-test",
+    "test:install": "npm run build; cd tests; node ../bin/elm-codegen install",
     "build": "tsc && npm run pkg:build",
     "watch": "tsc --watch",
     "codegen": "npm run build; node dist/index.js",
@@ -19,8 +20,16 @@
     "pkg:install-elm-json": "(npm run build; node dist/index.js install elm/json)",
     "pkg:install-elm-core": "(npm run build; node dist/index.js install elm/core)",
     "pkg:install-local-file": "(npm run build; cd cli/gen-package ; ../../bin/elm-codegen install test-package-from-file/Test.elm)",
-    "playground": "(npm run build; cd playground; node ../dist/index.js run src/Gen.elm --debug)",
-    "playground-watch": "(npm run build; cd playground; node ../dist/index.js run src/Gen.elm --debug --watch)"
+    "play-init": "(npm run build; mkdir play; cd play; node ../bin/elm-codegen init)",
+    "play-run": "(npm run build; cd play; node ../bin/elm-codegen run)",
+    "play-run:debug": "(npm run build; cd play; node ../bin/elm-codegen run --debug)",
+    "play:install": "(npm run build; cd play; node ../bin/elm-codegen install)",
+    "play:install-codec": "(npm run build; cd play; node ../bin/elm-codegen install miniBill/elm-codec)",
+    "play:install-ui": "(npm run build; cd play; node ../bin/elm-codegen install)",
+    "play:install-list": "(npm run build; cd play; node ../bin/elm-codegen install elm-community/list-extra)",
+    "play:install-css": "(npm run build; cd play; node ../bin/elm-codegen install rtfeldman/elm-css)",
+    "play:install-browser": "(npm run build; cd play; node ../bin/elm-codegen install elm/browser)",
+    "play-watch": "(npm run build; cd play; node ../bin/elm-codegen run --debug --watch)"
   },
   "files": [
     "dist",
