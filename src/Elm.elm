@@ -147,7 +147,7 @@ type alias Expression =
 
 {-| See what code this expression would generate!
 
-**Note** - Check out the `Elm.ToString` if this doesn't quite meet your needs!
+**Note** - Check out the `Elm.ToString` module if this doesn't quite meet your needs!
 
 -}
 toString : Expression -> String
