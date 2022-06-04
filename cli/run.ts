@@ -34,7 +34,7 @@ globalThis["XMLHttpRequest"] = XMLHttpRequest.XMLHttpRequest
 
 const currentVersion = require("../package.json").version
 
-async function run_generator(base: string, moduleName: string, elm_source: string, flags: any) {
+async function run_generator(output_dir: string, moduleName: string, elm_source: string, flags: any) {
   eval(elm_source)
 
   const promise = new Promise((resolve, reject) => {
@@ -52,14 +52,14 @@ async function run_generator(base: string, moduleName: string, elm_source: strin
   })
     .then((files: any) => {
       for (const file of files) {
-        const fullpath = path.join(base, file.path)
+        const fullpath = path.join(output_dir, file.path)
         fs.mkdirSync(path.dirname(fullpath), { recursive: true })
         fs.writeFileSync(fullpath, file.contents)
       }
       if (files.length == 1) {
-        console.log(format_block([`${chalk.cyan(base + path.sep)}${chalk.yellow(files[0].path)} was generated!`]))
+        console.log(format_block([`${chalk.cyan(output_dir + path.sep)}${chalk.yellow(files[0].path)} was generated!`]))
       } else {
-        console.log(format_block([`${chalk.yellow(files.length)} files generated in ${chalk.cyan(base)}!`]))
+        console.log(format_block([`${chalk.yellow(files.length)} files generated in ${chalk.cyan(output_dir)}!`]))
       }
     })
     .catch((errors) => {
@@ -83,16 +83,16 @@ async function run_generator(base: string, moduleName: string, elm_source: strin
   return promise
 }
 
-function generate(debug: boolean, elm_file: string, moduleName: string, target_dir: string, base: string, flags: any) {
+function generate(debug: boolean, elm_file: string, moduleName: string, output_dir: string, cwd: string, flags: any) {
   try {
     const data = elm_compiler.compileToStringSync([elm_file], {
-      cwd: base,
+      cwd: cwd,
       optimize: !debug,
       processOpts: { stdio: [null, null, "inherit"] },
     })
 
     // @ts-ignore
-    return new run_generator(target_dir, moduleName, data.toString(), flags)
+    return new run_generator(output_dir, moduleName, data.toString(), flags)
   } catch (error: unknown) {
     // This is generally an elm make error from the elm_compiler
     console.log(error)
@@ -491,7 +491,7 @@ export async function run_generation_from_cli(desiredElmFile: string | null, opt
     elmFile = desiredElmFile
   }
   let fullSourcePath = path.join(cwd, elmFile)
-  let output = path.join(cwd, options.output)
+  let output = options.output
 
   if (!fs.existsSync(fullSourcePath)) {
     console.log(
