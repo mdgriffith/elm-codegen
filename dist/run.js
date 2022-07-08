@@ -571,9 +571,17 @@ function run(elmFile, options) {
     });
 }
 exports.run = run;
+function parseJSONSafe(hopefullyJsonString) {
+    try {
+        return JSON.parse(hopefullyJsonString);
+    }
+    catch (parsingError) {
+        return null;
+    }
+}
 function run_generation_from_cli(desiredElmFile, options) {
     return __awaiter(this, void 0, void 0, function () {
-        var elmFile, cwd, fullSourcePath, output, flags, moduleName, install_dir, codeGenJson;
+        var elmFile, cwd, fullSourcePath, output, flags, parsed, moduleName, install_dir, codeGenJson;
         return __generator(this, function (_a) {
             elmFile = "Generate.elm";
             cwd = "./codegen";
@@ -592,15 +600,40 @@ function run_generation_from_cli(desiredElmFile, options) {
             }
             flags = null;
             if (options.flagsFrom) {
-                if (options.flagsFrom.endsWith(".json")) {
-                    flags = JSON.parse(fs.readFileSync(options.flagsFrom).toString());
+                if (!fs.existsSync(options.flagsFrom)) {
+                    if (path.isAbsolute(options.flagsFrom)) {
+                        console.log(format_block([
+                            chalk_1.default.cyan("elm-codegen") + " was called with " + chalk_1.default.cyan("--flags-from"),
+                            chalk_1.default.yellow(options.flagsFrom),
+                            "but that file doesn't exist.",
+                        ]));
+                    }
+                    else {
+                        console.log(format_block([
+                            chalk_1.default.cyan("elm-codegen") + " was called with " + chalk_1.default.cyan("--flags-from"),
+                            chalk_1.default.yellow(options.flagsFrom),
+                            "I looked in " + chalk_1.default.cyan(process.cwd()) + " but wasn't able to find anything.",
+                            "Is there a typo in the path?",
+                        ]));
+                    }
+                    process.exit(0);
                 }
-                else {
-                    flags = fs.readFileSync(options.flagsFrom).toString();
+                flags = fs.readFileSync(options.flagsFrom).toString();
+                if (options.flagsFrom.endsWith(".json")) {
+                    parsed = parseJSONSafe(flags);
+                    if (parsed == null && flags.trim().toLowerCase() != "null") {
+                        console.log(format_block([
+                            chalk_1.default.cyan("elm-codegen") + " was called with " + chalk_1.default.cyan("--flags-from"),
+                            chalk_1.default.yellow(options.flagsFrom) + " which has a .json extension, but I wasn't able to parse it as JSON.",
+                            "Is it valid JSON?",
+                        ]));
+                        process.exit(0);
+                    }
+                    flags = parsed;
                 }
             }
             else if (options.flags) {
-                flags = JSON.parse(options.flags);
+                flags = parseJSONSafe(options.flags);
             }
             moduleName = path.parse(elmFile).name;
             install_dir = getCodeGenJsonDir();
