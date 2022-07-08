@@ -245,18 +245,16 @@ maybe mainExpression branches =
     Elm.fn "myTuple" <|
         \myTuple ->
             Elm.Case.tuple myTuple
-                { nothing = Elm.int 0
-                , just =
-                    \one two ->
-                        Elm.plus (Elm.int 5) two
-                }
+                (\one two ->
+                    Elm.plus (Elm.int 5) two
+                )
 
 Generates
 
     \myTuple ->
         case myTuple of
-            ( one, two ) ->
-                5 + two
+            ( first, second ) ->
+                5 + second
 
 -}
 tuple :
@@ -311,11 +309,9 @@ tuple mainExpression branches =
     Elm.fn "myTriple" <|
         \myTriple ->
             Elm.Case.triple myTriple
-                { nothing = Elm.int 0
-                , just =
-                    \one two three ->
-                        Elm.plus (Elm.int 5) two
-                }
+                (\one two three ->
+                    Elm.plus (Elm.int 5) two
+                )
 
 Generates
 
@@ -606,7 +602,7 @@ branch0 name exp =
     Branch
         (\index ->
             ( index
-            , Pattern.NamedPattern { moduleName = [], name = name } []
+            , Pattern.NamedPattern { moduleName = [], name = Compiler.formatType name } []
             , exp
             )
         )
@@ -641,7 +637,7 @@ branch1 name ( argName, argType ) toExp =
             ( var.index
             , Pattern.NamedPattern
                 { moduleName = []
-                , name = name
+                , name = Compiler.formatType name
                 }
                 [ Compiler.nodify (Pattern.VarPattern var.name) ]
             , toExp var.exp
@@ -662,7 +658,7 @@ branch2 name ( oneName, oneType ) ( twoName, twoType ) toExp =
                     Compiler.toVarWithType one.index twoName twoType
             in
             ( two.index
-            , Pattern.NamedPattern { moduleName = [], name = name }
+            , Pattern.NamedPattern { moduleName = [], name = Compiler.formatType name }
                 [ Compiler.nodify (Pattern.VarPattern one.name)
                 , Compiler.nodify (Pattern.VarPattern two.name)
                 ]
@@ -693,7 +689,7 @@ branch3 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) 
                     Compiler.toVarWithType two.index threeName threeType
             in
             ( three.index
-            , Pattern.NamedPattern { moduleName = [], name = name }
+            , Pattern.NamedPattern { moduleName = [], name = Compiler.formatType name }
                 [ Compiler.nodify (Pattern.VarPattern one.name)
                 , Compiler.nodify (Pattern.VarPattern two.name)
                 , Compiler.nodify (Pattern.VarPattern three.name)
@@ -729,7 +725,7 @@ branch4 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) 
                     Compiler.toVarWithType three.index fourName fourType
             in
             ( four.index
-            , Pattern.NamedPattern { moduleName = [], name = name }
+            , Pattern.NamedPattern { moduleName = [], name = Compiler.formatType name }
                 [ Compiler.nodify (Pattern.VarPattern one.name)
                 , Compiler.nodify (Pattern.VarPattern two.name)
                 , Compiler.nodify (Pattern.VarPattern three.name)
@@ -777,7 +773,7 @@ branch5 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) 
                     Compiler.toVarWithType four.index fiveName fiveType
             in
             ( five.index
-            , Pattern.NamedPattern { moduleName = [], name = name }
+            , Pattern.NamedPattern { moduleName = [], name = Compiler.formatType name }
                 [ Compiler.nodify (Pattern.VarPattern one.name)
                 , Compiler.nodify (Pattern.VarPattern two.name)
                 , Compiler.nodify (Pattern.VarPattern three.name)
@@ -831,7 +827,7 @@ branch6 name ( oneName, oneType ) ( twoName, twoType ) ( threeName, threeType ) 
                     Compiler.toVarWithType four.index sixName sixType
             in
             ( six.index
-            , Pattern.NamedPattern { moduleName = [], name = name }
+            , Pattern.NamedPattern { moduleName = [], name = Compiler.formatType name }
                 [ Compiler.nodify (Pattern.VarPattern one.name)
                 , Compiler.nodify (Pattern.VarPattern two.name)
                 , Compiler.nodify (Pattern.VarPattern three.name)
@@ -865,7 +861,7 @@ branchWith name arity toExp =
                         |> List.unzip
             in
             ( Compiler.next index
-            , Pattern.NamedPattern { moduleName = [], name = name } patterns
+            , Pattern.NamedPattern { moduleName = [], name = Compiler.formatType name } patterns
             , toExp args
             )
         )
