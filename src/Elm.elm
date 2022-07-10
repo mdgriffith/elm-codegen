@@ -1665,11 +1665,12 @@ This may seem a little weird the first time you encounter it, so let's break it 
 Here's what's happening for the `fn*` functions —
 
   - The `String` arguments are the **names of the arguments** for the generated function.
+  - The attached `Maybe Annotation` is the type annotation. If you provide `Nothing`, then `elm-codegen` will infer the type for you!
   - The `(Expression -> Expression)` function is where we're providing you an `Expression` that represents an argument coming in to the generated function.
 
 So, this
 
-    Elm.fn "firstInt"
+    Elm.fn ( "firstInt", Nothing )
         (\firstArgument ->
             Elm.plus
                 (Elm.int 42)
@@ -1683,7 +1684,7 @@ Generates
 If you want to generate a **top level** function instead of an anonymous function, use `Elm.declaration`.
 
     Elm.declaration "add42" <|
-        Elm.fn "firstInt"
+        Elm.fn ( "firstInt", Nothing )
             (\firstArgument ->
                 Elm.plus
                     (Elm.int 42)
@@ -1700,29 +1701,14 @@ Results in
 
 If you absolutely don't want this behavior, you'll need to use [`functionAdvanced`](#functionAdvanced).
 
-**Another Note** — There may be situations where `elm-codegen` is unable to infer the type of one of the parameters. This is especially the case if you are using type aliases.
-
-In this case you can use [`withType`](#withType) to manually attach a type to a value. That looks like this:
-
-    import Elm
-    import Elm.Annotation
-
-    Elm.fn "firstInt"
-        (\firstArgument ->
-            (firstArgument
-                |> Elm.withType
-                    (Elm.Annotation.named ["MyOwnModule"] "MyCustomType")
-            )
-        )
-
 -}
-fn : String -> (Expression -> Expression) -> Expression
-fn oneBaseName toExpression =
+fn : ( String, Maybe Elm.Annotation.Annotation ) -> (Expression -> Expression) -> Expression
+fn ( oneBaseName, maybeAnnotation ) toExpression =
     Compiler.Expression <|
         \index ->
             let
                 one =
-                    Compiler.toVar index oneBaseName
+                    Compiler.toVarMaybeType index oneBaseName maybeAnnotation
 
                 (Compiler.Expression toExpr) =
                     toExpression one.val
@@ -1744,7 +1730,7 @@ fn oneBaseName toExpression =
                         Ok
                             { type_ =
                                 Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify (Annotation.GenericType one.typename))
+                                    (Compiler.nodify one.type_)
                                     (Compiler.nodify
                                         returnAnnotation.type_
                                     )
@@ -1919,11 +1905,11 @@ betaReduce e =
 
 {-| -}
 fn2 :
-    String
-    -> String
+    ( String, Maybe Elm.Annotation.Annotation )
+    -> ( String, Maybe Elm.Annotation.Annotation )
     -> (Expression -> Expression -> Expression)
     -> Expression
-fn2 oneBaseName twoBaseName toExpression =
+fn2 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) toExpression =
     Compiler.Expression <|
         \index ->
             let
@@ -1931,10 +1917,10 @@ fn2 oneBaseName twoBaseName toExpression =
                     index
 
                 one =
-                    Compiler.toVar childIndex oneBaseName
+                    Compiler.toVarMaybeType childIndex oneBaseName maybeOneType
 
                 two =
-                    Compiler.toVar one.index twoBaseName
+                    Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
 
                 ( newIndex_, return ) =
                     Compiler.toExpressionDetails (Compiler.dive two.index) (toExpression one.val two.val)
@@ -1956,10 +1942,10 @@ fn2 oneBaseName twoBaseName toExpression =
                         Ok
                             { type_ =
                                 Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify (Annotation.GenericType one.typename))
+                                    (Compiler.nodify one.type_)
                                     (Compiler.nodify
                                         (Annotation.FunctionTypeAnnotation
-                                            (Compiler.nodify (Annotation.GenericType two.typename))
+                                            (Compiler.nodify two.type_)
                                             (Compiler.nodify
                                                 returnAnnotation.type_
                                             )
@@ -1974,23 +1960,23 @@ fn2 oneBaseName twoBaseName toExpression =
 
 {-| -}
 fn3 :
-    String
-    -> String
-    -> String
+    ( String, Maybe Elm.Annotation.Annotation )
+    -> ( String, Maybe Elm.Annotation.Annotation )
+    -> ( String, Maybe Elm.Annotation.Annotation )
     -> (Expression -> Expression -> Expression -> Expression)
     -> Expression
-fn3 oneBaseName twoBaseName threeBaseName toExpression =
+fn3 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName, maybeThreeType ) toExpression =
     Compiler.Expression <|
         \index ->
             let
                 one =
-                    Compiler.toVar index oneBaseName
+                    Compiler.toVarMaybeType index oneBaseName maybeOneType
 
                 two =
-                    Compiler.toVar one.index twoBaseName
+                    Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
 
                 three =
-                    Compiler.toVar two.index threeBaseName
+                    Compiler.toVarMaybeType two.index threeBaseName maybeThreeType
 
                 ( newIndex, return ) =
                     Compiler.toExpressionDetails (Compiler.dive three.index) (toExpression one.val two.val three.val)
@@ -2013,13 +1999,13 @@ fn3 oneBaseName twoBaseName threeBaseName toExpression =
                         Ok
                             { type_ =
                                 Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify (Annotation.GenericType one.typename))
+                                    (Compiler.nodify one.type_)
                                     (Compiler.nodify
                                         (Annotation.FunctionTypeAnnotation
-                                            (Compiler.nodify (Annotation.GenericType two.typename))
+                                            (Compiler.nodify two.type_)
                                             (Compiler.nodify
                                                 (Annotation.FunctionTypeAnnotation
-                                                    (Compiler.nodify (Annotation.GenericType three.typename))
+                                                    (Compiler.nodify three.type_)
                                                     (Compiler.nodify
                                                         returnAnnotation.type_
                                                     )
@@ -2036,27 +2022,27 @@ fn3 oneBaseName twoBaseName threeBaseName toExpression =
 
 {-| -}
 fn4 :
-    String
-    -> String
-    -> String
-    -> String
+    ( String, Maybe Elm.Annotation.Annotation )
+    -> ( String, Maybe Elm.Annotation.Annotation )
+    -> ( String, Maybe Elm.Annotation.Annotation )
+    -> ( String, Maybe Elm.Annotation.Annotation )
     -> (Expression -> Expression -> Expression -> Expression -> Expression)
     -> Expression
-fn4 oneBaseName twoBaseName threeBaseName fourBaseName toExpression =
+fn4 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName, maybeThreeType ) ( fourBaseName, maybeFourType ) toExpression =
     Compiler.Expression <|
         \index ->
             let
                 one =
-                    Compiler.toVar index oneBaseName
+                    Compiler.toVarMaybeType index oneBaseName maybeOneType
 
                 two =
-                    Compiler.toVar one.index twoBaseName
+                    Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
 
                 three =
-                    Compiler.toVar two.index threeBaseName
+                    Compiler.toVarMaybeType two.index threeBaseName maybeThreeType
 
                 four =
-                    Compiler.toVar three.index fourBaseName
+                    Compiler.toVarMaybeType three.index fourBaseName maybeFourType
 
                 ( newIndex, return ) =
                     Compiler.toExpressionDetails (Compiler.dive four.index) (toExpression one.val two.val three.val four.val)
@@ -2080,16 +2066,16 @@ fn4 oneBaseName twoBaseName threeBaseName fourBaseName toExpression =
                         Ok
                             { type_ =
                                 Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify (Annotation.GenericType one.typename))
+                                    (Compiler.nodify one.type_)
                                     (Compiler.nodify
                                         (Annotation.FunctionTypeAnnotation
-                                            (Compiler.nodify (Annotation.GenericType two.typename))
+                                            (Compiler.nodify two.type_)
                                             (Compiler.nodify
                                                 (Annotation.FunctionTypeAnnotation
-                                                    (Compiler.nodify (Annotation.GenericType three.typename))
+                                                    (Compiler.nodify three.type_)
                                                     (Compiler.nodify
                                                         (Annotation.FunctionTypeAnnotation
-                                                            (Compiler.nodify (Annotation.GenericType four.typename))
+                                                            (Compiler.nodify four.type_)
                                                             (Compiler.nodify
                                                                 returnAnnotation.type_
                                                             )
@@ -2108,31 +2094,31 @@ fn4 oneBaseName twoBaseName threeBaseName fourBaseName toExpression =
 
 {-| -}
 fn5 :
-    String
-    -> String
-    -> String
-    -> String
-    -> String
+    ( String, Maybe Elm.Annotation.Annotation )
+    -> ( String, Maybe Elm.Annotation.Annotation )
+    -> ( String, Maybe Elm.Annotation.Annotation )
+    -> ( String, Maybe Elm.Annotation.Annotation )
+    -> ( String, Maybe Elm.Annotation.Annotation )
     -> (Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
     -> Expression
-fn5 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName toExpression =
+fn5 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName, maybeThreeType ) ( fourBaseName, maybeFourType ) ( fiveBaseName, maybeFiveType ) toExpression =
     Compiler.Expression <|
         \index ->
             let
                 one =
-                    Compiler.toVar index oneBaseName
+                    Compiler.toVarMaybeType index oneBaseName maybeOneType
 
                 two =
-                    Compiler.toVar one.index twoBaseName
+                    Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
 
                 three =
-                    Compiler.toVar two.index threeBaseName
+                    Compiler.toVarMaybeType two.index threeBaseName maybeThreeType
 
                 four =
-                    Compiler.toVar three.index fourBaseName
+                    Compiler.toVarMaybeType three.index fourBaseName maybeFourType
 
                 five =
-                    Compiler.toVar four.index fiveBaseName
+                    Compiler.toVarMaybeType four.index fiveBaseName maybeFiveType
 
                 ( newIndex, return ) =
                     Compiler.toExpressionDetails (Compiler.dive five.index) (toExpression one.val two.val three.val four.val five.val)
@@ -2157,19 +2143,19 @@ fn5 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName toExpression
                         Ok
                             { type_ =
                                 Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify (Annotation.GenericType one.typename))
+                                    (Compiler.nodify one.type_)
                                     (Compiler.nodify
                                         (Annotation.FunctionTypeAnnotation
-                                            (Compiler.nodify (Annotation.GenericType two.typename))
+                                            (Compiler.nodify two.type_)
                                             (Compiler.nodify
                                                 (Annotation.FunctionTypeAnnotation
-                                                    (Compiler.nodify (Annotation.GenericType three.typename))
+                                                    (Compiler.nodify three.type_)
                                                     (Compiler.nodify
                                                         (Annotation.FunctionTypeAnnotation
-                                                            (Compiler.nodify (Annotation.GenericType four.typename))
+                                                            (Compiler.nodify four.type_)
                                                             (Compiler.nodify
                                                                 (Annotation.FunctionTypeAnnotation
-                                                                    (Compiler.nodify (Annotation.GenericType five.typename))
+                                                                    (Compiler.nodify five.type_)
                                                                     (Compiler.nodify
                                                                         returnAnnotation.type_
                                                                     )
@@ -2190,35 +2176,35 @@ fn5 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName toExpression
 
 {-| -}
 fn6 :
-    String
-    -> String
-    -> String
-    -> String
-    -> String
-    -> String
+    ( String, Maybe Elm.Annotation.Annotation )
+    -> ( String, Maybe Elm.Annotation.Annotation )
+    -> ( String, Maybe Elm.Annotation.Annotation )
+    -> ( String, Maybe Elm.Annotation.Annotation )
+    -> ( String, Maybe Elm.Annotation.Annotation )
+    -> ( String, Maybe Elm.Annotation.Annotation )
     -> (Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
     -> Expression
-fn6 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName sixBaseName toExpression =
+fn6 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName, maybeThreeType ) ( fourBaseName, maybeFourType ) ( fiveBaseName, maybeFiveType ) ( sixBaseName, maybeSixType ) toExpression =
     Compiler.Expression <|
         \index ->
             let
                 one =
-                    Compiler.toVar index oneBaseName
+                    Compiler.toVarMaybeType index oneBaseName maybeOneType
 
                 two =
-                    Compiler.toVar one.index twoBaseName
+                    Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
 
                 three =
-                    Compiler.toVar two.index threeBaseName
+                    Compiler.toVarMaybeType two.index threeBaseName maybeThreeType
 
                 four =
-                    Compiler.toVar three.index fourBaseName
+                    Compiler.toVarMaybeType three.index fourBaseName maybeFourType
 
                 five =
-                    Compiler.toVar four.index fiveBaseName
+                    Compiler.toVarMaybeType four.index fiveBaseName maybeFiveType
 
                 six =
-                    Compiler.toVar five.index sixBaseName
+                    Compiler.toVarMaybeType five.index sixBaseName maybeSixType
 
                 ( newIndex, return ) =
                     Compiler.toExpressionDetails (Compiler.dive five.index) (toExpression one.val two.val three.val four.val five.val six.val)
@@ -2244,22 +2230,22 @@ fn6 oneBaseName twoBaseName threeBaseName fourBaseName fiveBaseName sixBaseName 
                         Ok
                             { type_ =
                                 Annotation.FunctionTypeAnnotation
-                                    (Compiler.nodify (Annotation.GenericType one.typename))
+                                    (Compiler.nodify one.type_)
                                     (Compiler.nodify
                                         (Annotation.FunctionTypeAnnotation
-                                            (Compiler.nodify (Annotation.GenericType two.typename))
+                                            (Compiler.nodify two.type_)
                                             (Compiler.nodify
                                                 (Annotation.FunctionTypeAnnotation
-                                                    (Compiler.nodify (Annotation.GenericType three.typename))
+                                                    (Compiler.nodify three.type_)
                                                     (Compiler.nodify
                                                         (Annotation.FunctionTypeAnnotation
-                                                            (Compiler.nodify (Annotation.GenericType four.typename))
+                                                            (Compiler.nodify four.type_)
                                                             (Compiler.nodify
                                                                 (Annotation.FunctionTypeAnnotation
-                                                                    (Compiler.nodify (Annotation.GenericType five.typename))
+                                                                    (Compiler.nodify five.type_)
                                                                     (Compiler.nodify
                                                                         (Annotation.FunctionTypeAnnotation
-                                                                            (Compiler.nodify (Annotation.GenericType six.typename))
+                                                                            (Compiler.nodify six.type_)
                                                                             (Compiler.nodify
                                                                                 returnAnnotation.type_
                                                                             )
@@ -2291,6 +2277,7 @@ comment content =
     Compiler.Comment ("{- " ++ content ++ " -}")
 
 
+renderDocumentation : Result String value1 -> Result (List Compiler.InferenceError) value -> Maybe String
 renderDocumentation resolvedType bodyAnnotation =
     case resolvedType of
         Ok sig ->

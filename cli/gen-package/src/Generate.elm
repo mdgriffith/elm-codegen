@@ -303,8 +303,8 @@ block2Case thisModule union =
 
         _ ->
             Just
-                (Elm.fn2 "expresssion"
-                    "tags"
+                (Elm.fn2 ( "expresssion", Nothing )
+                    ( "tags", Nothing )
                     (\express tagRecord ->
                         Gen.Elm.Case.custom express
                             (unionToAnnotation thisModule union)
@@ -560,12 +560,7 @@ block2Maker thisModule block =
                                 |> List.map (\( fieldName, _ ) -> ( fieldName, expressionType ))
                                 |> Annotation.record
 
-                        lambdaValue val =
-                            let
-                                arg =
-                                    val
-                                        |> Elm.withType lambdaArgType
-                            in
+                        lambdaValue arg =
                             fields
                                 |> List.map
                                     (\( fieldName, _ ) ->
@@ -574,7 +569,7 @@ block2Maker thisModule block =
                                     )
                                 |> Gen.Elm.record
                     in
-                    Elm.fn "arg" lambdaValue
+                    Elm.fn ( "arg", Just lambdaArgType ) lambdaValue
                         |> Just
 
                 _ ->
@@ -826,7 +821,7 @@ typeCreation thisModule block =
                                 |> List.map (\( fieldName, _ ) -> ( fieldName, expressionType ))
                                 |> Annotation.record
                     in
-                    [ Elm.fn (alias.name ++ "_args")
+                    [ Elm.fn ( alias.name ++ "_args", Nothing )
                         (\val ->
                             let
                                 arg =
