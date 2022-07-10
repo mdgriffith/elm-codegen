@@ -371,7 +371,7 @@ make_ =
         \ar0 ->
             Elm.apply
                 (Elm.value
-                    { importFrom = [ "Maybe" ]
+                    { importFrom = []
                     , name = "Just"
                     , annotation =
                         Just (Type.namedWith [] "Maybe" [ Type.var "a" ])
@@ -380,7 +380,7 @@ make_ =
                 [ ar0 ]
     , nothing =
         Elm.value
-            { importFrom = [ "Maybe" ]
+            { importFrom = []
             , name = "Nothing"
             , annotation = Just (Type.namedWith [] "Maybe" [ Type.var "a" ])
             }

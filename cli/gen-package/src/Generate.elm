@@ -14,6 +14,7 @@ import Gen.Elm
 import Gen.Elm.Annotation as GenType
 import Gen.Elm.Case
 import Gen.List
+import Gen.Tuple
 import Internal.Compiler as Compiler
 import Internal.Write as Write
 import Json.Decode as Json
@@ -193,7 +194,7 @@ expressionType =
     Annotation.named elm "Expression"
 
 
-blockToCall : List String -> Elm.Docs.Block -> Maybe Elm.Field
+blockToCall : List String -> Elm.Docs.Block -> Maybe Field
 blockToCall thisModule block =
     case block of
         Elm.Docs.MarkdownBlock str ->
@@ -251,7 +252,7 @@ blockToCall thisModule block =
                                 }
                             )
                         )
-                        |> Elm.field value.name
+                        |> Tuple.pair value.name
                         |> Just
 
                 _ ->
@@ -264,7 +265,7 @@ blockToCall thisModule block =
             Nothing
 
 
-blockToIdField : List String -> Elm.Docs.Block -> Maybe Elm.Field
+blockToIdField : List String -> Elm.Docs.Block -> Maybe Field
 blockToIdField thisModule block =
     case block of
         Elm.Docs.MarkdownBlock str ->
@@ -278,7 +279,7 @@ blockToIdField thisModule block =
 
         Elm.Docs.ValueBlock value ->
             Just
-                (Elm.field
+                (Tuple.pair
                     value.name
                     (valueWith thisModule
                         value.name
@@ -516,7 +517,7 @@ block2Maker thisModule block =
                                 (\( name, tags ) ->
                                     case tags of
                                         [] ->
-                                            Elm.field name
+                                            Tuple.pair name
                                                 (valueWith thisModule
                                                     name
                                                     (Elm.Type.Type union.name
@@ -525,7 +526,7 @@ block2Maker thisModule block =
                                                 )
 
                                         _ ->
-                                            Elm.field name
+                                            Tuple.pair name
                                                 (Elm.function
                                                     (List.indexedMap
                                                         (\i tag ->
@@ -564,7 +565,8 @@ block2Maker thisModule block =
                             fields
                                 |> List.map
                                     (\( fieldName, _ ) ->
-                                        Gen.Elm.field fieldName
+                                        Gen.Tuple.pair
+                                            (Elm.string fieldName)
                                             (Elm.get fieldName arg)
                                     )
                                 |> Gen.Elm.record
@@ -585,7 +587,11 @@ block2Maker thisModule block =
             Nothing
 
 
-record : String -> List Elm.Docs.Block -> (Elm.Docs.Block -> Maybe Elm.Field) -> Maybe Elm.Declaration
+type alias Field =
+    ( String, Elm.Expression )
+
+
+record : String -> List Elm.Docs.Block -> (Elm.Docs.Block -> Maybe Field) -> Maybe Elm.Declaration
 record recordName blocks makeField =
     let
         fields =
@@ -604,7 +610,7 @@ record recordName blocks makeField =
                 |> Just
 
 
-recordWithFieldList : String -> List Elm.Docs.Block -> (Elm.Docs.Block -> List Elm.Field) -> Maybe Elm.Declaration
+recordWithFieldList : String -> List Elm.Docs.Block -> (Elm.Docs.Block -> List Field) -> Maybe Elm.Declaration
 recordWithFieldList recordName blocks makeField =
     let
         fields =
@@ -623,7 +629,7 @@ recordWithFieldList recordName blocks makeField =
                 |> Just
 
 
-caseOf : List String -> Elm.Docs.Block -> Maybe Elm.Field
+caseOf : List String -> Elm.Docs.Block -> Maybe Field
 caseOf thisModule block =
     case block of
         Elm.Docs.MarkdownBlock str ->
@@ -631,7 +637,7 @@ caseOf thisModule block =
 
         Elm.Docs.UnionBlock union ->
             Maybe.map
-                (Elm.field union.name)
+                (Tuple.pair union.name)
                 (block2Case thisModule union)
 
         Elm.Docs.AliasBlock alias ->
@@ -647,19 +653,19 @@ caseOf thisModule block =
             Nothing
 
 
-annotation : List String -> Elm.Docs.Block -> Maybe Elm.Field
+annotation : List String -> Elm.Docs.Block -> Maybe Field
 annotation thisModule block =
     case block of
         Elm.Docs.MarkdownBlock str ->
             Nothing
 
         Elm.Docs.UnionBlock union ->
-            Elm.field union.name
+            Tuple.pair union.name
                 (annotationNamed union.name union.args)
                 |> Just
 
         Elm.Docs.AliasBlock alias ->
-            Elm.field alias.name
+            Tuple.pair alias.name
                 (aliasNamed alias)
                 |> Just
 
@@ -759,7 +765,7 @@ withBuiltInModules modName =
             modName
 
 
-typeCreation : List String -> Elm.Docs.Block -> List Elm.Field
+typeCreation : List String -> Elm.Docs.Block -> List Field
 typeCreation thisModule block =
     case block of
         Elm.Docs.MarkdownBlock str ->
@@ -776,7 +782,7 @@ typeCreation thisModule block =
                         (\( name, tags ) ->
                             case tags of
                                 [] ->
-                                    Elm.field name
+                                    Tuple.pair name
                                         (valueWith
                                             (withBuiltInModules
                                                 thisModule
@@ -788,7 +794,7 @@ typeCreation thisModule block =
                                         )
 
                                 _ ->
-                                    Elm.field name
+                                    Tuple.pair name
                                         (Elm.function
                                             (List.indexedMap
                                                 (\i tag ->
@@ -835,7 +841,8 @@ typeCreation thisModule block =
                                             builder =
                                                 Elm.get fieldName arg
                                         in
-                                        Gen.Elm.field fieldName
+                                        Gen.Tuple.pair
+                                            (Elm.string fieldName)
                                             builder
                                     )
                                 |> Gen.Elm.record
@@ -858,7 +865,7 @@ typeCreation thisModule block =
                                         )
                                     )
                         )
-                        |> Elm.field alias.name
+                        |> Tuple.pair alias.name
                     ]
 
                 _ ->
@@ -1138,7 +1145,7 @@ unpackArg tipe =
                 \rec ->
                     List.map
                         (\( fieldName, unpacked ) ->
-                            Gen.Elm.field fieldName
+                            Gen.Tuple.pair (Elm.string fieldName)
                                 (unpacked.unpacker (Elm.get fieldName rec))
                         )
                         unpackedFields
@@ -1159,7 +1166,7 @@ unpackArg tipe =
                 \rec ->
                     List.map
                         (\( fieldName, unpacked ) ->
-                            Gen.Elm.field fieldName
+                            Gen.Tuple.pair (Elm.string fieldName)
                                 (unpacked.unpacker (Elm.get fieldName rec))
                         )
                         unpackedFields

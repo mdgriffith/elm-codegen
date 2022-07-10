@@ -5,7 +5,7 @@ module Elm exposing
     , maybe, just, nothing
     , list, tuple, triple
     , withType
-    , record, field, Field, get, updateRecord
+    , record, get, updateRecord
     , letIn, ifThen
     , Declaration
     , comment, declaration
@@ -47,7 +47,7 @@ module Elm exposing
 
 ## Records
 
-@docs record, field, Field, get, updateRecord
+@docs record, get, updateRecord
 
 
 ## Flow control
@@ -891,7 +891,7 @@ list exprs =
 
 
 {-| -}
-updateRecord : Expression -> List Field -> Expression
+updateRecord : Expression -> List ( String, Expression ) -> Expression
 updateRecord recordExpression fields =
     Compiler.Expression <|
         \index ->
@@ -902,8 +902,11 @@ updateRecord recordExpression fields =
                 ( fieldIndex, fieldAnnotationsGathered, fieldDetails ) =
                     fields
                         |> List.foldl
-                            (\(Field fieldName fieldExp) ( currentIndex, fieldAnnotationResult, items ) ->
+                            (\( fieldNameUnformatted, fieldExp ) ( currentIndex, fieldAnnotationResult, items ) ->
                                 let
+                                    fieldName =
+                                        Compiler.formatValue fieldNameUnformatted
+
                                     ( newIndex, exp ) =
                                         Compiler.toExpressionDetails currentIndex fieldExp
 
@@ -1029,15 +1032,21 @@ updateRecord recordExpression fields =
             }
 
 
+{-| -}
+field : String -> Expression -> ( String, Expression )
+field =
+    Tuple.pair
+
+
 {-|
 
     Elm.record
-        [ Elm.field "name" (Elm.string "Elm")
-        , Elm.field "designation" (Elm.string "Pretty fabulous")
+        [ ( "name", Elm.string "Elm" )
+        , ( "designation", Elm.string "Pretty fabulous" )
         ]
 
 -}
-record : List Field -> Expression
+record : List ( String, Expression ) -> Expression
 record fields =
     Compiler.Expression <|
         \sourceIndex ->
@@ -1045,7 +1054,7 @@ record fields =
                 unified =
                     fields
                         |> List.foldl
-                            (\(Field unformattedFieldName fieldExpression) found ->
+                            (\( unformattedFieldName, fieldExpression ) found ->
                                 let
                                     ( newIndex, exp ) =
                                         Compiler.toExpressionDetails found.index fieldExpression
@@ -1135,17 +1144,6 @@ record fields =
             , imports =
                 unified.imports
             }
-
-
-{-| -}
-type Field
-    = Field String Expression
-
-
-{-| -}
-field : String -> Expression -> Field
-field name exp =
-    Field (Compiler.formatValue name) exp
 
 
 {-| A let block.

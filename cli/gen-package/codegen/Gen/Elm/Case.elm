@@ -7,6 +7,7 @@ module Gen.Elm.Case exposing (annotation_, branch0, branch1, branch2, branch3, b
 
 import Elm
 import Elm.Annotation as Type
+import Tuple
 
 
 {-| The name of this module. -}
@@ -69,8 +70,8 @@ maybe arg arg0 =
         )
         [ arg
         , Elm.record
-            [ Elm.field "nothing" arg0.nothing
-            , Elm.field "just" (Elm.functionReduced "unpack" arg0.just)
+            [ Tuple.pair "nothing" arg0.nothing
+            , Tuple.pair "just" (Elm.functionReduced "unpack" arg0.just)
             ]
         ]
 
@@ -137,8 +138,8 @@ result arg arg0 =
         )
         [ arg
         , Elm.record
-            [ Elm.field "err" (Elm.functionReduced "unpack" arg0.err)
-            , Elm.field "ok" (Elm.functionReduced "unpack" arg0.ok)
+            [ Tuple.pair "err" (Elm.functionReduced "unpack" arg0.err)
+            , Tuple.pair "ok" (Elm.functionReduced "unpack" arg0.ok)
             ]
         ]
 
@@ -203,8 +204,8 @@ list arg arg0 =
         )
         [ arg
         , Elm.record
-            [ Elm.field "empty" arg0.empty
-            , Elm.field
+            [ Tuple.pair "empty" arg0.empty
+            , Tuple.pair
                 "nonEmpty"
                 (Elm.functionReduced
                     "unpack"
@@ -219,18 +220,16 @@ list arg arg0 =
 {-| Elm.fn "myTuple" <|
         \myTuple ->
             Elm.Case.tuple myTuple
-                { nothing = Elm.int 0
-                , just =
-                    \one two ->
-                        Elm.plus (Elm.int 5) two
-                }
+                (\one two ->
+                    Elm.plus (Elm.int 5) two
+                )
 
 Generates
 
     \myTuple ->
         case myTuple of
-            ( one, two ) ->
-                5 + two
+            ( first, second ) ->
+                5 + second
 
 tuple: 
     Elm.Expression
@@ -270,11 +269,9 @@ tuple arg arg0 =
 {-| Elm.fn "myTriple" <|
         \myTriple ->
             Elm.Case.triple myTriple
-                { nothing = Elm.int 0
-                , just =
-                    \one two three ->
-                        Elm.plus (Elm.int 5) two
-                }
+                (\one two three ->
+                    Elm.plus (Elm.int 5) two
+                )
 
 Generates
 

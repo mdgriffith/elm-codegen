@@ -7,6 +7,7 @@ module Gen.Platform exposing (annotation_, call_, moduleName_, sendToApp, sendTo
 
 import Elm
 import Elm.Annotation as Type
+import Tuple
 
 
 {-| The name of this module. -}
@@ -104,15 +105,15 @@ worker arg =
             }
         )
         [ Elm.record
-            [ Elm.field "init" (Elm.functionReduced "unpack" arg.init)
-            , Elm.field
+            [ Tuple.pair "init" (Elm.functionReduced "unpack" arg.init)
+            , Tuple.pair
                 "update"
                 (Elm.functionReduced
                     "unpack"
                     (\unpack -> Elm.functionReduced "unpack" (arg.update unpack)
                     )
                 )
-            , Elm.field
+            , Tuple.pair
                 "subscriptions"
                 (Elm.functionReduced "unpack" arg.subscriptions)
             ]
