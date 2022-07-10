@@ -249,6 +249,54 @@ toVar index desiredName =
     }
 
 
+toVarMaybeType :
+    Index
+    -> String
+    -> Maybe Annotation
+    ->
+        { name : String
+        , type_ : Annotation.TypeAnnotation
+        , val : Expression
+        , index : Index
+        }
+toVarMaybeType index desiredName maybeAnnotation =
+    let
+        ( name, newIndex ) =
+            getName desiredName index
+
+        { imports, annotation, aliases } =
+            case maybeAnnotation of
+                Nothing ->
+                    { imports = []
+                    , annotation = Annotation.GenericType (protectTypeName desiredName index)
+                    , aliases = emptyAliases
+                    }
+
+                Just (Annotation ann) ->
+                    ann
+    in
+    { name = name
+    , type_ = annotation
+    , index = newIndex
+    , val =
+        Expression <|
+            \ignoredIndex_ ->
+                { expression =
+                    Exp.FunctionOrValue []
+                        name
+                , annotation =
+                    Ok
+                        { type_ =
+                            annotation
+                        , inferences = Dict.empty
+                        , aliases = aliases
+                        }
+                , imports =
+                    imports
+                }
+    }
+
+
 toVarWithType :
     Index
     -> String
