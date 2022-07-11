@@ -1,5 +1,5 @@
 module Elm.Case exposing
-    ( maybe, result, list
+    ( maybe, result, list, string
     , tuple, triple
     , custom
     , Branch, otherwise, branch0, branch1, branch2, branch3, branch4, branch5, branch6
@@ -8,7 +8,7 @@ module Elm.Case exposing
 
 {-|
 
-@docs maybe, result, list
+@docs maybe, result, list, string
 
 @docs tuple, triple
 
@@ -436,6 +436,57 @@ result mainExpression branches =
                                 )
                             )
                         ]
+            in
+            { expression =
+                Exp.CaseExpression
+                    { expression = Compiler.nodify expr.expression
+                    , cases = List.reverse gathered.cases
+                    }
+            , annotation =
+                case gathered.annotation of
+                    Nothing ->
+                        Err [ Compiler.EmptyCaseStatement ]
+
+                    Just ann ->
+                        ann
+            , imports = expr.imports ++ gathered.imports
+            }
+
+
+string :
+    Expression
+    ->
+        { cases : List ( String, Expression )
+        , otherwise : Expression
+        }
+    -> Expression
+string mainExpression branches =
+    Compiler.Expression <|
+        \index ->
+            let
+                branchList =
+                    List.map
+                        (\( caseString, caseExpression ) ->
+                            Branch
+                                (\branchIndex ->
+                                    ( branchIndex
+                                    , Pattern.StringPattern caseString
+                                    , caseExpression
+                                    )
+                                )
+                        )
+                        branches.cases
+                        ++ [ Branch
+                                (\branchIndex ->
+                                    ( branchIndex
+                                    , Pattern.AllPattern
+                                    , branches.otherwise
+                                    )
+                                )
+                           ]
+
+                ( expr, gathered ) =
+                    captureCase mainExpression [] (Compiler.dive index) branchList
             in
             { expression =
                 Exp.CaseExpression
