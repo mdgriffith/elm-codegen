@@ -55,7 +55,7 @@ program
   .option("--output <dir>", "The directory where your generated files should go.", "generated")
   .option(
     "--flags-from <file>",
-    "The file to feed to your elm app as flags.  If it has a json extension, it will be handed in as json."
+    "The file to feed to your elm app as flags.  If it has a json extension, it will be handed in as json, otherwise as a string."
   )
   .option("--flags <json>", "Json to pass to your elm app.  if --flags-from is given, that will take precedence.")
   .action(Run.run_generation_from_cli)
