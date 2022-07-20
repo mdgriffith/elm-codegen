@@ -9,12 +9,12 @@ run : (flags -> List File) -> Program flags () ()
 run f =
      Platform.worker
           { init =
-               \flags ->
+               \\flags ->
                     ( ()
                     , Gen.CodeGen.Generate.files <| f flags
                     )
           , update =
-               \_ model ->
+               \\_ model ->
                     ( model, Cmd.none )
           , subscriptions = \_ -> Sub.none
           }
