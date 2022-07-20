@@ -170,7 +170,7 @@ async function install_package(
     }
     if (version == null) {
       console.log(format_block([`No package found for ${chalk.yellow(pkg)}`]))
-      process.exit()
+      process.exit(1)
     }
   }
   const docsResp = await fetch(`https://elm-package-cache-psi.vercel.app/packages/${pkg}/${version}/docs.json`)
@@ -186,7 +186,7 @@ async function install_package(
         `, but you're running version ` +
         chalk.yellow(currentVersion)
     )
-    process.exit()
+    process.exit(1)
   }
   if (codeGenJson.dependencies && codeGenJson.dependencies.packages && pkg in codeGenJson.dependencies.packages) {
     console.log(chalk.yellow(pkg) + ` is already installed!`)
@@ -508,7 +508,7 @@ export async function run_generation_from_cli(desiredElmFile: string | null, opt
         "Have you set up a project using " + chalk.cyan("elm-codegen init") + "?",
       ])
     )
-    process.exit(0)
+    process.exit(1)
   }
 
   // prepare flags
@@ -534,7 +534,7 @@ export async function run_generation_from_cli(desiredElmFile: string | null, opt
         )
       }
 
-      process.exit(0)
+      process.exit(1)
     }
     flags = fs.readFileSync(options.flagsFrom).toString()
 
@@ -548,7 +548,7 @@ export async function run_generation_from_cli(desiredElmFile: string | null, opt
             "Is it valid JSON?",
           ])
         )
-        process.exit(0)
+        process.exit(1)
       }
       flags = parsed
     }

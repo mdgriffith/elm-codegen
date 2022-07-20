@@ -240,7 +240,7 @@ function install_package(pkg, install_dir, version, codeGenJson) {
                     }
                     if (version == null) {
                         console.log(format_block(["No package found for " + chalk_1.default.yellow(pkg)]));
-                        process.exit();
+                        process.exit(1);
                     }
                     _a.label = 3;
                 case 3: return [4 /*yield*/, node_fetch_1.default("https://elm-package-cache-psi.vercel.app/packages/" + pkg + "/" + version + "/docs.json")];
@@ -258,7 +258,7 @@ function install_package(pkg, install_dir, version, codeGenJson) {
                             chalk_1.default.yellow(codeGenJson.version) +
                             ", but you're running version " +
                             chalk_1.default.yellow(currentVersion));
-                        process.exit();
+                        process.exit(1);
                     }
                     if (codeGenJson.dependencies && codeGenJson.dependencies.packages && pkg in codeGenJson.dependencies.packages) {
                         console.log(chalk_1.default.yellow(pkg) + " is already installed!");
@@ -596,7 +596,7 @@ function run_generation_from_cli(desiredElmFile, options) {
                     "I wasn't able to find " + chalk_1.default.yellow(fullSourcePath) + ".",
                     "Have you set up a project using " + chalk_1.default.cyan("elm-codegen init") + "?",
                 ]));
-                process.exit(0);
+                process.exit(1);
             }
             flags = null;
             if (options.flagsFrom) {
@@ -616,7 +616,7 @@ function run_generation_from_cli(desiredElmFile, options) {
                             "Is there a typo in the path?",
                         ]));
                     }
-                    process.exit(0);
+                    process.exit(1);
                 }
                 flags = fs.readFileSync(options.flagsFrom).toString();
                 if (options.flagsFrom.endsWith(".json")) {
@@ -627,7 +627,7 @@ function run_generation_from_cli(desiredElmFile, options) {
                             chalk_1.default.yellow(options.flagsFrom) + " which has a .json extension, but I wasn't able to parse it as JSON.",
                             "Is it valid JSON?",
                         ]));
-                        process.exit(0);
+                        process.exit(1);
                     }
                     flags = parsed;
                 }
