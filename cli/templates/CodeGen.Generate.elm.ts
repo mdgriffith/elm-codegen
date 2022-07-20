@@ -11,7 +11,7 @@ run f =
           { init =
                \\flags ->
                     ( ()
-                    , Gen.CodeGen.Generate.files <| f flags
+                    , files (f flags)
                     )
           , update =
                \\_ model ->
