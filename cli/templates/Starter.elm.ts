@@ -11,19 +11,11 @@ import Gen.Helper
 
 main : Program {} () ()
 main =
-    Platform.worker
-        { init =
-            \\json ->
-                ( ()
-                , Generate.files
-                    [ file
-                    ]
-                )
-        , update =
-            \\msg model ->
-                ( model, Cmd.none )
-        , subscriptions = \\_ -> Sub.none
-        }
+    Generate.run <|
+        \\json ->
+            [ file
+            ]
+
 
 
 file : Elm.File
