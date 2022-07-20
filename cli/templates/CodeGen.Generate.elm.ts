@@ -16,7 +16,7 @@ run f =
           , update =
                \\_ model ->
                     ( model, Cmd.none )
-          , subscriptions = \_ -> Sub.none
+          , subscriptions = \\_ -> Sub.none
           }
 
 
