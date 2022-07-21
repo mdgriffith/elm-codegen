@@ -37,7 +37,18 @@ const currentVersion = require("../package.json").version
 async function run_generator(output_dir: string, moduleName: string, elm_source: string, flags: any) {
   eval(elm_source)
 
-  const promise = new Promise((resolve, reject) => {
+  const promise = new Promise<{ path: string; contents: string }[]>((resolve, reject) => {
+    // @ts-ignore
+    if (!(moduleName in this.Elm)) {
+      console.log(
+        chalk.cyan(
+          // @ts-ignore
+          `Module ${moduleName} not found in compile Elm code. Available modules are: ${JSON.stringify(this.Elm)}`
+        )
+      )
+      return 1
+    }
+
     // @ts-ignore
     const app = this.Elm[moduleName].init({ flags: flags })
     if (app.ports.onSuccessSend) {
