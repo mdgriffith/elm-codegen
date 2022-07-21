@@ -9,5 +9,6 @@ yarn.lock
 generators
 playground/codegen
 play
+dist
 
 tests/Gen
