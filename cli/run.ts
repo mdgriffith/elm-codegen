@@ -61,37 +61,38 @@ async function run_generator(output_dir: string, moduleName: string, elm_source:
       app.ports.onFailureSend.subscribe(reject)
     }
   })
-    .then((files: any) => {
-      for (const file of files) {
-        const fullpath = path.join(output_dir, file.path)
-        fs.mkdirSync(path.dirname(fullpath), { recursive: true })
-        fs.writeFileSync(fullpath, file.contents)
-      }
-      if (files.length == 1) {
-        console.log(format_block([`${chalk.cyan(output_dir + path.sep)}${chalk.yellow(files[0].path)} was generated!`]))
-      } else {
-        console.log(format_block([`${chalk.yellow(files.length)} files generated in ${chalk.cyan(output_dir)}!`]))
-      }
-    })
-    .catch((errors) => {
-      let formatted = ""
 
-      if (!!errors[Symbol.iterator]) {
-        for (const err of errors) {
-          formatted = formatted + format_title(err.title) + "\n\n" + err.description + "\n"
-        }
-      } else {
-        if (errors.message.contains("https://github.com/elm/core/blob/1.0.0/hints/2.md")) {
-          formatted = `Problem with the flags given to your Elm application on initialization.\n\n\nAdd the ${chalk.cyan(
-            "--debug"
-          )} to see more details!` // Assuming this is an Elm init error.
-        } else {
-          formatted = chalk.cyan(errors.message)
-        }
+  try {
+    const files = await promise
+    for (const file of files) {
+      const fullpath = path.join(output_dir, file.path)
+      fs.mkdirSync(path.dirname(fullpath), { recursive: true })
+      fs.writeFileSync(fullpath, file.contents)
+    }
+    if (files.length == 1) {
+      console.log(format_block([`${chalk.cyan(output_dir + path.sep)}${chalk.yellow(files[0].path)} was generated!`]))
+    } else {
+      console.log(format_block([`${chalk.yellow(files.length)} files generated in ${chalk.cyan(output_dir)}!`]))
+    }
+  } catch (errors: { title: string; description: string }[] | any) {
+    let formatted = ""
+
+    if (!!errors[Symbol.iterator]) {
+      for (const err of errors) {
+        formatted = formatted + format_title(err.title) + "\n\n" + err.description + "\n"
       }
-      console.error(formatted)
-    })
-  return promise
+    } else {
+      if (JSON.stringify(errors.message).includes("https://github.com/elm/core/blob/1.0.0/hints/2.md")) {
+        formatted = `Problem with the flags given to your Elm application on initialization.\n\n\nAdd the ${chalk.cyan(
+          "--debug"
+        )} to see more details!` // Assuming this is an Elm init error.
+      } else {
+        formatted = chalk.cyan(errors.message)
+      }
+    }
+    console.error(formatted)
+    return 1
+  }
 }
 
 function generate(debug: boolean, elm_file: string, moduleName: string, output_dir: string, cwd: string, flags: any) {
