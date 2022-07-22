@@ -613,7 +613,7 @@ inferenceErrorToString inf =
         CouldNotFindField found ->
             "I can't find ."
                 ++ found.field
-                ++ ", this record only has these fields:\n\n"
+                ++ ", this record only has these fields:\n\n    "
                 ++ String.join "\n    " found.existingFields
 
         AttemptingToGetOnIncorrectType attempting ->
