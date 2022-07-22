@@ -486,6 +486,14 @@ type InferenceError
     | DuplicateFieldInRecord String
     | CaseBranchesReturnDifferentTypes
     | CouldNotFindField String
+    | AttemptingToGetOnIncorrectType
+        { field : String
+        , on : Annotation.TypeAnnotation
+        }
+    | AttemptingGetOnTypeNameNotAnAlias
+        { field : String
+        , on : Annotation.TypeAnnotation
+        }
     | LetFieldNotFound
         { desiredField : String
         }
@@ -511,7 +519,7 @@ inferenceErrorToString inf =
             "Todo " ++ str
 
         MismatchedList one two ->
-            "There are multiple different types in a list!: \n\n"
+            "There are multiple different types in a list: \n\n"
                 ++ "    "
                 ++ (Elm.Writer.writeTypeAnnotation (nodify one)
                         |> Elm.Writer.write
@@ -551,6 +559,23 @@ inferenceErrorToString inf =
 
         CouldNotFindField fieldName ->
             "I can't find the " ++ fieldName ++ " field in the record"
+
+        AttemptingToGetOnIncorrectType attempting ->
+            "You're trying to access\n\n    ."
+                ++ attempting.field
+                ++ "\n\nbut this value isn't a record. It's a\n\n    "
+                ++ (Elm.Writer.writeTypeAnnotation (nodify attempting.on)
+                        |> Elm.Writer.write
+                   )
+
+        AttemptingGetOnTypeNameNotAnAlias attempting ->
+            "You're trying to access\n\n    ."
+                ++ attempting.field
+                ++ "\n\nbut this value isn't a record, it's a\n\n    "
+                ++ (Elm.Writer.writeTypeAnnotation (nodify attempting.on)
+                        |> Elm.Writer.write
+                   )
+                ++ "\n\nIs this value supposed to be an alias for a record? If so, check out Elm.alias!"
 
         LetFieldNotFound details ->
             details.desiredField ++ " not found, though I was trying to unpack it in a let expression."
@@ -2399,6 +2424,95 @@ unifyComparable vars comparableName two =
                 , Err
                     (NotAppendable two)
                 )
+
+
+resolveField index type_ aliases inferences fieldName =
+    case type_ of
+        Annotation.Record fields ->
+            case getFieldFromList fieldName fields of
+                Just ann ->
+                    Ok
+                        { type_ = ann
+                        , inferences = inferences
+                        , aliases = aliases
+                        }
+
+                Nothing ->
+                    Err [ CouldNotFindField fieldName ]
+
+        Annotation.GenericRecord name fields ->
+            case getFieldFromList fieldName (denode fields) of
+                Just ann ->
+                    Ok
+                        { type_ = ann
+                        , inferences = inferences
+                        , aliases = aliases
+                        }
+
+                Nothing ->
+                    Err [ CouldNotFindField fieldName ]
+
+        Annotation.GenericType nameOfRecord ->
+            inferRecordField index
+                { nameOfRecord = nameOfRecord
+                , fieldName = fieldName
+                }
+
+        Annotation.Typed nodedModAndName vars ->
+            case getAlias nodedModAndName aliases of
+                Nothing ->
+                    Err
+                        [ AttemptingGetOnTypeNameNotAnAlias
+                            { field = fieldName
+                            , on = type_
+                            }
+                        ]
+
+                Just aliased ->
+                    resolveField index aliased.target aliases inferences fieldName
+
+        Annotation.Tupled _ ->
+            Err
+                [ AttemptingToGetOnIncorrectType
+                    { field = fieldName
+                    , on = type_
+                    }
+                ]
+
+        Annotation.Unit ->
+            Err
+                [ AttemptingToGetOnIncorrectType
+                    { field = fieldName
+                    , on = type_
+                    }
+                ]
+
+        Annotation.FunctionTypeAnnotation _ _ ->
+            Err
+                [ AttemptingToGetOnIncorrectType
+                    { field = fieldName
+                    , on = type_
+                    }
+                ]
+
+
+getFieldFromList :
+    String
+    -> List (Node.Node ( Node.Node String, Node.Node b ))
+    -> Maybe b
+getFieldFromList selector fields =
+    case fields of
+        [] ->
+            Nothing
+
+        nodifiedTop :: remain ->
+            case denode nodifiedTop of
+                ( fieldname, contents ) ->
+                    if denode fieldname == selector then
+                        Just (denode contents)
+
+                    else
+                        getFieldFromList selector remain
 
 
 addInference :

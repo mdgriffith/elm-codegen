@@ -171,7 +171,22 @@ maybe maybeArg =
     typed [] "Maybe" [ maybeArg ]
 
 
-{-| -}
+{-| The classic example of a Model
+
+    Elm.Annotation.alias []
+        "Model"
+        []
+        (Elm.Annotation.record
+            [ ( "hello", Elm.Annotation.string ) ]
+        )
+
+would correspond to
+
+    type alias Model =
+        { hello : String
+        }
+
+-}
 alias :
     List String
     -> String

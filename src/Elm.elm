@@ -1244,63 +1244,12 @@ get unformattedFieldName recordExpression =
             , annotation =
                 case expr.annotation of
                     Ok recordAnn ->
-                        case recordAnn.type_ of
-                            Annotation.Record fields ->
-                                case getField fieldName fields of
-                                    Just ann ->
-                                        Ok
-                                            { type_ = ann
-                                            , inferences = recordAnn.inferences
-                                            , aliases = recordAnn.aliases
-                                            }
-
-                                    Nothing ->
-                                        Err [ Compiler.CouldNotFindField fieldName ]
-
-                            Annotation.GenericRecord name fields ->
-                                case getField fieldName (Compiler.denode fields) of
-                                    Just ann ->
-                                        Ok
-                                            { type_ = ann
-                                            , inferences = recordAnn.inferences
-                                            , aliases = recordAnn.aliases
-                                            }
-
-                                    Nothing ->
-                                        Err [ Compiler.CouldNotFindField fieldName ]
-
-                            Annotation.GenericType nameOfRecord ->
-                                Compiler.inferRecordField index
-                                    { nameOfRecord = nameOfRecord
-                                    , fieldName = fieldName
-                                    }
-
-                            otherwise ->
-                                expr.annotation
+                        Compiler.resolveField index recordAnn.type_ recordAnn.aliases recordAnn.inferences fieldName
 
                     otherwise ->
                         otherwise
             , imports = expr.imports
             }
-
-
-getField :
-    String
-    -> List (Node.Node ( Node.Node String, Node.Node b ))
-    -> Maybe b
-getField selector fields =
-    case fields of
-        [] ->
-            Nothing
-
-        nodifiedTop :: remain ->
-            case Compiler.denode nodifiedTop of
-                ( fieldname, contents ) ->
-                    if Compiler.denode fieldname == selector then
-                        Just (Compiler.denode contents)
-
-                    else
-                        getField selector remain
 
 
 verifyFields :
@@ -2170,7 +2119,10 @@ comment content =
     Compiler.Comment ("{- " ++ content ++ " -}")
 
 
-renderDocumentation : Result String value1 -> Result (List Compiler.InferenceError) value -> Maybe String
+renderDocumentation :
+    Result String value1
+    -> Result (List Compiler.InferenceError) Compiler.Inference
+    -> Maybe String
 renderDocumentation resolvedType bodyAnnotation =
     case resolvedType of
         Ok sig ->
@@ -2243,6 +2195,8 @@ declaration name (Compiler.Expression toBody) =
     { documentation =
         Compiler.nodifyMaybe
             (renderDocumentation resolvedType body.annotation)
+
+    -- (renderDebugDocumentation resolvedType body.annotation)
     , signature =
         case body.annotation of
             Ok sig ->
