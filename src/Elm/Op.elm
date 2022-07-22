@@ -574,7 +574,7 @@ autopipe committed topFn expressions =
                     (Compiler.nodify last)
                     (Compiler.nodify
                         (Exp.Application
-                            (Compiler.nodify topFn :: List.map (Compiler.nodify << parens) init)
+                            (Compiler.nodify topFn :: List.map (Compiler.nodify << Compiler.parens) init)
                         )
                     )
 
@@ -599,10 +599,10 @@ autopipe committed topFn expressions =
                             )
                             (Compiler.nodify
                                 (Exp.Application
-                                    (Compiler.nodify topFn :: List.map (Compiler.nodify << parens) init)
+                                    (Compiler.nodify topFn :: List.map (Compiler.nodify << Compiler.parens) init)
                                 )
                             )
 
                     _ ->
                         Exp.Application
-                            (List.map (Compiler.nodify << parens) (topFn :: expressions))
+                            (List.map (Compiler.nodify << Compiler.parens) (topFn :: expressions))

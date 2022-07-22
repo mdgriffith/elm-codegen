@@ -1417,57 +1417,6 @@ alias name innerAnnotation =
         )
 
 
-{-| Not exposed, this should be done automatically!
--}
-parens : Exp.Expression -> Exp.Expression
-parens expr =
-    case expr of
-        Exp.UnitExpr ->
-            expr
-
-        Exp.Integer i ->
-            expr
-
-        Exp.Literal _ ->
-            expr
-
-        Exp.Hex _ ->
-            expr
-
-        Exp.Floatable _ ->
-            expr
-
-        Exp.TupledExpression _ ->
-            expr
-
-        Exp.ParenthesizedExpression _ ->
-            expr
-
-        Exp.CharLiteral _ ->
-            expr
-
-        Exp.ListExpr _ ->
-            expr
-
-        Exp.FunctionOrValue _ _ ->
-            expr
-
-        Exp.RecordAccessFunction _ ->
-            expr
-
-        Exp.RecordUpdateExpression _ _ ->
-            expr
-
-        Exp.RecordExpr _ ->
-            expr
-
-        Exp.LambdaExpression _ ->
-            expr
-
-        _ ->
-            Exp.ParenthesizedExpression (Compiler.nodify expr)
-
-
 {-| -}
 apply : Expression -> List Expression -> Expression
 apply fnExp argExpressions =
@@ -1487,7 +1436,7 @@ apply fnExp argExpressions =
                 Exp.Application
                     (Compiler.nodifyAll
                         (fnDetails.expression
-                            :: List.map (parens << .expression) args
+                            :: List.map (Compiler.parens << .expression) args
                         )
                     )
             , annotation =

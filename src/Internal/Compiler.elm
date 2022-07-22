@@ -137,6 +137,56 @@ addAlias mod name ((Annotation annDetails) as ann) aliasCache =
         aliasCache
 
 
+{-| -}
+parens : Exp.Expression -> Exp.Expression
+parens expr =
+    case expr of
+        Exp.UnitExpr ->
+            expr
+
+        Exp.Integer i ->
+            expr
+
+        Exp.Literal _ ->
+            expr
+
+        Exp.Hex _ ->
+            expr
+
+        Exp.Floatable _ ->
+            expr
+
+        Exp.TupledExpression _ ->
+            expr
+
+        Exp.ParenthesizedExpression _ ->
+            expr
+
+        Exp.CharLiteral _ ->
+            expr
+
+        Exp.ListExpr _ ->
+            expr
+
+        Exp.FunctionOrValue _ _ ->
+            expr
+
+        Exp.RecordAccessFunction _ ->
+            expr
+
+        Exp.RecordUpdateExpression _ _ ->
+            expr
+
+        Exp.RecordExpr _ ->
+            expr
+
+        Exp.LambdaExpression _ ->
+            expr
+
+        _ ->
+            Exp.ParenthesizedExpression (nodify expr)
+
+
 {-| Remove duplicate values, keeping the first instance of each element which appears more than once.
 unique [ 0, 1, 1, 0, 1 ]
 --> [ 0, 1 ]
@@ -485,7 +535,10 @@ type InferenceError
     | MismatchedTypeVariables
     | DuplicateFieldInRecord String
     | CaseBranchesReturnDifferentTypes
-    | CouldNotFindField String
+    | CouldNotFindField
+        { field : String
+        , existingFields : List String
+        }
     | AttemptingToGetOnIncorrectType
         { field : String
         , on : Annotation.TypeAnnotation
@@ -557,8 +610,11 @@ inferenceErrorToString inf =
         CaseBranchesReturnDifferentTypes ->
             "Case returns different types."
 
-        CouldNotFindField fieldName ->
-            "I can't find the " ++ fieldName ++ " field in the record"
+        CouldNotFindField found ->
+            "I can't find ."
+                ++ found.field
+                ++ ", this record only has these fields:\n\n"
+                ++ String.join "\n    " found.existingFields
 
         AttemptingToGetOnIncorrectType attempting ->
             "You're trying to access\n\n    ."
@@ -2226,7 +2282,15 @@ unifiableFields aliases vars one two unified =
 getField name val fields captured =
     case fields of
         [] ->
-            Err (CouldNotFindField name)
+            Err
+                (CouldNotFindField
+                    { field = name
+                    , existingFields =
+                        List.map
+                            (denode >> Tuple.first >> denode)
+                            captured
+                    }
+                )
 
         top :: remain ->
             let
@@ -2438,7 +2502,13 @@ resolveField index type_ aliases inferences fieldName =
                         }
 
                 Nothing ->
-                    Err [ CouldNotFindField fieldName ]
+                    Err
+                        [ CouldNotFindField
+                            { field = fieldName
+                            , existingFields =
+                                List.map (denode >> Tuple.first >> denode) fields
+                            }
+                        ]
 
         Annotation.GenericRecord name fields ->
             case getFieldFromList fieldName (denode fields) of
@@ -2450,7 +2520,15 @@ resolveField index type_ aliases inferences fieldName =
                         }
 
                 Nothing ->
-                    Err [ CouldNotFindField fieldName ]
+                    Err
+                        [ CouldNotFindField
+                            { field = fieldName
+                            , existingFields =
+                                List.map
+                                    (denode >> Tuple.first >> denode)
+                                    (denode fields)
+                            }
+                        ]
 
         Annotation.GenericType nameOfRecord ->
             inferRecordField index
