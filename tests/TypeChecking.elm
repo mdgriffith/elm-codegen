@@ -189,7 +189,7 @@ generatedCode =
                 declarationAs
                     (Elm.declaration "map" myMap2)
                     """
-map : (optional -> fn_result) -> optional -> Optional fn_result
+map : (optional_0 -> fn_0_result) -> optional_0 -> Optional fn_0_result
 map fn optional =
     Present (fn optional)
 
@@ -201,7 +201,7 @@ map fn optional =
                         |> .signature
                     )
                     (String.trim """
-(a -> fn_result) -> Optional a -> Optional fn_result
+(a -> fn_0_result) -> Optional a -> Optional fn_0_result
 """)
         ]
 

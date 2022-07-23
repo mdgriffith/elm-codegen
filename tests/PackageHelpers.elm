@@ -128,34 +128,29 @@ suite =
                 equal
                     (Gen.Maybe.make_.just (Elm.int 5))
                     (Elm.just (Elm.int 5))
-        , only <|
-            test "typechecking an Element.row doesn't hang forever" <|
-                \_ ->
-                    let
-                        myRow =
-                            Gen.Element.row [ Gen.Element.spacing 5 ]
-                                [ Gen.Element.none ]
+        , test "typechecking an Element.row doesn't hang forever" <|
+            \_ ->
+                let
+                    myRow =
+                        Gen.Element.row [ Gen.Element.spacing 5 ]
+                            [ Gen.Element.none ]
 
-                        layout =
-                            Gen.Element.layout []
-                                (Gen.Element.column [ Gen.Element.spacing 24 ]
-                                    [ myRow
-                                    , myRow
-                                    , myRow
-                                    ]
-                                )
+                    layout =
+                        Gen.Element.layout []
+                            (Gen.Element.column [ Gen.Element.spacing 24 ]
+                                [ myRow
+                                , myRow
+                                , myRow
+                                ]
+                            )
 
-                        cycles =
-                            layout
-                                |> Compiler.facts
-                                |> Result.map (List.any ((==) True) << detectCycles)
-                                |> Result.withDefault True
-
-                        -- x =
-                        --     Elm.declaration "view"
-                        --         layout
-                    in
-                    Expect.equal False cycles
+                    cycles =
+                        layout
+                            |> Compiler.facts
+                            |> Result.map (List.any ((==) True) << detectCycles)
+                            |> Result.withDefault True
+                in
+                Expect.equal False cycles
         , test "typevariables in functions within a record dont pollute each other" <|
             \_ ->
                 Expect.equal
@@ -171,13 +166,6 @@ suite =
                             )
                             |> Tuple.pair "two"
                         ]
-                        |> (\d ->
-                                let
-                                    _ =
-                                        Debug.log "   RECORD" (Internal.Debug.everything d)
-                                in
-                                d
-                           )
                         |> Elm.declaration "test"
                         |> Elm.ToString.declaration
                         |> .body
