@@ -1,8 +1,8 @@
 export default () =>
   `
 port module Gen.CodeGen.Generate exposing
-    ( noInput, simple, simpleFrom
-    , run
+    ( run, fromJson, fromText
+    , withFeedback
     , File
     , error, files, info
     )
@@ -12,12 +12,12 @@ port module Gen.CodeGen.Generate exposing
 
 # Simple API
 
-@docs noInput, simple, simpleFrom
+@docs run, fromJson, fromText
 
 
 # With errors
 
-@docs run, Error
+@docs withFeedback, Error
 
 
 # Types
@@ -39,8 +39,8 @@ import Json.Encode as Json
 
 {-| Produce a list of files without taking input.
 -}
-noInput : List File -> Program flags () ()
-noInput f =
+run : List File -> Program flags () ()
+run f =
     Platform.worker
         { init =
             \\_ ->
@@ -55,9 +55,10 @@ noInput f =
 
 
 {-| Given the flags, decoded from JSON, produce a list of files as output.
+
 -}
-simple : Decoder flags -> (flags -> List File) -> Program Json.Value () ()
-simple decoder f =
+fromJson : Decoder flags -> (flags -> List File) -> Program Json.Value () ()
+fromJson decoder f =
     Platform.worker
         { init =
             \\flags ->
@@ -84,8 +85,8 @@ simple decoder f =
 
 {-| Given the file passed in with \`--flags-from\` as String, produce a list of files as output.
 -}
-simpleFrom : (String -> List File) -> Program String () ()
-simpleFrom f =
+fromText : (String -> List File) -> Program String () ()
+fromText f =
     Platform.worker
         { init =
             \\flags ->
@@ -111,12 +112,12 @@ type alias Error =
     }
 
 
-run :
+withFeedback :
     (flags
      -> Result (List Error) { info : List String, files : List File }
     )
     -> Program flags () ()
-run f =
+withFeedback f =
     Platform.worker
         { init =
             \\flags ->
