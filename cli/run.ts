@@ -360,7 +360,9 @@ async function reinstall_everything(install_dir: string, codeGenJson: CodeGenJso
     await install_package(key, install_dir, version, emptyCodeGenJson)
   }
 
-  fs.writeFileSync(path.join(install_dir, "Gen", "CodeGen", "Generate.elm"), templates.init.codegenProgram())
+  const genFolderPath = path.join(install_dir, "Gen", "CodeGen")
+  fs.mkdirSync(genFolderPath, { recursive: true })
+  fs.writeFileSync(path.join(genFolderPath, "Generate.elm"), templates.init.codegenProgram())
   const elmSources = []
   for (const item of codeGenJson.dependencies.local) {
     console.log("Installing " + item)
