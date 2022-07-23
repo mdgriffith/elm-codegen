@@ -167,29 +167,31 @@ generatedCode =
                     "\"Hello!\""
         , test "Function, arg order isn't reversed" <|
             \_ ->
-                declarationAs
-                    (Elm.function
-                        [ ( "str", Just Type.string )
-                        , ( "int", Just Type.int )
-                        , ( "bool", Just Type.bool )
-                        ]
-                        (\args ->
-                            case args of
-                                [ one, two, three ] ->
-                                    Elm.triple one two three
+                let
+                    exp =
+                        Elm.function
+                            [ ( "str", Just Type.string )
+                            , ( "int", Just Type.int )
+                            , ( "bool", Just Type.bool )
+                            ]
+                            (\args ->
+                                case args of
+                                    [ one, two, three ] ->
+                                        Elm.triple one two three
 
-                                _ ->
-                                    Elm.unit
-                        )
-                        |> Elm.declaration "myFunc"
-                    )
+                                    _ ->
+                                        Elm.unit
+                            )
+                in
+                declarationAs
+                    (Elm.declaration "myFunc" exp)
                     "myFunc : String -> Int -> Bool -> ( String, Int, Bool )\nmyFunc str int bool =\n    ( str, int, bool )"
         , test "Simplified version of map generates the correct signature" <|
             \_ ->
                 declarationAs
                     (Elm.declaration "map" myMap2)
                     """
-map : (optional_0 -> fn_0_result) -> optional_0 -> Optional fn_0_result
+map : (optional -> fn_result) -> optional -> Optional fn_result
 map fn optional =
     Present (fn optional)
 
@@ -201,7 +203,7 @@ map fn optional =
                         |> .signature
                     )
                     (String.trim """
-(a -> fn_0_result) -> Optional a -> Optional fn_0_result
+(a -> fn_result) -> Optional a -> Optional fn_result
 """)
         ]
 
