@@ -19,7 +19,6 @@ module Elm exposing
     , parse, unsafe
     , apply, value
     , unwrap, unwrapper
-    , facts
     )
 
 {-|
@@ -131,38 +130,6 @@ toString (Compiler.Expression toExp) =
             toExp Compiler.startIndex
     in
     Internal.Write.writeExpression expresh.expression
-
-
-{-| -}
-facts : Expression -> Result String (List ( String, String ))
-facts (Compiler.Expression exp) =
-    let
-        expresh =
-            exp Compiler.startIndex
-    in
-    case expresh.annotation of
-        Ok sig ->
-            sig.inferences
-                |> Dict.toList
-                |> List.map
-                    (\( key, type_ ) ->
-                        ( key, Internal.Write.writeAnnotation type_ )
-                    )
-                |> Ok
-
-        Err inferenceError ->
-            List.foldl
-                (\err str ->
-                    case str of
-                        "" ->
-                            Compiler.inferenceErrorToString err
-
-                        _ ->
-                            str ++ "\n\n" ++ Compiler.inferenceErrorToString err
-                )
-                ""
-                inferenceError
-                |> Err
 
 
 {-| Build a file!
@@ -837,12 +804,9 @@ maybe maybeContent =
 {-| -}
 list : List Expression -> Expression
 list exprs =
-    Compiler.Expression <|
-        \sourceIndex ->
+    Compiler.expression <|
+        \index ->
             let
-                index =
-                    Compiler.dive sourceIndex
-
                 exprDetails =
                     Compiler.thread index exprs
             in
@@ -867,11 +831,11 @@ list exprs =
 {-| -}
 updateRecord : Expression -> List ( String, Expression ) -> Expression
 updateRecord recordExpression fields =
-    Compiler.Expression <|
+    Compiler.expression <|
         \index ->
             let
                 ( recordIndex, recordExp ) =
-                    Compiler.toExpressionDetails (Compiler.dive index) recordExpression
+                    Compiler.toExpressionDetails index recordExpression
 
                 ( fieldIndex, fieldAnnotationsGathered, fieldDetails ) =
                     fields
@@ -1022,8 +986,8 @@ field =
 -}
 record : List ( String, Expression ) -> Expression
 record fields =
-    Compiler.Expression <|
-        \sourceIndex ->
+    Compiler.expression <|
+        \index ->
             let
                 unified =
                     fields
@@ -1075,7 +1039,7 @@ record fields =
                             , fieldAnnotations = []
                             , passed = Set.empty
                             , imports = []
-                            , index = Compiler.dive sourceIndex
+                            , index = index
                             }
             in
             { expression =
@@ -1421,17 +1385,16 @@ alias name innerAnnotation =
 {-| -}
 apply : Expression -> List Expression -> Expression
 apply fnExp argExpressions =
-    Compiler.Expression
+    Compiler.expression
         (\index ->
             let
                 ( annotationIndex, fnDetails ) =
                     Compiler.toExpressionDetails index fnExp
 
-                nextIndex =
-                    Compiler.dive annotationIndex
-
+                -- nextIndex =
+                --     Compiler.dive annotationIndex
                 args =
-                    Compiler.thread nextIndex argExpressions
+                    Compiler.thread annotationIndex argExpressions
             in
             { expression =
                 Exp.Application

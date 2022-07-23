@@ -56,6 +56,19 @@ type alias ExpressionDetails =
     }
 
 
+{-| An expression should always call `Index.dive`.
+
+This helper does that.
+
+-}
+expression : (Index -> ExpressionDetails) -> Expression
+expression toExp =
+    Expression
+        (\index ->
+            toExp (dive index)
+        )
+
+
 {-|
 
     type_ = What type this expression is declared to be
@@ -185,6 +198,34 @@ parens expr =
 
         _ ->
             Exp.ParenthesizedExpression (nodify expr)
+
+
+{-| -}
+facts : Expression -> Result String (List ( String, Annotation.TypeAnnotation ))
+facts (Expression exp) =
+    let
+        expresh =
+            exp startIndex
+    in
+    case expresh.annotation of
+        Ok sig ->
+            sig.inferences
+                |> Dict.toList
+                |> Ok
+
+        Err inferenceError ->
+            List.foldl
+                (\err str ->
+                    case str of
+                        "" ->
+                            inferenceErrorToString err
+
+                        _ ->
+                            str ++ "\n\n" ++ inferenceErrorToString err
+                )
+                ""
+                inferenceError
+                |> Err
 
 
 {-| Remove duplicate values, keeping the first instance of each element which appears more than once.
