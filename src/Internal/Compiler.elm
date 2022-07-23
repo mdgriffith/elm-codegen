@@ -143,7 +143,6 @@ addAlias mod name ((Annotation annDetails) as ann) aliasCache =
     Dict.insert (formatAliasKey mod name)
         { variables =
             getGenerics ann
-                |> List.map Node.value
                 |> unique
         , target = annDetails.annotation
         }
@@ -703,16 +702,16 @@ inferenceErrorToString inf =
             "Different lists of type variables"
 
 
-getGenerics : Annotation -> List (Node String)
+getGenerics : Annotation -> List String
 getGenerics (Annotation details) =
     getGenericsHelper details.annotation
 
 
-getGenericsHelper : Annotation.TypeAnnotation -> List (Node String)
+getGenericsHelper : Annotation.TypeAnnotation -> List String
 getGenericsHelper ann =
     case ann of
         Annotation.GenericType str ->
-            [ nodify str ]
+            [ str ]
 
         Annotation.Typed modName anns ->
             List.concatMap (getGenericsHelper << denode) anns
@@ -1329,7 +1328,9 @@ resolve cache annotation =
     in
     case resolveVariables cache annotation of
         Ok newAnnotation ->
-            checkRestrictions restrictions newAnnotation
+            newAnnotation
+                |> rewriteTypeVariables
+                |> checkRestrictions restrictions
 
         Err err ->
             Err err
@@ -1610,6 +1611,105 @@ getRestrictionsHelper existingRestrictions notation cache =
 
         Annotation.GenericRecord baseName (Node recordNode fields) ->
             existingRestrictions
+
+
+rewriteTypeVariables : Annotation.TypeAnnotation -> Annotation.TypeAnnotation
+rewriteTypeVariables type_ =
+    let
+        existing =
+            getGenericsHelper type_
+                |> Set.fromList
+    in
+    Tuple.second (rewriteTypeVariablesHelper existing Dict.empty type_)
+
+
+rewriteTypeVariablesHelper : Set String -> Dict String String -> Annotation.TypeAnnotation -> ( Dict String String, Annotation.TypeAnnotation )
+rewriteTypeVariablesHelper existing renames type_ =
+    case type_ of
+        Annotation.GenericType varName ->
+            case Dict.get varName renames of
+                Nothing ->
+                    let
+                        simplified =
+                            simplify varName
+                    in
+                    if Set.member simplified existing && varName /= simplified then
+                        -- We would have collided with an existing generic name
+                        ( renames, Annotation.GenericType simplified )
+
+                    else
+                        ( Dict.insert varName simplified renames, Annotation.GenericType simplified )
+
+                Just rename ->
+                    ( renames, Annotation.GenericType rename )
+
+        Annotation.Typed name vars ->
+            let
+                ( newUsed, newVars ) =
+                    vars
+                        |> List.foldl
+                            (\typevar ( varUsed, varList ) ->
+                                let
+                                    ( oneUsed, oneType ) =
+                                        rewriteTypeVariablesHelper existing varUsed (denode typevar)
+                                in
+                                ( oneUsed, nodify oneType :: varList )
+                            )
+                            ( renames, [] )
+            in
+            ( newUsed
+            , Annotation.Typed name (List.reverse newVars)
+            )
+
+        Annotation.Unit ->
+            ( renames, type_ )
+
+        Annotation.Tupled valsA ->
+            ( renames, type_ )
+
+        Annotation.Record fieldsA ->
+            ( renames, type_ )
+
+        Annotation.GenericRecord (Node.Node _ reVarName) (Node.Node fieldsARange fieldsA) ->
+            ( renames, type_ )
+
+        Annotation.FunctionTypeAnnotation one two ->
+            let
+                ( oneUsed, oneType ) =
+                    rewriteTypeVariablesHelper existing renames (denode one)
+
+                ( twoUsed, twoType ) =
+                    rewriteTypeVariablesHelper existing oneUsed (denode two)
+            in
+            ( twoUsed
+            , Annotation.FunctionTypeAnnotation
+                (nodify oneType)
+                (nodify twoType)
+            )
+
+
+{-| -}
+simplify : String -> String
+simplify fullStr =
+    String.split "_" fullStr
+        |> List.foldl
+            (\piece str ->
+                let
+                    isDigit =
+                        String.all Char.isDigit piece
+                in
+                if isDigit then
+                    str
+
+                else
+                    case str of
+                        "" ->
+                            piece
+
+                        _ ->
+                            str ++ "_" ++ piece
+            )
+            ""
 
 
 checkRestrictions : Restrictions -> Annotation.TypeAnnotation -> Result String Annotation.TypeAnnotation

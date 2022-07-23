@@ -1098,7 +1098,7 @@ record fields =
 -}
 letIn : List ( String, Expression ) -> Expression -> Expression
 letIn decls resultExpr =
-    Compiler.Expression <|
+    Compiler.expression <|
         \index ->
             let
                 ( firstIndex, within ) =
@@ -1309,7 +1309,7 @@ customType name variants =
                     (\(Variant _ listAnn) ->
                         listAnn
                             |> List.concatMap
-                                Compiler.getGenerics
+                                (List.map Compiler.nodify << Compiler.getGenerics)
                     )
                     variants
             , constructors =
@@ -1377,6 +1377,7 @@ alias name innerAnnotation =
             , name = Compiler.nodify (Compiler.formatType name)
             , generics =
                 Compiler.getGenerics innerAnnotation
+                    |> List.map Compiler.nodify
             , typeAnnotation = Compiler.nodify (Compiler.getInnerAnnotation innerAnnotation)
             }
         )
@@ -1391,8 +1392,6 @@ apply fnExp argExpressions =
                 ( annotationIndex, fnDetails ) =
                     Compiler.toExpressionDetails index fnExp
 
-                -- nextIndex =
-                --     Compiler.dive annotationIndex
                 args =
                     Compiler.thread annotationIndex argExpressions
             in
@@ -1456,7 +1455,7 @@ If you absolutely don't want this behavior, you'll need to use [`functionAdvance
 -}
 fn : ( String, Maybe Elm.Annotation.Annotation ) -> (Expression -> Expression) -> Expression
 fn ( oneBaseName, maybeAnnotation ) toExpression =
-    Compiler.Expression <|
+    Compiler.expression <|
         \index ->
             let
                 one =
@@ -1466,7 +1465,7 @@ fn ( oneBaseName, maybeAnnotation ) toExpression =
                     toExpression one.val
 
                 return =
-                    toExpr (Compiler.dive one.index)
+                    toExpr one.index
             in
             { expression =
                 Exp.LambdaExpression
@@ -1508,14 +1507,11 @@ Then it will replace itself with just
 -}
 functionReduced : String -> (Expression -> Expression) -> Expression
 functionReduced argBaseName toExpression =
-    Compiler.Expression <|
+    Compiler.expression <|
         \index ->
             let
-                childIndex =
-                    Compiler.dive index
-
                 ( arg1Name, newIndex ) =
-                    Compiler.getName argBaseName childIndex
+                    Compiler.getName argBaseName index
 
                 argType =
                     Elm.Annotation.var arg1Name
@@ -1662,20 +1658,17 @@ fn2 :
     -> (Expression -> Expression -> Expression)
     -> Expression
 fn2 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) toExpression =
-    Compiler.Expression <|
+    Compiler.expression <|
         \index ->
             let
-                childIndex =
-                    index
-
                 one =
-                    Compiler.toVarMaybeType childIndex oneBaseName maybeOneType
+                    Compiler.toVarMaybeType index oneBaseName maybeOneType
 
                 two =
                     Compiler.toVarMaybeType one.index twoBaseName maybeTwoType
 
                 ( newIndex_, return ) =
-                    Compiler.toExpressionDetails (Compiler.dive two.index) (toExpression one.val two.val)
+                    Compiler.toExpressionDetails two.index (toExpression one.val two.val)
             in
             { expression =
                 Exp.LambdaExpression
@@ -1718,7 +1711,7 @@ fn3 :
     -> (Expression -> Expression -> Expression -> Expression)
     -> Expression
 fn3 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName, maybeThreeType ) toExpression =
-    Compiler.Expression <|
+    Compiler.expression <|
         \index ->
             let
                 one =
@@ -1731,7 +1724,7 @@ fn3 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
                     Compiler.toVarMaybeType two.index threeBaseName maybeThreeType
 
                 ( newIndex, return ) =
-                    Compiler.toExpressionDetails (Compiler.dive three.index) (toExpression one.val two.val three.val)
+                    Compiler.toExpressionDetails three.index (toExpression one.val two.val three.val)
             in
             { expression =
                 Exp.LambdaExpression
@@ -1781,7 +1774,7 @@ fn4 :
     -> (Expression -> Expression -> Expression -> Expression -> Expression)
     -> Expression
 fn4 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName, maybeThreeType ) ( fourBaseName, maybeFourType ) toExpression =
-    Compiler.Expression <|
+    Compiler.expression <|
         \index ->
             let
                 one =
@@ -1797,7 +1790,7 @@ fn4 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
                     Compiler.toVarMaybeType three.index fourBaseName maybeFourType
 
                 ( newIndex, return ) =
-                    Compiler.toExpressionDetails (Compiler.dive four.index) (toExpression one.val two.val three.val four.val)
+                    Compiler.toExpressionDetails four.index (toExpression one.val two.val three.val four.val)
             in
             { expression =
                 Exp.LambdaExpression
@@ -1854,7 +1847,7 @@ fn5 :
     -> (Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
     -> Expression
 fn5 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName, maybeThreeType ) ( fourBaseName, maybeFourType ) ( fiveBaseName, maybeFiveType ) toExpression =
-    Compiler.Expression <|
+    Compiler.expression <|
         \index ->
             let
                 one =
@@ -1873,7 +1866,7 @@ fn5 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
                     Compiler.toVarMaybeType four.index fiveBaseName maybeFiveType
 
                 ( newIndex, return ) =
-                    Compiler.toExpressionDetails (Compiler.dive five.index) (toExpression one.val two.val three.val four.val five.val)
+                    Compiler.toExpressionDetails five.index (toExpression one.val two.val three.val four.val five.val)
             in
             { expression =
                 Exp.LambdaExpression
@@ -1937,7 +1930,7 @@ fn6 :
     -> (Expression -> Expression -> Expression -> Expression -> Expression -> Expression -> Expression)
     -> Expression
 fn6 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName, maybeThreeType ) ( fourBaseName, maybeFourType ) ( fiveBaseName, maybeFiveType ) ( sixBaseName, maybeSixType ) toExpression =
-    Compiler.Expression <|
+    Compiler.expression <|
         \index ->
             let
                 one =
@@ -1959,7 +1952,7 @@ fn6 ( oneBaseName, maybeOneType ) ( twoBaseName, maybeTwoType ) ( threeBaseName,
                     Compiler.toVarMaybeType five.index sixBaseName maybeSixType
 
                 ( newIndex, return ) =
-                    Compiler.toExpressionDetails (Compiler.dive five.index) (toExpression one.val two.val three.val four.val five.val six.val)
+                    Compiler.toExpressionDetails five.index (toExpression one.val two.val three.val four.val five.val six.val)
             in
             { expression =
                 Exp.LambdaExpression
@@ -2161,13 +2154,13 @@ functionAdvanced args fullExpression =
             fullExpression
 
         _ ->
-            Compiler.Expression <|
+            Compiler.expression <|
                 \index ->
                     let
                         expr =
                             case fullExpression of
                                 Compiler.Expression toExpr ->
-                                    toExpr (Compiler.dive index)
+                                    toExpr index
                     in
                     { expression =
                         Exp.LambdaExpression
@@ -2223,7 +2216,7 @@ function initialArgList toFullExpression =
             toFullExpression []
 
         _ ->
-            Compiler.Expression <|
+            Compiler.expression <|
                 \index ->
                     let
                         args =
@@ -2274,7 +2267,7 @@ function initialArgList toFullExpression =
                         expr =
                             case fullExpression of
                                 Compiler.Expression toExpr ->
-                                    toExpr (Compiler.dive index)
+                                    toExpr index
                     in
                     { expression =
                         Exp.LambdaExpression
