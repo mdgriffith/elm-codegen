@@ -3,6 +3,7 @@ module TypeChecking exposing (generatedCode, suite)
 import Elm
 import Elm.Annotation as Type
 import Elm.Case
+import Elm.Op
 import Elm.ToString
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
@@ -67,29 +68,29 @@ suite =
                 successfullyInferredType
                     (Elm.list
                         [ Elm.record
-                            [ Elm.field "first" (Elm.int 5)
-                            , Elm.field "second" (Elm.tuple (Elm.string "hello") (Elm.int 5))
-                            , Elm.field "first2" (Elm.int 5)
-                            , Elm.field "second2" (Elm.tuple (Elm.string "hello") (Elm.int 5))
-                            , Elm.field "first3" (Elm.int 5)
-                            , Elm.field "second3" (Elm.tuple (Elm.string "hello") (Elm.int 5))
+                            [ Tuple.pair "first" (Elm.int 5)
+                            , Tuple.pair "second" (Elm.tuple (Elm.string "hello") (Elm.int 5))
+                            , Tuple.pair "first2" (Elm.int 5)
+                            , Tuple.pair "second2" (Elm.tuple (Elm.string "hello") (Elm.int 5))
+                            , Tuple.pair "first3" (Elm.int 5)
+                            , Tuple.pair "second3" (Elm.tuple (Elm.string "hello") (Elm.int 5))
                             ]
                         ]
                     )
         , test "A simple plus function" <|
             \_ ->
                 successfullyInferredType
-                    (Elm.fn "myInt" <|
-                        Elm.plus (Elm.int 5)
+                    (Elm.fn ( "myInt", Nothing ) <|
+                        Elm.Op.plus (Elm.int 5)
                     )
         , test "Function with list mapping" <|
             \_ ->
                 successfullyInferredType
-                    (Elm.fn "myArg" <|
+                    (Elm.fn ( "myArg", Nothing ) <|
                         \myArg ->
                             listMap
                                 (\i ->
-                                    Elm.plus (Elm.int 5) i
+                                    Elm.Op.plus (Elm.int 5) i
                                 )
                                 [ myArg
                                 ]
@@ -97,19 +98,19 @@ suite =
         , test "Function that updates a literal elm record" <|
             \_ ->
                 successfullyInferredType
-                    (Elm.fn "myInt" <|
+                    (Elm.fn ( "myInt", Nothing ) <|
                         \myInt ->
                             Elm.updateRecord
                                 (Elm.record
-                                    [ Elm.field "first" (Elm.int 5)
-                                    , Elm.field "second" (Elm.tuple (Elm.string "hello") (Elm.int 5))
-                                    , Elm.field "first2" (Elm.int 5)
-                                    , Elm.field "second2" (Elm.tuple (Elm.string "hello") (Elm.int 5))
-                                    , Elm.field "first3" (Elm.int 5)
-                                    , Elm.field "second3" (Elm.tuple (Elm.string "hello") (Elm.int 5))
+                                    [ Tuple.pair "first" (Elm.int 5)
+                                    , Tuple.pair "second" (Elm.tuple (Elm.string "hello") (Elm.int 5))
+                                    , Tuple.pair "first2" (Elm.int 5)
+                                    , Tuple.pair "second2" (Elm.tuple (Elm.string "hello") (Elm.int 5))
+                                    , Tuple.pair "first3" (Elm.int 5)
+                                    , Tuple.pair "second3" (Elm.tuple (Elm.string "hello") (Elm.int 5))
                                     ]
                                 )
-                                [ Elm.field "first" myInt ]
+                                [ Tuple.pair "first" myInt ]
                     )
         ]
 
@@ -207,8 +208,8 @@ map fn optional =
 
 myMap2 =
     Elm.fn2
-        "fn"
-        "optional"
+        ( "fn", Nothing )
+        ( "optional", Nothing )
         (\fn a ->
             present [] (Elm.apply fn [ a ])
         )
@@ -216,8 +217,8 @@ myMap2 =
 
 myMap =
     Elm.fn2
-        "fn"
-        "optional"
+        ( "fn", Nothing )
+        ( "optional", Nothing )
         (\fn optional ->
             Elm.Case.custom optional
                 (Type.namedWith [] "Optional" [ Type.var "a" ])

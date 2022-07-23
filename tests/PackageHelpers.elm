@@ -2,6 +2,7 @@ module PackageHelpers exposing (suite)
 
 import Elm
 import Elm.Annotation as Type
+import Elm.Op
 import Elm.ToString
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
@@ -66,16 +67,16 @@ suite =
             \_ ->
                 Expect.equal
                     (Elm.record
-                        [ Elm.fn "arg"
+                        [ Elm.fn ( "arg", Nothing )
                             (\arg ->
-                                Elm.plus arg (Elm.int 5)
+                                Elm.Op.plus arg (Elm.int 5)
                             )
-                            |> Elm.field "one"
-                        , Elm.fn "arg"
+                            |> Tuple.pair "one"
+                        , Elm.fn ( "arg", Nothing )
                             (\arg ->
-                                Elm.append arg (Elm.string "World")
+                                Elm.Op.append arg (Elm.string "World")
                             )
-                            |> Elm.field "two"
+                            |> Tuple.pair "two"
                         ]
                         |> (\d ->
                                 let
