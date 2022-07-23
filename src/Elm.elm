@@ -19,6 +19,7 @@ module Elm exposing
     , parse, unsafe
     , apply, value
     , unwrap, unwrapper
+    , facts
     )
 
 {-|
@@ -1427,7 +1428,7 @@ apply fnExp argExpressions =
                     Compiler.toExpressionDetails index fnExp
 
                 nextIndex =
-                    Compiler.next annotationIndex
+                    Compiler.dive annotationIndex
 
                 args =
                     Compiler.thread nextIndex argExpressions
@@ -1441,9 +1442,6 @@ apply fnExp argExpressions =
                     )
             , annotation =
                 Compiler.applyType fnDetails.annotation args
-
-            -- BUGBUG -- It feels like this is the right place for variable protection, but maybe not?
-            -- |> Compiler.protectInference annotationIndex
             , imports = fnDetails.imports ++ List.concatMap Compiler.getImports args
             }
         )
