@@ -437,7 +437,7 @@ Though be sure `elm-codegen` isn't already doing this automatically for you!
 
 -}
 withType : Elm.Annotation.Annotation -> Expression -> Expression
-withType ann (Compiler.Expression toExp) =
+withType ((Compiler.Annotation annDetails) as ann) (Compiler.Expression toExp) =
     Compiler.Expression <|
         \index ->
             let
@@ -446,8 +446,26 @@ withType ann (Compiler.Expression toExp) =
             in
             { exp
                 | annotation =
-                    Compiler.unifyOn ann exp.annotation
-                , imports = exp.imports ++ Compiler.getAnnotationImports ann
+                    case Compiler.unifyOn ann exp.annotation of
+                        Ok unified ->
+                            Ok unified
+
+                        Err _ ->
+                            case exp.annotation of
+                                Ok expressionAnnotation ->
+                                    Ok
+                                        { type_ = annDetails.annotation
+                                        , inferences = expressionAnnotation.inferences
+                                        , aliases = expressionAnnotation.aliases
+                                        }
+
+                                Err err ->
+                                    Ok
+                                        { type_ = annDetails.annotation
+                                        , inferences = Dict.empty
+                                        , aliases = Compiler.emptyAliases
+                                        }
+                , imports = exp.imports ++ annDetails.imports
             }
 
 
