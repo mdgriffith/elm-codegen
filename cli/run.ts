@@ -517,6 +517,12 @@ export async function run_generation_from_cli(desiredElmFile: string | null, opt
       if (cwd == ".") {
         break
       }
+
+      const parsed = path.parse(cwd)
+      if (parsed.root == parsed.dir) {
+        // Avoid infinite recursion
+        break
+      }
     }
 
     elmFile = path.relative(cwd, desiredElmFile)
