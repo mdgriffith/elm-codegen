@@ -413,10 +413,12 @@ function copyHelpers(codeGenJson: CodeGenJson, options: Options) {
     if (item.endsWith(".elm")) {
       fs.writeFileSync(path.join(options.output, item), fs.readFileSync(item).toString())
     } else if (item.endsWith(path.sep)) {
-      getFilesWithin(item, ".elm").forEach((elmPath) => {
-        const relative = path.relative(item, elmPath)
-        fs.writeFileSync(path.join(options.output, relative), fs.readFileSync(elmPath).toString())
-      })
+      if (fs.existsSync(item)) {
+        getFilesWithin(item, ".elm").forEach((elmPath) => {
+          const relative = path.relative(item, elmPath)
+          fs.writeFileSync(path.join(options.output, relative), fs.readFileSync(elmPath).toString())
+        })
+      }
     }
   }
 }
