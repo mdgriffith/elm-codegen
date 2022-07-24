@@ -373,9 +373,15 @@ async function reinstall_everything(install_dir: string, codeGenJson: CodeGenJso
     } else if (item.endsWith(".elm")) {
       elmSources.push(fs.readFileSync(item).toString())
     } else if (item.endsWith(path.sep)) {
-      getFilesWithin(item, ".elm").forEach((elmPath) => {
-        elmSources.push(fs.readFileSync(elmPath).toString())
-      })
+      if (fs.existsSync(item)) {
+        getFilesWithin(item, ".elm").forEach((elmPath) => {
+          elmSources.push(fs.readFileSync(elmPath).toString())
+        })
+      } else {
+        console.log(
+          `\n${chalk.yellow(item)} is listed in your elm-codegen.json but doesn't exist!\nMaybe it should be removed?\n`
+        )
+      }
     }
   }
   if (elmSources.length > 0) {
