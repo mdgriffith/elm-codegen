@@ -602,8 +602,10 @@ export async function run_generation_from_cli(desiredElmFile: string | null, opt
 
     generate(options.debug, elmFile, moduleName, output, cwd, flags)
     Chokidar.watch(path.join(cwd, "**", "*.elm"), { ignored: path.join(output, "**") }).on("all", (event, path) => {
-      console.log("\nFile changed, regenerating")
-      generate(options.debug, elmFile, moduleName, output, cwd, flags)
+      if (event === "change") {
+        console.log(`\n${path} changed, regenerating`)
+        generate(options.debug, elmFile, moduleName, output, cwd, flags)
+      }
     })
   } else {
     //         skipping clearing files because in my test case it was failing with permission denied all the time.
