@@ -509,8 +509,23 @@ export async function run_generation_from_cli(desiredElmFile: string | null, opt
   let cwd = "./codegen"
 
   if (desiredElmFile != null) {
-    cwd = "."
-    elmFile = desiredElmFile
+    cwd = path.dirname(desiredElmFile)
+
+    while (!fs.existsSync(path.join(cwd, "elm.json"))) {
+      cwd = path.dirname(cwd)
+
+      if (cwd == ".") {
+        break
+      }
+
+      const parsed = path.parse(cwd)
+      if (parsed.root == parsed.dir) {
+        // Avoid infinite recursion
+        break
+      }
+    }
+
+    elmFile = path.relative(cwd, desiredElmFile)
   }
   let fullSourcePath = path.join(cwd, elmFile)
   let output = options.output
