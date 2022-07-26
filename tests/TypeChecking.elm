@@ -45,6 +45,14 @@ declarationAs decl str =
         (String.trim str)
 
 
+importsAs expression str =
+    Expect.equal
+        (Elm.ToString.expression expression
+            |> .imports
+        )
+        str
+
+
 suite : Test
 suite =
     describe "Type inference!"
@@ -112,6 +120,17 @@ suite =
                                 )
                                 [ Tuple.pair "first" myInt ]
                     )
+        , test "Imports are kept when expression is wrapped in letIn" <|
+            \_ ->
+                importsAs
+                    (Elm.letIn [ ( "foo", Elm.unit ) ] <|
+                        Elm.value
+                            { importFrom = [ "Module" ]
+                            , name = "constant"
+                            , annotation = Nothing
+                            }
+                    )
+                    "import Module"
         ]
 
 

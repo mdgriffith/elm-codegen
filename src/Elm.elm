@@ -1144,7 +1144,7 @@ letIn decls resultExpr =
                         )
                         { index = firstIndex
                         , declarations = []
-                        , imports = []
+                        , imports = within.imports
                         }
                         decls
             in
