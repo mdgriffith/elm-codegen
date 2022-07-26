@@ -205,6 +205,17 @@ map fn optional =
                     (String.trim """
 (a -> fn_result) -> Optional a -> Optional fn_result
 """)
+        , test "Multiply used type variable in record only appears once in signature" <|
+            \_ ->
+                declarationAs
+                    (Elm.alias "Record"
+                        (Type.record
+                            [ ( "a", Type.var "var" )
+                            , ( "b", Type.var "var" )
+                            ]
+                        )
+                    )
+                    "type alias Record var =\n    { a : var, b : var }"
         ]
 
 
