@@ -141,9 +141,7 @@ formatAliasKey mod name =
 addAlias : List String -> String -> Annotation -> AliasCache -> AliasCache
 addAlias mod name ((Annotation annDetails) as ann) aliasCache =
     Dict.insert (formatAliasKey mod name)
-        { variables =
-            getGenerics ann
-                |> unique
+        { variables = getGenerics ann
         , target = annDetails.annotation
         }
         aliasCache
@@ -705,6 +703,7 @@ inferenceErrorToString inf =
 getGenerics : Annotation -> List String
 getGenerics (Annotation details) =
     getGenericsHelper details.annotation
+        |> unique
 
 
 getGenericsHelper : Annotation.TypeAnnotation -> List String
