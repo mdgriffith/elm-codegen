@@ -1,11 +1,14 @@
 module Elm.Let exposing
-    ( letIn
-    , value, tuple, record
+    ( letIn, value
+    , tuple
+    , record
     , fn, fn2, fn3
     , toExpression
     )
 
 {-| This module is for building `let` expressions.
+
+@docs letIn, value
 
 Here's a brief example to get you started
 
@@ -28,10 +31,10 @@ Will translate into
     in
     one ++ two
 
-@docs letIn
 
+# Destructing values
 
-## Destructing values
+@docs tuple
 
 Here's an example destructing a tuple. This code
 
@@ -50,10 +53,37 @@ Will generate
     in
     first ++ second
 
-@docs value, tuple, record
+@docs record
+
+And extracting fields from a record.
+
+    Elm.Let.letIn
+        (\fields ->
+            case fields of
+                [ first, second ] ->
+                    Elm.Op.append first second
+
+                _ ->
+                    Elm.unit
+        )
+        |> Elm.Let.record [ "first", "second" ]
+            (Elm.record
+                [ ( "first", Elm.string "Hello" )
+                , ( "second", Elm.string "world!" )
+                ]
+            )
+        |> Elm.Let.toExpression
+
+Will generate:
+
+    let
+        { first, second } =
+            { first = "Hello", second = "world!" }
+    in
+    first ++ second
 
 
-## Functions
+# Functions
 
 Here's an example of declaring functions in a let expression:
 
@@ -522,34 +552,7 @@ tuple desiredNameOne desiredNameTwo valueExpr sourceLet =
             )
 
 
-{-|
-
-    Elm.Let.letIn
-        (\fields ->
-            case fields of
-                [ first, second ] ->
-                    Elm.Op.append first second
-
-                _ ->
-                    Elm.unit
-        )
-        |> Elm.Let.record [ "first", "second" ]
-            (Elm.record
-                [ ( "first", Elm.string "Hello" )
-                , ( "second", Elm.string "world!" )
-                ]
-            )
-        |> Elm.Let.toExpression
-
-Will translate into
-
-    let
-        { first, second } =
-            { first = "Hello", second = "world!" }
-    in
-    first ++ second
-
--}
+{-| -}
 record :
     List String
     -> Expression
