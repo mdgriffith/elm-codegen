@@ -100,17 +100,16 @@ suite =
                 successfullyInferredType
                     (Elm.fn ( "myInt", Nothing ) <|
                         \myInt ->
-                            Elm.updateRecord
-                                (Elm.record
-                                    [ Tuple.pair "first" (Elm.int 5)
-                                    , Tuple.pair "second" (Elm.tuple (Elm.string "hello") (Elm.int 5))
-                                    , Tuple.pair "first2" (Elm.int 5)
-                                    , Tuple.pair "second2" (Elm.tuple (Elm.string "hello") (Elm.int 5))
-                                    , Tuple.pair "first3" (Elm.int 5)
-                                    , Tuple.pair "second3" (Elm.tuple (Elm.string "hello") (Elm.int 5))
-                                    ]
-                                )
-                                [ Tuple.pair "first" myInt ]
+                            Elm.record
+                                [ Tuple.pair "first" (Elm.int 5)
+                                , Tuple.pair "second" (Elm.tuple (Elm.string "hello") (Elm.int 5))
+                                , Tuple.pair "first2" (Elm.int 5)
+                                , Tuple.pair "second2" (Elm.tuple (Elm.string "hello") (Elm.int 5))
+                                , Tuple.pair "first3" (Elm.int 5)
+                                , Tuple.pair "second3" (Elm.tuple (Elm.string "hello") (Elm.int 5))
+                                ]
+                                |> Elm.updateRecord
+                                    [ Tuple.pair "first" myInt ]
                     )
         ]
 
