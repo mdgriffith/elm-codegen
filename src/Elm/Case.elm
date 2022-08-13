@@ -51,7 +51,7 @@ Generates
             "It's nothing, I swear!"
 
         Just just ->
-            "Actually, it's " ++ just
+            "Actually, it's: " ++ just
 
 @docs custom
 
