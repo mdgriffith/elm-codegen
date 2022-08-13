@@ -5,11 +5,82 @@ module Elm.Let exposing
     , toExpression
     )
 
-{-|
+{-| This module is for building `let` expressions.
+
+Here's a brief example to get you started
+
+    Elm.Let.letIn
+        (\one two ->
+            Elm.Op.append one two
+        )
+        |> Elm.Let.value "one" (Elm.string "Hello")
+        |> Elm.Let.value "two" (Elm.string "World!")
+        |> Elm.Let.toExpression
+
+Will translate into
+
+    let
+        one =
+            "Hello!"
+
+        two =
+            "World"
+    in
+    one ++ two
 
 @docs letIn
 
+
+## Destructing values
+
+Here's an example destructing a tuple. This code
+
+    Elm.Let.letIn
+        (\( first, second ) ->
+            Elm.Op.append first second
+        )
+        |> Elm.Let.tuple "first" "second" (Elm.tuple (Elm.string "Hello") (Elm.string "World!"))
+        |> Elm.Let.toExpression
+
+Will generate
+
+    let
+        ( first, second ) =
+            ( "Hello", "World!" )
+    in
+    first ++ second
+
 @docs value, tuple, record
+
+
+## Functions
+
+Here's an example of declaring functions in a let expression:
+
+    Elm.Let.letIn
+        (\myFn ->
+            myFn (Elm.bool True)
+        )
+        |> Elm.Let.fn "myFn"
+            ( "arg", Just Type.bool )
+            (\arg ->
+                Elm.ifThen arg
+                    (Elm.string "True")
+                    (Elm.string "False")
+            )
+        |> Elm.Let.toExpression
+
+will generate
+
+    let
+        myFn arg =
+            if arg then
+                "True"
+
+            else
+                "False"
+    in
+    myFn True
 
 @docs fn, fn2, fn3
 
@@ -39,28 +110,7 @@ type Let a
         )
 
 
-{-|
-
-    Elm.Let.letIn
-        (\one two ->
-            Elm.Op.append one two
-        )
-        |> Elm.Let.value "one" (Elm.string "Hello")
-        |> Elm.Let.value "two" (Elm.string "World!")
-        |> Elm.Let.toExpression
-
-Will translate into
-
-    let
-        one =
-            "Hello!"
-
-        two =
-            "World"
-    in
-    one ++ two
-
--}
+{-| -}
 letIn : a -> Let a
 letIn return =
     Let
@@ -144,34 +194,7 @@ value desiredName valueExpr sourceLet =
         sourceLet
 
 
-{-|
-
-    Elm.Let.letIn
-        (\myFn ->
-            myFn (Elm.bool True)
-        )
-        |> Elm.Let.fn "myFn"
-            ( "arg", Just Type.bool )
-            (\arg ->
-                Elm.ifThen arg
-                    (Elm.string "True")
-                    (Elm.string "False")
-            )
-        |> Elm.Let.toExpression
-
-will translate into
-
-    let
-        myFn arg =
-            if arg then
-                "True"
-
-            else
-                "False"
-    in
-    myFn True
-
--}
+{-| -}
 fn :
     String
     -> ( String, Maybe Elm.Annotation.Annotation )
@@ -414,24 +437,7 @@ fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDes
         sourceLet
 
 
-{-|
-
-    Elm.Let.letIn
-        (\( first, second ) ->
-            Elm.Op.append first second
-        )
-        |> Elm.Let.tuple "first" "second" (Elm.tuple (Elm.string "Hello") (Elm.string "World!"))
-        |> Elm.Let.toExpression
-
-Will translate into
-
-    let
-        ( first, second ) =
-            ( "Hello", "World!" )
-    in
-    first ++ second
-
--}
+{-| -}
 tuple : String -> String -> Expression -> Let (( Expression, Expression ) -> a) -> Let a
 tuple desiredNameOne desiredNameTwo valueExpr sourceLet =
     sourceLet
