@@ -33,7 +33,7 @@ You should be good to proceed to the [Writing a Generator](https://github.com/md
 - `--output=generated` — Specify a different directory to generate files in.
 - `--watch` — Watch the `.elm` files in the `codegen` directory and regenerate if anything changes.
 - `--debug` — Allow `Debug.log` in your generator. This is off by default.
-- `--flags={"myStuff": true}` — Pass flags to your genrator as inline `JSON`.
+- `--flags={"myStuff": true}` — Pass flags to your generator as inline `JSON`.
 - `--flags-from=<file.json>` — Read a `JSON` file and pass it in to the generator as flags.
 
 Great! Onward!
