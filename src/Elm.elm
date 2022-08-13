@@ -48,8 +48,12 @@ module Elm exposing
 
 @docs ifThen
 
+**Note** If you need `let` or `case` expressions, check out the docs for `Elm.Let or`Elm.Case\`!
 
-## Top level
+
+## Declarations
+
+A `Declaration` is anything that is at the "top level" of your file, meaning all values with no indentation.
 
 @docs Declaration
 
@@ -477,8 +481,6 @@ Results in the following lambda
 
     \(MyModule.MyType val) -> val
 
-**Note** This needs to be a type with only a single variant
-
 -}
 unwrapper : List String -> String -> Expression
 unwrapper modName typename =
@@ -846,9 +848,20 @@ list exprs =
             }
 
 
-{-| -}
-updateRecord : Expression -> List ( String, Expression ) -> Expression
-updateRecord recordExpression fields =
+{-|
+
+    myRecord
+        |> updateRecord
+            [ ( "designation", Elm.string "Pretty fabulous" )
+            ]
+
+Results in
+
+    { myRecord | designation = "Pretty fabulous" }
+
+-}
+updateRecord : List ( String, Expression ) -> Expression -> Expression
+updateRecord fields recordExpression =
     Compiler.expression <|
         \index ->
             let
@@ -1112,6 +1125,26 @@ Will generate
 
     if True then
         "yes"
+
+    else
+        "no"
+
+If you need more than one branch, then chaing them together!
+
+     Elm.ifThen (Elm.bool True)
+        (Elm.string "yes")
+        (Elm.ifThen (Elm.bool True)
+            (Elm.string "maybe")
+            (Elm.string "no")
+        )
+
+Will generate
+
+    if True then
+        "yes"
+
+    else if True then
+        "maybe"
 
     else
         "no"
@@ -2404,7 +2437,11 @@ cmd =
         [ Compiler.nodify (Annotation.GenericType "msg") ]
 
 
-{-| -}
+{-| This will insert the given string into your generated file.
+
+Check out the [using packages/helpers guide](https://github.com/mdgriffith/elm-codegen/tree/main/guide/UsingHelpers.md). If you're reaching for this, it's likely you'd be better off using a local helper file!
+
+-}
 unsafe : String -> Declaration
 unsafe source =
     Compiler.Block (String.trim source)
