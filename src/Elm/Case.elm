@@ -3,7 +3,8 @@ module Elm.Case exposing
     , tuple, triple
     , custom
     , Branch, otherwise, branch0, branch1, branch2, branch3, branch4, branch5, branch6
-    , branchWith, listBranch
+    , branchWith
+    , branchList
     )
 
 {-| Generate a case expression!
@@ -13,8 +14,10 @@ Here's an example for extracting a `Maybe Int`
     Elm.Case.maybe myMaybe
         { nothing = Elm.int 0
         , just =
-            \content ->
+            ( "value"
+            , \content ->
                 Elm.plus (Elm.int 5) content
+            )
         }
 
 Generates
@@ -23,8 +26,8 @@ Generates
         Nothing ->
             0
 
-        Just just ->
-            just + 5
+        Just value ->
+            value + 5
 
 @docs maybe, result, list, string
 
@@ -54,7 +57,9 @@ Generates
 
 @docs Branch, otherwise, branch0, branch1, branch2, branch3, branch4, branch5, branch6
 
-@docs branchWith, listBranch
+@docs branchWith
+
+@docs branchList
 
 -}
 
@@ -201,7 +206,7 @@ maybe :
     Expression
     ->
         { nothing : Expression
-        , just : Expression -> Expression
+        , just : ( String, Expression -> Expression )
         }
     -> Expression
 maybe mainExpression branches =
@@ -225,18 +230,20 @@ maybe mainExpression branches =
                             )
                         , Branch
                             (\branchIndex ->
-                                let
-                                    ( justIndex, justName, justExp ) =
-                                        Compiler.var branchIndex "just"
-                                in
-                                ( justIndex
-                                , Pattern.NamedPattern
-                                    { moduleName = []
-                                    , name = "Just"
-                                    }
-                                    [ Compiler.nodify (Pattern.VarPattern justName) ]
-                                , branches.just justExp
-                                )
+                                case branches.just of
+                                    ( justVarName, toReturn ) ->
+                                        let
+                                            ( justIndex, justName, justExp ) =
+                                                Compiler.var branchIndex justVarName
+                                        in
+                                        ( justIndex
+                                        , Pattern.NamedPattern
+                                            { moduleName = []
+                                            , name = "Just"
+                                            }
+                                            [ Compiler.nodify (Pattern.VarPattern justName) ]
+                                        , toReturn justExp
+                                        )
                             )
                         ]
             in
@@ -259,26 +266,27 @@ maybe mainExpression branches =
 
 {-|
 
-    Elm.fn "myTuple" <|
-        \myTuple ->
-            Elm.Case.tuple myTuple
-                (\one two ->
-                    Elm.plus (Elm.int 5) two
-                )
+    Elm.Case.tuple myTuple
+        "first"
+        "second"
+        (\one two ->
+            Elm.plus (Elm.int 5) two
+        )
 
 Generates
 
-    \myTuple ->
-        case myTuple of
-            ( first, second ) ->
-                5 + second
+    case myTuple of
+        ( first, second ) ->
+            5 + second
 
 -}
 tuple :
     Expression
+    -> String
+    -> String
     -> (Expression -> Expression -> Expression)
     -> Expression
-tuple mainExpression branches =
+tuple mainExpression oneName twoName branches =
     Compiler.Expression <|
         \index ->
             let
@@ -290,10 +298,10 @@ tuple mainExpression branches =
                             (\branchIndex ->
                                 let
                                     ( firstIndex, firstName, firstExp ) =
-                                        Compiler.var branchIndex "first"
+                                        Compiler.var branchIndex oneName
 
                                     ( secondIndex, secondName, secondExp ) =
-                                        Compiler.var firstIndex "second"
+                                        Compiler.var firstIndex twoName
                                 in
                                 ( secondIndex
                                 , Pattern.TuplePattern
@@ -323,26 +331,29 @@ tuple mainExpression branches =
 
 {-|
 
-    Elm.fn "myTriple" <|
-        \myTriple ->
-            Elm.Case.triple myTriple
-                (\one two three ->
-                    Elm.plus (Elm.int 5) two
-                )
+    Elm.Case.triple myTriple
+        "one"
+        "two"
+        "three"
+        (\one two three ->
+            Elm.plus (Elm.int 5) two
+        )
 
 Generates
 
-    \myTriple ->
-        case myTriple of
-            ( one, two, three ) ->
-                5 + two
+    case myTriple of
+        ( one, two, three ) ->
+            5 + two
 
 -}
 triple :
     Expression
+    -> String
+    -> String
+    -> String
     -> (Expression -> Expression -> Expression -> Expression)
     -> Expression
-triple mainExpression branches =
+triple mainExpression one two three branches =
     Compiler.Expression <|
         \index ->
             let
@@ -354,13 +365,13 @@ triple mainExpression branches =
                             (\branchIndex ->
                                 let
                                     ( firstIndex, firstName, firstExp ) =
-                                        Compiler.var branchIndex "first"
+                                        Compiler.var branchIndex one
 
                                     ( secondIndex, secondName, secondExp ) =
-                                        Compiler.var firstIndex "second"
+                                        Compiler.var firstIndex two
 
                                     ( thirdIndex, thirdName, thirdExp ) =
-                                        Compiler.var secondIndex "third"
+                                        Compiler.var secondIndex three
                                 in
                                 ( thirdIndex
                                 , Pattern.TuplePattern
@@ -413,8 +424,8 @@ Generates
 result :
     Expression
     ->
-        { err : Expression -> Expression
-        , ok : Expression -> Expression
+        { err : ( String, Expression -> Expression )
+        , ok : ( String, Expression -> Expression )
         }
     -> Expression
 result mainExpression branches =
@@ -427,27 +438,31 @@ result mainExpression branches =
                         (Compiler.dive index)
                         [ Branch
                             (\branchIndex ->
-                                let
-                                    ( okIndex, okName, okExp ) =
-                                        Compiler.var branchIndex "ok"
-                                in
-                                ( okIndex
-                                , Pattern.NamedPattern { moduleName = [], name = "Ok" }
-                                    [ Compiler.nodify (Pattern.VarPattern okName) ]
-                                , branches.err okExp
-                                )
+                                case branches.ok of
+                                    ( okNameStr, toOk ) ->
+                                        let
+                                            ( okIndex, okName, okExp ) =
+                                                Compiler.var branchIndex okNameStr
+                                        in
+                                        ( okIndex
+                                        , Pattern.NamedPattern { moduleName = [], name = "Ok" }
+                                            [ Compiler.nodify (Pattern.VarPattern okName) ]
+                                        , toOk okExp
+                                        )
                             )
                         , Branch
                             (\branchIndex ->
-                                let
-                                    ( errIndex, errName, errExp ) =
-                                        Compiler.var branchIndex "err"
-                                in
-                                ( errIndex
-                                , Pattern.NamedPattern { moduleName = [], name = "Err" }
-                                    [ Compiler.nodify (Pattern.VarPattern errName) ]
-                                , branches.ok errExp
-                                )
+                                case branches.err of
+                                    ( errNameStr, toErr ) ->
+                                        let
+                                            ( errIndex, errName, errExp ) =
+                                                Compiler.var branchIndex errNameStr
+                                        in
+                                        ( errIndex
+                                        , Pattern.NamedPattern { moduleName = [], name = "Err" }
+                                            [ Compiler.nodify (Pattern.VarPattern errName) ]
+                                        , toErr errExp
+                                        )
                             )
                         ]
             in
@@ -479,7 +494,7 @@ string mainExpression branches =
     Compiler.Expression <|
         \index ->
             let
-                branchList =
+                allBranches =
                     List.map
                         (\( caseString, caseExpression ) ->
                             Branch
@@ -501,7 +516,7 @@ string mainExpression branches =
                            ]
 
                 ( expr, gathered ) =
-                    captureCase mainExpression [] (Compiler.dive index) branchList
+                    captureCase mainExpression [] (Compiler.dive index) allBranches
             in
             { expression =
                 Exp.CaseExpression
@@ -910,8 +925,8 @@ branchWith name arity toExp =
 
 
 {-| -}
-listBranch : Int -> (List Expression -> Expression) -> Branch
-listBranch arity toExp =
+branchList : Int -> (List Expression -> Expression) -> Branch
+branchList arity toExp =
     Branch
         (\index ->
             let
