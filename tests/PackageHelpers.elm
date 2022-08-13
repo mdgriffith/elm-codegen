@@ -32,6 +32,7 @@ successfullyInferredType expression =
                 )
 
 
+renderedAs : Elm.Expression -> String -> Expectation
 renderedAs expression str =
     Expect.equal
         (Elm.ToString.expression expression
