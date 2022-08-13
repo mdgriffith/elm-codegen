@@ -102,7 +102,3 @@ Additionally though, there are a few other helpers —
 
 5. `values_` — In some cases you may need to do something fancier. The `values_` record will help you refer directly to a single value.
    So, `Gen.Html.values_.div` is an `Expression` which generates just `Html.div`.
-
-There's one final thing you should read before you go!
-
-🕶️ [Mastering Buildtime vs Runtime](https://github.com/mdgriffith/elm-codegen/tree/main/guide/MasteringBuildtimeVsRuntime.md)
