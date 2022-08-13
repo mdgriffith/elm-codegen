@@ -1,9 +1,8 @@
 module Elm.ToString exposing (expression, annotation, declaration)
 
-{-|
+{-| Convert values to a string!
 
-
-# Rendering to string
+This can be useful if you're generating examples or just playing with the library and want to get an intuition for it.
 
 @docs expression, annotation, declaration
 
