@@ -48,7 +48,7 @@ module Elm exposing
 
 @docs ifThen
 
-**Note** If you need `let` or `case` expressions, check out the docs for `Elm.Let or`Elm.Case\`!
+**Note** If you need `let` or `case` expressions, check out the docs for [`Elm.Let`](./Elm-Let) or [`Elm.Case`](./Elm-Case)!
 
 
 ## Declarations
@@ -200,14 +200,14 @@ docs group =
 
 {-| Same as [file](#file), but you have more control over how the module comment is generated!
 
-Pass in a function that determines how to render a `@doc` comment.
+Pass in a function that determines how to render a `@docs` comment.
 
 Each exposed item is grouped based on the string used in [exposeWith](#exposeWith).
 
 **aliases** allow you to specify a module alias to be used.
 
     aliases =
-        [ (["Json", "Encode"), "Encode")
+        [ ( [ "Json", "Encode" ], "Encode" )
         ]
 
 would make an import statement like
@@ -535,7 +535,7 @@ unwrapper modName typename =
 
     Elm.declaration "myFunction" <|
         Elm.fn "val"
-            (\\val ->
+            (\val ->
                 Elm.unwrap "MyType" val
             )
 
@@ -1129,7 +1129,7 @@ Will generate
     else
         "no"
 
-If you need more than one branch, then chaing them together!
+If you need more than one branch, then chain them together!
 
      Elm.ifThen (Elm.bool True)
         (Elm.string "yes")
@@ -2339,7 +2339,7 @@ expose =
 
 {-| You can also add a group tag to an exposed value. This will automatically group the `docs` statements in the module docs.
 
-For precise control over what is rendered for the module comment, use [fileWith](#fileWith)
+For precise control over what is rendered for the module comment, use [fileWith](#fileWith).
 
 -}
 exposeWith : { exposeConstructor : Bool, group : Maybe String } -> Declaration -> Declaration
@@ -2368,7 +2368,7 @@ If you want to vary the messages going in and out of your app, don't use a huge 
 
 This will give you more flexibility in the future and save you having to wire up a bunch of stuff.
 
-**Another note** - You may need to expose your port explicitly using `Elm.expose`
+**Another note** - You may need to expose your port explicitly using [`Elm.expose`](#expose).
 
 -}
 portIncoming : String -> List Elm.Annotation.Annotation -> Declaration
