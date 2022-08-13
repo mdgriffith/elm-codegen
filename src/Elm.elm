@@ -6,7 +6,7 @@ module Elm exposing
     , list, tuple, triple
     , withType
     , record, get, updateRecord
-    , letIn, ifThen
+    , ifThen
     , Declaration
     , comment, declaration
     , withDocumentation
@@ -46,7 +46,7 @@ module Elm exposing
 
 ## Flow control
 
-@docs letIn, ifThen
+@docs ifThen
 
 
 ## Top level
@@ -1099,63 +1099,6 @@ record fields =
                         Err errs
             , imports =
                 unified.imports
-            }
-
-
-{-| A let block.
-
-    import Elm
-
-
-    Elm.letIn
-        [ ("one", (Elm.int 5))
-        , ("two", (Elm.int 10))
-        ]
-        (Elm.add (Elm.value "one") (Elm.value "two"))
-
--}
-letIn : List ( String, Expression ) -> Expression -> Expression
-letIn decls resultExpr =
-    Compiler.expression <|
-        \index ->
-            let
-                ( firstIndex, within ) =
-                    Compiler.toExpressionDetails index resultExpr
-
-                gathered =
-                    List.foldr
-                        (\( name, body ) accum ->
-                            let
-                                ( new, newExpr ) =
-                                    Compiler.toExpressionDetails accum.index body
-                            in
-                            { index = new
-                            , declarations =
-                                Compiler.nodify
-                                    (Exp.LetDestructuring
-                                        (Compiler.nodify
-                                            (Pattern.VarPattern name)
-                                        )
-                                        (Compiler.nodify newExpr.expression)
-                                    )
-                                    :: accum.declarations
-                            , imports = accum.imports ++ newExpr.imports
-                            }
-                        )
-                        { index = firstIndex
-                        , declarations = []
-                        , imports = []
-                        }
-                        decls
-            in
-            { expression =
-                Exp.LetExpression
-                    { declarations = gathered.declarations
-                    , expression = Compiler.nodify within.expression
-                    }
-            , imports = gathered.imports
-            , annotation =
-                within.annotation
             }
 
 
