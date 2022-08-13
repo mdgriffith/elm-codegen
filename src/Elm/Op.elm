@@ -486,8 +486,8 @@ applyInfix2 (BinOp symbol dir _) infixAnnotation l r =
             { expression =
                 Exp.OperatorApplication symbol
                     dir
-                    (Compiler.nodify left.expression)
-                    (Compiler.nodify right.expression)
+                    (Compiler.nodify (Compiler.parens left.expression))
+                    (Compiler.nodify (Compiler.parens right.expression))
             , annotation =
                 Compiler.applyType
                     (Ok
