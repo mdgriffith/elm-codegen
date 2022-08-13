@@ -6,11 +6,49 @@ module Elm.Case exposing
     , branchWith, listBranch
     )
 
-{-|
+{-| Generate a case expression!
+
+Here's an example for extracting a `Maybe Int`
+
+    Elm.Case.maybe myMaybe
+        { nothing = Elm.int 0
+        , just =
+            \content ->
+                Elm.plus (Elm.int 5) content
+        }
+
+Generates
+
+    case myMaybe of
+        Nothing ->
+            0
+
+        Just just ->
+            just + 5
 
 @docs maybe, result, list, string
 
 @docs tuple, triple
+
+
+## Case on a Custom Type
+
+    Elm.Case.custom maybeString
+        [ Elm.Case.branch0 "Nothing"
+            (Elm.string "It's nothing, I swear!")
+        , Elm.Case.branch1 "Just" ( "val", Elm.Annotation.string ) <|
+            \val ->
+                Elm.append (Elm.string "Actually, it's: ") val
+        ]
+
+Generates
+
+    case maybeString of
+        Nothing ->
+            "It's nothing, I swear!"
+
+        Just just ->
+            "Actually, it's " ++ just
 
 @docs custom
 
@@ -158,28 +196,7 @@ combineInferences infs infResult =
             Err err
 
 
-{-|
-
-    Elm.fn "myMaybe" <|
-        \myMaybe ->
-            Elm.Case.maybe myMaybe
-                { nothing = Elm.int 0
-                , just =
-                    \content ->
-                        Elm.plus (Elm.int 5) content
-                }
-
-Generates
-
-    \myMaybe ->
-        case myMaybe of
-            Nothing ->
-                0
-
-            Just just ->
-                just + 5
-
--}
+{-| -}
 maybe :
     Expression
     ->
@@ -374,26 +391,23 @@ triple mainExpression branches =
 
 {-|
 
-    Elm.fn "myResult" <|
-        \myResult ->
-            Elm.Case.triple myResult
-                { ok =
-                    \ok ->
-                        Elm.string "No errors"
-                , err =
-                    \err ->
-                        err
-                }
+    Elm.Case.triple myResult
+        { ok =
+            \ok ->
+                Elm.string "No errors"
+        , err =
+            \err ->
+                err
+        }
 
 Generates
 
-    \myResult ->
-        case myResult of
-            Ok ok ->
-                "No errors"
+    case myResult of
+        Ok ok ->
+            "No errors"
 
-            Err err ->
-                err
+        Err err ->
+            err
 
 -}
 result :
@@ -505,26 +519,25 @@ string mainExpression branches =
             }
 
 
-{-|
+{-| Let's unpack the first value from a list.
 
-    Elm.fn "myList" <|
-        \myList ->
-            Elm.Case.list myList
-                { empty = Elm.int 0
-                , nonEmpty =
-                    \top remaining ->
-                        Elm.plus (Elm.int 5) top
-                }
+    Elm.Case.list myList
+        { empty = Elm.int 0
+        , nonEmpty =
+            \top remaining ->
+                Elm.plus (Elm.int 5) top
+        }
 
 Generates
 
-    \myList ->
-        case myList of
-            [] ->
-                0
+    case myList of
+        [] ->
+            0
 
-            top :: remaining ->
-                top + 5
+        top :: remaining ->
+            top + 5
+
+**Note** if you want more control over unpacking lists, check out [`branchList`](#branchList)
 
 -}
 list :
@@ -585,30 +598,7 @@ list mainExpression branches =
             }
 
 
-{-|
-
-    Elm.fn "maybeString" <|
-        \maybeString ->
-            Elm.Case.custom maybeString
-                [ Elm.Case.branch [ "Maybe" ]
-                    "Nothing"
-                    (Elm.string "It's nothing, I swear!")
-                , Elm.Case.branch2 [ "Maybe" ] "Just" <|
-                    \just ->
-                        Elm.append (Elm.string "Actually, it's: ") just
-                ]
-
-Generates
-
-    \maybeString ->
-        case maybeString of
-            Nothing ->
-                "It's nothing, I swear!"
-
-            Just just ->
-                "Actually, it's " ++ just
-
--}
+{-| -}
 custom :
     Expression
     -> Type.Annotation
