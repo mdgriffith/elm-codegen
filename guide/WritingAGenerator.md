@@ -59,10 +59,10 @@ Finally, we can stuff a list of `Declarations` into `Elm.file` to get a proper f
 
 myFile : Elm.File
 myFile =
- Elm.file [ "eightyFour" ]
-    [ Elm.declaration "fortyTwo"
-        (Elm.plus (Elm.int 42) (Elm.int 42))
-    ]
+    Elm.file [ "MyFirstFile" ]
+        [ Elm.declaration "eightyFour"
+            (Elm.plus (Elm.int 42) (Elm.int 42))
+        ]
 ```
 
 **Note** — An `Elm.File` is just a record that has
