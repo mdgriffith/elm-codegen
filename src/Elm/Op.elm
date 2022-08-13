@@ -1,26 +1,43 @@
 module Elm.Op exposing
-    ( equal, notEqual
+    ( equal, notEqual, and, or
     , append, cons
     , plus, minus, multiply, divide, intDivide, power
-    , lt, gt, lte, gte, and, or
+    , lt, gt, lte, gte
     , pipe
     , parens
     , keep, skip
     , slash, query
     )
 
-{-|
+{-| This module helps generate operators!
+
+So, this
+
+    Elm.Op.equal (Elm.bool True) (Elm.bool False)
+
+Would generate
+
+    True == False
 
 
-# Operators
+## Equality
 
-@docs equal, notEqual
+@docs equal, notEqual, and, or
+
+
+## Lists and strings
 
 @docs append, cons
 
+
+## Math
+
 @docs plus, minus, multiply, divide, intDivide, power
 
-@docs lt, gt, lte, gte, and, or
+
+## Comparisons
+
+@docs lt, gt, lte, gte
 
 @docs pipe
 
@@ -451,7 +468,7 @@ pipeLeft =
 
 {-| Wrap an expression in parentheses.
 
-Generally you won't need this as elm-codegen handles parens for you, but it can be useful to semantically group operaties from this module.
+Generally you won't need this as `elm-codegen` handles parens for you, but it can be useful to semantically group operaties from this module.
 
 -}
 parens : Expression -> Expression
