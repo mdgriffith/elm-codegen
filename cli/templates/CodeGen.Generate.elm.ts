@@ -2,7 +2,7 @@ export default () =>
   `
 port module Gen.CodeGen.Generate exposing
     ( run, fromJson, fromText
-    , withFeedback
+    , withFeedback, Error
     , File
     , error, files, info
     )
