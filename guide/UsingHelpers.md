@@ -11,11 +11,11 @@ This means we need an easy way to:
 
 ## Using Packages
 
-Let's say you wanted to generate some code that uses [`elm-html`](https://package.elm-lang.org/packages/elm/html/latest/)!
+Let's say you wanted to generate some code that uses [`elm/html`](https://package.elm-lang.org/packages/elm/html/latest/)!
 
 `elm-codegen` can help you out with that.
 
-If you haven't already, make a new codegen project by running `elm-codegen init`, like you did in [Getting Started](https://github.com/mdgriffith/elm-codegen/tree/main/guide/GettingStarted.md)
+If you haven't already, make a new codegen project by running `elm-codegen init`, like you did in [Getting Started](https://github.com/mdgriffith/elm-codegen/tree/main/guide/GettingStarted.md).
 
 Now, run `cd codegen ; elm-codegen install elm/html`.
 
@@ -84,7 +84,7 @@ MyFile.add5 20
 
 Cool!
 
-**Note!** any helpers that are in the `helpers` directory will be copied over into your target directory.
+**Note!** Any helpers that are in the `helpers` directory will be copied over into your target directory.
 
 ## What's in the box?
 
