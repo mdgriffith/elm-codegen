@@ -38,7 +38,17 @@ type LetDeclarations
     | Record (List String) Expression
 
 
-{-| -}
+{-|
+
+    Elm.Let.letIn
+        (\one two ->
+            Elm.bool True
+        )
+        |> Elm.Let.value "one" (Elm.string "Hello!")
+        |> Elm.Let.value "two" (Elm.string "Hello2!")
+        |> Elm.toExpression
+
+-}
 letIn : a -> Let a
 letIn return =
     Let (\index -> ( [], return ))
@@ -101,6 +111,30 @@ asValue index desiredName sourceExpression =
                 []
             }
     )
+
+
+
+-- {-| -}
+-- fn :
+--     String
+--     -> ( String, Maybe Elm.Annotation.Annotation )
+--     -> (Expression -> Expression)
+--     -> Let ((Expression -> Expression) -> a)
+--     -> Let a
+-- fn desiredName ( argName, maybeArgType ) valueExpr sourceLet =
+--     with
+--         (Let
+--             (\index ->
+--                 let
+--                     ( name, valueReference ) =
+--                         asValue index desiredName valueExpr
+--                 in
+--                 ( [ Value name valueExpr ]
+--                 , valueReference
+--                 )
+--             )
+--         )
+--         sourceLet
 
 
 {-| -}
@@ -424,10 +458,19 @@ toExpression (Let toScope) =
                         scope
             in
             { expression =
-                Exp.LetExpression
-                    { declarations = gathered.declarations
-                    , expression = Compiler.nodify within.expression
-                    }
+                -- if we're leading into another let expression, just merge with it.
+                case within.expression of
+                    Exp.LetExpression inner ->
+                        Exp.LetExpression
+                            { declarations = gathered.declarations ++ inner.declarations
+                            , expression = inner.expression
+                            }
+
+                    _ ->
+                        Exp.LetExpression
+                            { declarations = gathered.declarations
+                            , expression = Compiler.nodify within.expression
+                            }
             , imports = gathered.imports
             , annotation =
                 within.annotation
