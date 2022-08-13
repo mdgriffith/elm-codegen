@@ -551,14 +551,14 @@ toExpression (Let toScope) =
                     Exp.LetExpression innerReturn ->
                         Exp.LetExpression
                             { declarations =
-                                scope.letDecls
+                                List.reverse scope.letDecls
                                     ++ innerReturn.declarations
                             , expression = innerReturn.expression
                             }
 
                     _ ->
                         Exp.LetExpression
-                            { declarations = scope.letDecls
+                            { declarations = List.reverse scope.letDecls
                             , expression = Compiler.nodify return.expression
                             }
             , imports = return.imports
