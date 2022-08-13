@@ -2010,7 +2010,17 @@ type alias Declaration =
     Compiler.Declaration
 
 
-{-| -}
+{-| Renders a multiline comment.
+
+    Elm.comment """Here is my comment!"""
+
+Will generate
+
+
+
+    {- Here is my comment! -}
+
+-}
 comment : String -> Declaration
 comment content =
     Compiler.Comment ("{- " ++ content ++ " -}")
