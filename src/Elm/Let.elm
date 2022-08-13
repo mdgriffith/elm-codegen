@@ -144,7 +144,34 @@ value desiredName valueExpr sourceLet =
         sourceLet
 
 
-{-| -}
+{-|
+
+    Elm.Let.letIn
+        (\myFn ->
+            myFn (Elm.bool True)
+        )
+        |> Elm.Let.fn "myFn"
+            ( "arg", Just Type.bool )
+            (\arg ->
+                Elm.ifThen arg
+                    (Elm.string "True")
+                    (Elm.string "False")
+            )
+        |> Elm.Let.toExpression
+
+will translate into
+
+    let
+        myFn arg =
+            if arg then
+                "True"
+
+            else
+                "False"
+    in
+    myFn True
+
+-}
 fn :
     String
     -> ( String, Maybe Elm.Annotation.Annotation )
@@ -387,7 +414,24 @@ fn3 desiredName ( oneDesiredArg, oneType ) ( twoDesiredArg, twoType ) ( threeDes
         sourceLet
 
 
-{-| -}
+{-|
+
+    Elm.Let.letIn
+        (\( first, second ) ->
+            Elm.Op.append first second
+        )
+        |> Elm.Let.tuple "first" "second" (Elm.tuple (Elm.string "Hello") (Elm.string "World!"))
+        |> Elm.Let.toExpression
+
+Will translate into
+
+    let
+        ( first, second ) =
+            ( "Hello", "World!" )
+    in
+    first ++ second
+
+-}
 tuple : String -> String -> Expression -> Let (( Expression, Expression ) -> a) -> Let a
 tuple desiredNameOne desiredNameTwo valueExpr sourceLet =
     sourceLet
@@ -472,7 +516,34 @@ tuple desiredNameOne desiredNameTwo valueExpr sourceLet =
             )
 
 
-{-| -}
+{-|
+
+    Elm.Let.letIn
+        (\fields ->
+            case fields of
+                [ first, second ] ->
+                    Elm.Op.append first second
+
+                _ ->
+                    Elm.unit
+        )
+        |> Elm.Let.record [ "first", "second" ]
+            (Elm.record
+                [ ( "first", Elm.string "Hello" )
+                , ( "second", Elm.string "world!" )
+                ]
+            )
+        |> Elm.Let.toExpression
+
+Will translate into
+
+    let
+        { first, second } =
+            { first = "Hello", second = "world!" }
+    in
+    first ++ second
+
+-}
 record :
     List String
     -> Expression
