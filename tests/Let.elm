@@ -27,71 +27,70 @@ suite =
 
 imports : Test
 imports =
-    only <|
-        describe "Import propagation"
-            [ test "Simple" <|
-                \_ ->
-                    Elm.Expect.importAs
-                        (Elm.Let.letIn
-                            (\one two ->
-                                Elm.Op.append one two
-                            )
-                            |> Elm.Let.value "one"
-                                (Elm.value
-                                    { importFrom = [ "Module" ]
-                                    , name = "constant"
-                                    , annotation = Nothing
-                                    }
-                                )
-                            |> Elm.Let.value "two" (Elm.string "World!")
-                            |> Elm.Let.toExpression
+    describe "Import propagation"
+        [ test "Simple" <|
+            \_ ->
+                Elm.Expect.importAs
+                    (Elm.Let.letIn
+                        (\one two ->
+                            Elm.Op.append one two
                         )
-                        "import Module"
-            , test "Second" <|
-                \_ ->
-                    Elm.Expect.importAs
-                        (Elm.Let.letIn
-                            (\one two ->
-                                Elm.Op.append one two
+                        |> Elm.Let.value "one"
+                            (Elm.value
+                                { importFrom = [ "Module" ]
+                                , name = "constant"
+                                , annotation = Nothing
+                                }
                             )
-                            |> Elm.Let.value "two" (Elm.string "World!")
-                            |> Elm.Let.value "one"
-                                (Elm.value
-                                    { importFrom = [ "Module" ]
-                                    , name = "constant"
-                                    , annotation = Nothing
-                                    }
-                                )
-                            |> Elm.Let.toExpression
+                        |> Elm.Let.value "two" (Elm.string "World!")
+                        |> Elm.Let.toExpression
+                    )
+                    "import Module"
+        , test "Second" <|
+            \_ ->
+                Elm.Expect.importAs
+                    (Elm.Let.letIn
+                        (\one two ->
+                            Elm.Op.append one two
                         )
-                        "import Module"
-            , test "Nested" <|
-                \_ ->
-                    Elm.Expect.importAs
-                        (Elm.Let.letIn
-                            (\one two ->
-                                Elm.Let.letIn
-                                    (\three four ->
-                                        Elm.tuple
-                                            (Elm.Op.append one two)
-                                            (Elm.Op.append three four)
+                        |> Elm.Let.value "two" (Elm.string "World!")
+                        |> Elm.Let.value "one"
+                            (Elm.value
+                                { importFrom = [ "Module" ]
+                                , name = "constant"
+                                , annotation = Nothing
+                                }
+                            )
+                        |> Elm.Let.toExpression
+                    )
+                    "import Module"
+        , test "Nested" <|
+            \_ ->
+                Elm.Expect.importAs
+                    (Elm.Let.letIn
+                        (\one two ->
+                            Elm.Let.letIn
+                                (\three four ->
+                                    Elm.tuple
+                                        (Elm.Op.append one two)
+                                        (Elm.Op.append three four)
+                                )
+                                |> Elm.Let.value "three" (Elm.string "and")
+                                |> Elm.Let.value "four"
+                                    (Elm.value
+                                        { importFrom = [ "Module" ]
+                                        , name = "constant"
+                                        , annotation = Nothing
+                                        }
                                     )
-                                    |> Elm.Let.value "three" (Elm.string "and")
-                                    |> Elm.Let.value "four"
-                                        (Elm.value
-                                            { importFrom = [ "Module" ]
-                                            , name = "constant"
-                                            , annotation = Nothing
-                                            }
-                                        )
-                                    |> Elm.Let.toExpression
-                            )
-                            |> Elm.Let.value "one" (Elm.string "Hello")
-                            |> Elm.Let.value "two" (Elm.string "World!")
-                            |> Elm.Let.toExpression
+                                |> Elm.Let.toExpression
                         )
-                        "import Module"
-            ]
+                        |> Elm.Let.value "one" (Elm.string "Hello")
+                        |> Elm.Let.value "two" (Elm.string "World!")
+                        |> Elm.Let.toExpression
+                    )
+                    "import Module"
+        ]
 
 
 generation : Test
