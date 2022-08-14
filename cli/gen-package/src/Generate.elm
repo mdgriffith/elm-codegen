@@ -304,8 +304,8 @@ block2Case thisModule union =
 
         _ ->
             Just
-                (Elm.fn2 ( "expresssion", Nothing )
-                    ( "tags", Nothing )
+                (Elm.fn2 ( union.name ++ "Expression", Nothing )
+                    ( union.name ++ "Tags", Nothing )
                     (\express tagRecord ->
                         Gen.Elm.Case.custom express
                             (unionToAnnotation thisModule union)
@@ -571,7 +571,7 @@ block2Maker thisModule block =
                                     )
                                 |> Gen.Elm.record
                     in
-                    Elm.fn ( "arg", Just lambdaArgType ) lambdaValue
+                    Elm.fn ( name ++ "arg", Just lambdaArgType ) lambdaValue
                         |> Just
 
                 _ ->
@@ -689,7 +689,7 @@ annotationNamed thisModule name tags =
             Elm.function
                 (List.indexedMap
                     (\i arg ->
-                        ( "arg" ++ String.fromInt i
+                        ( name ++ "Arg" ++ String.fromInt i
                         , Just (Annotation.named elmAnnotation "Annotation")
                         )
                     )
@@ -785,7 +785,7 @@ aliasNamed docAlias =
             Elm.function
                 (List.indexedMap
                     (\i arg ->
-                        ( "arg" ++ String.fromInt i
+                        ( docAlias.name ++ "Arg" ++ String.fromInt i
                         , Just (Annotation.named elmAnnotation "Annotation")
                         )
                     )
@@ -1035,36 +1035,37 @@ captureFunction baseName tipe captured =
         Elm.Type.Lambda one two ->
             let
                 unpacked =
-                    unpackArg one
+                    unpackArg baseName one
             in
             captureFunction baseName
                 two
-                { arguments = ( "arg", Just unpacked.annotation ) :: captured.arguments
+                { arguments = ( baseName ++ "Arg", Just unpacked.annotation ) :: captured.arguments
                 , unpackers = unpacked.unpacker :: captured.unpackers
                 }
 
         _ ->
             let
                 unpacked =
-                    unpackArg tipe
+                    unpackArg baseName tipe
             in
-            { arguments = ( "arg", Just unpacked.annotation ) :: captured.arguments
+            { arguments = ( baseName ++ "Arg", Just unpacked.annotation ) :: captured.arguments
             , unpackers = unpacked.unpacker :: captured.unpackers
             }
 
 
 unpackArgForLambdas :
-    Elm.Type.Type
+    String
+    -> Elm.Type.Type
     ->
         { annotation : Annotation.Annotation
         , unpacker : Elm.Expression -> Elm.Expression
         }
-unpackArgForLambdas tipe =
+unpackArgForLambdas name tipe =
     case tipe of
         Elm.Type.Lambda one two ->
             let
                 unpacked =
-                    unpackArgForLambdas two
+                    unpackArgForLambdas name two
             in
             { annotation =
                 Annotation.function [ expressionType ]
@@ -1092,17 +1093,18 @@ unpackArgForLambdas tipe =
 
 
 unpackArg :
-    Elm.Type.Type
+    String
+    -> Elm.Type.Type
     ->
         { annotation : Annotation.Annotation
         , unpacker : Elm.Expression -> Elm.Expression
         }
-unpackArg tipe =
+unpackArg fnName tipe =
     case tipe of
         Elm.Type.Lambda one two ->
             let
                 unpacked =
-                    unpackArgForLambdas two
+                    unpackArgForLambdas fnName two
             in
             { annotation =
                 Annotation.function
@@ -1112,7 +1114,7 @@ unpackArg tipe =
             , unpacker =
                 \value ->
                     Gen.Elm.functionReduced
-                        "unpack"
+                        (fnName ++ "Unpack")
                         (\val ->
                             unpacked.unpacker
                                 (Elm.apply value [ val ])
@@ -1123,7 +1125,7 @@ unpackArg tipe =
             if needsUnpacking inner then
                 let
                     unpacked =
-                        unpackArg inner
+                        unpackArg fnName inner
                 in
                 { annotation =
                     Annotation.list
@@ -1180,7 +1182,7 @@ unpackArg tipe =
             let
                 unpackedFields =
                     List.map
-                        (Tuple.mapSecond unpackArg)
+                        (Tuple.mapSecond (unpackArg fnName))
                         fields
             in
             { annotation =
@@ -1201,7 +1203,7 @@ unpackArg tipe =
             let
                 unpackedFields =
                     List.map
-                        (Tuple.mapSecond unpackArg)
+                        (Tuple.mapSecond (unpackArg fnName))
                         fields
             in
             { annotation =

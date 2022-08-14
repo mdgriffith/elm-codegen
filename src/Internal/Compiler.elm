@@ -1236,11 +1236,7 @@ formatValue : String -> String
 formatValue str =
     let
         formatted =
-            if String.toUpper str == str then
-                String.toLower str
-
-            else
-                String.toLower (String.left 1 str) ++ String.dropLeft 1 str
+            String.toLower (String.left 1 str) ++ String.dropLeft 1 str
     in
     sanitize formatted
 
@@ -1268,6 +1264,21 @@ sanitize str =
 
         "where" ->
             "where_"
+
+        "main" ->
+            "main_"
+
+        "port" ->
+            "port_"
+
+        "as" ->
+            "as_"
+
+        "if" ->
+            "if_"
+
+        "import" ->
+            "import_"
 
         _ ->
             str
