@@ -142,7 +142,7 @@ call_ =
                 )
                 [ arg ]
     , log =
-        \arg arg1 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Debug" ]
@@ -155,7 +155,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg1 ]
+                [ arg, arg0 ]
     , todo =
         \arg ->
             Elm.apply

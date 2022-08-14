@@ -174,7 +174,7 @@ call_ =
                 )
                 [ arg, arg0 ]
     , or =
-        \arg arg1 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Bitwise" ]
@@ -183,9 +183,9 @@ call_ =
                         Just (Type.function [ Type.int, Type.int ] Type.int)
                     }
                 )
-                [ arg, arg1 ]
+                [ arg, arg0 ]
     , xor =
-        \arg arg2 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Bitwise" ]
@@ -194,7 +194,7 @@ call_ =
                         Just (Type.function [ Type.int, Type.int ] Type.int)
                     }
                 )
-                [ arg, arg2 ]
+                [ arg, arg0 ]
     , complement =
         \arg ->
             Elm.apply
@@ -206,7 +206,7 @@ call_ =
                 )
                 [ arg ]
     , shiftLeftBy =
-        \arg arg4 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Bitwise" ]
@@ -215,9 +215,9 @@ call_ =
                         Just (Type.function [ Type.int, Type.int ] Type.int)
                     }
                 )
-                [ arg, arg4 ]
+                [ arg, arg0 ]
     , shiftRightBy =
-        \arg arg5 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Bitwise" ]
@@ -226,9 +226,9 @@ call_ =
                         Just (Type.function [ Type.int, Type.int ] Type.int)
                     }
                 )
-                [ arg, arg5 ]
+                [ arg, arg0 ]
     , shiftRightZfBy =
-        \arg arg6 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Bitwise" ]
@@ -237,7 +237,7 @@ call_ =
                         Just (Type.function [ Type.int, Type.int ] Type.int)
                     }
                 )
-                [ arg, arg6 ]
+                [ arg, arg0 ]
     }
 
 

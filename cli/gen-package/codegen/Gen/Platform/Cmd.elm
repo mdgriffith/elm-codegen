@@ -24,8 +24,7 @@ none =
     Elm.value
         { importFrom = [ "Platform", "Cmd" ]
         , name = "none"
-        , annotation =
-            Just (Type.namedWith [ "Platform", "Cmd" ] "Cmd" [ Type.var "msg" ])
+        , annotation = Just (Type.namedWith [] "Cmd" [ Type.var "msg" ])
         }
 
 
@@ -48,18 +47,9 @@ batch arg =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list
-                            (Type.namedWith
-                                [ "Platform", "Cmd" ]
-                                "Cmd"
-                                [ Type.var "msg" ]
-                            )
+                        [ Type.list (Type.namedWith [] "Cmd" [ Type.var "msg" ])
                         ]
-                        (Type.namedWith
-                            [ "Platform", "Cmd" ]
-                            "Cmd"
-                            [ Type.var "msg" ]
-                        )
+                        (Type.namedWith [] "Cmd" [ Type.var "msg" ])
                     )
             }
         )
@@ -86,16 +76,9 @@ map arg arg0 =
                 Just
                     (Type.function
                         [ Type.function [ Type.var "a" ] (Type.var "msg")
-                        , Type.namedWith
-                            [ "Platform", "Cmd" ]
-                            "Cmd"
-                            [ Type.var "a" ]
+                        , Type.namedWith [] "Cmd" [ Type.var "a" ]
                         ]
-                        (Type.namedWith
-                            [ "Platform", "Cmd" ]
-                            "Cmd"
-                            [ Type.var "msg" ]
-                        )
+                        (Type.namedWith [] "Cmd" [ Type.var "msg" ])
                     )
             }
         )
@@ -104,7 +87,7 @@ map arg arg0 =
 
 annotation_ : { cmd : Type.Annotation -> Type.Annotation }
 annotation_ =
-    { cmd = \arg0 -> Type.namedWith moduleName_ "Cmd" [ arg0 ] }
+    { cmd = \arg0 -> Type.namedWith [] "Cmd" [ arg0 ] }
 
 
 call_ :
@@ -122,23 +105,15 @@ call_ =
                         Just
                             (Type.function
                                 [ Type.list
-                                    (Type.namedWith
-                                        [ "Platform", "Cmd" ]
-                                        "Cmd"
-                                        [ Type.var "msg" ]
-                                    )
+                                    (Type.namedWith [] "Cmd" [ Type.var "msg" ])
                                 ]
-                                (Type.namedWith
-                                    [ "Platform", "Cmd" ]
-                                    "Cmd"
-                                    [ Type.var "msg" ]
-                                )
+                                (Type.namedWith [] "Cmd" [ Type.var "msg" ])
                             )
                     }
                 )
                 [ arg ]
     , map =
-        \arg arg1 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Platform", "Cmd" ]
@@ -149,20 +124,13 @@ call_ =
                                 [ Type.function
                                     [ Type.var "a" ]
                                     (Type.var "msg")
-                                , Type.namedWith
-                                    [ "Platform", "Cmd" ]
-                                    "Cmd"
-                                    [ Type.var "a" ]
+                                , Type.namedWith [] "Cmd" [ Type.var "a" ]
                                 ]
-                                (Type.namedWith
-                                    [ "Platform", "Cmd" ]
-                                    "Cmd"
-                                    [ Type.var "msg" ]
-                                )
+                                (Type.namedWith [] "Cmd" [ Type.var "msg" ])
                             )
                     }
                 )
-                [ arg, arg1 ]
+                [ arg, arg0 ]
     }
 
 
@@ -173,13 +141,7 @@ values_ =
         Elm.value
             { importFrom = [ "Platform", "Cmd" ]
             , name = "none"
-            , annotation =
-                Just
-                    (Type.namedWith
-                        [ "Platform", "Cmd" ]
-                        "Cmd"
-                        [ Type.var "msg" ]
-                    )
+            , annotation = Just (Type.namedWith [] "Cmd" [ Type.var "msg" ])
             }
     , batch =
         Elm.value
@@ -188,18 +150,9 @@ values_ =
             , annotation =
                 Just
                     (Type.function
-                        [ Type.list
-                            (Type.namedWith
-                                [ "Platform", "Cmd" ]
-                                "Cmd"
-                                [ Type.var "msg" ]
-                            )
+                        [ Type.list (Type.namedWith [] "Cmd" [ Type.var "msg" ])
                         ]
-                        (Type.namedWith
-                            [ "Platform", "Cmd" ]
-                            "Cmd"
-                            [ Type.var "msg" ]
-                        )
+                        (Type.namedWith [] "Cmd" [ Type.var "msg" ])
                     )
             }
     , map =
@@ -210,16 +163,9 @@ values_ =
                 Just
                     (Type.function
                         [ Type.function [ Type.var "a" ] (Type.var "msg")
-                        , Type.namedWith
-                            [ "Platform", "Cmd" ]
-                            "Cmd"
-                            [ Type.var "a" ]
+                        , Type.namedWith [] "Cmd" [ Type.var "a" ]
                         ]
-                        (Type.namedWith
-                            [ "Platform", "Cmd" ]
-                            "Cmd"
-                            [ Type.var "msg" ]
-                        )
+                        (Type.namedWith [] "Cmd" [ Type.var "msg" ])
                     )
             }
     }

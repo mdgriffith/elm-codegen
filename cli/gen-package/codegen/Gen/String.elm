@@ -999,7 +999,7 @@ all arg arg0 =
 
 annotation_ : { string : Type.Annotation }
 annotation_ =
-    { string = Type.namedWith moduleName_ "String" [] }
+    { string = Type.namedWith [] "String" [] }
 
 
 call_ :
@@ -1088,7 +1088,7 @@ call_ =
                 )
                 [ arg ]
     , repeat =
-        \arg arg3 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1099,9 +1099,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg3 ]
+                [ arg, arg0 ]
     , replace =
-        \arg arg4 arg5 ->
+        \arg arg0 arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1114,9 +1114,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg4, arg5 ]
+                [ arg, arg0, arg1 ]
     , append =
-        \arg arg5 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1129,7 +1129,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg5 ]
+                [ arg, arg0 ]
     , concat =
         \arg ->
             Elm.apply
@@ -1144,7 +1144,7 @@ call_ =
                 )
                 [ arg ]
     , split =
-        \arg arg7 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1157,9 +1157,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg7 ]
+                [ arg, arg0 ]
     , join =
-        \arg arg8 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1172,7 +1172,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg8 ]
+                [ arg, arg0 ]
     , words =
         \arg ->
             Elm.apply
@@ -1204,7 +1204,7 @@ call_ =
                 )
                 [ arg ]
     , slice =
-        \arg arg11 arg12 ->
+        \arg arg0 arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1217,9 +1217,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg11, arg12 ]
+                [ arg, arg0, arg1 ]
     , left =
-        \arg arg12 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1230,9 +1230,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg12 ]
+                [ arg, arg0 ]
     , right =
-        \arg arg13 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1243,9 +1243,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg13 ]
+                [ arg, arg0 ]
     , dropLeft =
-        \arg arg14 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1256,9 +1256,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg14 ]
+                [ arg, arg0 ]
     , dropRight =
-        \arg arg15 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1269,9 +1269,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg15 ]
+                [ arg, arg0 ]
     , contains =
-        \arg arg16 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1284,9 +1284,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg16 ]
+                [ arg, arg0 ]
     , startsWith =
-        \arg arg17 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1299,9 +1299,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg17 ]
+                [ arg, arg0 ]
     , endsWith =
-        \arg arg18 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1314,9 +1314,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg18 ]
+                [ arg, arg0 ]
     , indexes =
-        \arg arg19 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1329,9 +1329,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg19 ]
+                [ arg, arg0 ]
     , indices =
-        \arg arg20 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1344,7 +1344,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg20 ]
+                [ arg, arg0 ]
     , toInt =
         \arg ->
             Elm.apply
@@ -1406,7 +1406,7 @@ call_ =
                 )
                 [ arg ]
     , cons =
-        \arg arg26 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1419,7 +1419,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg26 ]
+                [ arg, arg0 ]
     , uncons =
         \arg ->
             Elm.apply
@@ -1482,7 +1482,7 @@ call_ =
                 )
                 [ arg ]
     , pad =
-        \arg arg32 arg33 ->
+        \arg arg0 arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1495,9 +1495,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg32, arg33 ]
+                [ arg, arg0, arg1 ]
     , padLeft =
-        \arg arg33 arg34 ->
+        \arg arg0 arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1510,9 +1510,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg33, arg34 ]
+                [ arg, arg0, arg1 ]
     , padRight =
-        \arg arg34 arg35 ->
+        \arg arg0 arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1525,7 +1525,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg34, arg35 ]
+                [ arg, arg0, arg1 ]
     , trim =
         \arg ->
             Elm.apply
@@ -1560,7 +1560,7 @@ call_ =
                 )
                 [ arg ]
     , map =
-        \arg arg38 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1575,9 +1575,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg38 ]
+                [ arg, arg0 ]
     , filter =
-        \arg arg39 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1592,9 +1592,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg39 ]
+                [ arg, arg0 ]
     , foldl =
-        \arg arg40 arg41 ->
+        \arg arg0 arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1612,9 +1612,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg40, arg41 ]
+                [ arg, arg0, arg1 ]
     , foldr =
-        \arg arg41 arg42 ->
+        \arg arg0 arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1632,9 +1632,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg41, arg42 ]
+                [ arg, arg0, arg1 ]
     , any =
-        \arg arg42 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1649,9 +1649,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg42 ]
+                [ arg, arg0 ]
     , all =
-        \arg arg43 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "String" ]
@@ -1666,7 +1666,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg43 ]
+                [ arg, arg0 ]
     }
 
 

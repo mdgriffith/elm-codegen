@@ -515,7 +515,7 @@ partition arg arg0 =
 
 annotation_ : { set : Type.Annotation -> Type.Annotation }
 annotation_ =
-    { set = \arg0 -> Type.namedWith moduleName_ "Set" [ arg0 ] }
+    { set = \arg0 -> Type.namedWith [ "Set" ] "Set" [ arg0 ] }
 
 
 call_ :
@@ -559,7 +559,7 @@ call_ =
                 )
                 [ arg ]
     , insert =
-        \arg arg1 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -581,9 +581,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg1 ]
+                [ arg, arg0 ]
     , remove =
-        \arg arg2 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -605,7 +605,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg2 ]
+                [ arg, arg0 ]
     , isEmpty =
         \arg ->
             Elm.apply
@@ -626,7 +626,7 @@ call_ =
                 )
                 [ arg ]
     , member =
-        \arg arg4 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -644,7 +644,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg4 ]
+                [ arg, arg0 ]
     , size =
         \arg ->
             Elm.apply
@@ -665,7 +665,7 @@ call_ =
                 )
                 [ arg ]
     , union =
-        \arg arg6 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -690,9 +690,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg6 ]
+                [ arg, arg0 ]
     , intersect =
-        \arg arg7 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -717,9 +717,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg7 ]
+                [ arg, arg0 ]
     , diff =
-        \arg arg8 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -744,7 +744,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg8 ]
+                [ arg, arg0 ]
     , toList =
         \arg ->
             Elm.apply
@@ -784,7 +784,7 @@ call_ =
                 )
                 [ arg ]
     , map =
-        \arg arg11 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -808,9 +808,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg11 ]
+                [ arg, arg0 ]
     , foldl =
-        \arg arg12 arg13 ->
+        \arg arg0 arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -831,9 +831,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg12, arg13 ]
+                [ arg, arg0, arg1 ]
     , foldr =
-        \arg arg13 arg14 ->
+        \arg arg0 arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -854,9 +854,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg13, arg14 ]
+                [ arg, arg0, arg1 ]
     , filter =
-        \arg arg14 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -880,9 +880,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg14 ]
+                [ arg, arg0 ]
     , partition =
-        \arg arg15 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Set" ]
@@ -913,7 +913,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg15 ]
+                [ arg, arg0 ]
     }
 
 

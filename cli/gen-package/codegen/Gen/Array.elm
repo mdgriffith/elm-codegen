@@ -502,7 +502,7 @@ filter arg arg0 =
 
 annotation_ : { array : Type.Annotation -> Type.Annotation }
 annotation_ =
-    { array = \arg0 -> Type.namedWith moduleName_ "Array" [ arg0 ] }
+    { array = \arg0 -> Type.namedWith [ "Array" ] "Array" [ arg0 ] }
 
 
 call_ :
@@ -550,7 +550,7 @@ call_ =
                 )
                 [ arg, arg0 ]
     , repeat =
-        \arg arg1 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -567,7 +567,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg1 ]
+                [ arg, arg0 ]
     , fromList =
         \arg ->
             Elm.apply
@@ -626,7 +626,7 @@ call_ =
                 )
                 [ arg ]
     , get =
-        \arg arg5 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -644,9 +644,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg5 ]
+                [ arg, arg0 ]
     , set =
-        \arg arg6 arg7 ->
+        \arg arg0 arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -669,9 +669,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg6, arg7 ]
+                [ arg, arg0, arg1 ]
     , push =
-        \arg arg7 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -693,9 +693,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg7 ]
+                [ arg, arg0 ]
     , append =
-        \arg arg8 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -720,9 +720,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg8 ]
+                [ arg, arg0 ]
     , slice =
-        \arg arg9 arg10 ->
+        \arg arg0 arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -745,7 +745,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg9, arg10 ]
+                [ arg, arg0, arg1 ]
     , toList =
         \arg ->
             Elm.apply
@@ -785,7 +785,7 @@ call_ =
                 )
                 [ arg ]
     , map =
-        \arg arg12 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -807,9 +807,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg12 ]
+                [ arg, arg0 ]
     , indexedMap =
-        \arg arg13 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -833,9 +833,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg13 ]
+                [ arg, arg0 ]
     , foldl =
-        \arg arg14 arg15 ->
+        \arg arg0 arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -856,9 +856,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg14, arg15 ]
+                [ arg, arg0, arg1 ]
     , foldr =
-        \arg arg15 arg16 ->
+        \arg arg0 arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -879,9 +879,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg15, arg16 ]
+                [ arg, arg0, arg1 ]
     , filter =
-        \arg arg16 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Array" ]
@@ -903,7 +903,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg16 ]
+                [ arg, arg0 ]
     }
 
 

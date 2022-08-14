@@ -303,7 +303,7 @@ fromCode arg =
 
 annotation_ : { char : Type.Annotation }
 annotation_ =
-    { char = Type.namedWith moduleName_ "Char" [] }
+    { char = Type.namedWith [] "Char" [] }
 
 
 call_ :

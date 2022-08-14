@@ -64,7 +64,7 @@ worker arg =
                                     (Type.tuple
                                         (Type.var "model")
                                         (Type.namedWith
-                                            [ "Platform", "Cmd" ]
+                                            []
                                             "Cmd"
                                             [ Type.var "msg" ]
                                         )
@@ -76,7 +76,7 @@ worker arg =
                                     (Type.tuple
                                         (Type.var "model")
                                         (Type.namedWith
-                                            [ "Platform", "Cmd" ]
+                                            []
                                             "Cmd"
                                             [ Type.var "msg" ]
                                         )
@@ -85,11 +85,7 @@ worker arg =
                             , ( "subscriptions"
                               , Type.function
                                     [ Type.var "model" ]
-                                    (Type.namedWith
-                                        [ "Platform", "Sub" ]
-                                        "Sub"
-                                        [ Type.var "msg" ]
-                                    )
+                                    (Type.namedWith [] "Sub" [ Type.var "msg" ])
                               )
                             ]
                         ]
@@ -194,11 +190,11 @@ annotation_ :
     }
 annotation_ =
     { program =
-        \arg0 arg1 arg2 ->
-            Type.namedWith moduleName_ "Program" [ arg0, arg1, arg2 ]
-    , task = \arg0 arg1 -> Type.namedWith moduleName_ "Task" [ arg0, arg1 ]
-    , processId = Type.namedWith moduleName_ "ProcessId" []
-    , router = \arg0 arg1 -> Type.namedWith moduleName_ "Router" [ arg0, arg1 ]
+        \arg0 arg1 arg2 -> Type.namedWith [] "Program" [ arg0, arg1, arg2 ]
+    , task = \arg0 arg1 -> Type.namedWith [ "Platform" ] "Task" [ arg0, arg1 ]
+    , processId = Type.namedWith [ "Platform" ] "ProcessId" []
+    , router =
+        \arg0 arg1 -> Type.namedWith [ "Platform" ] "Router" [ arg0, arg1 ]
     }
 
 
@@ -224,7 +220,7 @@ call_ =
                                             (Type.tuple
                                                 (Type.var "model")
                                                 (Type.namedWith
-                                                    [ "Platform", "Cmd" ]
+                                                    []
                                                     "Cmd"
                                                     [ Type.var "msg" ]
                                                 )
@@ -236,7 +232,7 @@ call_ =
                                             (Type.tuple
                                                 (Type.var "model")
                                                 (Type.namedWith
-                                                    [ "Platform", "Cmd" ]
+                                                    []
                                                     "Cmd"
                                                     [ Type.var "msg" ]
                                                 )
@@ -246,7 +242,7 @@ call_ =
                                       , Type.function
                                             [ Type.var "model" ]
                                             (Type.namedWith
-                                                [ "Platform", "Sub" ]
+                                                []
                                                 "Sub"
                                                 [ Type.var "msg" ]
                                             )
@@ -266,7 +262,7 @@ call_ =
                 )
                 [ arg ]
     , sendToApp =
-        \arg arg1 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Platform" ]
@@ -288,9 +284,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg1 ]
+                [ arg, arg0 ]
     , sendToSelf =
-        \arg arg2 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Platform" ]
@@ -312,7 +308,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg2 ]
+                [ arg, arg0 ]
     }
 
 
@@ -336,7 +332,7 @@ values_ =
                                     (Type.tuple
                                         (Type.var "model")
                                         (Type.namedWith
-                                            [ "Platform", "Cmd" ]
+                                            []
                                             "Cmd"
                                             [ Type.var "msg" ]
                                         )
@@ -348,7 +344,7 @@ values_ =
                                     (Type.tuple
                                         (Type.var "model")
                                         (Type.namedWith
-                                            [ "Platform", "Cmd" ]
+                                            []
                                             "Cmd"
                                             [ Type.var "msg" ]
                                         )
@@ -357,11 +353,7 @@ values_ =
                             , ( "subscriptions"
                               , Type.function
                                     [ Type.var "model" ]
-                                    (Type.namedWith
-                                        [ "Platform", "Sub" ]
-                                        "Sub"
-                                        [ Type.var "msg" ]
-                                    )
+                                    (Type.namedWith [] "Sub" [ Type.var "msg" ])
                               )
                             ]
                         ]

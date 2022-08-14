@@ -238,7 +238,7 @@ call_ =
                 )
                 [ arg ]
     , mapFirst =
-        \arg arg3 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Tuple" ]
@@ -253,9 +253,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg3 ]
+                [ arg, arg0 ]
     , mapSecond =
-        \arg arg4 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Tuple" ]
@@ -270,9 +270,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg4 ]
+                [ arg, arg0 ]
     , mapBoth =
-        \arg arg5 arg6 ->
+        \arg arg0 arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Tuple" ]
@@ -288,7 +288,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg5, arg6 ]
+                [ arg, arg0, arg1 ]
     }
 
 

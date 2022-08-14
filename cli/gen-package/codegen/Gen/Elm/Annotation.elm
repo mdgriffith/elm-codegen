@@ -365,7 +365,22 @@ extensible arg arg0 =
         [ Elm.string arg, Elm.list arg0 ]
 
 
-{-| alias: 
+{-| The classic example of a Model
+
+    Elm.Annotation.alias []
+        "Model"
+        []
+        (Elm.Annotation.record
+            [ ( "hello", Elm.Annotation.string ) ]
+        )
+
+would correspond to
+
+    type alias Model =
+        { hello : String
+        }
+
+alias: 
     List String
     -> String
     -> List Elm.Annotation.Annotation
@@ -511,7 +526,7 @@ call_ =
                 )
                 [ arg ]
     , named =
-        \arg arg1 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -528,9 +543,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg1 ]
+                [ arg, arg0 ]
     , namedWith =
-        \arg arg2 arg3 ->
+        \arg arg0 arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -555,7 +570,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg2, arg3 ]
+                [ arg, arg0, arg1 ]
     , maybe =
         \arg ->
             Elm.apply
@@ -603,7 +618,7 @@ call_ =
                 )
                 [ arg ]
     , tuple =
-        \arg arg5 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -628,9 +643,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg5 ]
+                [ arg, arg0 ]
     , triple =
-        \arg arg6 arg7 ->
+        \arg arg0 arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -659,7 +674,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg6, arg7 ]
+                [ arg, arg0, arg1 ]
     , set =
         \arg ->
             Elm.apply
@@ -684,7 +699,7 @@ call_ =
                 )
                 [ arg ]
     , dict =
-        \arg arg8 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -709,9 +724,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg8 ]
+                [ arg, arg0 ]
     , result =
-        \arg arg9 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -736,7 +751,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg9 ]
+                [ arg, arg0 ]
     , record =
         \arg ->
             Elm.apply
@@ -766,7 +781,7 @@ call_ =
                 )
                 [ arg ]
     , extensible =
-        \arg arg11 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -793,9 +808,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg11 ]
+                [ arg, arg0 ]
     , alias =
-        \arg arg12 arg13 arg14 ->
+        \arg arg0 arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -824,9 +839,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg12, arg13, arg14 ]
+                [ arg, arg0, arg1, arg2 ]
     , function =
-        \arg arg13 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Elm", "Annotation" ]
@@ -853,7 +868,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg13 ]
+                [ arg, arg0 ]
     , toString =
         \arg ->
             Elm.apply

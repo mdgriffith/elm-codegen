@@ -661,7 +661,7 @@ annotation thisModule block =
 
         Elm.Docs.UnionBlock union ->
             Tuple.pair union.name
-                (annotationNamed union.name union.args)
+                (annotationNamed thisModule union.name union.args)
                 |> Just
 
         Elm.Docs.AliasBlock alias ->
@@ -679,11 +679,11 @@ annotation thisModule block =
             Nothing
 
 
-annotationNamed : String -> List String -> Elm.Expression
-annotationNamed name tags =
+annotationNamed : List String -> String -> List String -> Elm.Expression
+annotationNamed thisModule name tags =
     case tags of
         [] ->
-            localType name []
+            localType thisModule name []
 
         nonEmpty ->
             Elm.function
@@ -696,32 +696,77 @@ annotationNamed name tags =
                     nonEmpty
                 )
                 (\args ->
-                    localType name args
+                    localType thisModule name args
                 )
 
 
-localType : String -> List Elm.Expression -> Elm.Expression
-localType name args =
-    Elm.apply
-        (Elm.value
-            { importFrom = [ "Elm", "Annotation" ]
-            , name = "namedWith"
-            , annotation =
-                Just
-                    (Annotation.function
-                        [ Annotation.list Annotation.string
-                        , Annotation.string
-                        , Annotation.list
-                            (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                        ]
-                        (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
-                    )
-            }
-        )
-        [ thisModuleName
-        , Elm.string name
-        , Elm.list args
-        ]
+localType : List String -> String -> List Elm.Expression -> Elm.Expression
+localType thisModule typeName args =
+    case preludeTypeName thisModule typeName of
+        ( mod, name ) ->
+            Elm.apply
+                (Elm.value
+                    { importFrom = [ "Elm", "Annotation" ]
+                    , name = "namedWith"
+                    , annotation =
+                        Just
+                            (Annotation.function
+                                [ Annotation.list Annotation.string
+                                , Annotation.string
+                                , Annotation.list
+                                    (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                                ]
+                                (Annotation.namedWith [ "Elm", "Annotation" ] "Annotation" [])
+                            )
+                    }
+                )
+                [ Elm.list (List.map Elm.string mod)
+                , Elm.string name
+                , Elm.list args
+                ]
+
+
+preludeTypeName : List String -> String -> ( List String, String )
+preludeTypeName mod name =
+    case ( mod, name ) of
+        ( [ "Maybe" ], "Maybe" ) ->
+            ( [], "Maybe" )
+
+        ( [ "List" ], "List" ) ->
+            ( [], "List" )
+
+        ( [ "Char" ], "Char" ) ->
+            ( [], "Char" )
+
+        ( [ "Basics" ], "Bool" ) ->
+            ( [], "Bool" )
+
+        ( [ "Basics" ], "Int" ) ->
+            ( [], "Int" )
+
+        ( [ "Basics" ], "Float" ) ->
+            ( [], "Float" )
+
+        ( [ "Basics" ], "Never" ) ->
+            ( [], "Never" )
+
+        ( [ "Result" ], "Result" ) ->
+            ( [], "Result" )
+
+        ( [ "String" ], "String" ) ->
+            ( [], "String" )
+
+        ( [ "Platform", "Cmd" ], "Cmd" ) ->
+            ( [], "Cmd" )
+
+        ( [ "Platform", "Sub" ], "Sub" ) ->
+            ( [], "Sub" )
+
+        ( [ "Platform" ], "Program" ) ->
+            ( [], "Program" )
+
+        otherwise ->
+            otherwise
 
 
 aliasNamed : Elm.Docs.Alias -> Elm.Expression
@@ -1469,6 +1514,16 @@ namedWithType thisModule name types =
 
         [ "Char", "Char" ] ->
             GenType.char
+
+        [ "Platform", "Cmd", "Cmd" ] ->
+            GenType.namedWith []
+                "Cmd"
+                (List.map (typeToExpression thisModule) types)
+
+        [ "Platform", "Sub", "Sub" ] ->
+            GenType.namedWith []
+                "Sub"
+                (List.map (typeToExpression thisModule) types)
 
         _ ->
             let

@@ -56,11 +56,7 @@ perform arg arg0 =
                             , Type.var "a"
                             ]
                         ]
-                        (Type.namedWith
-                            [ "Platform", "Cmd" ]
-                            "Cmd"
-                            [ Type.var "msg" ]
-                        )
+                        (Type.namedWith [] "Cmd" [ Type.var "msg" ])
                     )
             }
         )
@@ -114,11 +110,7 @@ attempt arg arg0 =
                             "Task"
                             [ Type.var "x", Type.var "a" ]
                         ]
-                        (Type.namedWith
-                            [ "Platform", "Cmd" ]
-                            "Cmd"
-                            [ Type.var "msg" ]
-                        )
+                        (Type.namedWith [] "Cmd" [ Type.var "msg" ])
                     )
             }
         )
@@ -504,10 +496,11 @@ map4 arg arg0 arg1 arg2 arg3 =
                     (\unpack0 ->
                         Elm.functionReduced
                             "unpack"
-                            (\unpack_4_3_3_3_0 ->
+                            (\unpack_2_1_2_0_2_0_2_0_0 ->
                                 Elm.functionReduced
                                     "unpack"
-                                    (arg unpack unpack0 unpack_4_3_3_3_0)
+                                    (arg unpack unpack0 unpack_2_1_2_0_2_0_2_0_0
+                                    )
                             )
                     )
             )
@@ -593,14 +586,15 @@ map5 arg arg0 arg1 arg2 arg3 arg4 =
                     (\unpack0 ->
                         Elm.functionReduced
                             "unpack"
-                            (\unpack_4_3_3_3_0 ->
+                            (\unpack_2_1_2_0_2_0_2_0_0 ->
                                 Elm.functionReduced
                                     "unpack"
-                                    (\unpack_4_4_3_3_3_0 ->
+                                    (\unpack_2_1_2_1_2_0_2_0_2_0_0 ->
                                         Elm.functionReduced
                                             "unpack"
-                                            (arg unpack unpack0 unpack_4_3_3_3_0
-                                                unpack_4_4_3_3_3_0
+                                            (arg unpack unpack0
+                                                 unpack_2_1_2_0_2_0_2_0_0
+                                                unpack_2_1_2_1_2_0_2_0_2_0_0
                                             )
                                     )
                             )
@@ -772,17 +766,13 @@ call_ =
                                     , Type.var "a"
                                     ]
                                 ]
-                                (Type.namedWith
-                                    [ "Platform", "Cmd" ]
-                                    "Cmd"
-                                    [ Type.var "msg" ]
-                                )
+                                (Type.namedWith [] "Cmd" [ Type.var "msg" ])
                             )
                     }
                 )
                 [ arg, arg0 ]
     , attempt =
-        \arg arg1 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Task" ]
@@ -802,17 +792,13 @@ call_ =
                                     "Task"
                                     [ Type.var "x", Type.var "a" ]
                                 ]
-                                (Type.namedWith
-                                    [ "Platform", "Cmd" ]
-                                    "Cmd"
-                                    [ Type.var "msg" ]
-                                )
+                                (Type.namedWith [] "Cmd" [ Type.var "msg" ])
                             )
                     }
                 )
-                [ arg, arg1 ]
+                [ arg, arg0 ]
     , andThen =
-        \arg arg2 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Task" ]
@@ -840,7 +826,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg2 ]
+                [ arg, arg0 ]
     , succeed =
         \arg ->
             Elm.apply
@@ -905,7 +891,7 @@ call_ =
                 )
                 [ arg ]
     , map =
-        \arg arg6 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Task" ]
@@ -927,9 +913,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg6 ]
+                [ arg, arg0 ]
     , map2 =
-        \arg arg7 arg8 ->
+        \arg arg0 arg1 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Task" ]
@@ -957,9 +943,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg7, arg8 ]
+                [ arg, arg0, arg1 ]
     , map3 =
-        \arg arg8 arg9 arg10 ->
+        \arg arg0 arg1 arg2 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Task" ]
@@ -991,9 +977,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg8, arg9, arg10 ]
+                [ arg, arg0, arg1, arg2 ]
     , map4 =
-        \arg arg9 arg10 arg11 arg12 ->
+        \arg arg0 arg1 arg2 arg3 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Task" ]
@@ -1033,9 +1019,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg9, arg10, arg11, arg12 ]
+                [ arg, arg0, arg1, arg2, arg3 ]
     , map5 =
-        \arg arg10 arg11 arg12 arg13 arg14 ->
+        \arg arg0 arg1 arg2 arg3 arg4 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Task" ]
@@ -1080,9 +1066,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg10, arg11, arg12, arg13, arg14 ]
+                [ arg, arg0, arg1, arg2, arg3, arg4 ]
     , onError =
-        \arg arg11 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Task" ]
@@ -1110,9 +1096,9 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg11 ]
+                [ arg, arg0 ]
     , mapError =
-        \arg arg12 ->
+        \arg arg0 ->
             Elm.apply
                 (Elm.value
                     { importFrom = [ "Task" ]
@@ -1134,7 +1120,7 @@ call_ =
                             )
                     }
                 )
-                [ arg, arg12 ]
+                [ arg, arg0 ]
     }
 
 
@@ -1169,11 +1155,7 @@ values_ =
                             , Type.var "a"
                             ]
                         ]
-                        (Type.namedWith
-                            [ "Platform", "Cmd" ]
-                            "Cmd"
-                            [ Type.var "msg" ]
-                        )
+                        (Type.namedWith [] "Cmd" [ Type.var "msg" ])
                     )
             }
     , attempt =
@@ -1195,11 +1177,7 @@ values_ =
                             "Task"
                             [ Type.var "x", Type.var "a" ]
                         ]
-                        (Type.namedWith
-                            [ "Platform", "Cmd" ]
-                            "Cmd"
-                            [ Type.var "msg" ]
-                        )
+                        (Type.namedWith [] "Cmd" [ Type.var "msg" ])
                     )
             }
     , andThen =
